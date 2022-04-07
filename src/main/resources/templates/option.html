@@ -1,0 +1,65 @@
+<!DOCTYPE HTML>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity5"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
+<head>
+    <meta charset="UTF-8">
+    <title>Project</title>
+</head>
+<body>
+<script>
+    function get_member_count(type) {
+        var target = document.getElementById("member_count");
+        if (type != "none") {
+            var arr = new Array(100);
+            for (var i = 0; i < arr.length; i++) {
+                arr[i] = i + 2;
+            }
+        }
+        target.options.length = 1;
+        for (x in arr) {
+            var opt = document.createElement("option");
+            opt.value = arr[x];
+            opt.innerHTML = arr[x];
+            target.appendChild(opt);
+        }
+    }
+</script>
+<div>
+    <div class="navbar-header">
+        <nav>
+            <ul class="nav nav-pills pull-right">
+                <li role="presentation" class="active"><a href="/member">Member</a></li>
+                <li role="presentation"><a href="/community">커뮤니티</a></li>
+                <li role="presentation"><a href="/myroom">마이룸</a></li>
+            </ul>
+        </nav>
+        <h3 class="text-muted"><a href="/">Home</a></h3>
+    </div>
+
+    <div class="jumbotron">
+        <h1>Hello</h1>
+        <p>
+            <a class="btn btn-lg btn-info" href="/" role="button">로그아웃</a>
+        </p>
+    </div>
+    <form>
+        <p>
+            <strong>대회 방식 선택</strong>
+            <select id = "competition_type" onchange="get_member_count(this.value)">
+                <option value = "none">--- 선택 ---</option>
+                <option value = "round_robin">라운드 로빈</option>
+                <option value = "tournament">토너먼트</option>
+            </select>
+        </p>
+        <p>
+            <strong>참가자 수 선택</strong>
+            <select id = "member_count">
+                <option value = "none">--- 선택 ---</option>
+            </select>
+        </p>
+    </form>
+</div>
+</body>
+</html>

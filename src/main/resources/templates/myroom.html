@@ -20,11 +20,13 @@
     </div>
 
     <div class="jumbotron">
-        <h1>Hello</h1>
-        <p>
-            <a class="btn btn-lg btn-info" href="/signup" role="button">회원가입</a>
-            <a class="btn btn-lg btn-info" href="/login" role="button">로그인</a>
-        </p>
+        <h1>hello</h1>
+        ID : <span sec:authentication="name"></span> <br>
+        소유 권한 : <span sec:authentication="authorities"></span> <br>
+        <form id="logout" th:action="@{/logout}" method="GET">
+            <input type="submit" value="로그아웃"/>
+        </form> <br>
+        <a class="btn btn-lg btn-info" href="/option" role="button">새로운대회시작</a>
     </div>
 </div> <!-- /container -->
 

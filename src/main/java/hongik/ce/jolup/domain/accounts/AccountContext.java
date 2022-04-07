@@ -1,3 +1,4 @@
+/*
 package hongik.ce.jolup.domain.accounts;
 
 import lombok.Getter;
@@ -21,3 +22,4 @@ public class AccountContext extends User {
         return Collections.singleton(new SimpleGrantedAuthority(role.getKey()));
     }
 }
+*/
