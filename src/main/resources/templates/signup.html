@@ -8,24 +8,15 @@
 </head>
 <body>
 <div class="container">
-    <div class="header">
-        <nav>
-            <ul class="nav nav-pills pull-right">
-                <li role="presentation" class="active"><a href="/member">Member</a></li> <br>
-                <li role="presentation"><a href="/community">커뮤니티</a></li> <br>
-                <li role="presentation"><a href="/myroom">마이룸</a></li> <br>
-            </ul>
-        </nav>
-        <h3 class="text-muted"><a href="/">Home</a></h3> <hr>
-    </div>
+    <th:block th:replace="header :: header"></th:block>
 
     <div class="jumbotron">
         <div class="tbl_wrp">
-            <form class="form-horizontal" th:action="@{/signup}" method="post">
+            <form class="form-horizontal" th:action="@{/}" method="post">
                 <div class="form-group">
-                    <label for="userId" class="col-sm-2 control-label">아이디</label>
+                    <label for="email" class="col-sm-2 control-label">아이디</label>
                     <div class="col-sm-10">
-                        <input type="text" class="form-control input-large" name="userId" id="userId" placeholder="아이디" required="required"> <br>
+                        <input type="text" class="form-control input-large" name="email" id="email" placeholder="아이디" required="required"> <br>
                     </div>
                 </div>
 

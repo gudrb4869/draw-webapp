@@ -17,12 +17,7 @@ import javax.servlet.http.HttpServletResponse;
 public class LoginController {
     private final AccountService accountService;
 
-    @GetMapping("/signup")
-    public String signup() {
-        return "signup";
-    }
-
-    @PostMapping("/signup")
+    @PostMapping("/")
     public String signup(AccountSaveRequestDto requestDto) {
         accountService.save(requestDto);
         return "redirect:/";

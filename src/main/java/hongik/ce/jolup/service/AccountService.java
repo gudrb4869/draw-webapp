@@ -22,9 +22,9 @@ public class AccountService implements UserDetailsService {
     // UserDetailService 상속시 필수로 구현해야 하는 메소드
     // UserDetail 가 기본 반환 타입, Account 가 이를 상속하고 있으므로 자동으로 다운캐스팅됨
     @Override
-    public UserDetails loadUserByUsername(String userId) throws UsernameNotFoundException {
-        return accountRepository.findByUserId(userId)
-                .orElseThrow(() -> new UsernameNotFoundException(userId));
+    public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
+        return accountRepository.findByEmail(email)
+                .orElseThrow(() -> new UsernameNotFoundException(email));
     }
 
     @Transactional
@@ -33,7 +33,7 @@ public class AccountService implements UserDetailsService {
         requestDto.setPassword(encoder.encode(requestDto.getPassword()));
 
         return accountRepository.save(Account.builder()
-                .userId(requestDto.getUserId())
+                .email(requestDto.getEmail())
                 .name(requestDto.getName())
                 .password(requestDto.getPassword())
                 .role(AccountRole.USER).build()).getId();

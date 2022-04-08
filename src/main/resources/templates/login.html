@@ -8,17 +8,7 @@
 </head>
 <body>
 <div class="container text-center">
-    <div class="navbar-header">
-        <nav>
-            <ul class="nav nav-pills pull-right">
-                <li role="presentation" class="active"><a href="/member">Member</a></li>
-                <li role="presentation"><a href="/community">커뮤니티</a></li>
-                <li role="presentation"><a href="/myroom">마이룸</a></li>
-            </ul>
-        </nav>
-        <h3 class="text-muted"><a href="/">Home</a></h3><hr>
-    </div>
-
+    <th:block th:replace="header :: header"></th:block>
     <div class="login-form d-flex justify-content-center">
         <div class="col-sm-5">
             <div class="panel">

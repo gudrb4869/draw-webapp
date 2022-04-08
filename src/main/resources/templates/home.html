@@ -1,31 +1,16 @@
 <!DOCTYPE HTML>
 <html xmlns="http://www.w3.org/1999/xhtml"
       xmlns:th="http://www.thymeleaf.org"
-      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity5"
-      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 <head>
     <meta charset="UTF-8">
 </head>
 <body>
 <div class="container">
-    <div class="navbar-header">
-        <nav>
-            <ul class="nav nav-pills pull-right">
-                <li role="presentation" class="active"><a href="/member">Member</a></li> <br>
-                <li role="presentation"><a href="/community">커뮤니티</a></li> <br>
-                <li role="presentation"><a href="/myroom">마이룸</a></li> <br>
-            </ul>
-        </nav>
-        <h3 class="text-muted"><a href="/">Home</a></h3><hr>
-    </div>
-
-    <div class="jumbotron">
-        <h1>Hello</h1>
-        <p>
-            <a class="btn btn-lg btn-info" href="/signup" role="button">회원가입</a>
-            <a class="btn btn-lg btn-info" href="/login" role="button">로그인</a>
-        </p>
-    </div>
+    <th:block th:replace="header :: header"></th:block>
+    <h1>Hello(Welcome Page)</h1>
+    <a class="btn btn-secondary mr-2 my-2 my-sm-0" th:href="@{/makeroom}" sec:authorize="isAuthenticated()">방만들기</a>
 </div> <!-- /container -->
 
 </body></html>
