@@ -16,11 +16,11 @@
                 <li role="presentation"><a href="/myroom">마이룸</a></li>
             </ul>
         </nav>
-        <h3 class="text-muted"><a href="/">Home</a></h3>
+        <h3 class="text-muted"><a href="/">Home</a></h3><hr>
     </div>
 
     <div class="jumbotron">
-        <h1>hello</h1>
+        <h1>안녕하세요</h1>
         ID : <span sec:authentication="name"></span> <br>
         소유 권한 : <span sec:authentication="authorities"></span> <br>
         <form id="logout" th:action="@{/logout}" method="GET">

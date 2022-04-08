@@ -28,16 +28,6 @@ public class LoginController {
         return "redirect:/";
     }
 
-    /*@GetMapping("/login")
-    public String login() {
-        return "login";
-    }*/
-
-    /*@PostMapping("/login")
-    public String login(String userId, String password) {
-        return "redirect:/myroom";
-    }*/
-
     @GetMapping("/logout")
     public String logoutPage(HttpServletRequest request, HttpServletResponse response) {
         new SecurityContextLogoutHandler().logout(request, response, SecurityContextHolder
