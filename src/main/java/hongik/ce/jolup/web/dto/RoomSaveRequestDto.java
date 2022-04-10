@@ -9,4 +9,5 @@ import lombok.Setter;
 public class RoomSaveRequestDto {
     private String subject;
     private RoomType roomType;
+    private Long memNum;
 }

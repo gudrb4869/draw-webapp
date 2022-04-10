@@ -1,5 +1,8 @@
+/*
 package hongik.ce.jolup.domain.matches;
 
+import hongik.ce.jolup.domain.accounts.Account;
+import hongik.ce.jolup.domain.rooms.Room;
 import lombok.*;
 
 import javax.persistence.*;
@@ -13,15 +16,19 @@ import javax.persistence.*;
 public class Match {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "match_id")
     private Long id;
-    @Column(nullable = false)
-    private Long cid;
-    @Column(nullable = false)
-    private Long mid1;
-    @Column(nullable = false)
-    private Long mid2;
-    @Column(nullable = false)
-    private Long score1;
-    @Column(nullable = false)
-    private Long score2;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "room_id")
+    private Room room;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id")
+    private Account account1;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id")
+    private Account account2;
 }
+*/

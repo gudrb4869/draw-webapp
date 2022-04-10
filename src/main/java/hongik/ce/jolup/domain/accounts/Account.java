@@ -6,9 +6,7 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import javax.persistence.*;
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.*;
 
 @Entity
 @Builder
@@ -46,7 +44,6 @@ public class Account implements UserDetails {
     private AccountRole role;
 
     // 필수 override 메소드를 구현
-
     // 사용자의 권한이 ,로 구분되어 있는 auth를 활용, 콜렉션 형태로 반환시킴
     // 단, 자료형은 GrantedAuthority를 구현해야 함
     @Override

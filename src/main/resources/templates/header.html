@@ -13,8 +13,8 @@
                                                                         th:if="${menu} == 'home'">(current)</span></a>
                 </li>
                 <li class="nav-item" th:classappend="${menu} == 'board'? 'active'">
-                    <a class="nav-link" href="#" th:href="@{/myroom}">마이룸 <span class="sr-only"
-                                                                                    th:if="${menu} == 'myroom'">(current)</span></a>
+                    <a class="nav-link" href="#" th:href="@{/myRoom}">마이룸 <span class="sr-only"
+                                                                                    th:if="${menu} == 'myRoom'">(current)</span></a>
                 </li>
             </ul>
             <a class="btn btn-secondary mr-2 my-2 my-sm-0" th:href="@{/signup}" sec:authorize="!isAuthenticated()">회원가입</a>

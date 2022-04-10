@@ -33,13 +33,12 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .and()
                 .authorizeRequests()
                 .antMatchers("/", "/login", "/signup").permitAll() // 누구나 접근 가능
-                .antMatchers("/myroom").hasAnyRole("USER", "MANAGER","ADMIN") // USER, MANAGER, ADMIN 모두 접근 가능
-                .antMatchers("/admin").hasRole("ADMIN") // ADMIN 만 접근 가능
                 .anyRequest().authenticated() // 나머지는 권한이 있기만 하면 접근 가능
                 .and()
                 .formLogin() // 로그인에 대한 설정
                 .loginPage("/login")
-                .defaultSuccessUrl("/myroom") // 로그인 성공시 연결되는 주소
+                .loginProcessingUrl("/login_proc")
+                .defaultSuccessUrl("/") // 로그인 성공시 연결되는 주소
                 .and()
                 .logout() // 로그아웃 관련 설정
                 .logoutSuccessUrl("/") // 로그아웃 성공시 연결되는 주소
