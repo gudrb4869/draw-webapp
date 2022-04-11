@@ -8,9 +8,8 @@
 </head>
 <body>
 <div class="container">
-    <th:block th:replace="header :: header"></th:block>
-    <h1>안녕하세요 <span sec:authentication="name"></span>님</h1>
-    <a class="btn btn-lg btn-info" href="/createRoom" role="button">방만들기</a> <br>
+    <th:block th:replace="fragments/header :: header"></th:block>
+    <a class="btn btn-lg btn-info" th:href="@{/room/create}" role="button">방만들기</a> <br>
     <h1>내 방 목록</h1>
     <table>
         <thead>
@@ -26,12 +25,11 @@
         <tr th:each="joinRoom, i : ${joinRooms}">
             <td th:text="${i.index+1}"></td>
             <td>
-                <a th:text="${joinRoom.room.getId()}" th:href="@{/}"></a>
+                <a th:href="'/room/'+${joinRoom.room.getId()}" th:text="${joinRoom.room.getId()}"></a>
             </td>
             <td th:text="${joinRoom.room.getSubject()}"></td>
             <td th:text="${joinRoom.room.roomType.getDescription()}"></td>
             <td th:text="${joinRoom.room.getMemNum()}"></td>
-
         </tr>
         </tbody>
     </table>

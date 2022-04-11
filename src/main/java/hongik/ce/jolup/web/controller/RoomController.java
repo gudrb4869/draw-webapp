@@ -22,22 +22,22 @@ public class RoomController {
     private final RoomService roomService;
     private final JoinRoomService joinRoomService;
 
-    @GetMapping("/createRoom")
-    public String makeroom(Model model) {
+    @GetMapping("/room/create")
+    public String createRoom(Model model) {
         model.addAttribute("roomTypes", RoomType.values());
-        return "createRoom";
+        return "room/create";
     }
 
-    @PostMapping("/createRoom")
+    @PostMapping("/room/create")
     public String createRoom(RoomSaveRequestDto requestDto, @AuthenticationPrincipal Account account) {
         joinRoomService.createJoinRoom(account, roomService.createRoom(requestDto));
-        return "redirect:/myRoom";
+        return "redirect:/room/list";
     }
 
-    @GetMapping("/myRoom")
+    @GetMapping("/room/list")
     public String myRoomList(Model model, @AuthenticationPrincipal Account account) {
         List<JoinRoom> joinRooms = joinRoomService.findMyJoinRooms(account);
         model.addAttribute("joinRooms", joinRooms);
-        return "myRoom";
+        return "room/list";
     }
 }

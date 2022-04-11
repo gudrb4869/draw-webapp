@@ -8,10 +8,10 @@
 </head>
 <body>
 <div class="container">
-    <th:block th:replace="header :: header"></th:block>
+    <th:block th:replace="fragments/header :: header"></th:block>
     <div class="jumbotron">
         <div class="tbl_wrp">
-            <form class="form-horizontal" th:action="@{/createRoom}" method="post">
+            <form class="form-horizontal" th:action="@{/room/create}" method="post">
                 <div class="form-group">
                     <label for="subject" class="col-sm-2 control-label">대회 제목</label>
                     <div class="col-sm-10">

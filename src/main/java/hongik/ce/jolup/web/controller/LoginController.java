@@ -20,13 +20,13 @@ public class LoginController {
     @PostMapping("/")
     public String signup(AccountSaveRequestDto requestDto) {
         accountService.save(requestDto);
-        return "redirect:/";
+        return "redirect:/index";
     }
 
     @GetMapping("/logout")
     public String logoutPage(HttpServletRequest request, HttpServletResponse response) {
         new SecurityContextLogoutHandler().logout(request, response, SecurityContextHolder
                 .getContext().getAuthentication());
-        return "redirect:/";
+        return "redirect:/index";
     }
 }

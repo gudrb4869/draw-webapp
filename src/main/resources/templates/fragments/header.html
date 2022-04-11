@@ -13,7 +13,7 @@
                                                                         th:if="${menu} == 'home'">(current)</span></a>
                 </li>
                 <li class="nav-item" th:classappend="${menu} == 'board'? 'active'">
-                    <a class="nav-link" href="#" th:href="@{/myRoom}">마이룸 <span class="sr-only"
+                    <a class="nav-link" href="#" th:href="@{/room/list}">마이룸 <span class="sr-only"
                                                                                     th:if="${menu} == 'myRoom'">(current)</span></a>
                 </li>
             </ul>
@@ -21,10 +21,11 @@
             <a class="btn btn-secondary my-2 my-sm-0" th:href="@{/login}" sec:authorize="!isAuthenticated()">로그인</a> <!-- 로그인이 안된 경우  -->
 
             <form class="form-inline my-2 my-lg-0" th:action="@{/logout}" method="post" sec:authorize="isAuthenticated()">
-                <span class="text-white mr-2 mx-2" sec:authentication="name">사용자</span>
-                <span class="text-white mr-2 mx-2" sec:authentication="authorities">권한</span>
+                <span class="text-white mr-2 mx-2" sec:authentication="name">사용자</span>님, 안녕하세요.
+<!--                <span class="text-white mr-2 mx-2" sec:authentication="authorities">권한</span>-->
                 <button class="btn btn-secondary my-2 my-sm-0" type="submit">로그아웃</button>
             </form>
+
         </div>
     </nav>
 </th:block>
