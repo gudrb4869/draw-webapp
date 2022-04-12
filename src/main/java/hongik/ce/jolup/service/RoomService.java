@@ -15,7 +15,7 @@ public class RoomService {
     private final RoomRepository roomRepository;
 
     @Transactional
-    public Long createRoom(RoomDto requestDto) {
+    public Long save(RoomDto requestDto) {
         return roomRepository.save(Room.builder()
                 .subject(requestDto.getSubject())
                 .roomType(requestDto.getRoomType())

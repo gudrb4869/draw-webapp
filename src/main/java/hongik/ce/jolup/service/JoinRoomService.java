@@ -25,6 +25,14 @@ public class JoinRoomService {
                 .roomRole(RoomRole.MASTER).build()).getId();
     }
 
+    @Transactional
+    public Long addJoinRoom(User user, Long roomId) {
+        return joinRoomRepository.save(JoinRoom.builder()
+                .user(user)
+                .room(roomRepository.getById(roomId))
+                .roomRole(RoomRole.GUEST).build()).getId();
+    }
+
     public List<JoinRoom> findMyJoinRooms(User user) {
         return joinRoomRepository.findByUser(user);
     }

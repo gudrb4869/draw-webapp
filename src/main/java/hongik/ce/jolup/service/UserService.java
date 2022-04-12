@@ -12,6 +12,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
+import java.util.Optional;
 
 @RequiredArgsConstructor
 @Service
@@ -29,7 +30,6 @@ public class UserService implements UserDetailsService {
 
     @Transactional
     public Long save(UserDto userDto) {
-
         BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
         userDto.setPassword(encoder.encode(userDto.getPassword()));
 
@@ -38,5 +38,9 @@ public class UserService implements UserDetailsService {
                 .name(userDto.getName())
                 .password(userDto.getPassword())
                 .role(UserRole.USER).build()).getId();
+    }
+
+    public Optional<User> findOne(String email) {
+        return userRepository.findByEmail(email);
     }
 }
