@@ -1,6 +1,6 @@
-package hongik.ce.jolup.config.security;
+package hongik.ce.jolup.config;
 
-import hongik.ce.jolup.service.AccountService;
+import hongik.ce.jolup.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.boot.autoconfigure.security.servlet.PathRequest;
 import org.springframework.context.annotation.Configuration;
@@ -14,9 +14,9 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 @RequiredArgsConstructor
 @EnableWebSecurity
 @Configuration
-public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
+public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
-    private final AccountService accountService;
+    private final UserService userService;
 
     @Override
     // 인증을 무시할 경로 설정
@@ -48,7 +48,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     @Override
     // 로그인 시 필요한 정보를 가져옴
     public void configure(AuthenticationManagerBuilder auth) throws Exception {
-        auth.userDetailsService(accountService) // 유저 정보는 accountService 에서 가져온다
+        auth.userDetailsService(userService) // 유저 정보는 accountService 에서 가져온다
                 .passwordEncoder(new BCryptPasswordEncoder()); // 패스워드 인코더는 passwordEncoder(BCrypt 사용)
     }
 }

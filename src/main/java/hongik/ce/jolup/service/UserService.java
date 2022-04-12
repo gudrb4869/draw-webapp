@@ -1,9 +1,9 @@
 package hongik.ce.jolup.service;
 
-import hongik.ce.jolup.domain.accounts.Account;
-import hongik.ce.jolup.domain.accounts.AccountRepository;
-import hongik.ce.jolup.domain.accounts.AccountRole;
-import hongik.ce.jolup.web.dto.AccountSaveRequestDto;
+import hongik.ce.jolup.domain.user.User;
+import hongik.ce.jolup.domain.user.UserRepository;
+import hongik.ce.jolup.domain.user.UserRole;
+import hongik.ce.jolup.web.dto.UserDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -15,27 +15,28 @@ import javax.transaction.Transactional;
 
 @RequiredArgsConstructor
 @Service
-public class AccountService implements UserDetailsService {
+public class UserService implements UserDetailsService {
 
-    private final AccountRepository accountRepository;
+    private final UserRepository userRepository;
 
     // UserDetailService 상속시 필수로 구현해야 하는 메소드
     // UserDetail 가 기본 반환 타입, Account 가 이를 상속하고 있으므로 자동으로 다운캐스팅됨
     @Override
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
-        return accountRepository.findByEmail(email)
+        return userRepository.findByEmail(email)
                 .orElseThrow(() -> new UsernameNotFoundException(email));
     }
 
     @Transactional
-    public Long save(AccountSaveRequestDto requestDto) {
-        BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
-        requestDto.setPassword(encoder.encode(requestDto.getPassword()));
+    public Long save(UserDto userDto) {
 
-        return accountRepository.save(Account.builder()
-                .email(requestDto.getEmail())
-                .name(requestDto.getName())
-                .password(requestDto.getPassword())
-                .role(AccountRole.USER).build()).getId();
+        BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
+        userDto.setPassword(encoder.encode(userDto.getPassword()));
+
+        return userRepository.save(User.builder()
+                .email(userDto.getEmail())
+                .name(userDto.getName())
+                .password(userDto.getPassword())
+                .role(UserRole.USER).build()).getId();
     }
 }

@@ -1,6 +1,6 @@
-package hongik.ce.jolup.domain.rooms;
+package hongik.ce.jolup.domain.room;
 
-import hongik.ce.jolup.domain.accounts.Account;
+import hongik.ce.jolup.domain.user.User;
 import lombok.*;
 
 import javax.persistence.*;
@@ -31,12 +31,13 @@ public class JoinRoom {
 
     @ManyToOne
     @JoinColumn(name = "user_id")
-    private Account account;
+    private User user;
 
     @ManyToOne
     @JoinColumn(name = "room_id")
     private Room room;
 
     @Column(nullable = false)
+    @Enumerated(EnumType.STRING)
     private RoomRole roomRole;
 }

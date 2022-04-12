@@ -1,7 +1,7 @@
 package hongik.ce.jolup.web.dto;
 
-import hongik.ce.jolup.domain.rooms.Room;
-import hongik.ce.jolup.domain.rooms.RoomType;
+import hongik.ce.jolup.domain.room.Room;
+import hongik.ce.jolup.domain.room.RoomType;
 import lombok.*;
 
 @Getter

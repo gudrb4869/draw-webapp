@@ -1,4 +1,4 @@
-package hongik.ce.jolup.config.security;
+package hongik.ce.jolup.config;
 
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.config.annotation.ViewControllerRegistry;

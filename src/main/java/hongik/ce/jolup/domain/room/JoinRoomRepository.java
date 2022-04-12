@@ -1,10 +1,10 @@
-package hongik.ce.jolup.domain.rooms;
+package hongik.ce.jolup.domain.room;
 
-import hongik.ce.jolup.domain.accounts.Account;
+import hongik.ce.jolup.domain.user.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;
 
 public interface JoinRoomRepository extends JpaRepository<JoinRoom, Long> {
-        List<JoinRoom> findByAccount(Account account);
+        List<JoinRoom> findByUser(User user);
 }

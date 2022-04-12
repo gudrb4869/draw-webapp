@@ -1,4 +1,4 @@
-package hongik.ce.jolup.domain.rooms;
+package hongik.ce.jolup.domain.room;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 

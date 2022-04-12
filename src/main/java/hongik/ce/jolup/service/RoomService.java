@@ -1,7 +1,7 @@
 package hongik.ce.jolup.service;
 
-import hongik.ce.jolup.domain.rooms.Room;
-import hongik.ce.jolup.domain.rooms.RoomRepository;
+import hongik.ce.jolup.domain.room.Room;
+import hongik.ce.jolup.domain.room.RoomRepository;
 import hongik.ce.jolup.web.dto.RoomDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;

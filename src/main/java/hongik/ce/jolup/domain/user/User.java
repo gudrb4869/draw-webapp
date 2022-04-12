@@ -1,4 +1,4 @@
-package hongik.ce.jolup.domain.accounts;
+package hongik.ce.jolup.domain.user;
 
 import lombok.*;
 import org.springframework.security.core.GrantedAuthority;
@@ -9,11 +9,10 @@ import javax.persistence.*;
 import java.util.*;
 
 @Entity
-@Builder
 @Getter
-@AllArgsConstructor
-@NoArgsConstructor
-public class Account implements UserDetails {
+@Table(name = "user")
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
+public class User implements UserDetails {
     /*
     drop table if exists account CASCADE;
     create table account(
@@ -41,7 +40,25 @@ public class Account implements UserDetails {
 
     @Column(nullable = false)
     @Enumerated(EnumType.STRING)
-    private AccountRole role;
+    private UserRole role;
+
+    @Builder
+    public User(String email, String password, String name, UserRole role) {
+        this.email = email;
+        this.password = password;
+        this.name = name;
+        this.role = role;
+    }
+
+    public User update(String password, String name) {
+        this.password = password;
+        this.name = name;
+        return this;
+    }
+
+    public String getRoleKey() {
+        return this.role.getKey();
+    }
 
     // 필수 override 메소드를 구현
     // 사용자의 권한이 ,로 구분되어 있는 auth를 활용, 콜렉션 형태로 반환시킴

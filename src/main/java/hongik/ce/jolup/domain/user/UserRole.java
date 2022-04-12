@@ -1,11 +1,11 @@
-package hongik.ce.jolup.domain.accounts;
+package hongik.ce.jolup.domain.user;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
 @Getter
 @RequiredArgsConstructor
-public enum AccountRole {
+public enum UserRole {
     USER("ROLE_USER", "일반사용자"),
     MANAGER("ROLE_MANAGER", "매니저"),
     ADMIN("ROLE_ADMIN", "관리자");
