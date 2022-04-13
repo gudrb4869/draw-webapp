@@ -1,5 +1,7 @@
 package hongik.ce.jolup.domain.user;
 
+import hongik.ce.jolup.domain.Time;
+import hongik.ce.jolup.domain.join.Join;
 import lombok.*;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -12,7 +14,7 @@ import java.util.*;
 @Getter
 @Table(name = "user")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class User implements UserDetails {
+public class User extends Time implements UserDetails {
     /*
     drop table if exists account CASCADE;
     create table account(
@@ -29,7 +31,7 @@ public class User implements UserDetails {
     @Column(name = "user_id")
     private Long id;
 
-    @Column(unique = true, nullable = false)
+    @Column(unique = true, nullable = false, updatable = false)
     private String email;
 
     @Column(nullable = false)
@@ -41,6 +43,9 @@ public class User implements UserDetails {
     @Column(nullable = false)
     @Enumerated(EnumType.STRING)
     private UserRole role;
+
+    @OneToMany(mappedBy = "user")
+    private List<Join> joins = new ArrayList<>();
 
     @Builder
     public User(String email, String password, String name, UserRole role) {

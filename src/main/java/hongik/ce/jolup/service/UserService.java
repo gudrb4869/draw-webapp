@@ -1,9 +1,9 @@
 package hongik.ce.jolup.service;
 
 import hongik.ce.jolup.domain.user.User;
-import hongik.ce.jolup.domain.user.UserRepository;
+import hongik.ce.jolup.repository.UserRepository;
 import hongik.ce.jolup.domain.user.UserRole;
-import hongik.ce.jolup.web.dto.UserDto;
+import hongik.ce.jolup.dto.UserDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -16,6 +16,7 @@ import java.util.Optional;
 
 @RequiredArgsConstructor
 @Service
+@Transactional
 public class UserService implements UserDetailsService {
 
     private final UserRepository userRepository;
@@ -28,8 +29,9 @@ public class UserService implements UserDetailsService {
                 .orElseThrow(() -> new UsernameNotFoundException(email));
     }
 
-    @Transactional
     public Long save(UserDto userDto) {
+        validateDuplicateUser(userDto);
+
         BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
         userDto.setPassword(encoder.encode(userDto.getPassword()));
 
@@ -38,6 +40,13 @@ public class UserService implements UserDetailsService {
                 .name(userDto.getName())
                 .password(userDto.getPassword())
                 .role(UserRole.USER).build()).getId();
+    }
+
+    private void validateDuplicateUser(UserDto userDto) {
+        Optional<User> findUser = userRepository.findByEmail(userDto.getEmail());
+        if (!findUser.isEmpty()) {
+            throw new IllegalStateException("이미 존재하는 아이디입니다!");
+        }
     }
 
     public Optional<User> findOne(String email) {

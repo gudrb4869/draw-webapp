@@ -1,35 +1,34 @@
-package hongik.ce.jolup.web.controller;
+package hongik.ce.jolup.controller;
 
-import hongik.ce.jolup.domain.user.User;
-import hongik.ce.jolup.domain.room.JoinRoom;
 import hongik.ce.jolup.domain.room.RoomType;
-import hongik.ce.jolup.service.JoinRoomService;
+import hongik.ce.jolup.domain.user.User;
+import hongik.ce.jolup.dto.JoinDto;
+import hongik.ce.jolup.dto.RoomDto;
+import hongik.ce.jolup.service.JoinService;
 import hongik.ce.jolup.service.RoomService;
 import hongik.ce.jolup.service.UserService;
-import hongik.ce.jolup.web.dto.JoinRoomDto;
-import hongik.ce.jolup.web.dto.RoomDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
-import java.util.List;
 import java.util.Optional;
-
 @RequiredArgsConstructor
 @Controller
-@RequestMapping("room")
-public class RoomController {
+public class JoinController {
 
     private final RoomService roomService;
-    private final JoinRoomService joinRoomService;
+    private final JoinService joinRoomService;
     private final UserService userService;
 
-    @GetMapping("/create")
+    /*@GetMapping("/create")
     public String createRoom(@RequestParam(value = "count", defaultValue = "2") Integer count,
                              Model model) {
-        JoinRoomDto joinRoomDto = new JoinRoomDto();
+        JoinDto joinRoomDto = new JoinDto();
 
         for (int i = 0; i < count; i++) {
             joinRoomDto.addEmail(new String());
@@ -42,7 +41,7 @@ public class RoomController {
     }
 
     @PostMapping("/create")
-    public String createRoom(@ModelAttribute JoinRoomDto form,
+    public String createRoom(@ModelAttribute JoinDto form,
                              RoomDto requestDto,
                              @AuthenticationPrincipal User user) {
         Long roomId = roomService.save(requestDto);
@@ -56,12 +55,5 @@ public class RoomController {
         }
 
         return "redirect:/room/list";
-    }
-
-    @GetMapping({"", "/list"})
-    public String myRoomList(Model model, @AuthenticationPrincipal User user) {
-        List<JoinRoom> joinRooms = joinRoomService.findMyJoinRooms(user);
-        model.addAttribute("joinRooms", joinRooms);
-        return "room/list";
-    }
+    }*/
 }

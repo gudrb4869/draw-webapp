@@ -1,9 +1,12 @@
 package hongik.ce.jolup.domain.room;
 
+import hongik.ce.jolup.domain.join.Join;
 import lombok.*;
 import org.springframework.util.Assert;
 
 import javax.persistence.*;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Getter
@@ -34,6 +37,9 @@ public class Room {
 
     @Column(nullable = false)
     private Long memNum;
+
+    @OneToMany(mappedBy = "room")
+    private List<Join> joins = new ArrayList<>();
 
     @Builder
     public Room(Long id, String subject, RoomType roomType, Long memNum) {

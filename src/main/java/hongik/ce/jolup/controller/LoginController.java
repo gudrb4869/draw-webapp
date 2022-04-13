@@ -1,7 +1,7 @@
-package hongik.ce.jolup.web.controller;
+package hongik.ce.jolup.controller;
 
 import hongik.ce.jolup.service.UserService;
-import hongik.ce.jolup.web.dto.UserDto;
+import hongik.ce.jolup.dto.UserDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.authentication.logout.SecurityContextLogoutHandler;
@@ -18,8 +18,8 @@ public class LoginController {
     private final UserService userService;
 
     @PostMapping("/")
-    public String signup(UserDto requestDto) {
-        userService.save(requestDto);
+    public String signup(UserDto userDto) {
+        userService.save(userDto);
         return "redirect:/";
     }
 

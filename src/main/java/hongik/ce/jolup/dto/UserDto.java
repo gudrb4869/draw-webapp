@@ -1,4 +1,4 @@
-package hongik.ce.jolup.web.dto;
+package hongik.ce.jolup.dto;
 
 import hongik.ce.jolup.domain.user.User;
 import hongik.ce.jolup.domain.user.UserRole;

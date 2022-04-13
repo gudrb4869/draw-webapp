@@ -1,10 +1,10 @@
 package hongik.ce.jolup.service;
 
 import hongik.ce.jolup.domain.user.User;
-import hongik.ce.jolup.domain.room.JoinRoom;
-import hongik.ce.jolup.domain.room.JoinRoomRepository;
-import hongik.ce.jolup.domain.room.RoomRepository;
-import hongik.ce.jolup.domain.room.RoomRole;
+import hongik.ce.jolup.domain.join.Join;
+import hongik.ce.jolup.repository.JoinRepository;
+import hongik.ce.jolup.repository.RoomRepository;
+import hongik.ce.jolup.domain.join.JoinRole;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -13,27 +13,29 @@ import java.util.List;
 
 @RequiredArgsConstructor
 @Service
-public class JoinRoomService {
+@Transactional
+public class JoinService {
 
-    private final JoinRoomRepository joinRoomRepository;
+    private final JoinRepository joinRoomRepository;
     private final RoomRepository roomRepository;
-    @Transactional
+
     public Long createJoinRoom(User user, Long roomId) {
-        return joinRoomRepository.save(JoinRoom.builder()
+        /*return joinRoomRepository.save(Join.builder()
                 .user(user)
                 .room(roomRepository.getById(roomId))
-                .roomRole(RoomRole.MASTER).build()).getId();
+                .role(JoinRole.MASTER).build()).getId();*/
+        return null;
     }
 
-    @Transactional
     public Long addJoinRoom(User user, Long roomId) {
-        return joinRoomRepository.save(JoinRoom.builder()
+        /*return joinRoomRepository.save(Join.builder()
                 .user(user)
                 .room(roomRepository.getById(roomId))
-                .roomRole(RoomRole.GUEST).build()).getId();
+                .role(JoinRole.GUEST).build()).getId();*/
+        return null;
     }
 
-    public List<JoinRoom> findMyJoinRooms(User user) {
+    public List<Join> findMyJoinRooms(User user) {
         return joinRoomRepository.findByUser(user);
     }
 }

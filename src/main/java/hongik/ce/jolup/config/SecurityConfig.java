@@ -13,7 +13,6 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 @RequiredArgsConstructor
 @EnableWebSecurity
-@Configuration
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     private final UserService userService;
@@ -27,7 +26,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Override
     // http 관련 인증 설정 기능
-    public void configure(HttpSecurity http) throws Exception {
+    protected void configure(HttpSecurity http) throws Exception {
         http
                 .csrf().disable().headers().frameOptions().disable()// h2-console 화면 사용하기 위함
                 .and()
@@ -48,7 +47,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     @Override
     // 로그인 시 필요한 정보를 가져옴
     public void configure(AuthenticationManagerBuilder auth) throws Exception {
-        auth.userDetailsService(userService) // 유저 정보는 accountService 에서 가져온다
+        auth.userDetailsService(userService) // 유저 정보는 userService 에서 가져온다
                 .passwordEncoder(new BCryptPasswordEncoder()); // 패스워드 인코더는 passwordEncoder(BCrypt 사용)
     }
 }

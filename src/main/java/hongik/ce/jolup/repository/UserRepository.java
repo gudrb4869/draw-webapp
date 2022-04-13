@@ -1,5 +1,6 @@
-package hongik.ce.jolup.domain.user;
+package hongik.ce.jolup.repository;
 
+import hongik.ce.jolup.domain.user.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.Optional;
