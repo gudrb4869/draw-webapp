@@ -51,7 +51,6 @@ public class Join {
     public void delete() {
 
     }
-
     /*public Join update(JoinRole role) {
         this.role = role;
         return this;

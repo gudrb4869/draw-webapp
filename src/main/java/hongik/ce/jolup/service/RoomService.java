@@ -24,7 +24,7 @@ public class RoomService {
                 .memNum(requestDto.getMemNum()).build()).getId();
     }
 
-    public List<Room> findRooms() {
+    public List<Room> findAll() {
         return roomRepository.findAll();
     }
 

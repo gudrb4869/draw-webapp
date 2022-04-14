@@ -25,6 +25,29 @@
         </tr>
         </tbody>
     </table>
+    <h1>경기 일정표</h1>
+    <table>
+        <thead>
+        <tr>
+            <th> # </th>
+            <th> 홈 </th>
+            <th></th>
+            <th></th>
+            <th></th>
+            <th> 어웨이 </th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="matchDto, i : ${matchDtos}">
+            <td th:text="${i.index+1}"></td>
+            <td th:text="${matchDto.getUser1Dto().getName()}"></td>
+            <td>0</td>
+            <td>:</td>
+            <td>0</td>
+            <td th:text="${matchDto.getUser2Dto().getName()}"></td>
+        </tr>
+        </tbody>
+    </table>
 </div>
 </body>
 </html>

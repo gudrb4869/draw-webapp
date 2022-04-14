@@ -50,11 +50,26 @@ public class UserService implements UserDetailsService {
         }
     }
 
-    public List<User> findUsers() {
+    public List<User> findAll() {
         return userRepository.findAll();
     }
 
-    public Optional<User> findOne(String email) {
-        return userRepository.findByEmail(email);
+    public UserDto findOne(String email) {
+        Optional<User> userWrapper = userRepository.findByEmail(email);
+
+        if (userWrapper.isEmpty()) {
+            return null;
+        }
+        User user = userWrapper.get();
+
+        UserDto userDto = UserDto.builder()
+                .id(user.getId())
+                .email(user.getEmail())
+                .password(user.getPassword())
+                .name(user.getName())
+                .role(user.getRole())
+                .build();
+
+        return userDto;
     }
 }
