@@ -1,22 +1,11 @@
 package hongik.ce.jolup.controller;
 
-import hongik.ce.jolup.domain.room.RoomType;
-import hongik.ce.jolup.domain.user.User;
-import hongik.ce.jolup.dto.JoinDto;
-import hongik.ce.jolup.dto.RoomDto;
 import hongik.ce.jolup.service.JoinService;
 import hongik.ce.jolup.service.RoomService;
 import hongik.ce.jolup.service.UserService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 
-import java.util.Optional;
 @RequiredArgsConstructor
 @Controller
 public class JoinController {

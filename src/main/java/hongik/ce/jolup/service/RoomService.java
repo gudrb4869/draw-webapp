@@ -5,8 +5,9 @@ import hongik.ce.jolup.repository.RoomRepository;
 import hongik.ce.jolup.dto.RoomDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
-import javax.transaction.Transactional;
+import java.util.List;
 import java.util.Optional;
 
 @RequiredArgsConstructor
@@ -23,8 +24,12 @@ public class RoomService {
                 .memNum(requestDto.getMemNum()).build()).getId();
     }
 
-    public RoomDto getRoom(Long id) {
-        Optional<Room> roomWrapper = roomRepository.findById(id);
+    public List<Room> findRooms() {
+        return roomRepository.findAll();
+    }
+
+    public RoomDto findRoom(Long roomId) {
+        Optional<Room> roomWrapper = roomRepository.findById(roomId);
         Room room = roomWrapper.get();
 
         RoomDto roomDto = RoomDto.builder()

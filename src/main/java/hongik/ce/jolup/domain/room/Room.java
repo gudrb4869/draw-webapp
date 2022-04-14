@@ -1,6 +1,7 @@
 package hongik.ce.jolup.domain.room;
 
 import hongik.ce.jolup.domain.join.Join;
+import hongik.ce.jolup.dto.RoomDto;
 import lombok.*;
 import org.springframework.util.Assert;
 
@@ -47,6 +48,15 @@ public class Room {
         this.subject = subject;
         this.roomType = roomType;
         this.memNum = memNum;
+    }
+
+    public static RoomDto toDto(Room room) {
+        return RoomDto.builder()
+                .id(room.getId())
+                .subject(room.getSubject())
+                .roomType(room.getRoomType())
+                .memNum(room.getMemNum())
+                .build();
     }
 
     public Room update(String subject, RoomType roomType, Long memNum) {

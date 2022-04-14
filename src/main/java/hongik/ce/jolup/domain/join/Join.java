@@ -36,31 +36,24 @@ public class Join {
     @JoinColumn(name = "room_id")
     private Room room;
 
-    @Column(nullable = false)
+    /*@Column(nullable = false)
     @Enumerated(EnumType.STRING)
-    private JoinRole role;
+    private JoinRole role;*/
 
     @Builder
-    public Join(Long id, User user, Room room, JoinRole role) {
+    public Join(Long id, User user, Room room/*, JoinRole role*/) {
         this.id = id;
         this.user = user;
         this.room = room;
-        this.role = role;
-    }
-
-    public static Join createJoin(User user, Room room, JoinRole role) {
-        return Join.builder()
-                .user(user)
-                .room(room)
-                .role(role).build();
+        /*this.role = role;*/
     }
 
     public void delete() {
 
     }
 
-    public Join update(JoinRole role) {
+    /*public Join update(JoinRole role) {
         this.role = role;
         return this;
-    }
+    }*/
 }

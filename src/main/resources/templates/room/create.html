@@ -50,7 +50,7 @@
                         <tbody>
                         <tr th:each="email, itemStat : *{emails}">
                             <td th:text="'참가자' + ${itemStat.index+1}"></td>
-                            <td><input th:field="*{emails[__${itemStat.index}__]}" /></td>
+                            <td><input th:field="*{emails[__${itemStat.index}__]}" required="required"/></td>
                         </tr>
                         </tbody>
                     </table>

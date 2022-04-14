@@ -6,8 +6,10 @@ import lombok.*;
 
 @Getter
 @Setter
+@Builder
 @ToString
 @NoArgsConstructor
+@AllArgsConstructor
 public class RoomDto {
     private Long id;
     private String subject;
@@ -22,13 +24,5 @@ public class RoomDto {
                 .memNum(memNum)
                 .build();
         return room;
-    }
-
-    @Builder
-    public RoomDto(Long id, String subject, RoomType roomType, Long memNum) {
-        this.id = id;
-        this.subject = subject;
-        this.roomType = roomType;
-        this.memNum = memNum;
     }
 }

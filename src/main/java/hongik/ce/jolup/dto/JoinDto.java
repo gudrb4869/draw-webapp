@@ -1,19 +1,24 @@
 package hongik.ce.jolup.dto;
 
-import lombok.Getter;
-import lombok.Setter;
-import lombok.ToString;
-
-import java.util.ArrayList;
-import java.util.List;
+import hongik.ce.jolup.domain.join.Join;
+import lombok.*;
 
 @Getter
 @Setter
 @ToString
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class JoinDto {
-    private List<String> emails = new ArrayList<>();
+    private Long id;
+    private UserDto userDto;
+    private RoomDto roomDto;
 
-    public void addEmail(String email) {
-        this.emails.add(email);
+    public Join toEntity() {
+        return Join.builder()
+                .id(id)
+                .user(userDto.toEntity())
+                .room(roomDto.toEntity())
+                .build();
     }
 }

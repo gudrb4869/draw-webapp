@@ -2,6 +2,7 @@ package hongik.ce.jolup.domain.user;
 
 import hongik.ce.jolup.domain.Time;
 import hongik.ce.jolup.domain.join.Join;
+import hongik.ce.jolup.dto.UserDto;
 import lombok.*;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -48,11 +49,22 @@ public class User extends Time implements UserDetails {
     private List<Join> joins = new ArrayList<>();
 
     @Builder
-    public User(String email, String password, String name, UserRole role) {
+    public User(Long id, String email, String password, String name, UserRole role) {
+        this.id = id;
         this.email = email;
         this.password = password;
         this.name = name;
         this.role = role;
+    }
+
+    public static UserDto toDto(User user) {
+        return UserDto.builder()
+                .id(user.getId())
+                .email(user.getEmail())
+                .password(user.getPassword())
+                .name(user.getName())
+                .role(user.getRole())
+                .build();
     }
 
     public User update(String password, String name) {

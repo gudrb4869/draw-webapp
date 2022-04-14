@@ -10,8 +10,9 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
-import javax.transaction.Transactional;
+import java.util.List;
 import java.util.Optional;
 
 @RequiredArgsConstructor
@@ -26,7 +27,7 @@ public class UserService implements UserDetailsService {
     @Override
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
         return userRepository.findByEmail(email)
-                .orElseThrow(() -> new UsernameNotFoundException(email));
+                .orElseThrow(() -> new UsernameNotFoundException("Could not found : " + email));
     }
 
     public Long save(UserDto userDto) {
@@ -47,6 +48,10 @@ public class UserService implements UserDetailsService {
         if (!findUser.isEmpty()) {
             throw new IllegalStateException("이미 존재하는 아이디입니다!");
         }
+    }
+
+    public List<User> findUsers() {
+        return userRepository.findAll();
     }
 
     public Optional<User> findOne(String email) {
