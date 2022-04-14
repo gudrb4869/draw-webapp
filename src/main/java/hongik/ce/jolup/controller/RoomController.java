@@ -74,11 +74,20 @@ public class RoomController {
                 .stream().map(UserDto::getId).collect(Collectors.toList());
 
         Collections.shuffle(userIdList);
+        int count = userIdList.size();
 
-        for (int i = 0; i < userIdList.size(); i++) {
-            for (int j = i + 1; j < userIdList.size(); j++) {
+        /*for (int i = 0; i < count; i++) {
+            for (int j = i + 1; j < count; j++) {
                 matchService.save(roomId, userIdList.get(i), userIdList.get(j));
             }
+        }*/
+
+        for (int i = 0; i < count - 1; i++) {
+            for (int j = 0; j < count/2; j++) {
+                matchService.save(roomId, userIdList.get(j), userIdList.get(count - j - 1));
+            }
+
+            userIdList.add(userIdList.remove(0));
         }
 
         return "redirect:/room/list";

@@ -26,7 +26,7 @@ public class MatchService {
 
     public Long save(Long roomId, Long user1Id, Long user2Id) {
         if (user1Id == user2Id) {
-            throw new IllegalStateException("같은 아이디끼리 경기할 수 없습니다!");
+            return null;
         }
 
         Optional<Room> optionalRoom = roomRepository.findById(roomId);
