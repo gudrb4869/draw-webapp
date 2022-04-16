@@ -37,20 +37,7 @@ public class JoinService {
         return join.getId();
     }
 
-    public List<JoinDto> findByUser(User user) {
-        List<Join> joins = joinRepository.findByUser(user);
-        List<JoinDto> joinDtos = new ArrayList<>();
-        for(Join join : joins) {
-            joinDtos.add(JoinDto.builder()
-                            .id(join.getId())
-                            .userDto(User.toDto(join.getUser()))
-                            .roomDto(Room.toDto(join.getRoom())).build());
-        }
-        return joinDtos;
-    }
-
-    public List<JoinDto> findByRoom(Room room) {
-        List<Join> joins = joinRepository.findByRoom(room);
+    public List<JoinDto> findJoins(List<Join> joins) {
         List<JoinDto> joinDtos = new ArrayList<>();
         for(Join join : joins) {
             joinDtos.add(JoinDto.builder()
@@ -59,5 +46,13 @@ public class JoinService {
                     .roomDto(Room.toDto(join.getRoom())).build());
         }
         return joinDtos;
+    }
+
+    public List<JoinDto> findByUser(User user) {
+        return findJoins(joinRepository.findByUser(user));
+    }
+
+    public List<JoinDto> findByRoom(Room room) {
+        return findJoins(joinRepository.findByRoom(room));
     }
 }
