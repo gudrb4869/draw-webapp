@@ -66,4 +66,10 @@ public class MatchService {
         return matchDtos;
     }
 
+    public MatchDto findById(Long id) {
+        Match match = matchRepository.findById(id).get();
+        MatchDto matchDto = Match.toDto(match);
+        return matchDto;
+    }
+
 }

@@ -17,7 +17,7 @@ public class MatchDto {
     private UserDto user1Dto;
     private UserDto user2Dto;
 
-    public Match toEntity(MatchDto matchDto) {
+    public Match toEntity() {
         return Match.builder()
                 .id(id)
                 .room(roomDto.toEntity())

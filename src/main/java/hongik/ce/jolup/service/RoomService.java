@@ -17,11 +17,11 @@ public class RoomService {
 
     private final RoomRepository roomRepository;
 
-    public Long save(RoomDto requestDto) {
+    public Long save(RoomDto roomDto) {
         return roomRepository.save(Room.builder()
-                .subject(requestDto.getSubject())
-                .roomType(requestDto.getRoomType())
-                .memNum(requestDto.getMemNum()).build()).getId();
+                .subject(roomDto.getSubject())
+                .roomType(roomDto.getRoomType())
+                .memNum(roomDto.getMemNum()).build()).getId();
     }
 
     public List<Room> findAll() {
