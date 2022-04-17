@@ -1,6 +1,7 @@
 package hongik.ce.jolup.service;
 
 import hongik.ce.jolup.domain.match.Match;
+import hongik.ce.jolup.domain.result.Result;
 import hongik.ce.jolup.domain.room.Room;
 import hongik.ce.jolup.domain.user.User;
 import hongik.ce.jolup.dto.MatchDto;
@@ -41,12 +42,16 @@ public class MatchService {
             throw new IllegalStateException("존재하지 않은 회원입니다!");
         }
 
+        Result result = Result.builder()
+                .user1Score(0)
+                .user2Score(0).build();
+
         Match match = Match.builder()
                 .room(optionalRoom.get())
                 .user1(optionalUser1.get())
                 .user2(optionalUser2.get())
+                .result(result)
                 .build();
-
         matchRepository.save(match);
         return match.getId();
     }
@@ -61,6 +66,7 @@ public class MatchService {
                     .roomDto(Room.toDto(match.getRoom()))
                     .user1Dto(User.toDto(match.getUser1()))
                     .user2Dto(User.toDto(match.getUser2()))
+                    .result(match.getResult())
                     .build());
         }
         return matchDtos;

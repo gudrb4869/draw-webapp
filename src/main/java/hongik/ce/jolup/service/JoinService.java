@@ -52,7 +52,7 @@ public class JoinService {
         return findJoins(joinRepository.findByUser(user));
     }
 
-    public List<JoinDto> findByRoom(Room room) {
-        return findJoins(joinRepository.findByRoom(room));
+    public List<JoinDto> findByRoom(RoomDto roomDto) {
+        return findJoins(joinRepository.findByRoom(roomDto.toEntity()));
     }
 }

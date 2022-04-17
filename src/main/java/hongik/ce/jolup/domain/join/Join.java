@@ -2,6 +2,7 @@ package hongik.ce.jolup.domain.join;
 
 import hongik.ce.jolup.domain.room.Room;
 import hongik.ce.jolup.domain.user.User;
+import hongik.ce.jolup.dto.JoinDto;
 import lombok.*;
 
 import javax.persistence.*;
@@ -46,6 +47,13 @@ public class Join {
         this.user = user;
         this.room = room;
         /*this.role = role;*/
+    }
+
+    public static JoinDto toDto (Join join) {
+        return JoinDto.builder()
+                .id(join.getId())
+                .userDto(User.toDto(join.getUser()))
+                .roomDto(Room.toDto(join.getRoom())).build();
     }
 
     public void delete() {

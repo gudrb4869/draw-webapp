@@ -25,7 +25,7 @@
         </tr>
         </tbody>
     </table>
-    <h1>경기 일정표</h1>
+    <h1>일정</h1>
     <table>
         <thead>
         <tr>
@@ -41,10 +41,39 @@
         <tr th:each="matchDto, i : ${matchDtos}">
             <td th:text="${i.index+1}"></td>
             <td th:text="${matchDto.getUser1Dto().getName()}"></td>
-            <td>0</td>
+            <td th:text="${matchDto.getResult().getUser1Score()}"></td>
             <td>:</td>
-            <td>0</td>
+            <td th:text="${matchDto.getResult().getUser2Score()}"></td>
             <td th:text="${matchDto.getUser2Dto().getName()}"></td>
+        </tr>
+        </tbody>
+    </table>
+    <h1>순위</h1>
+    <table>
+        <thead>
+        <tr>
+            <th>#</th>
+            <th>이름</th>
+            <th>승점</th>
+            <th>승</th>
+            <th>무</th>
+            <th>패</th>
+            <th>득점</th>
+            <th>실점</th>
+            <th>득실차</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="joinDto, i : ${joinDtos}">
+            <td th:text="${i.index+1}"></td>
+            <td th:text="${joinDto.getUserDto().getName()}"></td>
+            <td>0</td>
+            <td>0</td>
+            <td>0</td>
+            <td>0</td>
+            <td>0</td>
+            <td>0</td>
+            <td>0</td>
         </tr>
         </tbody>
     </table>

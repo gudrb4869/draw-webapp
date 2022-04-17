@@ -1,42 +1,49 @@
 package hongik.ce.jolup.domain.result;
 
 import hongik.ce.jolup.domain.match.Match;
-import lombok.AccessLevel;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import javax.persistence.*;
 
-@Entity
+/*@Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@Table(name = "result")
+@Table(name = "result")*/
+@Getter
+@Setter
+@Embeddable
+@ToString
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Result {
-    @Id
+    /*@Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "result_id")
     private Long id;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @OneToOne
     @JoinColumn(name = "match_id")
-    private Match match;
+    private Match match;*/
 
-    @Column(nullable = false)
-    private Short homeScore;
+    @Column(nullable = false, name = "home_score")
+    private Integer user1Score;
 
-    @Column(nullable = false)
-    private Short awayScore;
+    @Column(nullable = false, name = "away_score")
+    private Integer user2Score;
 
     @Builder
-    public Result(Long id, Match match, Short homeScore, Short awayScore) {
-        this.id = id;
-        this.match = match;
-        this.homeScore = homeScore;
-        this.awayScore = awayScore;
+    public Result(/*Long id, Match match, */Integer user1Score, Integer user2Score) {
+        /*this.id = id;
+        this.match = match;*/
+        this.user1Score = user1Score;
+        this.user2Score = user2Score;
     }
 
-    public static void toDto(Result result) {
-        ;
-    }
+    /*public static ResultDto toDto(Result result) {
+        return ResultDto.builder()
+                .id(result.getId())
+                .matchDto(Match.toDto(result.getMatch()))
+                .user1Score(result.getUser1Score())
+                .user2Score(result.getUser2Score())
+                .build();
+    }*/
 }

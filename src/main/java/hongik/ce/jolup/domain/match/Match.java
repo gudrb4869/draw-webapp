@@ -1,5 +1,6 @@
 package hongik.ce.jolup.domain.match;
 
+import hongik.ce.jolup.domain.result.Result;
 import hongik.ce.jolup.domain.room.Room;
 import hongik.ce.jolup.domain.user.User;
 import hongik.ce.jolup.dto.MatchDto;
@@ -29,12 +30,17 @@ public class Match {
     @JoinColumn(name = "away_id")
     private User user2;
 
+//    @OneToOne(mappedBy = "match")
+    @Embedded
+    private Result result;
+
     @Builder
-    public Match(Long id, Room room, User user1, User user2) {
+    public Match(Long id, Room room, User user1, User user2, Result result) {
         this.id = id;
         this.room = room;
         this.user1 = user1;
         this.user2 = user2;
+        this.result = result;
     }
 
     public static MatchDto toDto(Match match) {
@@ -43,6 +49,12 @@ public class Match {
                 .roomDto(Room.toDto(match.getRoom()))
                 .user1Dto(User.toDto(match.getUser1()))
                 .user2Dto(User.toDto(match.getUser2()))
+                .result(match.getResult())
                 .build();
+    }
+
+    public Match update(Result result) {
+        this.result = result;
+        return this;
     }
 }
