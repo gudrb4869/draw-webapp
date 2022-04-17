@@ -25,6 +25,11 @@ public class MatchService {
     private final UserRepository userRepository;
     private final RoomRepository roomRepository;
 
+    public Long save(Match match) {
+        return matchRepository.save(match).getId();
+
+    }
+
     public Long save(Long roomId, Long user1Id, Long user2Id) {
         if (user1Id == user2Id) {
             return null;

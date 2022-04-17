@@ -35,6 +35,7 @@
             <th></th>
             <th></th>
             <th> 어웨이 </th>
+            <th></th>
         </tr>
         </thead>
         <tbody>
@@ -45,6 +46,9 @@
             <td>:</td>
             <td th:text="${matchDto.getResult().getUser2Score()}"></td>
             <td th:text="${matchDto.getUser2Dto().getName()}"></td>
+            <th>
+                <a th:href="'/match/'+${matchDto.getId()}">수정</a>
+            </th>
         </tr>
         </tbody>
     </table>
