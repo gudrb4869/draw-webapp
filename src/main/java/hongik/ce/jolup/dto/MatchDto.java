@@ -1,6 +1,7 @@
 package hongik.ce.jolup.dto;
 
 import hongik.ce.jolup.domain.match.Match;
+import hongik.ce.jolup.domain.match.MatchStatus;
 import hongik.ce.jolup.domain.result.Result;
 import lombok.*;
 
@@ -16,6 +17,7 @@ public class MatchDto {
     private UserDto user1Dto;
     private UserDto user2Dto;
     private Result result;
+    private MatchStatus matchStatus;
 
     public Match toEntity() {
         return Match.builder()
@@ -24,6 +26,7 @@ public class MatchDto {
                 .user1(user1Dto.toEntity())
                 .user2(user2Dto.toEntity())
                 .result(result)
+                .matchStatus(matchStatus)
                 .build();
     }
 }

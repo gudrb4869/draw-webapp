@@ -26,11 +26,11 @@ public class JoinService {
 
     public Long save(Long userId, Long roomId) {
         Optional<User> user = userRepository.findById(userId);
-        RoomDto room = roomService.findRoom(roomId);
+        RoomDto roomDto = roomService.findRoom(roomId);
 
         Join join = Join.builder()
                 .user(user.get())
-                .room(room.toEntity())
+                .room(roomDto.toEntity())
                 .build();
 
         joinRepository.save(join);

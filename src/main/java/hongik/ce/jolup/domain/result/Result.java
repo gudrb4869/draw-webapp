@@ -1,6 +1,7 @@
 package hongik.ce.jolup.domain.result;
 
 import hongik.ce.jolup.domain.match.Match;
+import hongik.ce.jolup.dto.ResultDto;
 import lombok.*;
 
 import javax.persistence.*;
@@ -38,12 +39,12 @@ public class Result {
         this.user2Score = user2Score;
     }
 
-    /*public static ResultDto toDto(Result result) {
+    public static ResultDto toDto(Result result) {
         return ResultDto.builder()
-                .id(result.getId())
-                .matchDto(Match.toDto(result.getMatch()))
+                /*.id(result.getId())
+                .matchDto(Match.toDto(result.getMatch()))*/
                 .user1Score(result.getUser1Score())
                 .user2Score(result.getUser2Score())
                 .build();
-    }*/
+    }
 }

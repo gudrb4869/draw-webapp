@@ -1,6 +1,7 @@
 package hongik.ce.jolup.service;
 
 import hongik.ce.jolup.domain.match.Match;
+import hongik.ce.jolup.domain.match.MatchStatus;
 import hongik.ce.jolup.domain.result.Result;
 import hongik.ce.jolup.domain.room.Room;
 import hongik.ce.jolup.domain.user.User;
@@ -56,6 +57,7 @@ public class MatchService {
                 .user1(optionalUser1.get())
                 .user2(optionalUser2.get())
                 .result(result)
+                .matchStatus(MatchStatus.READY)
                 .build();
         matchRepository.save(match);
         return match.getId();
@@ -72,6 +74,7 @@ public class MatchService {
                     .user1Dto(User.toDto(match.getUser1()))
                     .user2Dto(User.toDto(match.getUser2()))
                     .result(match.getResult())
+                    .matchStatus(match.getMatchStatus())
                     .build());
         }
         return matchDtos;

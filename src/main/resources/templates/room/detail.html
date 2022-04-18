@@ -41,11 +41,11 @@
         <tbody>
         <tr th:each="matchDto, i : ${matchDtos}">
             <td th:text="${i.index+1}"></td>
-            <td th:text="${matchDto.getUser1Dto().getName()}"></td>
+            <td th:text="${matchDto.getUser1Dto().getEmail() + '('+ matchDto.getUser1Dto().getName() + ')'}"></td>
             <td th:text="${matchDto.getResult().getUser1Score()}"></td>
             <td>:</td>
             <td th:text="${matchDto.getResult().getUser2Score()}"></td>
-            <td th:text="${matchDto.getUser2Dto().getName()}"></td>
+            <td th:text="${matchDto.getUser2Dto().getEmail() + '('+ matchDto.getUser2Dto().getName() + ')'}"></td>
             <th>
                 <a th:href="'/match/'+${matchDto.getId()}">수정</a>
             </th>
@@ -70,7 +70,7 @@
         <tbody>
         <tr th:each="joinDto, i : ${joinDtos}">
             <td th:text="${i.index+1}"></td>
-            <td th:text="${joinDto.getUserDto().getName()}"></td>
+            <td th:text="${joinDto.getUserDto().getEmail() + '('+ joinDto.getUserDto().getName() + ')'}"></td>
             <td>0</td>
             <td>0</td>
             <td>0</td>

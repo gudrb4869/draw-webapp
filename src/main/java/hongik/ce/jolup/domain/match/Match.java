@@ -30,17 +30,21 @@ public class Match {
     @JoinColumn(name = "away_id")
     private User user2;
 
-//    @OneToOne(mappedBy = "match")
     @Embedded
     private Result result;
 
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false, name = "match_status")
+    private MatchStatus matchStatus;
+
     @Builder
-    public Match(Long id, Room room, User user1, User user2, Result result) {
+    public Match(Long id, Room room, User user1, User user2, Result result, MatchStatus matchStatus) {
         this.id = id;
         this.room = room;
         this.user1 = user1;
         this.user2 = user2;
         this.result = result;
+        this.matchStatus = matchStatus;
     }
 
     public static MatchDto toDto(Match match) {
@@ -53,8 +57,9 @@ public class Match {
                 .build();
     }
 
-    public Match update(Result result) {
+    public Match update(Result result, MatchStatus matchStatus) {
         this.result = result;
+        this.matchStatus = matchStatus;
         return this;
     }
 }

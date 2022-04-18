@@ -41,6 +41,30 @@ public class Join {
     @Enumerated(EnumType.STRING)
     private JoinRole role;*/
 
+    /*@Column(name = "p", nullable = false)
+    private Integer plays;
+
+    @Column(name = "w", nullable = false)
+    private Integer win;
+
+    @Column(name = "d", nullable = false)
+    private Integer draw;
+
+    @Column(name = "l", nullable = false)
+    private Integer lose;
+
+    @Column(name = "gf", nullable = false)
+    private Integer goalFor;
+
+    @Column(name = "ga", nullable = false)
+    private Integer goalAgainst;
+
+    @Column(name = "gd", nullable = false)
+    private Integer goalDifference;
+
+    @Column(name = "pts", nullable = false)
+    private Integer points;*/
+
     @Builder
     public Join(Long id, User user, Room room/*, JoinRole role*/) {
         this.id = id;
