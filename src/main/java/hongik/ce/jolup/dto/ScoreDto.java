@@ -1,6 +1,6 @@
 package hongik.ce.jolup.dto;
 
-import hongik.ce.jolup.domain.result.Result;
+import hongik.ce.jolup.domain.score.Score;
 import lombok.*;
 
 @Getter
@@ -9,14 +9,14 @@ import lombok.*;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class ResultDto {
+public class ScoreDto {
     /*private Long id;
     private MatchDto matchDto;*/
     private Integer user1Score;
     private Integer user2Score;
 
-    public Result toEntity() {
-        return Result.builder()
+    public Score toEntity() {
+        return Score.builder()
                 /*.id(id)
                 .match(matchDto.toEntity())*/
                 .user1Score(user1Score)

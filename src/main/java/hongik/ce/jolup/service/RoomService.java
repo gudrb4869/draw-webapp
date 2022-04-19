@@ -19,7 +19,7 @@ public class RoomService {
 
     public Long save(RoomDto roomDto) {
         return roomRepository.save(Room.builder()
-                .subject(roomDto.getSubject())
+                .title(roomDto.getTitle())
                 .roomType(roomDto.getRoomType())
                 .memNum(roomDto.getMemNum()).build()).getId();
     }
@@ -34,7 +34,7 @@ public class RoomService {
 
         RoomDto roomDto = RoomDto.builder()
                 .id(room.getId())
-                .subject(room.getSubject())
+                .title(room.getTitle())
                 .roomType(room.getRoomType())
                 .memNum(room.getMemNum())
                 .build();

@@ -1,5 +1,6 @@
 package hongik.ce.jolup.domain.join;
 
+import hongik.ce.jolup.domain.result.Result;
 import hongik.ce.jolup.domain.room.Room;
 import hongik.ce.jolup.domain.user.User;
 import hongik.ce.jolup.dto.JoinDto;
@@ -37,39 +38,19 @@ public class Join {
     @JoinColumn(name = "room_id")
     private Room room;
 
+    @Embedded
+    private Result result;
+
     /*@Column(nullable = false)
     @Enumerated(EnumType.STRING)
     private JoinRole role;*/
 
-    /*@Column(name = "p", nullable = false)
-    private Integer plays;
-
-    @Column(name = "w", nullable = false)
-    private Integer win;
-
-    @Column(name = "d", nullable = false)
-    private Integer draw;
-
-    @Column(name = "l", nullable = false)
-    private Integer lose;
-
-    @Column(name = "gf", nullable = false)
-    private Integer goalFor;
-
-    @Column(name = "ga", nullable = false)
-    private Integer goalAgainst;
-
-    @Column(name = "gd", nullable = false)
-    private Integer goalDifference;
-
-    @Column(name = "pts", nullable = false)
-    private Integer points;*/
-
     @Builder
-    public Join(Long id, User user, Room room/*, JoinRole role*/) {
+    public Join(Long id, User user, Room room, Result result/*, JoinRole role*/) {
         this.id = id;
         this.user = user;
         this.room = room;
+        this.result = result;
         /*this.role = role;*/
     }
 
@@ -77,14 +58,17 @@ public class Join {
         return JoinDto.builder()
                 .id(join.getId())
                 .userDto(User.toDto(join.getUser()))
-                .roomDto(Room.toDto(join.getRoom())).build();
+                .roomDto(Room.toDto(join.getRoom()))
+                .result(join.getResult())
+                .build();
     }
 
     public void delete() {
 
     }
-    /*public Join update(JoinRole role) {
-        this.role = role;
+
+    public Join update(Result result) {
+        this.result = result;
         return this;
-    }*/
+    }
 }

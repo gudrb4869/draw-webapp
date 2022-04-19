@@ -1,5 +1,6 @@
 package hongik.ce.jolup.service;
 
+import hongik.ce.jolup.domain.result.Result;
 import hongik.ce.jolup.domain.room.Room;
 import hongik.ce.jolup.domain.user.User;
 import hongik.ce.jolup.domain.join.Join;
@@ -12,6 +13,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
 
@@ -24,6 +26,10 @@ public class JoinService {
     private final UserRepository userRepository;
     private final RoomService roomService;
 
+    public Long save(Join join) {
+        return joinRepository.save(join).getId();
+    }
+
     public Long save(Long userId, Long roomId) {
         Optional<User> user = userRepository.findById(userId);
         RoomDto roomDto = roomService.findRoom(roomId);
@@ -31,6 +37,9 @@ public class JoinService {
         Join join = Join.builder()
                 .user(user.get())
                 .room(roomDto.toEntity())
+                .result(Result.builder().plays(0).win(0).draw(0)
+                        .lose(0).goalFor(0).goalAgainst(0)
+                        .goalDifference(0).points(0).build())
                 .build();
 
         joinRepository.save(join);
@@ -43,7 +52,9 @@ public class JoinService {
             joinDtos.add(JoinDto.builder()
                     .id(join.getId())
                     .userDto(User.toDto(join.getUser()))
-                    .roomDto(Room.toDto(join.getRoom())).build());
+                    .roomDto(Room.toDto(join.getRoom()))
+                    .result(join.getResult())
+                    .build());
         }
         return joinDtos;
     }
@@ -54,5 +65,13 @@ public class JoinService {
 
     public List<JoinDto> findByRoom(RoomDto roomDto) {
         return findJoins(joinRepository.findByRoom(roomDto.toEntity()));
+    }
+
+    public Join findOne(User user, Room room) {
+        return joinRepository.findByUserAndRoom(user, room).get();
+    }
+
+    public List<JoinDto> findByRoomSort(RoomDto roomDto) {
+        return findJoins(joinRepository.findByRoomSort(roomDto.toEntity()));
     }
 }

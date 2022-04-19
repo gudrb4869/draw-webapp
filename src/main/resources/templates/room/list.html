@@ -30,7 +30,7 @@
             <td>
                 <a th:href="'/room/'+${join.getRoomDto().getId()}" th:text="${join.getRoomDto().getId()}"></a>
             </td>
-            <td th:text="${join.getRoomDto().getSubject()}"></td>
+            <td th:text="${join.getRoomDto().getTitle()}"></td>
             <td th:text="${join.getRoomDto().getRoomType().getDescription()}"></td>
 <!--            <td th:text="${joinRoom.room.getMemNum()}"></td>-->
         </tr>

@@ -1,6 +1,6 @@
 package hongik.ce.jolup.domain.match;
 
-import hongik.ce.jolup.domain.result.Result;
+import hongik.ce.jolup.domain.score.Score;
 import hongik.ce.jolup.domain.room.Room;
 import hongik.ce.jolup.domain.user.User;
 import hongik.ce.jolup.dto.MatchDto;
@@ -31,19 +31,19 @@ public class Match {
     private User user2;
 
     @Embedded
-    private Result result;
+    private Score score;
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false, name = "match_status")
     private MatchStatus matchStatus;
 
     @Builder
-    public Match(Long id, Room room, User user1, User user2, Result result, MatchStatus matchStatus) {
+    public Match(Long id, Room room, User user1, User user2, Score score, MatchStatus matchStatus) {
         this.id = id;
         this.room = room;
         this.user1 = user1;
         this.user2 = user2;
-        this.result = result;
+        this.score = score;
         this.matchStatus = matchStatus;
     }
 
@@ -53,12 +53,13 @@ public class Match {
                 .roomDto(Room.toDto(match.getRoom()))
                 .user1Dto(User.toDto(match.getUser1()))
                 .user2Dto(User.toDto(match.getUser2()))
-                .result(match.getResult())
+                .matchStatus(match.getMatchStatus())
+                .score(match.getScore())
                 .build();
     }
 
-    public Match update(Result result, MatchStatus matchStatus) {
-        this.result = result;
+    public Match update(Score score, MatchStatus matchStatus) {
+        this.score = score;
         this.matchStatus = matchStatus;
         return this;
     }

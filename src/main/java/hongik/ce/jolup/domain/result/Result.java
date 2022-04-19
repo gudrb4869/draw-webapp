@@ -1,50 +1,39 @@
 package hongik.ce.jolup.domain.result;
 
-import hongik.ce.jolup.domain.match.Match;
-import hongik.ce.jolup.dto.ResultDto;
 import lombok.*;
 
-import javax.persistence.*;
+import javax.persistence.Column;
+import javax.persistence.Embeddable;
 
-/*@Entity
-@Getter
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
-@Table(name = "result")*/
+@Embeddable
 @Getter
 @Setter
-@Embeddable
 @ToString
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
+@AllArgsConstructor
+@Builder
 public class Result {
-    /*@Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "result_id")
-    private Long id;
+    @Column(name = "p", nullable = false)
+    private Integer plays;
 
-    @OneToOne
-    @JoinColumn(name = "match_id")
-    private Match match;*/
+    @Column(name = "w", nullable = false)
+    private Integer win;
 
-    @Column(nullable = false, name = "home_score")
-    private Integer user1Score;
+    @Column(name = "d", nullable = false)
+    private Integer draw;
 
-    @Column(nullable = false, name = "away_score")
-    private Integer user2Score;
+    @Column(name = "l", nullable = false)
+    private Integer lose;
 
-    @Builder
-    public Result(/*Long id, Match match, */Integer user1Score, Integer user2Score) {
-        /*this.id = id;
-        this.match = match;*/
-        this.user1Score = user1Score;
-        this.user2Score = user2Score;
-    }
+    @Column(name = "gf", nullable = false)
+    private Integer goalFor;
 
-    public static ResultDto toDto(Result result) {
-        return ResultDto.builder()
-                /*.id(result.getId())
-                .matchDto(Match.toDto(result.getMatch()))*/
-                .user1Score(result.getUser1Score())
-                .user2Score(result.getUser2Score())
-                .build();
-    }
+    @Column(name = "ga", nullable = false)
+    private Integer goalAgainst;
+
+    @Column(name = "gd", nullable = false)
+    private Integer goalDifference;
+
+    @Column(name = "pts", nullable = false)
+    private Integer points;
 }

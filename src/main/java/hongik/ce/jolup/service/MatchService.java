@@ -2,7 +2,7 @@ package hongik.ce.jolup.service;
 
 import hongik.ce.jolup.domain.match.Match;
 import hongik.ce.jolup.domain.match.MatchStatus;
-import hongik.ce.jolup.domain.result.Result;
+import hongik.ce.jolup.domain.score.Score;
 import hongik.ce.jolup.domain.room.Room;
 import hongik.ce.jolup.domain.user.User;
 import hongik.ce.jolup.dto.MatchDto;
@@ -28,7 +28,6 @@ public class MatchService {
 
     public Long save(Match match) {
         return matchRepository.save(match).getId();
-
     }
 
     public Long save(Long roomId, Long user1Id, Long user2Id) {
@@ -48,7 +47,7 @@ public class MatchService {
             throw new IllegalStateException("존재하지 않은 회원입니다!");
         }
 
-        Result result = Result.builder()
+        Score score = Score.builder()
                 .user1Score(0)
                 .user2Score(0).build();
 
@@ -56,7 +55,7 @@ public class MatchService {
                 .room(optionalRoom.get())
                 .user1(optionalUser1.get())
                 .user2(optionalUser2.get())
-                .result(result)
+                .score(score)
                 .matchStatus(MatchStatus.READY)
                 .build();
         matchRepository.save(match);
@@ -73,7 +72,7 @@ public class MatchService {
                     .roomDto(Room.toDto(match.getRoom()))
                     .user1Dto(User.toDto(match.getUser1()))
                     .user2Dto(User.toDto(match.getUser2()))
-                    .result(match.getResult())
+                    .score(match.getScore())
                     .matchStatus(match.getMatchStatus())
                     .build());
         }

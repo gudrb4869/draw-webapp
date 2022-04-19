@@ -30,7 +30,7 @@ public class Room {
     private Long id;
 
     @Column(length = 100, nullable = false)
-    private String subject;
+    private String title;
 
     @Column(nullable = false)
     @Enumerated(EnumType.STRING)
@@ -43,9 +43,9 @@ public class Room {
     private List<Join> joins = new ArrayList<>();
 
     @Builder
-    public Room(Long id, String subject, RoomType roomType, Long memNum) {
+    public Room(Long id, String title, RoomType roomType, Long memNum) {
         this.id = id;
-        this.subject = subject;
+        this.title = title;
         this.roomType = roomType;
         this.memNum = memNum;
     }
@@ -53,14 +53,14 @@ public class Room {
     public static RoomDto toDto(Room room) {
         return RoomDto.builder()
                 .id(room.getId())
-                .subject(room.getSubject())
+                .title(room.getTitle())
                 .roomType(room.getRoomType())
                 .memNum(room.getMemNum())
                 .build();
     }
 
-    public Room update(String subject, RoomType roomType, Long memNum) {
-        this.subject = subject;
+    public Room update(String title, RoomType roomType, Long memNum) {
+        this.title = title;
         this.roomType = roomType;
         this.memNum = memNum;
         return this;

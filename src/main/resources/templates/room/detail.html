@@ -19,7 +19,7 @@
         </thead>
         <tbody>
         <tr>
-            <td th:text="${roomDto.subject}"></td>
+            <td th:text="${roomDto.title}"></td>
             <td th:text="${roomDto.roomType}"></td>
             <td th:text="${roomDto.memNum}"></td>
         </tr>
@@ -42,9 +42,9 @@
         <tr th:each="matchDto, i : ${matchDtos}">
             <td th:text="${i.index+1}"></td>
             <td th:text="${matchDto.getUser1Dto().getEmail() + '('+ matchDto.getUser1Dto().getName() + ')'}"></td>
-            <td th:text="${matchDto.getResult().getUser1Score()}"></td>
+            <td th:text="${matchDto.getScore().getUser1Score()}"></td>
             <td>:</td>
-            <td th:text="${matchDto.getResult().getUser2Score()}"></td>
+            <td th:text="${matchDto.getScore().getUser2Score()}"></td>
             <td th:text="${matchDto.getUser2Dto().getEmail() + '('+ matchDto.getUser2Dto().getName() + ')'}"></td>
             <th>
                 <a th:href="'/match/'+${matchDto.getId()}">수정</a>
@@ -58,26 +58,28 @@
         <tr>
             <th>#</th>
             <th>이름</th>
-            <th>승점</th>
+            <th>경기수</th>
             <th>승</th>
             <th>무</th>
             <th>패</th>
             <th>득점</th>
             <th>실점</th>
             <th>득실차</th>
+            <th>승점</th>
         </tr>
         </thead>
         <tbody>
         <tr th:each="joinDto, i : ${joinDtos}">
             <td th:text="${i.index+1}"></td>
             <td th:text="${joinDto.getUserDto().getEmail() + '('+ joinDto.getUserDto().getName() + ')'}"></td>
-            <td>0</td>
-            <td>0</td>
-            <td>0</td>
-            <td>0</td>
-            <td>0</td>
-            <td>0</td>
-            <td>0</td>
+            <td th:text="${joinDto.getResult().getPlays()}"></td>
+            <td th:text="${joinDto.getResult().getWin()}"></td>
+            <td th:text="${joinDto.getResult().getDraw()}"></td>
+            <td th:text="${joinDto.getResult().getLose()}"></td>
+            <td th:text="${joinDto.getResult().getGoalFor()}"></td>
+            <td th:text="${joinDto.getResult().getGoalAgainst()}"></td>
+            <td th:text="${joinDto.getResult().getGoalDifference()}"></td>
+            <td th:text="${joinDto.getResult().getPoints()}"></td>
         </tr>
         </tbody>
     </table>

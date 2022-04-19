@@ -27,7 +27,6 @@ public class RoomController {
     private final JoinService joinService;
     private final UserService userService;
     private final MatchService matchService;
-//    private final ResultService resultService;
 
     @GetMapping("/create")
     public String createRoom(@RequestParam(value = "count", defaultValue = "2") Integer count,
@@ -74,14 +73,25 @@ public class RoomController {
         Collections.shuffle(userIdList);
         int count = userIdList.size();
 
-        for (int i = 0; count % 2 == 1 ? i < count : i < count - 1; i++) {
-            for (int j = 0; j < count/2; j++) {
-                Long matchId = matchService.save(roomId, userIdList.get(j), userIdList.get(count - j - 1));
-//                resultService.save(matchId, 0, 0);
+        if (count % 2 == 1) {
+            for (int i = 0; i < count; i++) {
+                for (int j = 0; j < count/2; j++) {
+                    matchService.save(roomId, userIdList.get((i + j) % count),
+                            userIdList.get((i + count - j - 2) % count));
+                }
             }
-
-            userIdList.add(userIdList.remove(0));
         }
+        else {
+            Long fixed = userIdList.remove(0);
+            for (int i = 0; i < count - 1; i++) {
+                for (int j = 0; j < count/2 - 1; j++) {
+                    matchService.save(roomId, userIdList.get((i + j) % (count - 1)),
+                            userIdList.get((i + count - j - 2) % (count - 1)));
+                }
+                matchService.save(roomId, userIdList.get((i + count/2 - 1) % (count - 1)), fixed);
+            }
+        }
+
 
         return "redirect:/room/list";
     }
@@ -98,7 +108,7 @@ public class RoomController {
     public String detail(@PathVariable("no") Long no, Model model) {
         RoomDto roomDto = roomService.findRoom(no);
         List<MatchDto> matchDtos = matchService.findByRoom(roomDto);
-        List<JoinDto> joinDtos = joinService.findByRoom(roomDto);
+        List<JoinDto> joinDtos = joinService.findByRoomSort(roomDto);
         model.addAttribute("joinDtos", joinDtos);
         model.addAttribute("roomDto", roomDto);
         model.addAttribute("matchDtos", matchDtos);

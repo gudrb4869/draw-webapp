@@ -12,14 +12,14 @@ import lombok.*;
 @AllArgsConstructor
 public class RoomDto {
     private Long id;
-    private String subject;
+    private String title;
     private RoomType roomType;
     private Long memNum;
 
     public Room toEntity() {
         Room room = Room.builder()
                 .id(id)
-                .subject(subject)
+                .title(title)
                 .roomType(roomType)
                 .memNum(memNum)
                 .build();
