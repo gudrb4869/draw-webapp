@@ -18,8 +18,7 @@
             <th>방id</th>
             <th>제목</th>
             <th>타입</th>
-            <th>참여인원수</th>
-            <th></th>
+            <!--            <th>참여인원수</th>-->
         </tr>
         </thead>
         <tbody>
@@ -33,18 +32,7 @@
             </td>
             <td th:text="${join.getRoomDto().getTitle()}"></td>
             <td th:text="${join.getRoomDto().getRoomType().getDescription()}"></td>
-            <td th:text="${join.getRoomDto().getMemNum()}"></td>
-            <td>
-                <div>
-                    <a th:href="'/room/'+${join.getRoomDto().getId()}">
-                        <button class="btn btn-primary">보기</button>
-                    </a>
-                    <form id="delete-form" th:action="@{'/room/' + ${join.getRoomDto().getId()}}" method="post">
-                        <input type="hidden" name="_method" value="delete"/>
-                        <button class="btn btn-warning" id="delete-btn">삭제</button>
-                    </form>
-                </div>
-            </td>
+            <!--            <td th:text="${joinRoom.room.getMemNum()}"></td>-->
         </tr>
         </tbody>
     </table>

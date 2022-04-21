@@ -85,4 +85,8 @@ public class MatchService {
         return matchDto;
     }
 
+    public void delete(Long id) {
+        matchRepository.deleteById(id);
+    }
+
 }

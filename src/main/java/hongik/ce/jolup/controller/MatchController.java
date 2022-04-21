@@ -37,6 +37,7 @@ public class MatchController {
     public String update(@PathVariable("no") Long no,
                          Score score, MatchStatus matchStatus) {
         Match match = matchService.findById(no).toEntity();
+        Long roomId = match.getRoom().getId();
         Join join1 = joinService.findOne(match.getUser1(), match.getRoom());
         Result result1 = join1.getResult();
         Join join2 = joinService.findOne(match.getUser2(), match.getRoom());
@@ -94,6 +95,6 @@ public class MatchController {
         }
         joinService.save(join1.update(result1));
         joinService.save(join2.update(result2));
-        return "redirect:/room/list";
+        return "redirect:/room/" + roomId;
     }
 }

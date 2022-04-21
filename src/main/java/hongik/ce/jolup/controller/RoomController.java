@@ -104,6 +104,20 @@ public class RoomController {
         return "room/list";
     }
 
+    @DeleteMapping("/{no}")
+    public String deleteRoom(@PathVariable("no") Long no) {
+        List<Long> matchList = matchService.findByRoom(roomService.findRoom(no))
+                .stream().map(MatchDto::getId).collect(Collectors.toList());
+        List<Long> joinList = joinService.findByRoom(roomService.findRoom(no))
+                .stream().map(JoinDto::getId).collect(Collectors.toList());
+        for (Long matchId : matchList)
+            matchService.delete(matchId);
+        for (Long joinId : joinList)
+            joinService.delete(joinId);
+        roomService.delete(no);
+        return "redirect:/room/list";
+    }
+
     @GetMapping("/{no}")
     public String detail(@PathVariable("no") Long no, Model model) {
         RoomDto roomDto = roomService.findRoom(no);

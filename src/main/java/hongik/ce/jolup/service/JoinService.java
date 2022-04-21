@@ -74,4 +74,8 @@ public class JoinService {
     public List<JoinDto> findByRoomSort(RoomDto roomDto) {
         return findJoins(joinRepository.findByRoomSort(roomDto.toEntity()));
     }
+
+    public void delete(Long id) {
+        joinRepository.deleteById(id);
+    }
 }
