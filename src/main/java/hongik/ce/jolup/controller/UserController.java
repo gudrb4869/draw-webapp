@@ -3,6 +3,7 @@ package hongik.ce.jolup.controller;
 import hongik.ce.jolup.service.UserService;
 import hongik.ce.jolup.dto.UserDto;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.authentication.logout.SecurityContextLogoutHandler;
@@ -15,11 +16,14 @@ import javax.servlet.http.HttpServletResponse;
 
 @RequiredArgsConstructor
 @Controller
-public class LoginController {
+public class UserController {
     private final UserService userService;
 
     @GetMapping("/signup")
     public String signup() {
+        if (isAuthenticated()) {
+            return "redirect:/";
+        }
         return "signup";
     }
 
@@ -31,6 +35,9 @@ public class LoginController {
 
     @GetMapping("/login")
     public String login() {
+        if (isAuthenticated()) {
+            return "redirect:/";
+        }
         return "login";
     }
 
@@ -41,5 +48,14 @@ public class LoginController {
             new SecurityContextLogoutHandler().logout(request, response, authentication);
         }
         return "redirect:/";
+    }
+
+    private boolean isAuthenticated() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if (authentication == null || AnonymousAuthenticationToken.class.
+                isAssignableFrom(authentication.getClass())) {
+            return false;
+        }
+        return authentication.isAuthenticated();
     }
 }

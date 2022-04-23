@@ -80,7 +80,11 @@ public class MatchService {
     }
 
     public MatchDto findById(Long id) {
-        Match match = matchRepository.findById(id).get();
+        Optional<Match> matchWrapper = matchRepository.findById(id);
+        if (matchWrapper.isEmpty()) {
+            return null;
+        }
+        Match match = matchWrapper.get();
         MatchDto matchDto = Match.toDto(match);
         return matchDto;
     }

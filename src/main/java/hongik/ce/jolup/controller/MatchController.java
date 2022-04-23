@@ -26,6 +26,9 @@ public class MatchController {
     @GetMapping("/{no}")
     public String matchDetail(@PathVariable("no") Long no, Model model) {
         MatchDto matchDto = matchService.findById(no);
+        if (matchDto == null) {
+            return "error";
+        }
         ScoreDto scoreDto = Score.toDto(matchDto.getScore());
         model.addAttribute("matchDto", matchDto);
         model.addAttribute("scoreDto", scoreDto);

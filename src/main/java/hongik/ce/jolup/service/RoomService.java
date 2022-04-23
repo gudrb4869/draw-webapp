@@ -30,15 +30,11 @@ public class RoomService {
 
     public RoomDto findRoom(Long roomId) {
         Optional<Room> roomWrapper = roomRepository.findById(roomId);
+        if (roomWrapper.isEmpty()) {
+            return null;
+        }
         Room room = roomWrapper.get();
-
-        RoomDto roomDto = RoomDto.builder()
-                .id(room.getId())
-                .title(room.getTitle())
-                .roomType(room.getRoomType())
-                .memNum(room.getMemNum())
-                .build();
-
+        RoomDto roomDto = Room.toDto(room);
         return roomDto;
     }
 

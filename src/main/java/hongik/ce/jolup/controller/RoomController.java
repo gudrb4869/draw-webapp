@@ -121,6 +121,9 @@ public class RoomController {
     @GetMapping("/{no}")
     public String detail(@PathVariable("no") Long no, Model model) {
         RoomDto roomDto = roomService.findRoom(no);
+        if (roomDto == null) {
+            return "error";
+        }
         List<MatchDto> matchDtos = matchService.findByRoom(roomDto);
         List<JoinDto> joinDtos = joinService.findByRoomSort(roomDto);
         model.addAttribute("joinDtos", joinDtos);

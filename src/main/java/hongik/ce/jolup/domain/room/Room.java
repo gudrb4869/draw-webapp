@@ -3,7 +3,6 @@ package hongik.ce.jolup.domain.room;
 import hongik.ce.jolup.domain.join.Join;
 import hongik.ce.jolup.dto.RoomDto;
 import lombok.*;
-import org.springframework.util.Assert;
 
 import javax.persistence.*;
 import java.util.ArrayList;

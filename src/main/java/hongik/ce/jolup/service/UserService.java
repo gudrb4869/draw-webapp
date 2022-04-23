@@ -56,20 +56,11 @@ public class UserService implements UserDetailsService {
 
     public UserDto findOne(String email) {
         Optional<User> userWrapper = userRepository.findByEmail(email);
-
         if (userWrapper.isEmpty()) {
             return null;
         }
         User user = userWrapper.get();
-
-        UserDto userDto = UserDto.builder()
-                .id(user.getId())
-                .email(user.getEmail())
-                .password(user.getPassword())
-                .name(user.getName())
-                .role(user.getRole())
-                .build();
-
+        UserDto userDto = User.toDto(user);
         return userDto;
     }
 
