@@ -1,72 +1,69 @@
 <!DOCTYPE HTML>
 <html xmlns="http://www.w3.org/1999/xhtml"
       xmlns:th="http://www.thymeleaf.org"
-      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity5"
-      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
-<head>
-    <meta charset="UTF-8">
-</head>
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head th:replace="fragments/header :: header" />
 <body>
 <div class="container">
-    <th:block th:replace="fragments/header :: header"></th:block>
+    <div th:replace="fragments/bodyheader" :: bodyheader />
     <div class="jumbotron">
-        <div class="tbl_wrp">
-            <form class="form-horizontal" th:action="@{/room/create}"
-                  th:object="${form}" method="post">
-                <div class="form-group">
-                    <label for="title" class="col-sm-2 control-label">대회 제목</label>
-                    <div class="col-sm-10">
-                        <input type="text" class="form-control input-large" name="title" id="title" placeholder="제목" required="required"> <br>
-                    </div>
+        <form class="form-horizontal" th:action="@{/room/create}"
+              th:object="${form}" method="post">
+            <div class="form-group">
+                <label for="title" class="col-sm-2 control-label">대회 제목</label>
+                <div class="col-sm-10">
+                    <input type="text" class="form-control input-large" name="title" id="title" placeholder="제목" required="required"> <br>
                 </div>
+            </div>
 
-                <div class="form-group">
-                    <label for="roomType" class="col-sm-2 control-label">대회 방식</label>
-                    <div class="col-sm-10">
-                        <select id="roomType" th:name="roomType">
-                            <option th:each="roomType : ${roomTypes}" th:value="${roomType}" th:text="${roomType.getDescription()}"></option> <br>
-                        </select> <br>
-                    </div>
+            <div class="form-group">
+                <label for="roomType" class="col-sm-2 control-label">대회 방식</label>
+                <div class="col-sm-10">
+                    <select id="roomType" th:name="roomType">
+                        <option th:each="roomType : ${roomTypes}" th:value="${roomType}" th:text="${roomType.getDescription()}"></option> <br>
+                    </select> <br>
                 </div>
+            </div>
 
-                <div class="form-group">
-                    <label class="col-sm-2 control-label">대회 참여 인원</label>
-                    <div class="col-sm-10">
-                        <select th:name="memNum" onchange="if(this.value) location.href=('/room/create/?count=' + this.value)">
-                            <option th:each="i : ${#numbers.sequence(2, 20)}" th:value="${i}" th:text="${i}"
-                                    th:selected="${i == count}"></option> <br>
-                        </select> <br>
-                    </div>
+            <div class="form-group">
+                <label class="col-sm-2 control-label">대회 참여 인원</label>
+                <div class="col-sm-10">
+                    <select th:name="memNum" onchange="if(this.value) location.href=('/room/create/?count=' + this.value)">
+                        <option th:each="i : ${#numbers.sequence(2, 20)}" th:value="${i}" th:text="${i}"
+                                th:selected="${i == count}"></option> <br>
+                    </select> <br>
                 </div>
+            </div>
 
-                <div class="form-group">
-                    <table>
-                        <thead>
-                        <tr>
-                            <th>#</th>
-                            <th>참가자 아이디</th>
-                        </tr>
-                        </thead>
-                        <tbody>
-                        <tr th:each="email, itemStat : *{emails}">
-                            <td th:text="'참가자' + ${itemStat.index+1}"></td>
-                            <td><input th:field="*{emails[__${itemStat.index}__]}" required="required"/></td>
-                        </tr>
-                        </tbody>
-                    </table>
-                    <!--<div th:each="i : ${#numbers.sequence(1, #numbers.formatInteger(count, 0))}" class="col-sm-10">
-                        참가자 [[${i}]]: <input type="text" class="form-control input-large" required="required"/>
-                    </div>-->
-                </div>
+            <div class="form-group">
+                <table>
+                    <thead>
+                    <tr>
+                        <th>#</th>
+                        <th>참가자 아이디</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr th:each="email, itemStat : *{emails}">
+                        <td th:text="'참가자' + ${itemStat.index+1}"></td>
+                        <td><input th:field="*{emails[__${itemStat.index}__]}" required="required"/></td>
+                    </tr>
+                    </tbody>
+                </table>
+                <!--<div th:each="i : ${#numbers.sequence(1, #numbers.formatInteger(count, 0))}" class="col-sm-10">
+                    참가자 [[${i}]]: <input type="text" class="form-control input-large" required="required"/>
+                </div>-->
+            </div>
 
-                <div class="form-group">
-                    <div class="col-sm-offset-1 col-sm-10">
-                        <button type="submit" class="btn btn-lg btn-success">방 만들기</button> <br>
-                    </div>
+            <div class="form-group">
+                <div class="col-sm-offset-1 col-sm-10">
+                    <button type="submit" class="btn btn-lg btn-success">방 만들기</button> <br>
                 </div>
-            </form>
-        </div>
+            </div>
+        </form>
     </div>
-</div>
+    <div th:replace="fragments/footer" :: footer />
+</div> <!-- /container -->
 </body>
 </html>

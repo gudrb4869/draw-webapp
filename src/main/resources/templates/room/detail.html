@@ -1,92 +1,93 @@
 <!DOCTYPE HTML>
 <html xmlns="http://www.w3.org/1999/xhtml"
       xmlns:th="http://www.thymeleaf.org"
-      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity5"
-      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
-<head>
-    <meta charset="UTF-8">
-</head>
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head th:replace="fragments/header :: header" />
 <body>
 <div class="container">
-    <th:block th:replace="fragments/header :: header"></th:block>
-    <table>
-        <thead>
-        <tr>
-            <th>제목</th>
-            <th>타입</th>
-            <th>인원수</th>
-        </tr>
-        </thead>
-        <tbody>
-        <tr>
-            <td th:text="${roomDto.title}"></td>
-            <td th:text="${roomDto.roomType}"></td>
-            <td th:text="${roomDto.memNum}"></td>
-        </tr>
-        </tbody>
-    </table>
-    <h1>일정</h1>
-    <table>
-        <thead>
-        <tr>
-            <th> # </th>
-            <th> 홈 </th>
-            <th></th>
-            <th></th>
-            <th></th>
-            <th> 어웨이 </th>
-            <th></th>
-            <th></th>
-        </tr>
-        </thead>
-        <tbody>
-        <tr th:each="matchDto, i : ${matchDtos}">
-            <td th:text="${i.index+1}"></td>
-            <td th:text="${matchDto.getUser1Dto().getEmail() + '('+ matchDto.getUser1Dto().getName() + ')'}"></td>
-            <td th:text="${matchDto.getScore().getUser1Score()}"></td>
-            <td>:</td>
-            <td th:text="${matchDto.getScore().getUser2Score()}"></td>
-            <td th:text="${matchDto.getUser2Dto().getEmail() + '('+ matchDto.getUser2Dto().getName() + ')'}"></td>
-            <td th:text="${matchDto.getMatchStatus().getDescription()}"></td>
-            <th>
-                <a th:href="'/match/'+${matchDto.getId()}">
-                    <button class="btn btn-primary">수정</button>
-                </a>
-            </th>
-        </tr>
-        </tbody>
-    </table>
-    <h1>순위</h1>
-    <table>
-        <thead>
-        <tr>
-            <th>#</th>
-            <th>이름</th>
-            <th>경기수</th>
-            <th>승</th>
-            <th>무</th>
-            <th>패</th>
-            <th>득점</th>
-            <th>실점</th>
-            <th>득실차</th>
-            <th>승점</th>
-        </tr>
-        </thead>
-        <tbody>
-        <tr th:each="joinDto, i : ${joinDtos}">
-            <td th:text="${i.index+1}"></td>
-            <td th:text="${joinDto.getUserDto().getEmail() + '('+ joinDto.getUserDto().getName() + ')'}"></td>
-            <td th:text="${joinDto.getResult().getPlays()}"></td>
-            <td th:text="${joinDto.getResult().getWin()}"></td>
-            <td th:text="${joinDto.getResult().getDraw()}"></td>
-            <td th:text="${joinDto.getResult().getLose()}"></td>
-            <td th:text="${joinDto.getResult().getGoalFor()}"></td>
-            <td th:text="${joinDto.getResult().getGoalAgainst()}"></td>
-            <td th:text="${joinDto.getResult().getGoalDifference()}"></td>
-            <td th:text="${joinDto.getResult().getPoints()}"></td>
-        </tr>
-        </tbody>
-    </table>
-</div>
+    <div th:replace="fragments/bodyheader" :: bodyheader />
+    <div class="jumbotron">
+        <table>
+            <thead>
+            <tr>
+                <th>제목</th>
+                <th>타입</th>
+                <th>인원수</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr>
+                <td th:text="${roomDto.title}"></td>
+                <td th:text="${roomDto.roomType}"></td>
+                <td th:text="${roomDto.memNum}"></td>
+            </tr>
+            </tbody>
+        </table>
+        <h1>일정</h1>
+        <table>
+            <thead>
+            <tr>
+                <th> # </th>
+                <th> 홈 </th>
+                <th></th>
+                <th></th>
+                <th></th>
+                <th> 어웨이 </th>
+                <th></th>
+                <th></th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="matchDto, i : ${matchDtos}">
+                <td th:text="${i.index+1}"></td>
+                <td th:text="${matchDto.getUser1Dto().getEmail() + '('+ matchDto.getUser1Dto().getName() + ')'}"></td>
+                <td th:text="${matchDto.getScore().getUser1Score()}"></td>
+                <td>:</td>
+                <td th:text="${matchDto.getScore().getUser2Score()}"></td>
+                <td th:text="${matchDto.getUser2Dto().getEmail() + '('+ matchDto.getUser2Dto().getName() + ')'}"></td>
+                <td th:text="${matchDto.getMatchStatus().getDescription()}"></td>
+                <th>
+                    <a th:href="'/match/'+${matchDto.getId()}">
+                        <button class="btn btn-primary">수정</button>
+                    </a>
+                </th>
+            </tr>
+            </tbody>
+        </table>
+        <h1>순위</h1>
+        <table>
+            <thead>
+            <tr>
+                <th>#</th>
+                <th>이름</th>
+                <th>경기수</th>
+                <th>승</th>
+                <th>무</th>
+                <th>패</th>
+                <th>득점</th>
+                <th>실점</th>
+                <th>득실차</th>
+                <th>승점</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="joinDto, i : ${joinDtos}">
+                <td th:text="${i.index+1}"></td>
+                <td th:text="${joinDto.getUserDto().getEmail() + '('+ joinDto.getUserDto().getName() + ')'}"></td>
+                <td th:text="${joinDto.getResult().getPlays()}"></td>
+                <td th:text="${joinDto.getResult().getWin()}"></td>
+                <td th:text="${joinDto.getResult().getDraw()}"></td>
+                <td th:text="${joinDto.getResult().getLose()}"></td>
+                <td th:text="${joinDto.getResult().getGoalFor()}"></td>
+                <td th:text="${joinDto.getResult().getGoalAgainst()}"></td>
+                <td th:text="${joinDto.getResult().getGoalDifference()}"></td>
+                <td th:text="${joinDto.getResult().getPoints()}"></td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+    <div th:replace="fragments/footer" :: footer />
+</div> <!-- /container -->
 </body>
 </html>

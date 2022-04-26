@@ -1,59 +1,60 @@
 <!DOCTYPE HTML>
 <html xmlns="http://www.w3.org/1999/xhtml"
       xmlns:th="http://www.thymeleaf.org"
-      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity5"
-      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
-<head>
-    <meta charset="UTF-8">
-</head>
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head th:replace="fragments/header :: header" />
 <body>
 <div class="container">
-    <th:block th:replace="fragments/header :: header"></th:block>
-    <form class="form-horizontal" th:action="@{'/match/update/' + ${matchDto.getId()}}" method="post">
-        <input type="hidden" name="_method" value="put"/>
-        <table>
-            <thead>
-            <tr>
-                <th> 홈 </th>
-                <th></th>
-                <th></th>
-                <th></th>
-                <th> 어웨이 </th>
-                <th></th>
-            </tr>
-            </thead>
-            <tbody>
-            <td th:text="${matchDto.getUser1Dto().getEmail() + '('+ matchDto.getUser1Dto().getName() + ')'}"></td>
-            <td>
-                <input type="number" class="form-control input-large" min="0" max="100" th:default="${scoreDto.getUser1Score()}"
-                       name="user1Score" th:value="${scoreDto.user1Score}" required="required">
-            </td>
-            <td>:</td>
-            <td>
-                <input type="number" class="form-control input-large" min="0" max="100" th:default="${scoreDto.getUser2Score()}"
-                       name="user2Score"th:value="${scoreDto.user2Score}" required="required">
-            </td>
-            <td th:text="${matchDto.getUser2Dto().getEmail() + '('+ matchDto.getUser2Dto().getName() + ')'}"></td>
-            <td>
-                <div class="form-group">
-                    <div class="col-sm-10">
-                        <select th:name="matchStatus">
-                            <option th:each="matchStatus : ${matchStatuses}" th:value="${matchStatus}"
-                                    th:text="${matchStatus.getDescription()}"></option> <br>
-                        </select> <br>
+    <div th:replace="fragments/bodyheader" :: bodyheader />
+    <div class="jumbotron">
+        <form class="form-horizontal" th:action="@{'/match/update/' + ${matchDto.getId()}}" method="post">
+            <input type="hidden" name="_method" value="put"/>
+            <table>
+                <thead>
+                <tr>
+                    <th> 홈 </th>
+                    <th></th>
+                    <th></th>
+                    <th></th>
+                    <th> 어웨이 </th>
+                    <th></th>
+                </tr>
+                </thead>
+                <tbody>
+                <td th:text="${matchDto.getUser1Dto().getEmail() + '('+ matchDto.getUser1Dto().getName() + ')'}"></td>
+                <td>
+                    <input type="number" class="form-control input-large" min="0" max="100" th:default="${scoreDto.getUser1Score()}"
+                           name="user1Score" th:value="${scoreDto.user1Score}" required="required">
+                </td>
+                <td>:</td>
+                <td>
+                    <input type="number" class="form-control input-large" min="0" max="100" th:default="${scoreDto.getUser2Score()}"
+                           name="user2Score"th:value="${scoreDto.user2Score}" required="required">
+                </td>
+                <td th:text="${matchDto.getUser2Dto().getEmail() + '('+ matchDto.getUser2Dto().getName() + ')'}"></td>
+                <td>
+                    <div class="form-group">
+                        <div class="col-sm-10">
+                            <select th:name="matchStatus">
+                                <option th:each="matchStatus : ${matchStatuses}" th:value="${matchStatus}"
+                                        th:text="${matchStatus.getDescription()}"></option> <br>
+                            </select> <br>
+                        </div>
                     </div>
-                </div>
-            </td>
-            </tr>
-            </tbody>
-        </table>
+                </td>
+                </tr>
+                </tbody>
+            </table>
 
-        <div class="form-group">
-            <div class="col-sm-offset-1 col-sm-10">
-                <button type="submit" class="btn btn-lg btn-success">수정</button> <br>
+            <div class="form-group">
+                <div class="col-sm-offset-1 col-sm-10">
+                    <button type="submit" class="btn btn-lg btn-success">수정</button> <br>
+                </div>
             </div>
-        </div>
-    </form>
-</div>
+        </form>
+    </div>
+    <div th:replace="fragments/footer" :: footer />
+</div> <!-- /container -->
 </body>
 </html>
