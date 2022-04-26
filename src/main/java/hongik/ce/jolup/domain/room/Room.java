@@ -38,7 +38,7 @@ public class Room {
     @Column(nullable = false)
     private Long memNum;
 
-    @OneToMany(mappedBy = "room")
+    @OneToMany(mappedBy = "room", cascade = CascadeType.ALL)
     private List<Join> joins = new ArrayList<>();
 
     @Builder

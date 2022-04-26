@@ -63,12 +63,24 @@ public class Join {
                 .build();
     }
 
-    public void delete() {
-
-    }
-
     public Join update(Result result) {
         this.result = result;
         return this;
+    }
+
+    public void setUser(User user) {
+        if (this.user != null) {
+            this.user.getJoins().remove(this);
+        }
+        this.user = user;
+        user.getJoins().add(this);
+    }
+
+    public void setRoom(Room room) {
+        if (this.room != null) {
+            this.room.getJoins().remove(this);
+        }
+        this.room = room;
+        room.getJoins().add(this);
     }
 }

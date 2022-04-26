@@ -1,33 +1,14 @@
 <!DOCTYPE html>
-<html lang="ko"
-      xmlns="http://www.w3.org/1999/xhtml"
+<html xmlns="http://www.w3.org/1999/xhtml"
       xmlns:th="http://www.thymeleaf.org"
       xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
-<th:block th:fragment="header">
-    <nav class="navbar navbar-expand-md navbar-dark bg-dark fixed-top" th:fragment="menu(menu)">
-        <h3>Spring Boot Project</h3>
-
-        <div class="collapse navbar-collapse" id="navbarsExampleDefault">
-            <ul class="navbar-nav mr-auto">
-                <li class="nav-item" th:classappend="${menu} == 'home'? 'active'">
-                    <a class="nav-link" href="#" th:href="@{/}">홈<span class="sr-only"
-                                                                        th:if="${menu} == 'home'">(current)</span></a>
-                </li>
-                <li class="nav-item" th:classappend="${menu} == 'board'? 'active'">
-                    <a class="nav-link" href="#" th:href="@{/room/list}">목록 <span class="sr-only"
-                                                                                    th:if="${menu} == 'myRoom'">(current)</span></a>
-                </li>
-            </ul>
-            <a class="btn btn-secondary mr-2 my-2 my-sm-0" th:href="@{/signup}" sec:authorize="!isAuthenticated()">회원가입</a>
-            <a class="btn btn-secondary my-2 my-sm-0" th:href="@{/login}" sec:authorize="!isAuthenticated()">로그인</a> <!-- 로그인이 안된 경우  -->
-
-            <form class="form-inline my-2 my-lg-0" th:action="@{/logout}" method="post" sec:authorize="isAuthenticated()">
-                <span class="text-white mr-2 mx-2" sec:authentication="name">사용자</span>님, 안녕하세요.
-<!--                <span class="text-white mr-2 mx-2" sec:authentication="authorities">권한</span>-->
-                <button class="btn btn-secondary my-2 my-sm-0" type="submit">로그아웃</button>
-            </form>
-
-        </div>
-    </nav>
-</th:block>
-</html>
+<head th:fragment="header">
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink- to-fit=no">
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+    <!-- Custom styles for this template -->
+    <link href="/css/jumbotron-narrow.css" rel="stylesheet">
+    <!--<title>Hello, world!</title>-->
+</head>

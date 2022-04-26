@@ -1,14 +1,14 @@
 <!DOCTYPE HTML>
 <html xmlns="http://www.w3.org/1999/xhtml"
       xmlns:th="http://www.thymeleaf.org"
-      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity5"
-      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
-<head>
-    <meta charset="UTF-8">
-</head>
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head th:replace="fragments/header :: header" /> <style>
+    .fieldError { border-color: #bd2130;
+    } </style>
 <body>
 <div class="container">
-    <th:block th:replace="fragments/header :: header"></th:block>
+    <div th:replace="fragments/bodyheader" :: bodyheader />
     <div class="jumbotron">
         <div class="tbl_wrp">
             <form class="form-horizontal" th:action="@{/signup}" method="post">
@@ -46,6 +46,7 @@
             </form>
         </div>
     </div>
-</div>
+    <div th:replace="fragments/footer" :: footer />
+</div> <!-- /container -->
 </body>
 </html>
