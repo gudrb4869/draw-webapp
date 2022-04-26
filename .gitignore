@@ -38,3 +38,6 @@ out/
 
 ### oauth ###
 /src/main/resources/application-oauth.properties
+
+### css, js ###
+/src/main/resources/static/
