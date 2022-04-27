@@ -29,7 +29,7 @@ public class MatchController {
         if (matchDto == null) {
             return "error";
         }
-        ScoreDto scoreDto = Score.toDto(matchDto.getScore());
+        ScoreDto scoreDto = matchDto.getScore().toDto();
         model.addAttribute("matchDto", matchDto);
         model.addAttribute("scoreDto", scoreDto);
         model.addAttribute("matchStatuses", MatchStatus.values());
@@ -41,10 +41,10 @@ public class MatchController {
                          Score score, MatchStatus matchStatus) {
         Match match = matchService.findById(no).toEntity();
         Long roomId = match.getRoom().getId();
-        Join join1 = joinService.findOne(match.getUser1(), match.getRoom());
-        Result result1 = join1.getResult();
-        Join join2 = joinService.findOne(match.getUser2(), match.getRoom());
-        Result result2 = join2.getResult();
+        JoinDto joinDto1 = joinService.findOne(match.getUser1(), match.getRoom());
+        Result result1 = joinDto1.getResult();
+        JoinDto joinDto2 = joinService.findOne(match.getUser2(), match.getRoom());
+        Result result2 = joinDto2.getResult();
 
         if (match.getMatchStatus().equals(MatchStatus.END)) {
             if (match.getScore().getUser1Score() > match.getScore().getUser2Score()) {
@@ -96,8 +96,10 @@ public class MatchController {
             result2.setPoints(result2.getWin() * 3 + result2.getDraw());
             matchService.save(match.update(score, matchStatus));
         }
-        joinService.save(join1.update(result1));
-        joinService.save(join2.update(result2));
+        joinDto1.setResult(result1);
+        joinDto2.setResult(result2);
+        joinService.save(joinDto1);
+        joinService.save(joinDto2);
         return "redirect:/room/" + roomId;
     }
 }

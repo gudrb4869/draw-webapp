@@ -49,12 +49,12 @@ public class Room {
         this.memNum = memNum;
     }
 
-    public static RoomDto toDto(Room room) {
+    public RoomDto toDto() {
         return RoomDto.builder()
-                .id(room.getId())
-                .title(room.getTitle())
-                .roomType(room.getRoomType())
-                .memNum(room.getMemNum())
+                .id(id)
+                .title(title)
+                .roomType(roomType)
+                .memNum(memNum)
                 .build();
     }
 

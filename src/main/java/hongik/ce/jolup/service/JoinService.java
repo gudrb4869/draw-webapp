@@ -6,8 +6,8 @@ import hongik.ce.jolup.domain.user.User;
 import hongik.ce.jolup.domain.join.Join;
 import hongik.ce.jolup.dto.JoinDto;
 import hongik.ce.jolup.dto.RoomDto;
+import hongik.ce.jolup.dto.UserDto;
 import hongik.ce.jolup.repository.JoinRepository;
-import hongik.ce.jolup.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -22,25 +22,24 @@ import java.util.Optional;
 public class JoinService {
 
     private final JoinRepository joinRepository;
-    private final UserRepository userRepository;
+    private final UserService userService;
     private final RoomService roomService;
 
-    public Long save(Join join) {
-        return joinRepository.save(join).getId();
+    public Long save(JoinDto joinDto) {
+        return joinRepository.save(joinDto.toEntity()).getId();
     }
 
     public Long save(Long userId, Long roomId) {
-        Optional<User> user = userRepository.findById(userId);
+        UserDto userDto = userService.findUser(userId);
         RoomDto roomDto = roomService.findRoom(roomId);
 
         Join join = Join.builder()
-                .user(user.get())
-                .room(roomDto.toEntity())
                 .result(Result.builder().plays(0).win(0).draw(0)
                         .lose(0).goalFor(0).goalAgainst(0)
                         .goalDifference(0).points(0).build())
                 .build();
-
+        join.setUser(userDto.toEntity());
+        join.setRoom(roomDto.toEntity());
         joinRepository.save(join);
         return join.getId();
     }
@@ -48,26 +47,36 @@ public class JoinService {
     public List<JoinDto> findJoins(List<Join> joins) {
         List<JoinDto> joinDtos = new ArrayList<>();
         for(Join join : joins) {
-            joinDtos.add(JoinDto.builder()
-                    .id(join.getId())
-                    .userDto(User.toDto(join.getUser()))
-                    .roomDto(Room.toDto(join.getRoom()))
-                    .result(join.getResult())
-                    .build());
+            joinDtos.add(join.toDto());
         }
         return joinDtos;
     }
 
     public List<JoinDto> findByUser(User user) {
-        return findJoins(joinRepository.findByUser(user));
+        List<Join> joins = joinRepository.findByUser(user);
+        List<JoinDto> joinDtos = new ArrayList<>();
+        for (Join join : joins) {
+            joinDtos.add(join.toDto());
+        }
+        return joinDtos;
     }
 
     public List<JoinDto> findByRoom(RoomDto roomDto) {
-        return findJoins(joinRepository.findByRoom(roomDto.toEntity()));
+        List<Join> joins = joinRepository.findByRoom(roomDto.toEntity());
+        List<JoinDto> joinDtos = new ArrayList<>();
+        for (Join join : joins) {
+            joinDtos.add(join.toDto());
+        }
+        return joinDtos;
     }
 
-    public Join findOne(User user, Room room) {
-        return joinRepository.findByUserAndRoom(user, room).get();
+    public JoinDto findOne(User user, Room room) {
+        Optional<Join> optionalJoin = joinRepository.findByUserAndRoom(user, room);
+        if (optionalJoin.isEmpty())
+            return null;
+        Join join = optionalJoin.get();
+        JoinDto joinDto = join.toDto();
+        return joinDto;
     }
 
     public List<JoinDto> findByRoomSort(RoomDto roomDto) {

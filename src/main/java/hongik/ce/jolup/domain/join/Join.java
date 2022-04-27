@@ -54,12 +54,12 @@ public class Join {
         /*this.role = role;*/
     }
 
-    public static JoinDto toDto (Join join) {
+    public JoinDto toDto () {
         return JoinDto.builder()
-                .id(join.getId())
-                .userDto(User.toDto(join.getUser()))
-                .roomDto(Room.toDto(join.getRoom()))
-                .result(join.getResult())
+                .id(id)
+                .userDto(user.toDto())
+                .roomDto(room.toDto())
+                .result(result)
                 .build();
     }
 

@@ -12,6 +12,8 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Optional;
 
@@ -35,12 +37,9 @@ public class UserService implements UserDetailsService {
 
         BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
         userDto.setPassword(encoder.encode(userDto.getPassword()));
+        userDto.setRole(UserRole.USER);
 
-        return userRepository.save(User.builder()
-                .email(userDto.getEmail())
-                .name(userDto.getName())
-                .password(userDto.getPassword())
-                .role(UserRole.USER).build()).getId();
+        return userRepository.save(userDto.toEntity()).getId();
     }
 
     private void validateDuplicateUser(UserDto userDto) {
@@ -50,8 +49,22 @@ public class UserService implements UserDetailsService {
         }
     }
 
-    public List<User> findAll() {
-        return userRepository.findAll();
+    public List<UserDto> findAll() {
+        List<User> users = userRepository.findAll();
+        List<UserDto> userDtos = new ArrayList<>();
+        for (User user : users) {
+            userDtos.add(user.toDto());
+        }
+        return userDtos;
+    }
+
+    public UserDto findUser(Long userId) {
+        Optional<User> optionalUser = userRepository.findById(userId);
+        if (optionalUser.isEmpty())
+            return null;
+        User user = optionalUser.get();
+        UserDto userDto = user.toDto();
+        return userDto;
     }
 
     public UserDto findOne(String email) {
@@ -60,11 +73,17 @@ public class UserService implements UserDetailsService {
             return null;
         }
         User user = userWrapper.get();
-        UserDto userDto = User.toDto(user);
+        UserDto userDto = user.toDto();
         return userDto;
     }
 
     public void delete(Long id) {
         userRepository.deleteById(id);
+    }
+
+    public HashMap<String, Object> emailOverlap(String email) {
+        HashMap<String, Object> map = new HashMap<String, Object>();
+        map.put("result", userRepository.existsByEmail(email));
+        return map;
     }
 }

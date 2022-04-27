@@ -14,9 +14,9 @@
                     <p>아이디와 비밀번호를 입력해주세요</p>
                 </div>
 
-                <div th:if="${param.error}" class="form-group">
+                <!--<div th:if="${param.error}" class="form-group">
                     <span th:text="${exception}" class="alert alert-danger">예외가 발생했습니다.</span>
-                </div>
+                </div>-->
 
                 <form th:action="@{/login_proc}" class="form-signin" method="post">
                     <!--            <form name="frm" id="frm" action="#" method="post" onsubmit="return false" class="form-signin">-->
@@ -34,7 +34,7 @@
                     </div>
 
                     <div th:if="${param.error}" class="form-group">
-                    <span th:text="${session[SPRING_SECURITY_LAST_EXCEPTION]}"
+                    <span th:text="${session}"
                           class="alert alert-danger">아이디 또는 비밀번호가 맞지 않습니다.</span>
                     </div>
 

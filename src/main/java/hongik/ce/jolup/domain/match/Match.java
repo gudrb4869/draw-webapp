@@ -47,14 +47,14 @@ public class Match {
         this.matchStatus = matchStatus;
     }
 
-    public static MatchDto toDto(Match match) {
+    public MatchDto toDto() {
         return MatchDto.builder()
-                .id(match.getId())
-                .roomDto(Room.toDto(match.getRoom()))
-                .user1Dto(User.toDto(match.getUser1()))
-                .user2Dto(User.toDto(match.getUser2()))
-                .matchStatus(match.getMatchStatus())
-                .score(match.getScore())
+                .id(id)
+                .roomDto(room.toDto())
+                .user1Dto(user1.toDto())
+                .user2Dto(user2.toDto())
+                .matchStatus(matchStatus)
+                .score(score)
                 .build();
     }
 

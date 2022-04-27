@@ -10,7 +10,7 @@
     <div class="jumbotron">
         <form class="form-horizontal" th:action="@{'/match/update/' + ${matchDto.getId()}}" method="post">
             <input type="hidden" name="_method" value="put"/>
-            <table>
+            <table class="table table-striped">
                 <thead>
                 <tr>
                     <th> 홈 </th>

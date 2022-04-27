@@ -1,5 +1,6 @@
 package hongik.ce.jolup.controller;
 
+import hongik.ce.jolup.domain.join.Join;
 import hongik.ce.jolup.domain.user.User;
 import hongik.ce.jolup.domain.room.RoomType;
 import hongik.ce.jolup.dto.JoinDto;
@@ -13,6 +14,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
@@ -99,7 +101,6 @@ public class RoomController {
     @GetMapping({"", "/list"})
     public String myRoomList(Model model, @AuthenticationPrincipal User user) {
         List<JoinDto> joins = joinService.findByUser(user);
-//        model.addAttribute("user", user);
         model.addAttribute("joins", joins);
         return "room/list";
     }

@@ -10,6 +10,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 
 import javax.persistence.*;
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Entity
 @Getter
@@ -45,25 +46,27 @@ public class User extends Time implements UserDetails {
     @Enumerated(EnumType.STRING)
     private UserRole role;
 
-    @OneToMany(mappedBy = "user")
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Join> joins = new ArrayList<>();
 
     @Builder
-    public User(Long id, String email, String password, String name, UserRole role) {
+    public User(Long id, String email, String password, String name, UserRole role, List<Join> joins) {
         this.id = id;
         this.email = email;
         this.password = password;
         this.name = name;
         this.role = role;
+        this.joins = joins;
     }
 
-    public static UserDto toDto(User user) {
+    public UserDto toDto() {
         return UserDto.builder()
-                .id(user.getId())
-                .email(user.getEmail())
-                .password(user.getPassword())
-                .name(user.getName())
-                .role(user.getRole())
+                .id(id)
+                .email(email)
+                .password(password)
+                .name(name)
+                .role(role)
+                .joinDtos(joins.stream().map(Join::toDto).collect(Collectors.toList()))
                 .build();
     }
 

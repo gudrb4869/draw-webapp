@@ -17,12 +17,11 @@ public class RoomDto {
     private Long memNum;
 
     public Room toEntity() {
-        Room room = Room.builder()
+        return Room.builder()
                 .id(id)
                 .title(title)
                 .roomType(roomType)
                 .memNum(memNum)
                 .build();
-        return room;
     }
 }

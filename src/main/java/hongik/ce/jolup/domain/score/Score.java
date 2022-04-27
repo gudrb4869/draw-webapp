@@ -23,10 +23,10 @@ public class Score {
         this.user2Score = user2Score;
     }
 
-    public static ScoreDto toDto(Score score) {
+    public ScoreDto toDto() {
         return ScoreDto.builder()
-                .user1Score(score.getUser1Score())
-                .user2Score(score.getUser2Score())
+                .user1Score(user1Score)
+                .user2Score(user2Score)
                 .build();
     }
 }

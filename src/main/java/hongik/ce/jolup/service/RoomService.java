@@ -7,6 +7,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -24,8 +25,13 @@ public class RoomService {
                 .memNum(roomDto.getMemNum()).build()).getId();
     }
 
-    public List<Room> findAll() {
-        return roomRepository.findAll();
+    public List<RoomDto> findAll() {
+        List<Room> rooms = roomRepository.findAll();
+        List<RoomDto> roomDtos = new ArrayList<>();
+        for (Room room : rooms) {
+            roomDtos.add(room.toDto());
+        }
+        return roomDtos;
     }
 
     public RoomDto findRoom(Long roomId) {
@@ -34,7 +40,7 @@ public class RoomService {
             return null;
         }
         Room room = roomWrapper.get();
-        RoomDto roomDto = Room.toDto(room);
+        RoomDto roomDto = room.toDto();
         return roomDto;
     }
 

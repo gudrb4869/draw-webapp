@@ -69,9 +69,9 @@ public class MatchService {
         for (Match match : matches) {
             matchDtos.add(MatchDto.builder()
                     .id(match.getId())
-                    .roomDto(Room.toDto(match.getRoom()))
-                    .user1Dto(User.toDto(match.getUser1()))
-                    .user2Dto(User.toDto(match.getUser2()))
+                    .roomDto(match.getRoom().toDto())
+                    .user1Dto(match.getUser1().toDto())
+                    .user2Dto(match.getUser2().toDto())
                     .score(match.getScore())
                     .matchStatus(match.getMatchStatus())
                     .build());
@@ -85,7 +85,7 @@ public class MatchService {
             return null;
         }
         Match match = matchWrapper.get();
-        MatchDto matchDto = Match.toDto(match);
+        MatchDto matchDto = match.toDto();
         return matchDto;
     }
 
