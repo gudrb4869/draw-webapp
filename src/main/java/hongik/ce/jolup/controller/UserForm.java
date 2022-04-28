@@ -1,16 +1,15 @@
-package hongik.ce.jolup.dto;
+package hongik.ce.jolup.controller;
 
 import lombok.*;
 
 import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.Pattern;
 
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class UserRequestDto {
+public class UserForm {
     @NotBlank(message = "아이디는 필수 입력 값입니다!")
 //    @Pattern(regexp = "^(?:\\w+\\.?)*\\w+@(?:\\w+\\.)+\\w+$", message = "이메일 형식이 올바르지 않습니다.")
     private String email;

@@ -5,6 +5,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 
+import javax.validation.constraints.NotBlank;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -12,7 +13,7 @@ import java.util.List;
 @Setter
 @NoArgsConstructor
 public class JoinForm {
-    private List<String> emails = new ArrayList<>();
+    private List<@NotBlank(message = "형식이 올바르지 않습니다!") String> emails = new ArrayList<>();
 
     public void addEmail(String email) {
         this.emails.add(email);

@@ -1,7 +1,6 @@
 package hongik.ce.jolup.controller;
 
 import hongik.ce.jolup.dto.UserDto;
-import hongik.ce.jolup.dto.UserRequestDto;
 import hongik.ce.jolup.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.AnonymousAuthenticationToken;
@@ -29,12 +28,12 @@ public class UserController {
         if (isAuthenticated()) {
             return "redirect:/";
         }
-        model.addAttribute("userRequestDto", new UserRequestDto());
+        model.addAttribute("userForm", new UserForm());
         return "signup";
     }
 
     @PostMapping("/signup")
-    public /*ModelAndView*/ String signup(@Valid UserRequestDto userRequestDto, BindingResult result, ModelAndView modelAndView) {
+    public /*ModelAndView*/ String signup(@Valid UserForm userForm, BindingResult result, ModelAndView modelAndView) {
 
         if (result.hasErrors()) {
             /*modelAndView.setViewName("signup");
@@ -42,9 +41,9 @@ public class UserController {
             return "signup";
         }
         UserDto userDto = UserDto.builder()
-                .email(userRequestDto.getEmail())
-                .password(userRequestDto.getPassword())
-                .name(userRequestDto.getName()).build();
+                .email(userForm.getEmail())
+                .password(userForm.getPassword())
+                .name(userForm.getName()).build();
         userService.save(userDto);
 
         /*modelAndView.addObject("data", new Message("회원가입이 완료되었습니다.", "/"));

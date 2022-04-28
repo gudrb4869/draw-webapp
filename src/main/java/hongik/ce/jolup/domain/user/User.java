@@ -1,5 +1,6 @@
 package hongik.ce.jolup.domain.user;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import hongik.ce.jolup.domain.Time;
 import hongik.ce.jolup.domain.join.Join;
 import hongik.ce.jolup.dto.UserDto;
@@ -50,12 +51,13 @@ public class User extends Time implements UserDetails {
     private List<Join> joins = new ArrayList<>();
 
     @Builder
-    public User(Long id, String email, String password, String name, UserRole role) {
+    public User(Long id, String email, String password, String name, UserRole role, List<Join> joins) {
         this.id = id;
         this.email = email;
         this.password = password;
         this.name = name;
         this.role = role;
+        this.joins = joins;
     }
 
     public UserDto toDto() {

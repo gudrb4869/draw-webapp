@@ -4,6 +4,9 @@ import hongik.ce.jolup.domain.room.Room;
 import hongik.ce.jolup.domain.room.RoomType;
 import lombok.*;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
 @Getter
 @Setter
 @Builder
@@ -15,6 +18,7 @@ public class RoomDto {
     private String title;
     private RoomType roomType;
     private Long memNum;
+//    private List<JoinDto> joinDtos;
 
     public Room toEntity() {
         return Room.builder()
@@ -22,6 +26,7 @@ public class RoomDto {
                 .title(title)
                 .roomType(roomType)
                 .memNum(memNum)
+//                .joins(joinDtos.stream().map(JoinDto::toEntity).collect(Collectors.toList()))
                 .build();
     }
 }

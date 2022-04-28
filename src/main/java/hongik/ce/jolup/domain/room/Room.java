@@ -7,6 +7,7 @@ import lombok.*;
 import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Entity
 @Getter
@@ -38,15 +39,16 @@ public class Room {
     @Column(nullable = false)
     private Long memNum;
 
-    @OneToMany(mappedBy = "room", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "room", fetch = FetchType.LAZY)
     private List<Join> joins = new ArrayList<>();
 
     @Builder
-    public Room(Long id, String title, RoomType roomType, Long memNum) {
+    public Room(Long id, String title, RoomType roomType, Long memNum/*, List<Join> joins*/) {
         this.id = id;
         this.title = title;
         this.roomType = roomType;
         this.memNum = memNum;
+//        this.joins = joins;
     }
 
     public RoomDto toDto() {
@@ -55,6 +57,7 @@ public class Room {
                 .title(title)
                 .roomType(roomType)
                 .memNum(memNum)
+//                .joinDtos(joins.stream().map(Join::toDto).collect(Collectors.toList()));
                 .build();
     }
 
