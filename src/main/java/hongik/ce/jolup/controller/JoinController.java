@@ -1,4 +1,4 @@
-package hongik.ce.jolup.controller;
+/*package hongik.ce.jolup.controller;
 
 import hongik.ce.jolup.service.JoinService;
 import hongik.ce.jolup.service.RoomService;
@@ -14,7 +14,7 @@ public class JoinController {
     private final JoinService joinRoomService;
     private final UserService userService;
 
-    /*@GetMapping("/create")
+    @GetMapping("/create")
     public String createRoom(@RequestParam(value = "count", defaultValue = "2") Integer count,
                              Model model) {
         JoinDto joinRoomDto = new JoinDto();
@@ -44,5 +44,5 @@ public class JoinController {
         }
 
         return "redirect:/room/list";
-    }*/
-}
+    }
+}*/

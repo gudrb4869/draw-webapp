@@ -1,7 +1,6 @@
 <!DOCTYPE HTML>
 <html xmlns="http://www.w3.org/1999/xhtml"
       xmlns:th="http://www.thymeleaf.org"
-      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
       xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 <head th:replace="fragments/header :: header" />
 <body>
@@ -18,7 +17,7 @@
                     <span th:text="${exception}" class="alert alert-danger">예외가 발생했습니다.</span>
                 </div>-->
 
-                <form th:action="@{/login_proc}" class="form-signin" method="post">
+                <form th:action="@{/login_proc}" method="post">
                     <!--            <form name="frm" id="frm" action="#" method="post" onsubmit="return false" class="form-signin">-->
                     <!--                <input th:type="hidden" th:value="secret" name="secret_key">-->
                     <div class="form-group">
@@ -34,8 +33,7 @@
                     </div>
 
                     <div th:if="${param.error}" class="form-group">
-                    <span th:text="${session}"
-                          class="alert alert-danger">아이디 또는 비밀번호가 맞지 않습니다.</span>
+                        <span th:text="${session}" class="alert alert-danger">아이디 또는 비밀번호가 맞지 않습니다.</span> <br>
                     </div>
 
                     <button type="submit" class="btn btn-lg btn-primary btn-block">로그인</button> <br>

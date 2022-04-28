@@ -14,6 +14,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -46,7 +47,7 @@ public class RoomController {
     }
 
     @PostMapping("/create")
-    public String createRoom(@ModelAttribute("form") JoinForm joinForm,
+    public String createRoom(@ModelAttribute("form") @Valid JoinForm joinForm,
                              RoomDto roomDto,
                              @AuthenticationPrincipal User user) {
 
@@ -72,29 +73,67 @@ public class RoomController {
                 .stream().map(JoinDto::getUserDto).collect(Collectors.toList())
                 .stream().map(UserDto::getId).collect(Collectors.toList());
 
-        Collections.shuffle(userIdList);
-        int count = userIdList.size();
+        if (roomDto.getRoomType().equals(RoomType.LEAGUE)) {
+            // 리그
+            Collections.shuffle(userIdList);
+            int count = userIdList.size();
+            Long matchNo = 1L;
 
-        if (count % 2 == 1) {
-            for (int i = 0; i < count; i++) {
-                for (int j = 0; j < count/2; j++) {
-                    matchService.save(roomId, userIdList.get((i + j) % count),
-                            userIdList.get((i + count - j - 2) % count));
+            if (count % 2 == 1) {
+                for (int i = 0; i < count; i++) {
+                    for (int j = 0; j < count/2; j++) {
+                        matchService.save(roomId, userIdList.get((i + j) % count),
+                                userIdList.get((i + count - j - 2) % count), matchNo);
+                        matchNo++;
+                    }
+                }
+            }
+            else {
+                Long fixed = userIdList.remove(0);
+                for (int i = 0; i < count - 1; i++) {
+                    for (int j = 0; j < count/2 - 1; j++) {
+                        matchService.save(roomId, userIdList.get((i + j) % (count - 1)),
+                                userIdList.get((i + count - j - 2) % (count - 1)), matchNo);
+                        matchNo++;
+                    }
+                    matchService.save(roomId, userIdList.get((i + count/2 - 1) % (count - 1)), fixed, matchNo);
+                    matchNo++;
                 }
             }
         }
-        else {
-            Long fixed = userIdList.remove(0);
-            for (int i = 0; i < count - 1; i++) {
-                for (int j = 0; j < count/2 - 1; j++) {
-                    matchService.save(roomId, userIdList.get((i + j) % (count - 1)),
-                            userIdList.get((i + count - j - 2) % (count - 1)));
+        else if (roomDto.getRoomType().equals(RoomType.TOURNAMENT)) {
+            // 토너먼트
+            Collections.shuffle(userIdList);
+            int count = userIdList.size();
+            Long matchNo = 1L;
+
+            int cnt = count;
+            while (cnt > 0) {
+                for (int i = 0; i < cnt / 2; i++) {
+                    matchService.save(roomId, userIdList.get(i * 2), userIdList.get(i * 2 + 1), matchNo);
                 }
-                matchService.save(roomId, userIdList.get((i + count/2 - 1) % (count - 1)), fixed);
+                cnt = cnt / 2 + cnt % 2;
             }
+
+            /*if (count % 2 == 1) {
+                for (int i = 0; i < count; i++) {
+                    for (int j = 0; j < count/2; j++) {
+                        matchService.save(roomId, userIdList.get((i + j) % count),
+                                userIdList.get((i + count - j - 2) % count));
+                    }
+                }
+            }
+            else {
+                Long fixed = userIdList.remove(0);
+                for (int i = 0; i < count - 1; i++) {
+                    for (int j = 0; j < count/2 - 1; j++) {
+                        matchService.save(roomId, userIdList.get((i + j) % (count - 1)),
+                                userIdList.get((i + count - j - 2) % (count - 1)));
+                    }
+                    matchService.save(roomId, userIdList.get((i + count/2 - 1) % (count - 1)), fixed);
+                }
+            }*/
         }
-
-
         return "redirect:/room/list";
     }
 

@@ -37,14 +37,18 @@ public class Match {
     @Column(nullable = false, name = "match_status")
     private MatchStatus matchStatus;
 
+    @Column(name = "match_no")
+    private Long matchNo;
+
     @Builder
-    public Match(Long id, Room room, User user1, User user2, Score score, MatchStatus matchStatus) {
+    public Match(Long id, Room room, User user1, User user2, Score score, MatchStatus matchStatus, Long matchNo) {
         this.id = id;
         this.room = room;
         this.user1 = user1;
         this.user2 = user2;
         this.score = score;
         this.matchStatus = matchStatus;
+        this.matchNo = matchNo;
     }
 
     public MatchDto toDto() {
@@ -55,6 +59,7 @@ public class Match {
                 .user2Dto(user2.toDto())
                 .matchStatus(matchStatus)
                 .score(score)
+                .matchNo(matchNo)
                 .build();
     }
 

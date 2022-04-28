@@ -20,7 +20,7 @@ public class UserDto {
     private String password;
     private String name;
     private UserRole role;
-    private List<JoinDto> joinDtos;
+//    private List<JoinDto> joinDtos;
 
     public User toEntity() {
         return User.builder()
@@ -29,7 +29,7 @@ public class UserDto {
                 .password(password)
                 .name(name)
                 .role(role)
-                .joins(joinDtos.stream().map(JoinDto::toEntity).collect(Collectors.toList()))
+//                .joins(joinDtos.stream().map(JoinDto::toEntity).collect(Collectors.toList()))
                 .build();
     }
 }

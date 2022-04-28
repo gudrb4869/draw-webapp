@@ -18,6 +18,7 @@ public class MatchDto {
     private UserDto user2Dto;
     private Score score;
     private MatchStatus matchStatus;
+    private Long matchNo;
 
     public Match toEntity() {
         return Match.builder()
@@ -27,6 +28,7 @@ public class MatchDto {
                 .user2(user2Dto.toEntity())
                 .score(score)
                 .matchStatus(matchStatus)
+                .matchNo(matchNo)
                 .build();
     }
 }

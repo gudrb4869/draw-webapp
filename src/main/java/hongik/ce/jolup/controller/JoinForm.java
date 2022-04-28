@@ -1,6 +1,7 @@
 package hongik.ce.jolup.controller;
 
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 
@@ -9,7 +10,7 @@ import java.util.List;
 
 @Getter
 @Setter
-@ToString
+@NoArgsConstructor
 public class JoinForm {
     private List<String> emails = new ArrayList<>();
 

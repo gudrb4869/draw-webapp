@@ -46,17 +46,16 @@ public class User extends Time implements UserDetails {
     @Enumerated(EnumType.STRING)
     private UserRole role;
 
-    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
     private List<Join> joins = new ArrayList<>();
 
     @Builder
-    public User(Long id, String email, String password, String name, UserRole role, List<Join> joins) {
+    public User(Long id, String email, String password, String name, UserRole role) {
         this.id = id;
         this.email = email;
         this.password = password;
         this.name = name;
         this.role = role;
-        this.joins = joins;
     }
 
     public UserDto toDto() {
@@ -66,7 +65,7 @@ public class User extends Time implements UserDetails {
                 .password(password)
                 .name(name)
                 .role(role)
-                .joinDtos(joins.stream().map(Join::toDto).collect(Collectors.toList()))
+//                .joinDtos(joins.stream().map(Join::toDto).collect(Collectors.toList()))
                 .build();
     }
 

@@ -15,6 +15,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
 @Service
@@ -34,39 +35,31 @@ public class JoinService {
         RoomDto roomDto = roomService.findRoom(roomId);
 
         Join join = Join.builder()
+                .user(userDto.toEntity())
+                .room(roomDto.toEntity())
                 .result(Result.builder().plays(0).win(0).draw(0)
                         .lose(0).goalFor(0).goalAgainst(0)
                         .goalDifference(0).points(0).build())
                 .build();
-        join.setUser(userDto.toEntity());
-        join.setRoom(roomDto.toEntity());
+        /*join.setUser(userDto.toEntity());
+        join.setRoom(roomDto.toEntity());*/
         joinRepository.save(join);
         return join.getId();
     }
 
-    public List<JoinDto> findJoins(List<Join> joins) {
-        List<JoinDto> joinDtos = new ArrayList<>();
-        for(Join join : joins) {
-            joinDtos.add(join.toDto());
-        }
-        return joinDtos;
-    }
-
     public List<JoinDto> findByUser(User user) {
         List<Join> joins = joinRepository.findByUser(user);
-        List<JoinDto> joinDtos = new ArrayList<>();
-        for (Join join : joins) {
-            joinDtos.add(join.toDto());
-        }
+        List<JoinDto> joinDtos = joins.stream()
+                .map(Join::toDto)
+                .collect(Collectors.toList());
         return joinDtos;
     }
 
     public List<JoinDto> findByRoom(RoomDto roomDto) {
         List<Join> joins = joinRepository.findByRoom(roomDto.toEntity());
-        List<JoinDto> joinDtos = new ArrayList<>();
-        for (Join join : joins) {
-            joinDtos.add(join.toDto());
-        }
+        List<JoinDto> joinDtos = joins.stream()
+                .map(Join::toDto)
+                .collect(Collectors.toList());
         return joinDtos;
     }
 
@@ -80,7 +73,11 @@ public class JoinService {
     }
 
     public List<JoinDto> findByRoomSort(RoomDto roomDto) {
-        return findJoins(joinRepository.findByRoomSort(roomDto.toEntity()));
+        List<Join> joins = joinRepository.findByRoomSort(roomDto.toEntity());
+        List<JoinDto> joinDtos = joins.stream()
+                .map(Join::toDto)
+                .collect(Collectors.toList());
+        return joinDtos;
     }
 
     public void delete(Long id) {

@@ -17,6 +17,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
 @Service
@@ -30,7 +31,7 @@ public class MatchService {
         return matchRepository.save(match).getId();
     }
 
-    public Long save(Long roomId, Long user1Id, Long user2Id) {
+    public Long save(Long roomId, Long user1Id, Long user2Id, Long matchNo) {
         if (user1Id == user2Id) {
             return null;
         }
@@ -57,6 +58,7 @@ public class MatchService {
                 .user2(optionalUser2.get())
                 .score(score)
                 .matchStatus(MatchStatus.READY)
+                .matchNo(matchNo)
                 .build();
         matchRepository.save(match);
         return match.getId();
@@ -64,18 +66,9 @@ public class MatchService {
 
     public List<MatchDto> findByRoom(RoomDto roomDto) {
         List<Match> matches = matchRepository.findByRoom(roomDto.toEntity());
-        List<MatchDto> matchDtos = new ArrayList<>();
-
-        for (Match match : matches) {
-            matchDtos.add(MatchDto.builder()
-                    .id(match.getId())
-                    .roomDto(match.getRoom().toDto())
-                    .user1Dto(match.getUser1().toDto())
-                    .user2Dto(match.getUser2().toDto())
-                    .score(match.getScore())
-                    .matchStatus(match.getMatchStatus())
-                    .build());
-        }
+        List<MatchDto> matchDtos = matches.stream()
+                .map(Match::toDto)
+                .collect(Collectors.toList());
         return matchDtos;
     }
 

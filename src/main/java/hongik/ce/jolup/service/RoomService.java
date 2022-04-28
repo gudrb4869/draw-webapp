@@ -10,6 +10,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
 @Service
@@ -27,10 +28,9 @@ public class RoomService {
 
     public List<RoomDto> findAll() {
         List<Room> rooms = roomRepository.findAll();
-        List<RoomDto> roomDtos = new ArrayList<>();
-        for (Room room : rooms) {
-            roomDtos.add(room.toDto());
-        }
+        List<RoomDto> roomDtos = rooms.stream()
+                .map(Room::toDto)
+                .collect(Collectors.toList());
         return roomDtos;
     }
 

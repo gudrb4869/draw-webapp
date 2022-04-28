@@ -16,6 +16,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
 @Service
@@ -51,10 +52,9 @@ public class UserService implements UserDetailsService {
 
     public List<UserDto> findAll() {
         List<User> users = userRepository.findAll();
-        List<UserDto> userDtos = new ArrayList<>();
-        for (User user : users) {
-            userDtos.add(user.toDto());
-        }
+        List<UserDto> userDtos = users.stream()
+                .map(User::toDto)
+                .collect(Collectors.toList());
         return userDtos;
     }
 
