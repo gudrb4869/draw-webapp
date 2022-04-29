@@ -7,7 +7,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -19,7 +18,7 @@ public class RoomService {
 
     private final RoomRepository roomRepository;
 
-    public Long save(RoomDto roomDto) {
+    public Long saveRoom(RoomDto roomDto) {
         return roomRepository.save(Room.builder()
                 .title(roomDto.getTitle())
                 .roomType(roomDto.getRoomType())
@@ -34,7 +33,7 @@ public class RoomService {
         return roomDtos;
     }
 
-    public RoomDto findRoom(Long roomId) {
+    public RoomDto getRoom(Long roomId) {
         Optional<Room> roomWrapper = roomRepository.findById(roomId);
         if (roomWrapper.isEmpty()) {
             return null;
@@ -44,7 +43,7 @@ public class RoomService {
         return roomDto;
     }
 
-    public void delete(Long id) {
+    public void deleteRoom(Long id) {
         roomRepository.deleteById(id);
     }
 }

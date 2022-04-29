@@ -12,7 +12,6 @@ import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -33,22 +32,16 @@ public class UserController {
     }
 
     @PostMapping("/signup")
-    public /*ModelAndView*/ String signup(@Valid UserForm userForm, BindingResult result, ModelAndView modelAndView) {
+    public /*ModelAndView*/ String signup(@Valid UserForm userForm, BindingResult result) {
 
         if (result.hasErrors()) {
-            /*modelAndView.setViewName("signup");
-            return modelAndView;*/
             return "signup";
         }
         UserDto userDto = UserDto.builder()
                 .email(userForm.getEmail())
                 .password(userForm.getPassword())
                 .name(userForm.getName()).build();
-        userService.save(userDto);
-
-        /*modelAndView.addObject("data", new Message("회원가입이 완료되었습니다.", "/"));
-        modelAndView.setViewName("message");
-        return modelAndView;*/
+        userService.saveUser(userDto);
         return "redirect:/";
     }
 

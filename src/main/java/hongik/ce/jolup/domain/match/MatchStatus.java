@@ -6,7 +6,7 @@ import lombok.RequiredArgsConstructor;
 @Getter
 @RequiredArgsConstructor
 public enum MatchStatus {
-    READY("준비중"),
+    READY("준비"),
     END("종료");
 
     private final String description;

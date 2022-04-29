@@ -1,6 +1,8 @@
 package hongik.ce.jolup.controller;
 
-import hongik.ce.jolup.domain.join.Join;
+import hongik.ce.jolup.domain.match.MatchStatus;
+import hongik.ce.jolup.domain.result.Result;
+import hongik.ce.jolup.domain.score.Score;
 import hongik.ce.jolup.domain.user.User;
 import hongik.ce.jolup.domain.room.RoomType;
 import hongik.ce.jolup.dto.JoinDto;
@@ -12,13 +14,12 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
@@ -32,49 +33,76 @@ public class RoomController {
     private final MatchService matchService;
 
     @GetMapping("/create")
-    public String createRoom(@RequestParam(value = "count", defaultValue = "2") Integer count,
+    public String createRoom(@RequestParam(value = "title", defaultValue = "") String title,
+                             @RequestParam(value = "roomType", defaultValue = "LEAGUE") RoomType roomType,
+                             @RequestParam(value = "memNum", defaultValue = "2") Long memNum,
+//                             @RequestParam(value = "emails") List<String> emails,
                              Model model) {
-        JoinForm joinForm = new JoinForm();
-
-        for (int i = 0; i < count; i++) {
-            joinForm.addEmail(new String());
+        RoomForm roomForm = new RoomForm();
+        roomForm.setTitle(title);
+        roomForm.setRoomType(roomType);
+        roomForm.setMemNum(memNum);
+        for (int i = 0; i < memNum; i++) {
+            roomForm.addEmail(new String());
         }
 
-        model.addAttribute("form", joinForm);
+        model.addAttribute("form", roomForm);
         model.addAttribute("roomTypes", RoomType.values());
-        model.addAttribute("count", count);
         return "room/create";
     }
 
     @PostMapping("/create")
-    public String createRoom(@ModelAttribute("form") @Valid JoinForm joinForm,
-                             RoomDto roomDto,
-                             @AuthenticationPrincipal User user) {
+    public String createRoom(@ModelAttribute("form") @Valid RoomForm roomForm,
+                             BindingResult bindingResult,
+                             @AuthenticationPrincipal User user,
+                             Model model) {
 
-        if (joinForm.getEmails().size() != joinForm.getEmails().stream().distinct().count()) {
-            return "redirect:/room/create";
+        if (bindingResult.hasErrors()) {
+            model.addAttribute("roomTypes", RoomType.values());
+            return "room/create";
         }
 
-        for(String email : joinForm.getEmails()) {
+        for(String email : roomForm.getEmails()) {
             UserDto userDto = userService.findOne(email);
             if (userDto == null) {
-                throw new IllegalStateException("존재하지 않는 아이디입니다!");
+                model.addAttribute("data", new Message("존재하지 않는 ID입니다!", "/room/create"));
+                return "message";
             }
         }
 
-        Long roomId = roomService.save(roomDto);
-
-        for(String email : joinForm.getEmails()) {
-            UserDto userDto = userService.findOne(email);
-            joinService.save(userDto.getId(), roomId);
+        if (roomForm.getEmails().size() != roomForm.getEmails().stream().distinct().count()) {
+            model.addAttribute("data", new Message("동일한 ID를 입력하실 수 없습니다!", "/room/create"));
+            return "message";
         }
 
-        List<Long> userIdList = joinService.findByRoom(roomService.findRoom(roomId))
-                .stream().map(JoinDto::getUserDto).collect(Collectors.toList())
-                .stream().map(UserDto::getId).collect(Collectors.toList());
+        if (roomForm.getRoomType().equals(RoomType.TOURNAMENT) && (roomForm.getMemNum() & (roomForm.getMemNum() - 1)) != 0) {
+            model.addAttribute("data", new Message("인원수가 올바르지 않습니다!", "/room/create"));
+            return "message";
+        }
+
+        RoomDto roomRequestDto = RoomDto.builder()
+                .title(roomForm.getTitle())
+                .roomType(roomForm.getRoomType())
+                .memNum(roomForm.getMemNum()).build();
+        Long roomId = roomService.saveRoom(roomRequestDto);
+
+        RoomDto roomDto = roomService.getRoom(roomId);
+
+        for(String email : roomForm.getEmails()) {
+            UserDto userDto = userService.findOne(email);
+            JoinDto joinDto = JoinDto.builder()
+                    .userDto(userDto)
+                    .roomDto(roomDto)
+                    .result(Result.builder().plays(0).win(0).draw(0).lose(0).goalFor(0)
+                            .goalAgainst(0).goalDifference(0).points(0).build())
+                    .build();
+            joinService.saveJoin(joinDto);
+        }
+
+        List<UserDto> userIdList = joinService.findByRoom(roomDto)
+                .stream().map(JoinDto::getUserDto).collect(Collectors.toList());
 
         if (roomDto.getRoomType().equals(RoomType.LEAGUE)) {
-            // 리그
             Collections.shuffle(userIdList);
             int count = userIdList.size();
             Long matchNo = 1L;
@@ -82,58 +110,57 @@ public class RoomController {
             if (count % 2 == 1) {
                 for (int i = 0; i < count; i++) {
                     for (int j = 0; j < count/2; j++) {
-                        matchService.save(roomId, userIdList.get((i + j) % count),
-                                userIdList.get((i + count - j - 2) % count), matchNo);
+                        MatchDto matchDto = MatchDto.builder().roomDto(roomDto)
+                                .user1Dto(userIdList.get((i + j) % count))
+                                .user2Dto(userIdList.get((i + count - j - 2) % count))
+                                .matchStatus(MatchStatus.READY)
+                                .matchNo(matchNo)
+                                .score(Score.builder().user1Score(0).user2Score(0).build()).build();
+                        matchService.saveMatch(matchDto);
                         matchNo++;
                     }
                 }
             }
             else {
-                Long fixed = userIdList.remove(0);
+                UserDto fixed = userIdList.remove(0);
                 for (int i = 0; i < count - 1; i++) {
                     for (int j = 0; j < count/2 - 1; j++) {
-                        matchService.save(roomId, userIdList.get((i + j) % (count - 1)),
-                                userIdList.get((i + count - j - 2) % (count - 1)), matchNo);
+                        MatchDto matchDto = MatchDto.builder().roomDto(roomDto)
+                                .user1Dto(userIdList.get((i + j) % (count - 1)))
+                                .user2Dto(userIdList.get((i + count - j - 2) % (count - 1)))
+                                .matchStatus(MatchStatus.READY)
+                                .matchNo(matchNo)
+                                .score(Score.builder().user1Score(0).user2Score(0).build()).build();
+                        matchService.saveMatch(matchDto);
                         matchNo++;
                     }
-                    matchService.save(roomId, userIdList.get((i + count/2 - 1) % (count - 1)), fixed, matchNo);
+                    MatchDto matchDto = MatchDto.builder().roomDto(roomDto)
+                            .user1Dto(userIdList.get((i + count/2 - 1) % (count - 1)))
+                            .user2Dto(fixed)
+                            .matchStatus(MatchStatus.READY)
+                            .matchNo(matchNo)
+                            .score(Score.builder().user1Score(0).user2Score(0).build()).build();
+                    matchService.saveMatch(matchDto);
                     matchNo++;
                 }
             }
         }
-        else if (roomDto.getRoomType().equals(RoomType.TOURNAMENT)) {
+        /*else if (roomDto.getRoomType().equals(RoomType.TOURNAMENT)) {
             // 토너먼트
             Collections.shuffle(userIdList);
             int count = userIdList.size();
             Long matchNo = 1L;
-
+            int round = (int)Math.ceil(Math.log(count) / Math.log(2));
             int cnt = count;
-            while (cnt > 0) {
-                for (int i = 0; i < cnt / 2; i++) {
-                    matchService.save(roomId, userIdList.get(i * 2), userIdList.get(i * 2 + 1), matchNo);
+            for (int i = 0; i < round; i++) {
+                int temp = cnt / 2;
+                for (int j = 0; j < temp; j++) {
+                    matchService.save(roomId, userIdList.remove(0), userIdList.remove(0), matchNo);
+                    matchNo++;
                 }
-                cnt = cnt / 2 + cnt % 2;
+                cnt = (int)Math.ceil(cnt / 2);
             }
-
-            /*if (count % 2 == 1) {
-                for (int i = 0; i < count; i++) {
-                    for (int j = 0; j < count/2; j++) {
-                        matchService.save(roomId, userIdList.get((i + j) % count),
-                                userIdList.get((i + count - j - 2) % count));
-                    }
-                }
-            }
-            else {
-                Long fixed = userIdList.remove(0);
-                for (int i = 0; i < count - 1; i++) {
-                    for (int j = 0; j < count/2 - 1; j++) {
-                        matchService.save(roomId, userIdList.get((i + j) % (count - 1)),
-                                userIdList.get((i + count - j - 2) % (count - 1)));
-                    }
-                    matchService.save(roomId, userIdList.get((i + count/2 - 1) % (count - 1)), fixed);
-                }
-            }*/
-        }
+        }*/
         return "redirect:/room/list";
     }
 
@@ -144,23 +171,23 @@ public class RoomController {
         return "room/list";
     }
 
-    @DeleteMapping("/{no}")
-    public String deleteRoom(@PathVariable("no") Long no) {
-        List<Long> matchList = matchService.findByRoom(roomService.findRoom(no))
+    @DeleteMapping("/{roomId}")
+    public String deleteRoom(@PathVariable("roomId") Long roomId) {
+        List<Long> matchList = matchService.findByRoom(roomService.getRoom(roomId))
                 .stream().map(MatchDto::getId).collect(Collectors.toList());
-        List<Long> joinList = joinService.findByRoom(roomService.findRoom(no))
+        List<Long> joinList = joinService.findByRoom(roomService.getRoom(roomId))
                 .stream().map(JoinDto::getId).collect(Collectors.toList());
         for (Long matchId : matchList)
-            matchService.delete(matchId);
+            matchService.deleteMatch(matchId);
         for (Long joinId : joinList)
-            joinService.delete(joinId);
-        roomService.delete(no);
+            joinService.deleteJoin(joinId);
+        roomService.deleteRoom(roomId);
         return "redirect:/room/list";
     }
 
-    @GetMapping("/{no}")
-    public String detail(@PathVariable("no") Long no, Model model) {
-        RoomDto roomDto = roomService.findRoom(no);
+    @GetMapping("/{roomId}")
+    public String detail(@PathVariable("roomId") Long roomId, Model model) {
+        RoomDto roomDto = roomService.getRoom(roomId);
         if (roomDto == null) {
             return "error";
         }

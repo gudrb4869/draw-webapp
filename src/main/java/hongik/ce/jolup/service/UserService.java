@@ -12,7 +12,6 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Optional;
@@ -33,7 +32,7 @@ public class UserService implements UserDetailsService {
                 .orElseThrow(() -> new UsernameNotFoundException("Could not found : " + email));
     }
 
-    public Long save(UserDto userDto) {
+    public Long saveUser(UserDto userDto) {
         validateDuplicateUser(userDto);
 
         BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
@@ -58,7 +57,7 @@ public class UserService implements UserDetailsService {
         return userDtos;
     }
 
-    public UserDto findUser(Long userId) {
+    public UserDto getUser(Long userId) {
         Optional<User> optionalUser = userRepository.findById(userId);
         if (optionalUser.isEmpty())
             return null;
@@ -77,7 +76,7 @@ public class UserService implements UserDetailsService {
         return userDto;
     }
 
-    public void delete(Long id) {
+    public void deleteUser(Long id) {
         userRepository.deleteById(id);
     }
 

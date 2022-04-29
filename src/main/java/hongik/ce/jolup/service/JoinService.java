@@ -1,7 +1,5 @@
 package hongik.ce.jolup.service;
 
-import hongik.ce.jolup.domain.result.Result;
-import hongik.ce.jolup.domain.room.Room;
 import hongik.ce.jolup.domain.user.User;
 import hongik.ce.jolup.domain.join.Join;
 import hongik.ce.jolup.dto.JoinDto;
@@ -12,7 +10,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -26,25 +23,8 @@ public class JoinService {
     private final UserService userService;
     private final RoomService roomService;
 
-    public Long save(JoinDto joinDto) {
+    public Long saveJoin(JoinDto joinDto) {
         return joinRepository.save(joinDto.toEntity()).getId();
-    }
-
-    public Long save(Long userId, Long roomId) {
-        UserDto userDto = userService.findUser(userId);
-        RoomDto roomDto = roomService.findRoom(roomId);
-
-        Join join = Join.builder()
-                .user(userDto.toEntity())
-                .room(roomDto.toEntity())
-                .result(Result.builder().plays(0).win(0).draw(0)
-                        .lose(0).goalFor(0).goalAgainst(0)
-                        .goalDifference(0).points(0).build())
-                .build();
-        /*join.setUser(userDto.toEntity());
-        join.setRoom(roomDto.toEntity());*/
-        joinRepository.save(join);
-        return join.getId();
     }
 
     public List<JoinDto> findByUser(User user) {
@@ -63,8 +43,8 @@ public class JoinService {
         return joinDtos;
     }
 
-    public JoinDto findOne(User user, Room room) {
-        Optional<Join> optionalJoin = joinRepository.findByUserAndRoom(user, room);
+    public JoinDto findOne(UserDto userDto, RoomDto roomDto) {
+        Optional<Join> optionalJoin = joinRepository.findByUserAndRoom(userDto.toEntity(), roomDto.toEntity());
         if (optionalJoin.isEmpty())
             return null;
         Join join = optionalJoin.get();
@@ -80,7 +60,7 @@ public class JoinService {
         return joinDtos;
     }
 
-    public void delete(Long id) {
+    public void deleteJoin(Long id) {
         joinRepository.deleteById(id);
     }
 }

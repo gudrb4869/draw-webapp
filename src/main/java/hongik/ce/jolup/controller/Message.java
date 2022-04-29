@@ -1,4 +1,4 @@
-/*package hongik.ce.jolup.controller;
+package hongik.ce.jolup.controller;
 
 import lombok.*;
 
@@ -9,4 +9,4 @@ import lombok.*;
 public class Message {
     String message = "";
     String href = "";
-}*/
+}

@@ -1,10 +1,6 @@
 package hongik.ce.jolup.service;
 
 import hongik.ce.jolup.domain.match.Match;
-import hongik.ce.jolup.domain.match.MatchStatus;
-import hongik.ce.jolup.domain.score.Score;
-import hongik.ce.jolup.domain.room.Room;
-import hongik.ce.jolup.domain.user.User;
 import hongik.ce.jolup.dto.MatchDto;
 import hongik.ce.jolup.dto.RoomDto;
 import hongik.ce.jolup.repository.MatchRepository;
@@ -14,7 +10,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -27,41 +22,8 @@ public class MatchService {
     private final UserRepository userRepository;
     private final RoomRepository roomRepository;
 
-    public Long save(Match match) {
-        return matchRepository.save(match).getId();
-    }
-
-    public Long save(Long roomId, Long user1Id, Long user2Id, Long matchNo) {
-        if (user1Id == user2Id) {
-            return null;
-        }
-
-        Optional<Room> optionalRoom = roomRepository.findById(roomId);
-        Optional<User> optionalUser1 = userRepository.findById(user1Id);
-        Optional<User> optionalUser2 = userRepository.findById(user2Id);
-
-        if (optionalRoom.isEmpty()) {
-            throw new IllegalStateException("존재하지 않은 방입니다!");
-        }
-
-        if (optionalUser1.isEmpty() || optionalUser2.isEmpty()) {
-            throw new IllegalStateException("존재하지 않은 회원입니다!");
-        }
-
-        Score score = Score.builder()
-                .user1Score(0)
-                .user2Score(0).build();
-
-        Match match = Match.builder()
-                .room(optionalRoom.get())
-                .user1(optionalUser1.get())
-                .user2(optionalUser2.get())
-                .score(score)
-                .matchStatus(MatchStatus.READY)
-                .matchNo(matchNo)
-                .build();
-        matchRepository.save(match);
-        return match.getId();
+    public Long saveMatch(MatchDto matchDto) {
+        return matchRepository.save(matchDto.toEntity()).getId();
     }
 
     public List<MatchDto> findByRoom(RoomDto roomDto) {
@@ -72,7 +34,7 @@ public class MatchService {
         return matchDtos;
     }
 
-    public MatchDto findById(Long id) {
+    public MatchDto getMatch(Long id) {
         Optional<Match> matchWrapper = matchRepository.findById(id);
         if (matchWrapper.isEmpty()) {
             return null;
@@ -82,7 +44,7 @@ public class MatchService {
         return matchDto;
     }
 
-    public void delete(Long id) {
+    public void deleteMatch(Long id) {
         matchRepository.deleteById(id);
     }
 

@@ -22,7 +22,7 @@
             </thead>
             <tbody>
             <tr th:if="${joins.isEmpty()}">
-                <td colspan="5">No Rooms Available</td>
+                <td colspan="5">참여중인 대회가 없습니다!</td>
             </tr>
             <tr th:each="join, i : ${joins}">
                 <td th:text="${i.index+1}"></td>
@@ -33,13 +33,11 @@
                 <td th:text="${join.getRoomDto().getRoomType().getDescription()}"></td>
                 <td th:text="${join.getRoomDto().getMemNum()}"></td>
                 <td>
-                    <div>
-                        <a th:href="'/room/'+${join.getRoomDto().getId()}">
-                            <button class="btn btn-primary">보기</button>
-                        </a>
-                        <form id="delete-form" th:action="@{'/room/' + ${join.getRoomDto().getId()}}" method="post">
+                    <div class="container">
+                        <form class="form-check-inline m y-2 my-lg-0" th:action="@{'/room/' + ${join.getRoomDto().getId()}}" method="post">
+                            <a class="btn btn-primary my-2 my-sm-0" th:href="'/room/'+${join.getRoomDto().getId()}">조회</a>
                             <input type="hidden" name="_method" value="delete"/>
-                            <button class="btn btn-warning" id="delete-btn">삭제</button>
+                            <button class="btn btn-danger my-2 my-sm-0" type="submit">삭제</button>
                         </form>
                     </div>
                 </td>
