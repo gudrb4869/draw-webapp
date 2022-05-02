@@ -27,8 +27,8 @@ public class JoinService {
         return joinRepository.save(joinDto.toEntity()).getId();
     }
 
-    public List<JoinDto> findByUser(User user) {
-        List<Join> joins = joinRepository.findByUser(user);
+    public List<JoinDto> findByUser(UserDto userDto) {
+        List<Join> joins = joinRepository.findByUser(userDto.toEntity());
         List<JoinDto> joinDtos = joins.stream()
                 .map(Join::toDto)
                 .collect(Collectors.toList());

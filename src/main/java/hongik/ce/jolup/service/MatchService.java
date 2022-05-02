@@ -44,6 +44,16 @@ public class MatchService {
         return matchDto;
     }
 
+    public MatchDto findOne(RoomDto roomDto, Long roundNo, Long matchNo) {
+        Optional<Match> optionalMatch = matchRepository.findByRoomAndRoundNoAndMatchNo(roomDto.toEntity(), roundNo, matchNo);
+        if (optionalMatch.isEmpty()) {
+            return null;
+        }
+        Match match = optionalMatch.get();
+        MatchDto matchDto = match.toDto();
+        return matchDto;
+    }
+
     public void deleteMatch(Long id) {
         matchRepository.deleteById(id);
     }

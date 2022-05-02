@@ -16,11 +16,10 @@
                     <th></th>
                     <th></th>
                     <th> 어웨이 </th>
-<!--                    <th></th>-->
                 </tr>
                 </thead>
                 <tbody>
-                <td th:text="${matchDto.getUser1Dto().getEmail() + '('+ matchDto.getUser1Dto().getName() + ')'}"></td>
+                <td th:text="${matchDto.getUser1Dto() == null} ? 'null': ${matchDto.getUser1Dto().getEmail() + '('+ matchDto.getUser1Dto().getName() + ')'}"></td>
                 <td>
                     <input type="number" class="form-control input-large" min="0" max="100" th:default="${scoreDto.getUser1Score()}"
                            name="user1Score" th:value="${scoreDto.user1Score}" required="required">
@@ -30,17 +29,7 @@
                     <input type="number" class="form-control input-large" min="0" max="100" th:default="${scoreDto.getUser2Score()}"
                            name="user2Score"th:value="${scoreDto.user2Score}" required="required">
                 </td>
-                <td th:text="${matchDto.getUser2Dto().getEmail() + '('+ matchDto.getUser2Dto().getName() + ')'}"></td>
-                <!--<td>
-                    <div class="form-group">
-                        <div class="col-sm-10">
-                            <select th:name="matchStatus">
-                                <option th:each="matchStatus : ${matchStatuses}" th:value="${matchStatus}"
-                                        th:text="${matchStatus.getDescription()}"></option> <br>
-                            </select> <br>
-                        </div>
-                    </div>
-                </td>-->
+                <td th:text="${matchDto.getUser1Dto() == null} ? 'null': ${matchDto.getUser2Dto().getEmail() + '('+ matchDto.getUser2Dto().getName() + ')'}"></td>
                 </tr>
                 </tbody>
             </table>

@@ -17,6 +17,7 @@ import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 import java.util.Collections;
 import java.util.List;
@@ -99,22 +100,24 @@ public class RoomController {
             joinService.saveJoin(joinDto);
         }
 
-        List<UserDto> userIdList = joinService.findByRoom(roomDto)
+        List<UserDto> userDtoList = joinService.findByRoom(roomDto)
                 .stream().map(JoinDto::getUserDto).collect(Collectors.toList());
 
         if (roomDto.getRoomType().equals(RoomType.LEAGUE)) {
-            Collections.shuffle(userIdList);
-            int count = userIdList.size();
-            Long matchNo = 1L;
+            // 리그
+            Collections.shuffle(userDtoList);
+            int count = userDtoList.size();
 
             if (count % 2 == 1) {
                 for (int i = 0; i < count; i++) {
+                    Long matchNo = 1L;
                     for (int j = 0; j < count/2; j++) {
                         MatchDto matchDto = MatchDto.builder().roomDto(roomDto)
-                                .user1Dto(userIdList.get((i + j) % count))
-                                .user2Dto(userIdList.get((i + count - j - 2) % count))
+                                .user1Dto(userDtoList.get((i + j) % count))
+                                .user2Dto(userDtoList.get((i + count - j - 2) % count))
                                 .matchStatus(MatchStatus.READY)
                                 .matchNo(matchNo)
+                                .roundNo(i + 1L)
                                 .score(Score.builder().user1Score(0).user2Score(0).build()).build();
                         matchService.saveMatch(matchDto);
                         matchNo++;
@@ -122,51 +125,86 @@ public class RoomController {
                 }
             }
             else {
-                UserDto fixed = userIdList.remove(0);
+                UserDto fixed = userDtoList.remove(0);
                 for (int i = 0; i < count - 1; i++) {
+                    Long matchNo = 1L;
                     for (int j = 0; j < count/2 - 1; j++) {
                         MatchDto matchDto = MatchDto.builder().roomDto(roomDto)
-                                .user1Dto(userIdList.get((i + j) % (count - 1)))
-                                .user2Dto(userIdList.get((i + count - j - 2) % (count - 1)))
+                                .user1Dto(userDtoList.get((i + j) % (count - 1)))
+                                .user2Dto(userDtoList.get((i + count - j - 2) % (count - 1)))
                                 .matchStatus(MatchStatus.READY)
                                 .matchNo(matchNo)
+                                .roundNo(i + 1L)
                                 .score(Score.builder().user1Score(0).user2Score(0).build()).build();
                         matchService.saveMatch(matchDto);
                         matchNo++;
                     }
                     MatchDto matchDto = MatchDto.builder().roomDto(roomDto)
-                            .user1Dto(userIdList.get((i + count/2 - 1) % (count - 1)))
+                            .user1Dto(userDtoList.get((i + count/2 - 1) % (count - 1)))
                             .user2Dto(fixed)
                             .matchStatus(MatchStatus.READY)
                             .matchNo(matchNo)
+                            .roundNo(i + 1L)
                             .score(Score.builder().user1Score(0).user2Score(0).build()).build();
                     matchService.saveMatch(matchDto);
                     matchNo++;
                 }
             }
         }
-        /*else if (roomDto.getRoomType().equals(RoomType.TOURNAMENT)) {
+        else if (roomDto.getRoomType().equals(RoomType.TOURNAMENT)) {
             // 토너먼트
-            Collections.shuffle(userIdList);
-            int count = userIdList.size();
-            Long matchNo = 1L;
+            Collections.shuffle(userDtoList);
+            int count = userDtoList.size();
+            /*Long matchNo = 1L;
+            for (int i = 0; i < count / 2; i++) {
+                MatchDto matchDto = MatchDto.builder().roomDto(roomDto)
+                        .user1Dto(userDtoList.remove(0))
+                        .user2Dto(userDtoList.remove(0))
+                        .matchStatus(MatchStatus.READY)
+                        .matchNo(matchNo)
+                        .roundNo(i + 1L)
+                        .score(Score.builder().user1Score(0).user2Score(0).build()).build();
+                matchService.saveMatch(matchDto);
+                matchNo++;
+            }*/
             int round = (int)Math.ceil(Math.log(count) / Math.log(2));
             int cnt = count;
             for (int i = 0; i < round; i++) {
+                Long matchNo = 1L;
                 int temp = cnt / 2;
                 for (int j = 0; j < temp; j++) {
-                    matchService.save(roomId, userIdList.remove(0), userIdList.remove(0), matchNo);
-                    matchNo++;
+                    if (userDtoList.size() >= 2) {
+                        MatchDto matchDto = MatchDto.builder().roomDto(roomDto)
+                                .user1Dto(userDtoList.remove(0))
+                                .user2Dto(userDtoList.remove(0))
+                                .matchStatus(MatchStatus.READY)
+                                .matchNo(matchNo)
+                                .roundNo(i + 1L)
+                                .score(Score.builder().user1Score(0).user2Score(0).build()).build();
+                        matchService.saveMatch(matchDto);
+                        matchNo++;
+                    }
+                    else {
+                        MatchDto matchDto = MatchDto.builder().roomDto(roomDto)
+                                .user1Dto(null)
+                                .user2Dto(null)
+                                .matchStatus(MatchStatus.READY)
+                                .matchNo(matchNo)
+                                .roundNo(i + 1L)
+                                .score(Score.builder().user1Score(0).user2Score(0).build()).build();
+                        matchService.saveMatch(matchDto);
+                        matchNo++;
+                    }
                 }
                 cnt = (int)Math.ceil(cnt / 2);
             }
-        }*/
+        }
         return "redirect:/room/list";
     }
 
     @GetMapping({"", "/list"})
     public String myRoomList(Model model, @AuthenticationPrincipal User user) {
-        List<JoinDto> joins = joinService.findByUser(user);
+        List<JoinDto> joins = joinService.findByUser(user.toDto());
         model.addAttribute("joins", joins);
         return "room/list";
     }
@@ -186,16 +224,28 @@ public class RoomController {
     }
 
     @GetMapping("/{roomId}")
-    public String detail(@PathVariable("roomId") Long roomId, Model model) {
+    public String detail(@PathVariable("roomId") Long roomId, Model model, @AuthenticationPrincipal User user) {
         RoomDto roomDto = roomService.getRoom(roomId);
         if (roomDto == null) {
             return "error";
         }
+
+        List<Long> list = joinService.findByRoom(roomDto).stream().map(JoinDto::getUserDto).map(UserDto::getId).collect(Collectors.toList());
+        if (!list.contains(user.toDto().getId())) {
+            return "error";
+        }
+
         List<MatchDto> matchDtos = matchService.findByRoom(roomDto);
         List<JoinDto> joinDtos = joinService.findByRoomSort(roomDto);
         model.addAttribute("joinDtos", joinDtos);
         model.addAttribute("roomDto", roomDto);
         model.addAttribute("matchDtos", matchDtos);
-        return "room/detail";
+        if (roomDto.getRoomType().equals(RoomType.LEAGUE)) {
+            return "/room/league";
+        }
+        else if (roomDto.getRoomType().equals(RoomType.TOURNAMENT)) {
+            return "/room/tournament";
+        }
+        return "error";
     }
 }
