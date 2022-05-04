@@ -37,22 +37,22 @@ public class Match {
     @Column(nullable = false, name = "match_status")
     private MatchStatus matchStatus;
 
-    @Column(name = "match_no")
+    @Column(name = "round_no", nullable = false)
+    private Integer roundNo;
+
+    @Column(name = "match_no", nullable = false)
     private Long matchNo;
 
-    @Column(name = "round_no")
-    private Long roundNo;
-
     @Builder
-    public Match(Long id, Room room, User user1, User user2, Score score, MatchStatus matchStatus, Long matchNo, Long roundNo) {
+    public Match(Long id, Room room, User user1, User user2, Score score, MatchStatus matchStatus, Integer roundNo, Long matchNo) {
         this.id = id;
         this.room = room;
         this.user1 = user1;
         this.user2 = user2;
         this.score = score;
         this.matchStatus = matchStatus;
-        this.matchNo = matchNo;
         this.roundNo = roundNo;
+        this.matchNo = matchNo;
     }
 
     public MatchDto toDto() {
@@ -63,8 +63,8 @@ public class Match {
                 .user2Dto(user2==null?null:user2.toDto())
                 .matchStatus(matchStatus)
                 .score(score)
-                .matchNo(matchNo)
                 .roundNo(roundNo)
+                .matchNo(matchNo)
                 .build();
     }
 

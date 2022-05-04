@@ -12,5 +12,5 @@ public interface MatchRepository extends JpaRepository<Match, Long> {
     List<Match> findByRoom(Room room);
     List<Match> findByUser1(User user1);
     List<Match> findByUser2(User user2);
-    Optional<Match> findByRoomAndRoundNoAndMatchNo(Room room, Long roundNo, Long matchNo);
+    Optional<Match> findByRoomAndRoundNoAndMatchNo(Room room, Integer roundNo, Long matchNo);
 }

@@ -44,7 +44,7 @@ public class MatchService {
         return matchDto;
     }
 
-    public MatchDto findOne(RoomDto roomDto, Long roundNo, Long matchNo) {
+    public MatchDto findOne(RoomDto roomDto, Integer roundNo, Long matchNo) {
         Optional<Match> optionalMatch = matchRepository.findByRoomAndRoundNoAndMatchNo(roomDto.toEntity(), roundNo, matchNo);
         if (optionalMatch.isEmpty()) {
             return null;

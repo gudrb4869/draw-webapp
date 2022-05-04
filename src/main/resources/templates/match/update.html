@@ -29,7 +29,7 @@
                     <input type="number" class="form-control input-large" min="0" max="100" th:default="${scoreDto.getUser2Score()}"
                            name="user2Score"th:value="${scoreDto.user2Score}" required="required">
                 </td>
-                <td th:text="${matchDto.getUser1Dto() == null} ? 'null': ${matchDto.getUser2Dto().getEmail() + '('+ matchDto.getUser2Dto().getName() + ')'}"></td>
+                <td th:text="${matchDto.getUser2Dto() == null} ? 'null': ${matchDto.getUser2Dto().getEmail() + '('+ matchDto.getUser2Dto().getName() + ')'}"></td>
                 </tr>
                 </tbody>
             </table>

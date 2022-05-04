@@ -18,8 +18,8 @@ public class MatchDto {
     private UserDto user2Dto;
     private Score score;
     private MatchStatus matchStatus;
+    private Integer roundNo;
     private Long matchNo;
-    private Long roundNo;
 
     public Match toEntity() {
         return Match.builder()
@@ -29,8 +29,8 @@ public class MatchDto {
                 .user2(user2Dto == null ? null : user2Dto.toEntity())
                 .score(score)
                 .matchStatus(matchStatus)
-                .matchNo(matchNo)
                 .roundNo(roundNo)
+                .matchNo(matchNo)
                 .build();
     }
 }
