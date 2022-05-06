@@ -87,9 +87,9 @@ public class MatchController {
                 result1.setWin(result1.getWin() + 1);
                 result2.setLose(result2.getLose() + 1);
                 if (roomDto.getRoomType().equals(RoomType.TOURNAMENT)) {
-                    MatchDto nextMatchDto = matchService.findOne(roomDto, matchDto.getRoundNo() + 1, (long)Math.ceil(matchDto.getMatchNo() / 2.0));
+                    MatchDto nextMatchDto = matchService.findOne(roomDto, matchDto.getRoundNo() + 1, matchDto.getMatchNo() / 2);
                     if (nextMatchDto != null) {
-                        if (matchDto.getMatchNo() % 2 == 1) {
+                        if (matchDto.getMatchNo() % 2 == 0) {
                             nextMatchDto.setUser1Dto(matchDto.getUser1Dto());
                         } else {
                             nextMatchDto.setUser2Dto(matchDto.getUser1Dto());
@@ -101,9 +101,9 @@ public class MatchController {
                 result1.setLose(result1.getLose() + 1);
                 result2.setWin(result2.getWin() + 1);
                 if (roomDto.getRoomType().equals(RoomType.TOURNAMENT)) {
-                    MatchDto nextMatchDto = matchService.findOne(roomDto, matchDto.getRoundNo() + 1, (long)Math.ceil(matchDto.getMatchNo() / 2.0));
+                    MatchDto nextMatchDto = matchService.findOne(roomDto, matchDto.getRoundNo() + 1, matchDto.getMatchNo() / 2);
                     if (nextMatchDto != null) {
-                        if (matchDto.getMatchNo() % 2 == 1) {
+                        if (matchDto.getMatchNo() % 2 == 0) {
                             nextMatchDto.setUser1Dto(matchDto.getUser2Dto());
                         } else {
                             nextMatchDto.setUser2Dto(matchDto.getUser2Dto());
@@ -139,9 +139,9 @@ public class MatchController {
 
     private void resetTournamentMatch(MatchDto matchDto, RoomDto roomDto) {
         MatchDto curMatchDto = matchDto;
-        MatchDto nextMatchDto = matchService.findOne(roomDto, curMatchDto.getRoundNo() + 1, (long)Math.ceil(curMatchDto.getMatchNo() / 2.0));
+        MatchDto nextMatchDto = matchService.findOne(roomDto, curMatchDto.getRoundNo() + 1, curMatchDto.getMatchNo() / 2);
         while (nextMatchDto != null) {
-            if (curMatchDto.getMatchNo() % 2 == 1) {
+            if (curMatchDto.getMatchNo() % 2 == 0) {
                 nextMatchDto.setUser1Dto(null);
             } else {
                 nextMatchDto.setUser2Dto(null);
@@ -150,7 +150,7 @@ public class MatchController {
             nextMatchDto.setMatchStatus(MatchStatus.READY);
             matchService.saveMatch(nextMatchDto);
             curMatchDto = nextMatchDto;
-            nextMatchDto = matchService.findOne(roomDto, curMatchDto.getRoundNo() + 1, (long)Math.ceil(curMatchDto.getMatchNo() / 2.0));
+            nextMatchDto = matchService.findOne(roomDto, curMatchDto.getRoundNo() + 1, curMatchDto.getMatchNo() / 2);
         }
     }
 }

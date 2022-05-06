@@ -47,12 +47,12 @@
 <!--                <td th:text="${i.index+1}"></td>-->
                 <td th:text="${matchDto.getRoundNo()}"></td>
                 <td th:text="${matchDto.getMatchNo()}"></td>
-                <td th:text="${matchDto.getUser1Dto() == null} ? ${matchDto.getRoundNo() - 1} + '라운드 ' + ${matchDto.getMatchNo() * 2 - 1} + '경기 승자'
+                <td th:text="${matchDto.getUser1Dto() == null} ? ${matchDto.getRoundNo() - 1} + '라운드 ' + ${matchDto.getMatchNo() * 2} + '경기 승자'
                 : ${matchDto.getUser1Dto().getEmail() + '('+ matchDto.getUser1Dto().getName() + ')'}"></td>
                 <td th:text="${matchDto.getScore().getUser1Score()}"></td>
                 <td>:</td>
                 <td th:text="${matchDto.getScore().getUser2Score()}"></td>
-                <td th:text="${matchDto.getUser2Dto() == null} ? ${matchDto.getRoundNo() - 1} + '라운드' + ${matchDto.getMatchNo() * 2} + '경기 승자'
+                <td th:text="${matchDto.getUser2Dto() == null} ? ${matchDto.getRoundNo() - 1} + '라운드' + ${matchDto.getMatchNo() * 2 + 1} + '경기 승자'
                 : ${matchDto.getUser2Dto().getEmail() + '('+ matchDto.getUser2Dto().getName() + ')'}"></td>
                 <td th:text="${matchDto.getMatchStatus().getDescription()}"></td>
                 <td>

@@ -18,9 +18,7 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
@@ -112,39 +110,38 @@ public class RoomController {
             int round = count % 2 == 1 ? count : count - 1;
             if (count % 2 == 1) {
                 for (int i = 0; i < count; i++) {
-                    Long matchNo = 0L;
                     for (int j = 0; j < count/2; j++) {
                         MatchDto matchDto = MatchDto.builder().roomDto(roomDto)
                                 .user1Dto(userDtoList.get((i + j) % count))
                                 .user2Dto(userDtoList.get((i + count - j - 2) % count))
                                 .matchStatus(MatchStatus.READY)
-                                .matchNo(++matchNo)
-                                .roundNo(i + 1)
+                                .roundNo(i)
+                                .matchNo(j)
                                 .score(Score.builder().user1Score(0).user2Score(0).build()).build();
                         matchService.saveMatch(matchDto);
                     }
                 }
             }
             else {
+                int j;
                 UserDto fixed = userDtoList.remove(0);
                 for (int i = 0; i < count - 1; i++) {
-                    Long matchNo = 0L;
-                    for (int j = 0; j < count/2 - 1; j++) {
+                    for (j = 0; j < count/2 - 1; j++) {
                         MatchDto matchDto = MatchDto.builder().roomDto(roomDto)
                                 .user1Dto(userDtoList.get((i + j) % (count - 1)))
                                 .user2Dto(userDtoList.get((i + count - j - 2) % (count - 1)))
                                 .matchStatus(MatchStatus.READY)
-                                .matchNo(++matchNo)
-                                .roundNo(i + 1)
+                                .roundNo(i)
+                                .matchNo(j)
                                 .score(Score.builder().user1Score(0).user2Score(0).build()).build();
                         matchService.saveMatch(matchDto);
                     }
                     MatchDto matchDto = MatchDto.builder().roomDto(roomDto)
-                            .user1Dto(i % 2 == 0 ? userDtoList.get((i + count/2 - 1) % (count - 1)) : fixed)
-                            .user2Dto(i % 2 == 0 ? fixed : userDtoList.get((i + count/2 - 1) % (count - 1)))
+                            .user1Dto(i % 2 == 0 ? userDtoList.get((i + j) % (count - 1)) : fixed)
+                            .user2Dto(i % 2 == 0 ? fixed : userDtoList.get((i + j) % (count - 1)))
                             .matchStatus(MatchStatus.READY)
-                            .matchNo(++matchNo)
-                            .roundNo(i + 1)
+                            .roundNo(i)
+                            .matchNo(j)
                             .score(Score.builder().user1Score(0).user2Score(0).build()).build();
                     matchService.saveMatch(matchDto);
                 }
@@ -155,21 +152,37 @@ public class RoomController {
             Collections.shuffle(userDtoList);
             int count = userDtoList.size();
             int round = (int)Math.ceil(Math.log(count) / Math.log(2));
-            int match = (int)Math.pow(2, round) / 2;
+//            int round = 0;
+//            int match = 0;
+            int match = (int) Math.ceil(Math.pow(2, round - 1));
             int auto_win_num = (int)Math.pow(2, round) - count;
+
             List<UserDto> autoWinList = new ArrayList<>();
             for (int i = 0; i < auto_win_num; i++) {
                 autoWinList.add(userDtoList.remove(0));
             }
+
+            Set<Integer> set = new HashSet<>();
+            while (set.size() < auto_win_num) {
+                Double value = Math.random() * match;
+                set.add(value.intValue());
+            }
+            List<Integer> list = new ArrayList<>(set);
+            Collections.sort(list);
+
             for (int i = 0; i < round; i++) {
-                Long matchNo = 0L;
-                for (int j = 0; j < (i == 0 ? match - auto_win_num: match); j++) {
+                for (int j = 0; j < match; j++) {
+                    if (i == 0 && list.contains(j)) {
+                        continue;
+                    }
                     MatchDto matchDto = MatchDto.builder().roomDto(roomDto)
-                            .user1Dto(i == 0 ? userDtoList.remove(0) : (i > 0 && autoWinList.size() > 0 ? autoWinList.remove(0) : null))
-                            .user2Dto(i == 0 ? userDtoList.remove(0) : (i > 0 && autoWinList.size() > 0 ? autoWinList.remove(0) : null))
+                            .user1Dto(i == 0 ? userDtoList.remove(0) :
+                                    (autoWinList.size() > 0 && list.contains(j * 2) ? autoWinList.remove(0) : null))
+                            .user2Dto(i == 0 ? userDtoList.remove(0) :
+                                    (autoWinList.size() > 0 && list.contains(j * 2 + 1)? autoWinList.remove(0) : null))
                             .matchStatus(MatchStatus.READY)
-                            .matchNo(++matchNo)
-                            .roundNo(i + 1)
+                            .roundNo(i)
+                            .matchNo(j)
                             .score(Score.builder().user1Score(0).user2Score(0).build()).build();
                     matchService.saveMatch(matchDto);
                 }
@@ -218,10 +231,10 @@ public class RoomController {
         model.addAttribute("roomDto", roomDto);
         model.addAttribute("matchDtos", matchDtos);
         if (roomDto.getRoomType().equals(RoomType.LEAGUE)) {
-            return "/room/league";
+            return "room/league";
         }
         else if (roomDto.getRoomType().equals(RoomType.TOURNAMENT)) {
-            return "/room/tournament";
+            return "room/tournament";
         }
         return "error";
     }

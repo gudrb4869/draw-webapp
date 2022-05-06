@@ -41,10 +41,10 @@ public class Match {
     private Integer roundNo;
 
     @Column(name = "match_no", nullable = false)
-    private Long matchNo;
+    private Integer matchNo;
 
     @Builder
-    public Match(Long id, Room room, User user1, User user2, Score score, MatchStatus matchStatus, Integer roundNo, Long matchNo) {
+    public Match(Long id, Room room, User user1, User user2, Score score, MatchStatus matchStatus, Integer roundNo, Integer matchNo) {
         this.id = id;
         this.room = room;
         this.user1 = user1;

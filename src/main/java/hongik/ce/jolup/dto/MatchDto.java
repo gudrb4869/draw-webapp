@@ -19,7 +19,7 @@ public class MatchDto {
     private Score score;
     private MatchStatus matchStatus;
     private Integer roundNo;
-    private Long matchNo;
+    private Integer matchNo;
 
     public Match toEntity() {
         return Match.builder()
