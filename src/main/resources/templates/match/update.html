@@ -36,8 +36,8 @@
 
             <div class="form-group">
                 <div class="col-sm-offset-1 col-sm-10">
-                    <button type="submit" class="btn btn-lg btn-info" th:name="matchStatus" th:value="READY">초기화</button>
-                    <button type="submit" class="btn btn-lg btn-success" th:name="matchStatus" th:value="END">저장</button>
+                    <button type="submit" class="btn btn-info" th:name="matchStatus" th:value="READY">초기화</button>
+                    <button type="submit" class="btn btn-success" th:name="matchStatus" th:value="END">저장</button>
                     <a th:href="'/room/'+${matchDto.getRoomDto().getId()}" class="btn btn-warning">취소</a>
                 </div>
             </div>
