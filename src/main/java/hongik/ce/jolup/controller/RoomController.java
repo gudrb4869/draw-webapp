@@ -11,6 +11,7 @@ import hongik.ce.jolup.dto.UserDto;
 import hongik.ce.jolup.service.*;
 import hongik.ce.jolup.dto.RoomDto;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -21,9 +22,10 @@ import javax.validation.Valid;
 import java.util.*;
 import java.util.stream.Collectors;
 
+@Slf4j
 @RequiredArgsConstructor
 @Controller
-@RequestMapping("room")
+@RequestMapping("/room")
 public class RoomController {
 
     private final RoomService roomService;
@@ -32,18 +34,24 @@ public class RoomController {
     private final MatchService matchService;
 
     @GetMapping("/create")
-    public String createRoom(@RequestParam(value = "title", defaultValue = "") String title,
-                             @RequestParam(value = "roomType", defaultValue = "LEAGUE") RoomType roomType,
-                             @RequestParam(value = "memNum", defaultValue = "2") Long memNum,
-//                             @RequestParam(value = "emails") List<String> emails,
-                             Model model) {
+    public String createRoom(
+//            @ModelAttribute("form") RoomForm roomForm,
+            @RequestParam(value = "title", defaultValue = "") String title,
+            @RequestParam(value = "roomType", defaultValue = "LEAGUE") RoomType roomType,
+            @RequestParam(value = "memNum", defaultValue = "2") Long memNum,
+//            @RequestParam(value = "emails", defaultValue = "") String emails,
+            Model model) {
         RoomForm roomForm = new RoomForm();
         roomForm.setTitle(title);
         roomForm.setRoomType(roomType);
         roomForm.setMemNum(memNum);
+//        roomForm.addEmail(emails);
         for (int i = 0; i < memNum; i++) {
             roomForm.addEmail(new String());
         }
+        /*log.info("form.title={}", roomForm.getTitle());
+        log.info("form.roomType={}", roomForm.getRoomType());
+        log.info("form.memNum={}", roomForm.getMemNum());*/
 
         model.addAttribute("form", roomForm);
         model.addAttribute("roomTypes", RoomType.values());
@@ -189,10 +197,10 @@ public class RoomController {
                 match /= 2;
             }
         }
-        return "redirect:/room/list";
+        return "redirect:/room";
     }
 
-    @GetMapping({"", "/list"})
+    @GetMapping
     public String myRoomList(Model model, @AuthenticationPrincipal User user) {
         List<JoinDto> joins = joinService.findByUser(user.toDto());
         model.addAttribute("joins", joins);
@@ -210,7 +218,7 @@ public class RoomController {
         for (Long joinId : joinList)
             joinService.deleteJoin(joinId);
         roomService.deleteRoom(roomId);
-        return "redirect:/room/list";
+        return "redirect:/room";
     }
 
     @GetMapping("/{roomId}")

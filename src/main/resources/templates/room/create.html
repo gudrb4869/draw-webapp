@@ -23,24 +23,27 @@
 
         <div class="py-2">
             <div>대회 방식</div>
-            <select th:field="*{roomType}" class="form-select-sm">
+            <select th:field="*{roomType}" class="form-select-sm"
+                    th:onchange="|location.href='/room/create?title=' + form.title.value
+                    + '&roomType='+ this.value + '&memNum=' + form.memNum.value|">
                 <option th:each="roomType : ${roomTypes}" th:value="${roomType.name()}"
-                        th:text="${roomType.description}"></option>
+                        th:text="${roomType.description}" th:selected="${roomType == form.roomType}"></option>
             </select>
         </div>
 
         <div class="py-2">
             <div>대회 참여 인원</div>
             <select th:field="*{memNum}" class="form-select-sm"
-                    th:onchange="|location.href=('/room/create?title=' + form.title.value
-                     + '&roomType=' + form.roomType.value + '&memNum=' + this.value)|">
-                <option th:each="i : ${#numbers.sequence(2, 20)}" th:value="${i}" th:text="${i}"
-                        th:selected="${i == form.memNum}"></option> <br>
-            </select> <br>
+                    th:onchange="|location.href='/room/create?title=' + form.title.value
+                    + '&roomType='+ form.roomType.value + '&memNum=' + this.value|">
+<!--                th:onchange="|location.href='@{/room/create(title=*{title}, roomType=*{roomType}, memNum=*{memNum})}'|">-->
+                <option th:each="memNum : ${#numbers.sequence(2, 20)}" th:value="${memNum}" th:text="${memNum}"
+                        th:selected="${memNum == form.memNum}"></option>
+            </select>
         </div>
 
-        <div class="form-group">
-            <table class="table table-striped">
+        <div>
+            <table class="table">
                 <thead>
                 <tr>
                     <th>#</th>
@@ -48,21 +51,22 @@
                 </tr>
                 </thead>
                 <tbody>
-                <tr th:each="email, itemStat : *{emails}">
-                    <td th:text="'참가자' + ${itemStat.index+1}"></td>
-                    <td><input type="text" th:field="*{emails[__${itemStat.index}__]}"
-                               th:class="${#fields.hasErrors('emails[__${itemStat.index}__]')}? 'form-control fieldError': 'form-control'"/>
-                        <p th:if="${#fields.hasErrors('emails[__${itemStat.index}__]')}" th:errors="*{emails[__${itemStat.index}__]}" class="error_msg">이메일 형식이 올바르지 않음</p>
+                <tr th:each="email : *{emails}">
+                    <td th:text="'참가자' + ${emailStat.count}"></td>
+                    <td>
+                        <input type="text" th:field="*{emails[__${emailStat.index}__]}"
+                               th:class="${#fields.hasErrors('emails[__${emailStat.index}__]')}? 'form-control fieldError': 'form-control'"/>
+                        <p th:if="${#fields.hasErrors('emails[__${emailStat.index}__]')}" th:errors="*{emails[__${emailStat.index}__]}" class="error_msg">이메일 형식이 올바르지 않음</p>
                     </td>
                 </tr>
                 </tbody>
             </table>
         </div>
 
-        <div class="form-group">
-            <div class="col-sm-offset-1 col-sm-10">
-                <button type="submit" class="btn btn-primary">생성</button>
-                <a th:href="@{/room/list}" class="btn btn-warning">취소</a>
+        <div class="row">
+            <div class="col">
+                <button type="submit" class="btn btn-primary btn-lg">생성</button>
+                <a th:href="@{/room}" class="btn btn-warning btn-lg">취소</a>
             </div>
         </div>
 

@@ -23,31 +23,11 @@
     </table>
 
     <div class="my-2 my-lg-0">
-        <a th:href="@{/room/list}" class="btn btn-warning">목록</a>
+        <a th:href="@{/room}" class="btn btn-warning">목록</a>
     </div>
     <hr class="my-4">
     <h1>일정</h1>
-    <!--<table class="table table-striped">
-        <thead>
-        <tr>
-            <th colspan="9">라운드</th>
-        </tr>
-        </thead>
-        <tbody>
-        <tr th:each="r : ${#numbers.formatInteger(roomDto.getMemNum()) % 2 == 1}? ">
-            <td>
-                <table>
-                    <tr>
-                        <td>
-
-                        </td>
-                    </tr>
-                </table>
-            </td>
-        </tr>
-        </tbody>
-    </table>-->
-    <table class="table table-striped">
+    <table class="table table-bordered">
         <thead>
         <tr>
             <th>라운드</th>
@@ -63,7 +43,6 @@
         </thead>
         <tbody>
         <tr th:each="matchDto, i : ${matchDtos}">
-            <!--                <td th:text="${i.index+1}"></td>-->
             <td th:text="${matchDto.getRoundNo()}"></td>
             <td th:text="${matchDto.getMatchNo()}"></td>
             <td th:text="${matchDto.getUser1Dto().getEmail() + '('+ matchDto.getUser1Dto().getName() + ')'}"></td>
@@ -82,7 +61,7 @@
     </table>
     <hr class="my-4">
     <h1>순위</h1>
-    <table class="table table-striped">
+    <table class="table table-light">
         <thead>
         <tr>
             <th>#</th>

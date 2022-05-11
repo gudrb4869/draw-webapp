@@ -7,45 +7,44 @@
 <div class="container" style="max-width: 600px">
     <div th:replace="fragments/bodyheader" :: bodyheader />
     <div class="py-5 text-center">
-        <h1><span class="text-black mr-2 mx-2" sec:authentication="name">사용자</span>님의 대회 목록</h1>
+        <h1><span class="text-black mx-2" sec:authentication="name">사용자</span>님의 대회 목록</h1>
     </div>
     <hr class="my-4">
-    <a class="btn btn-info" th:href="@{/room/create}" role="button" style="float:right;">대회 만들기</a> <br>
-    <table class="table table-striped">
-        <thead>
-        <tr>
-            <th>구분</th>
-            <!--                <th>방id</th>-->
-            <th>제목</th>
-            <th>타입</th>
-            <th>참여인원수</th>
-            <th></th>
-        </tr>
-        </thead>
-        <tbody>
-        <tr th:if="${joins.isEmpty()}">
-            <td colspan="5">참여중인 대회가 없습니다!</td>
-        </tr>
-        <tr th:each="join, i : ${joins}">
-            <td th:text="${i.index+1}"></td>
-            <!--<td>
-                <a th:href="'/room/'+${join.getRoomDto().getId()}" th:text="${join.getRoomDto().getId()}"></a>
-            </td>-->
-            <td th:text="${join.getRoomDto().getTitle()}"></td>
-            <td th:text="${join.getRoomDto().getRoomType().getDescription()}"></td>
-            <td th:text="${join.getRoomDto().getMemNum()}"></td>
-            <td>
-                <div class="container">
-                    <form class="form-check-inline m y-2 my-lg-0" th:action="@{'/room/' + ${join.getRoomDto().getId()}}" method="post">
-                        <a class="btn btn-primary my-2 my-sm-0" th:href="'/room/'+${join.getRoomDto().getId()}">조회</a>
-                        <input type="hidden" name="_method" value="delete"/>
-                        <button class="btn btn-danger my-2 my-sm-0" type="submit">삭제</button>
-                    </form>
-                </div>
-            </td>
-        </tr>
-        </tbody>
-    </table>
+    <a class="btn btn-info" th:href="@{/room/create}" role="button" style="float:right;">대회 만들기</a>
+    <div>
+        <table class="table">
+            <thead>
+            <tr>
+                <th>구분</th>
+                <!--                <th>방id</th>-->
+                <th>제목</th>
+                <th>타입</th>
+                <th>참여인원수</th>
+                <th></th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:if="${joins.isEmpty()}">
+                <td class="text-center" colspan="5">참여중인 대회가 없습니다!</td>
+            </tr>
+            <tr th:each="join : ${joins}">
+                <td th:text="${joinStat.count}"></td>
+                <td th:text="${join.getRoomDto().getTitle()}"></td>
+                <td th:text="${join.getRoomDto().getRoomType().getDescription()}"></td>
+                <td th:text="${join.getRoomDto().getMemNum()}"></td>
+                <td>
+                    <div class="container">
+                        <form class="form-check-inline my-2 my-lg-0" th:action="@{'/room/' + ${join.getRoomDto().getId()}}" method="post">
+                            <a class="btn btn-primary my-2 my-sm-0" th:href="'/room/'+${join.getRoomDto().getId()}">조회</a>
+                            <input type="hidden" name="_method" value="delete"/>
+                            <button class="btn btn-danger my-2 my-sm-0" type="submit">삭제</button>
+                        </form>
+                    </div>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
     <div th:replace="fragments/footer" :: footer />
 </div> <!-- /container -->
 </body>
