@@ -42,6 +42,12 @@ public class UserService implements UserDetailsService {
         return userRepository.save(userDto.toEntity()).getId();
     }
 
+    public Long UpdateUser(UserDto userDto) {
+        BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
+        userDto.setPassword(encoder.encode(userDto.getPassword()));
+        return userRepository.save(userDto.toEntity()).getId();
+    }
+
     private void validateDuplicateUser(UserDto userDto) {
         Optional<User> findUser = userRepository.findByEmail(userDto.getEmail());
         if (!findUser.isEmpty()) {

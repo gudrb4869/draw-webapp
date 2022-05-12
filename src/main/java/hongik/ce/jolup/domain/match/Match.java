@@ -1,5 +1,6 @@
 package hongik.ce.jolup.domain.match;
 
+import hongik.ce.jolup.domain.Time;
 import hongik.ce.jolup.domain.score.Score;
 import hongik.ce.jolup.domain.room.Room;
 import hongik.ce.jolup.domain.user.User;
@@ -12,7 +13,7 @@ import javax.persistence.*;
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Table(name = "match")
-public class Match {
+public class Match extends Time {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "match_id")

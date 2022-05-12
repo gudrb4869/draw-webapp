@@ -1,5 +1,6 @@
 package hongik.ce.jolup.domain.join;
 
+import hongik.ce.jolup.domain.Time;
 import hongik.ce.jolup.domain.result.Result;
 import hongik.ce.jolup.domain.room.Room;
 import hongik.ce.jolup.domain.user.User;
@@ -12,7 +13,7 @@ import javax.persistence.*;
 @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Table(name = "joins")
-public class Join {
+public class Join extends Time {
     /*
     drop table if exists join_room CASCADE;
     create table join_room(

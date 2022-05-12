@@ -64,7 +64,6 @@ public class RoomController {
                              BindingResult bindingResult,
                              @AuthenticationPrincipal User user,
                              Model model) {
-
         if (bindingResult.hasErrors()) {
             model.addAttribute("roomTypes", RoomType.values());
             return "room/create";
@@ -87,15 +86,16 @@ public class RoomController {
             model.addAttribute("data", new Message("인원수가 올바르지 않습니다!", "/room/create"));
             return "message";
         }*/
-
+        log.info("roomForm.title={}", roomForm.getTitle());
         RoomDto roomRequestDto = RoomDto.builder()
                 .title(roomForm.getTitle())
                 .roomType(roomForm.getRoomType())
                 .memNum(roomForm.getMemNum()).build();
+        log.info("roomRequestDto.title={}", roomRequestDto.getTitle());
         Long roomId = roomService.saveRoom(roomRequestDto);
 
         RoomDto roomDto = roomService.getRoom(roomId);
-
+        log.info("roomDto.title={}", roomDto.getTitle());
         for(String email : roomForm.getEmails()) {
             UserDto userDto = userService.findOne(email);
             JoinDto joinDto = JoinDto.builder()

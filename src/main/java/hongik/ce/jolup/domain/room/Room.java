@@ -1,5 +1,6 @@
 package hongik.ce.jolup.domain.room;
 
+import hongik.ce.jolup.domain.Time;
 import hongik.ce.jolup.domain.join.Join;
 import hongik.ce.jolup.dto.RoomDto;
 import lombok.*;
@@ -13,7 +14,7 @@ import java.util.stream.Collectors;
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Table(name = "room")
-public class Room {
+public class Room extends Time {
     /*
     drop table if exists room CASCADE;
     create table room(

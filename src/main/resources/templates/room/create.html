@@ -13,7 +13,7 @@
     <div class="py-5 text-center">
         <h2>대회 만들기</h2>
     </div>
-    <form th:action th:object="${form}" method="post">
+    <form th:action="@{/room/create}" th:object="${form}" method="post">
         <div>
             <label th:for="title">대회 이름</label>
             <input type="text" th:field="*{title}" placeholder="대회 이름을 입력하세요"
