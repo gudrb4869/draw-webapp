@@ -41,17 +41,17 @@ public class Join {
     @Embedded
     private Result result;
 
-    /*@Column(nullable = false)
+    @Column(nullable = false)
     @Enumerated(EnumType.STRING)
-    private JoinRole role;*/
+    private JoinRole joinRole;
 
     @Builder
-    public Join(Long id, User user, Room room, Result result/*, JoinRole role*/) {
+    public Join(Long id, User user, Room room, Result result, JoinRole joinRole) {
         this.id = id;
         this.user = user;
         this.room = room;
         this.result = result;
-        /*this.role = role;*/
+        this.joinRole = joinRole;
     }
 
     public JoinDto toDto () {
@@ -60,6 +60,7 @@ public class Join {
                 .userDto(user.toDto())
                 .roomDto(room.toDto())
                 .result(result)
+                .joinRole(joinRole)
                 .build();
     }
 

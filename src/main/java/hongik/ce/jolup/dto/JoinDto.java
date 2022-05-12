@@ -1,6 +1,7 @@
 package hongik.ce.jolup.dto;
 
 import hongik.ce.jolup.domain.join.Join;
+import hongik.ce.jolup.domain.join.JoinRole;
 import hongik.ce.jolup.domain.result.Result;
 import lombok.*;
 
@@ -15,6 +16,7 @@ public class JoinDto {
     private UserDto userDto;
     private RoomDto roomDto;
     private Result result;
+    private JoinRole joinRole;
 
     public Join toEntity() {
         return Join.builder()
@@ -22,6 +24,7 @@ public class JoinDto {
                 .user(userDto.toEntity())
                 .room(roomDto.toEntity())
                 .result(result)
+                .joinRole(joinRole)
                 .build();
     }
 }

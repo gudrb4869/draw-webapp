@@ -51,10 +51,9 @@ public class UserService implements UserDetailsService {
 
     public List<UserDto> findAll() {
         List<User> users = userRepository.findAll();
-        List<UserDto> userDtos = users.stream()
+        return users.stream()
                 .map(User::toDto)
                 .collect(Collectors.toList());
-        return userDtos;
     }
 
     public UserDto getUser(Long userId) {
@@ -62,8 +61,7 @@ public class UserService implements UserDetailsService {
         if (optionalUser.isEmpty())
             return null;
         User user = optionalUser.get();
-        UserDto userDto = user.toDto();
-        return userDto;
+        return user.toDto();
     }
 
     public UserDto findOne(String email) {
@@ -72,8 +70,7 @@ public class UserService implements UserDetailsService {
             return null;
         }
         User user = userWrapper.get();
-        UserDto userDto = user.toDto();
-        return userDto;
+        return user.toDto();
     }
 
     public void deleteUser(Long id) {

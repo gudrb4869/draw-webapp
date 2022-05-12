@@ -25,7 +25,25 @@
     <div class="my-2 my-lg-0">
         <a th:href="@{/room}" class="btn btn-warning">목록</a>
     </div>
-
+    <div class="text-center py-2" style="max-width: 600px">
+        <hr class="my-4">
+        <h1>대회 참여자 목록</h1>
+        <table class="table table-light">
+            <thead>
+            <tr>
+                <th>이름</th>
+                <th>권한</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="joinDto : ${joinDtos}">
+                <td th:text="${joinDto.getUserDto().getEmail() + '('+ joinDto.getUserDto().getName() + ')'}"></td>
+                <td th:text="${joinDto.joinRole.getDescription()}"></td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+    <hr class="my-4">
     <h1>일정</h1>
     <table class="table table-bordered">
         <thead>
@@ -54,8 +72,9 @@
                 : ${matchDto.getUser2Dto().getEmail() + '('+ matchDto.getUser2Dto().getName() + ')'}"></td>
             <td th:text="${matchDto.getMatchStatus().getDescription()}"></td>
             <td>
-                <input type="button" class="btn btn-primary" th:value="'수정'" th:onclick="|location.href='@{/match/{matchId}(matchId=${matchDto.id})}'|" th:disabled="${matchDto.user1Dto == null} or ${matchDto.user2Dto == null}"/>
-<!--                    <button class="btn btn-primary" th:disabled="|${matchDto.user1Dto == null} or ${matchDto.user2Dto == null}|">수정</button>-->
+                <input type="button" class="btn btn-primary" th:value="'수정'"
+                       th:onclick="|location.href='@{/match/{matchId}(matchId=${matchDto.id})}'|"
+                       th:disabled="${matchDto.user1Dto == null} or ${matchDto.user2Dto == null} or ${myJoinDto.joinRole.name() == 'GUEST'}"/>
             </td>
         </tr>
         </tbody>

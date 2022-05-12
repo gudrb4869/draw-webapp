@@ -20,8 +20,6 @@ import java.util.stream.Collectors;
 public class JoinService {
 
     private final JoinRepository joinRepository;
-    private final UserService userService;
-    private final RoomService roomService;
 
     public Long saveJoin(JoinDto joinDto) {
         return joinRepository.save(joinDto.toEntity()).getId();
@@ -54,6 +52,14 @@ public class JoinService {
 
     public List<JoinDto> findByRoomSort(RoomDto roomDto) {
         List<Join> joins = joinRepository.findByRoomSort(roomDto.toEntity());
+        List<JoinDto> joinDtos = joins.stream()
+                .map(Join::toDto)
+                .collect(Collectors.toList());
+        return joinDtos;
+    }
+
+    public List<JoinDto> findByRoomOrderByJoinRole(RoomDto roomDto) {
+        List<Join> joins = joinRepository.findByRoomOrderByJoinRoleDesc(roomDto.toEntity());
         List<JoinDto> joinDtos = joins.stream()
                 .map(Join::toDto)
                 .collect(Collectors.toList());

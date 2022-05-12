@@ -18,9 +18,8 @@ import java.util.stream.Collectors;
 @Service
 @Transactional
 public class MatchService {
+
     private final MatchRepository matchRepository;
-    private final UserRepository userRepository;
-    private final RoomRepository roomRepository;
 
     public Long saveMatch(MatchDto matchDto) {
         return matchRepository.save(matchDto.toEntity()).getId();

@@ -6,8 +6,9 @@ import lombok.RequiredArgsConstructor;
 @Getter
 @RequiredArgsConstructor
 public enum JoinRole {
-    MASTER("방관리자"),
-    GUEST("방유저");
+    MASTER("관리자"),
+    MANAGER("매니저"),
+    GUEST("유저");
 
     private final String description;
 }

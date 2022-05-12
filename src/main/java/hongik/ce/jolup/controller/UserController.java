@@ -32,7 +32,7 @@ public class UserController {
     }
 
     @PostMapping("/signup")
-    public /*ModelAndView*/ String signup(@Valid UserForm userForm, BindingResult result) {
+    public /*ModelAndView*/ String signup(@Valid UserForm userForm, BindingResult result, Model model) {
 
         if (result.hasErrors()) {
             return "signup";
@@ -41,7 +41,12 @@ public class UserController {
                 .email(userForm.getEmail())
                 .password(userForm.getPassword())
                 .name(userForm.getName()).build();
-        userService.saveUser(userDto);
+        try {
+            userService.saveUser(userDto);
+        } catch (IllegalStateException e) {
+            model.addAttribute("errorMessage", e.getMessage());
+            return "signup";
+        }
         return "redirect:/";
     }
 

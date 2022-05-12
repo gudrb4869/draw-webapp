@@ -1,5 +1,6 @@
 package hongik.ce.jolup.controller;
 
+import hongik.ce.jolup.domain.join.JoinRole;
 import hongik.ce.jolup.domain.match.MatchStatus;
 import hongik.ce.jolup.domain.result.Result;
 import hongik.ce.jolup.domain.score.Score;
@@ -102,7 +103,10 @@ public class RoomController {
                     .roomDto(roomDto)
                     .result(Result.builder().plays(0).win(0).draw(0).lose(0).goalFor(0)
                             .goalAgainst(0).goalDifference(0).points(0).build())
+                    .joinRole(JoinRole.GUEST)
                     .build();
+            if (userDto.getId().equals(user.getId()))
+                joinDto.setJoinRole(JoinRole.MASTER);
             joinService.saveJoin(joinDto);
         }
 
@@ -234,14 +238,20 @@ public class RoomController {
         }
 
         List<MatchDto> matchDtos = matchService.findByRoom(roomDto);
-        List<JoinDto> joinDtos = joinService.findByRoomSort(roomDto);
-        model.addAttribute("joinDtos", joinDtos);
+
+        JoinDto myJoinDto = joinService.findOne(user.toDto(), roomDto);
+        log.info("myJoinDto={}", myJoinDto);
         model.addAttribute("roomDto", roomDto);
         model.addAttribute("matchDtos", matchDtos);
+        model.addAttribute("myJoinDto", myJoinDto);
         if (roomDto.getRoomType().equals(RoomType.LEAGUE)) {
+            List<JoinDto> joinDtos = joinService.findByRoomSort(roomDto);
+            model.addAttribute("joinDtos", joinDtos);
             return "room/league";
         }
         else if (roomDto.getRoomType().equals(RoomType.TOURNAMENT)) {
+            List<JoinDto> joinDtos = joinService.findByRoomOrderByJoinRole(roomDto);
+            model.addAttribute("joinDtos", joinDtos);
             return "room/tournament";
         }
         return "error";

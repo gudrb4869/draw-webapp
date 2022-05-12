@@ -19,18 +19,13 @@ public class RoomService {
     private final RoomRepository roomRepository;
 
     public Long saveRoom(RoomDto roomDto) {
-        return roomRepository.save(Room.builder()
-                .title(roomDto.getTitle())
-                .roomType(roomDto.getRoomType())
-                .memNum(roomDto.getMemNum()).build()).getId();
+        return roomRepository.save(roomDto.toEntity()).getId();
     }
 
     public List<RoomDto> findAll() {
-        List<Room> rooms = roomRepository.findAll();
-        List<RoomDto> roomDtos = rooms.stream()
+        return roomRepository.findAll().stream()
                 .map(Room::toDto)
                 .collect(Collectors.toList());
-        return roomDtos;
     }
 
     public RoomDto getRoom(Long roomId) {
@@ -39,8 +34,7 @@ public class RoomService {
             return null;
         }
         Room room = roomWrapper.get();
-        RoomDto roomDto = room.toDto();
-        return roomDto;
+        return room.toDto();
     }
 
     public void deleteRoom(Long id) {

@@ -15,7 +15,11 @@
         <h2>회원 가입</h2>
     </div>
     <form class="form-control" th:action method="post" th:object="${userForm}">
-        <div>
+
+        <div class="py-2" th:if="${errorMessage}">
+            <span th:text="${errorMessage}" class="alert alert-danger">예외가 발생했습니다.</span>
+        </div>
+        <div class="py-2">
             <label th:for="email">아이디</label>
             <input type="text" th:field="*{email}" placeholder="아이디를 입력하세요"
                    th:class="${#fields.hasErrors('email')}? 'form-control fieldError' : 'form-control'">

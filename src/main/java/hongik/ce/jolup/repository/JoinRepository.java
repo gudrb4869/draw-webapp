@@ -17,4 +17,6 @@ public interface JoinRepository extends JpaRepository<Join, Long> {
 
         @Query("SELECT j from Join j where j.room = :#{#room} order by j.result.points desc, j.result.goalDifference desc, j.result.goalFor desc, j.user.name asc")
         List<Join> findByRoomSort(@Param("room") Room room);
+
+        List<Join> findByRoomOrderByJoinRoleDesc(Room room);
 }
