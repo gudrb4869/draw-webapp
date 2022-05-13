@@ -6,6 +6,7 @@ import javax.validation.constraints.NotBlank;
 
 @Getter
 @Setter
+@ToString
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder

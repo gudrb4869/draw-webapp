@@ -6,6 +6,7 @@ import lombok.*;
 import javax.validation.Valid;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -13,10 +14,8 @@ import java.util.List;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-@Builder
+@ToString @Builder
 public class RoomForm {
-    private List<@NotBlank(message = "참가자 ID는 필수 입력 값입니다!") String> emails = new ArrayList<>();
-
     @NotBlank(message = "대회 이름은 필수 입력 값입니다!")
     private String title;
 
@@ -26,27 +25,9 @@ public class RoomForm {
     @NotNull(message = "대회 참여 인원 수는 필수 입력 값입니다!")
     private Long memNum;
 
-    /*public RoomForm() {
-        this.roomType = RoomType.LEAGUE;
-        this.memNum = 2L;
-        for (int i = 0; i < memNum; i++) {
-            addEmail(new String());
-        }
-    }
-
-    public RoomForm(List<String> emails, String title, RoomType roomType, Long memNum) {
-        this.emails = emails;
-        this.title = title;
-        this.roomType = roomType;
-        this.memNum = memNum;
-        for (int i = 0; i < memNum; i++) {
-            if (i >= emails.size()) {
-                addEmail(new String());
-                continue;
-            }
-            addEmail(emails.get(i));
-        }
-    }*/
+    @Size(min = 2, message = "최소 인원 오류")
+    @NotNull(message = "null 오류")
+    private List<@NotBlank(message = "참가자 아이디는 필수 입력 값입니다!") String> emails = new ArrayList<>();
 
     public void addEmail(String email) {
         this.emails.add(email);

@@ -35,27 +35,24 @@ public class RoomController {
     private final MatchService matchService;
 
     @GetMapping("/create")
-    public String createRoom(
-//            @ModelAttribute("form") RoomForm roomForm,
-            @RequestParam(value = "title", defaultValue = "") String title,
-            @RequestParam(value = "roomType", defaultValue = "LEAGUE") RoomType roomType,
-            @RequestParam(value = "memNum", defaultValue = "2") Long memNum,
-//            @RequestParam(value = "emails", defaultValue = "") String emails,
-            Model model) {
+    public String createRoom(@RequestParam(name = "title", defaultValue = "") String title,
+                             @RequestParam(name = "roomType", defaultValue = "LEAGUE") RoomType roomType,
+                             @RequestParam(name = "memNum", defaultValue = "2") Long memNum,
+                             @RequestParam(name = "emails", defaultValue = ",") List<String> emails,
+                             Model model) {
         RoomForm roomForm = new RoomForm();
         roomForm.setTitle(title);
         roomForm.setRoomType(roomType);
         roomForm.setMemNum(memNum);
-//        roomForm.addEmail(emails);
-        for (int i = 0; i < memNum; i++) {
-            roomForm.addEmail(new String());
+        for(int i = 0; i < memNum; i++) {
+            if (i < emails.size()) {
+                roomForm.addEmail(emails.get(i));
+                continue;
+            }
+                roomForm.addEmail(new String());
         }
-        /*log.info("form.title={}", roomForm.getTitle());
-        log.info("form.roomType={}", roomForm.getRoomType());
-        log.info("form.memNum={}", roomForm.getMemNum());*/
-
+        log.info("form = {}", roomForm);
         model.addAttribute("form", roomForm);
-        model.addAttribute("roomTypes", RoomType.values());
         return "room/create";
     }
 
@@ -64,8 +61,9 @@ public class RoomController {
                              BindingResult bindingResult,
                              @AuthenticationPrincipal User user,
                              Model model) {
+
+        log.info("roomForm = {}", roomForm);
         if (bindingResult.hasErrors()) {
-            model.addAttribute("roomTypes", RoomType.values());
             return "room/create";
         }
 
@@ -82,20 +80,15 @@ public class RoomController {
             return "message";
         }
 
-        /*if (roomForm.getRoomType().equals(RoomType.TOURNAMENT) && (roomForm.getMemNum() & (roomForm.getMemNum() - 1)) != 0) {
-            model.addAttribute("data", new Message("인원수가 올바르지 않습니다!", "/room/create"));
-            return "message";
-        }*/
-        log.info("roomForm.title={}", roomForm.getTitle());
         RoomDto roomRequestDto = RoomDto.builder()
                 .title(roomForm.getTitle())
                 .roomType(roomForm.getRoomType())
                 .memNum(roomForm.getMemNum()).build();
-        log.info("roomRequestDto.title={}", roomRequestDto.getTitle());
+        log.info("roomRequestDto = {}", roomRequestDto);
         Long roomId = roomService.saveRoom(roomRequestDto);
 
         RoomDto roomDto = roomService.getRoom(roomId);
-        log.info("roomDto.title={}", roomDto.getTitle());
+        log.info("roomDto = {}", roomDto);
         for(String email : roomForm.getEmails()) {
             UserDto userDto = userService.findOne(email);
             JoinDto joinDto = JoinDto.builder()
@@ -240,7 +233,7 @@ public class RoomController {
         List<MatchDto> matchDtos = matchService.findByRoom(roomDto);
 
         JoinDto myJoinDto = joinService.findOne(user.toDto(), roomDto);
-        log.info("myJoinDto={}", myJoinDto);
+        log.info("myJoinDto = {}", myJoinDto);
         model.addAttribute("roomDto", roomDto);
         model.addAttribute("matchDtos", matchDtos);
         model.addAttribute("myJoinDto", myJoinDto);

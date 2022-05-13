@@ -74,8 +74,10 @@ public class UserController {
     }
 
     @GetMapping("/edit")
-    public String edit(Model model) {
-        model.addAttribute("userEditForm", new UserEditForm());
+    public String edit(Model model, @AuthenticationPrincipal User user) {
+        UserEditForm userEditForm = new UserEditForm();
+        userEditForm.setName(user.getName());
+        model.addAttribute("userEditForm", userEditForm);
         return "edit";
     }
 
@@ -88,7 +90,7 @@ public class UserController {
         }
         UserDto userDto = userService.getUser(user.getId());
         log.info("userDto={}", userDto);
-        log.info("userEditForm.password_current={}", userEditForm.getPassword_current());
+        log.info("userEditForm = {}", userEditForm);
         BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
         if (!encoder.matches(userEditForm.getPassword_current(), userDto.getPassword())) {
             model.addAttribute("errorMessage", "에러 발생");

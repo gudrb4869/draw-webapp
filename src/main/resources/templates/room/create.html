@@ -3,9 +3,13 @@
       xmlns:th="http://www.thymeleaf.org">
 <head th:replace="fragments/header :: header" />
 <style>
-    .fieldError {border-color: #bd2130;}
-    .ok_msg{color: #0a53be;}
-    .error_msg{color: #bd2130;}
+    .container {
+        max-width: 560px;
+    }
+    .field-error {
+        border-color: #dc3545;
+        color: #dc3545;
+    }
 </style>
 <body>
 <div class="container" style="max-width: 600px">
@@ -17,16 +21,15 @@
         <div>
             <label th:for="title">대회 이름</label>
             <input type="text" th:field="*{title}" placeholder="대회 이름을 입력하세요"
-                   th:class="${#fields.hasErrors('title')}? 'form-control fieldError' : 'form-control'">
-            <p th:if="${#fields.hasErrors('title')}" th:errors="*{title}" class="error_msg">대회 이름 형식이 올바르지 않음</p>
+                   class="form-control" th:errorclass="field-error">
+            <p th:errors="*{title}" class="field-error">대회 이름 오류</p>
         </div>
 
         <div class="py-2">
             <div>대회 방식</div>
             <select th:field="*{roomType}" class="form-select-sm"
-                    th:onchange="|location.href='/room/create?title=' + form.title.value
-                    + '&roomType='+ this.value + '&memNum=' + form.memNum.value|">
-                <option th:each="roomType : ${roomTypes}" th:value="${roomType.name()}"
+                    onchange="updateForm()">
+                <option th:each="roomType : ${T(hongik.ce.jolup.domain.room.RoomType).values()}" th:value="${roomType.name()}"
                         th:text="${roomType.description}" th:selected="${roomType == form.roomType}"></option>
             </select>
         </div>
@@ -34,11 +37,11 @@
         <div class="py-2">
             <div>대회 참여 인원</div>
             <select th:field="*{memNum}" class="form-select-sm"
-                    th:onchange="|location.href='/room/create?title=' + form.title.value
-                    + '&roomType='+ form.roomType.value + '&memNum=' + this.value|">
-<!--                th:onchange="|location.href='@{/room/create(title=*{title}, roomType=*{roomType}, memNum=*{memNum})}'|">-->
+                    onchange="updateForm()">
+            <!--th:onchange="|location.href='@{/room/create?title=' + form.title.value
+            + '&roomType='+ form.roomType.value + '&memNum=' + this.value +  '}'|">-->
                 <option th:each="memNum : ${#numbers.sequence(2, 20)}" th:value="${memNum}" th:text="${memNum}"
-                        th:selected="${memNum == form.memNum}"></option>
+                        th:selected="${memNum} == ${form.memNum}"></option>
             </select>
         </div>
 
@@ -55,8 +58,8 @@
                     <td th:text="'참가자' + ${emailStat.count}"></td>
                     <td>
                         <input type="text" th:field="*{emails[__${emailStat.index}__]}"
-                               th:class="${#fields.hasErrors('emails[__${emailStat.index}__]')}? 'form-control fieldError': 'form-control'"/>
-                        <p th:if="${#fields.hasErrors('emails[__${emailStat.index}__]')}" th:errors="*{emails[__${emailStat.index}__]}" class="error_msg">이메일 형식이 올바르지 않음</p>
+                               th:errorclass="field-error" class="form-control"/>
+                        <p th:errors="*{emails[__${emailStat.index}__]}" class="field-error">이메일 형식이 올바르지 않음</p>
                     </td>
                 </tr>
                 </tbody>
@@ -74,4 +77,22 @@
     <div th:replace="fragments/footer" :: footer />
 </div> <!-- /container -->
 </body>
+
+<script th:inline="javascript">
+    function updateForm() {
+        let title = document.getElementById("title").value;
+        let roomType = document.getElementById("roomType").value;
+        let memNum = document.getElementById("memNum").value;
+        let emails = []
+        for (var i = 0; i < memNum; i++) {
+            if (document.getElementById("emails" + String(i))) {
+                emails.push(document.getElementById("emails" + String(i)).value)
+            }
+            else {
+                emails.push("")
+            }
+        }
+        location.href="/room/create?title=" + title + "&roomType=" + roomType + "&memNum=" + memNum + "&emails=" + emails;
+    }
+</script>
 </html>

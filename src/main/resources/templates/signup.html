@@ -4,9 +4,13 @@
       xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 <head th:replace="fragments/header :: header" />
 <style>
-    .fieldError {border-color: #bd2130;}
-    .ok_msg{color: #0a53be;}
-    .error_msg{color: #bd2130;}
+    .container {
+        max-width: 560px;
+    }
+    .field-error {
+        border-color: #dc3545;
+        color: #dc3545;
+    }
 </style>
 <body>
 <div class="container" style="max-width: 600px">
@@ -22,8 +26,8 @@
         <div class="py-2">
             <label th:for="email">아이디</label>
             <input type="text" th:field="*{email}" placeholder="아이디를 입력하세요"
-                   th:class="${#fields.hasErrors('email')}? 'form-control fieldError' : 'form-control'">
-            <p th:if="${#fields.hasErrors('email')}" th:errors="*{email}" class="error_msg">아이디 형식이 올바르지 않음</p>
+                   th:errorclass="field-error" class="form-control">
+            <p th:errors="*{email}" class="field-error">아이디 오류</p>
             <!--                    <input class="btn btn-outline-primary btn-sm mx-1" type="button" id="emailOverlay" onclick="emailCheck()" value="중복 체크"/>-->
             <!--                    <input class="btn btn-outline-success btn-sm" type="button" id="resetEmail" onclick="resetEmail()" disabled value="다시입력"/>-->
         </div>
@@ -31,15 +35,15 @@
         <div>
             <label th:for="password">비밀번호</label>
             <input type="password" th:field="*{password}" placeholder="비밀번호를 입력하세요"
-                   th:class="${#fields.hasErrors('password')}? 'form-control fieldError' : 'form-control'">
-            <p th:if="${#fields.hasErrors('password')}" th:errors="*{password}" class="error_msg">비밀번호 형식이 올바르지 않음</p>
+                   th:errorclass="field-error" class="form-control">
+            <p th:errors="*{password}" class="field-error">비밀번호 오류</p>
         </div>
 
         <div>
             <label th:for="name">이름</label>
             <input type="text" th:field="*{name}" placeholder="이름을 입력하세요"
-                   th:class="${#fields.hasErrors('name')}? 'form-control fieldError' : 'form-control'">
-            <p th:if="${#fields.hasErrors('name')}" th:errors="*{name}" class="error_msg">이름 형식이 올바르지 않음</p>
+                   th:errorclass="field-error" class="form-control">
+            <p th:errors="*{name}" class="field-error">이름 오류</p>
         </div>
 
         <hr class="my-4">
