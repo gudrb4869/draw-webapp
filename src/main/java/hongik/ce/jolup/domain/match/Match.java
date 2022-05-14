@@ -12,7 +12,7 @@ import javax.persistence.*;
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@Table(name = "match")
+@Table(name = "matches")
 @ToString
 public class Match extends Time {
     @Id

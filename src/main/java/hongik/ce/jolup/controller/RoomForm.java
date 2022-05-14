@@ -6,6 +6,7 @@ import lombok.*;
 import javax.validation.Valid;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
 import java.util.ArrayList;
 import java.util.List;
@@ -17,6 +18,8 @@ import java.util.List;
 @ToString @Builder
 public class RoomForm {
     @NotBlank(message = "대회 이름은 필수 입력 값입니다!")
+    @Size(max = 30, message = "대회 이름의 최대 길이는 30글자입니다!")
+//    @Pattern(regexp = "^(?:\\w+\\.?)*\\w+@(?:\\w+\\.)+\\w+$", message = "대회 이름 형식이 올바르지 않습니다.")
     private String title;
 
     @NotNull(message = "대회 방식은 필수 입력 값입니다!")

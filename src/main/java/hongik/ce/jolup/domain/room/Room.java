@@ -31,7 +31,7 @@ public class Room extends Time {
     @Column(name = "room_id")
     private Long id;
 
-    @Column(length = 100, nullable = false)
+    @Column(length = 30, nullable = false)
     private String title;
 
     @Column(nullable = false)

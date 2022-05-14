@@ -60,9 +60,9 @@ public class MatchController {
 
         RoomDto roomDto = matchDto.getRoomDto();
         JoinDto joinDto1 = joinService.findOne(matchDto.getHomeDto(), matchDto.getRoomDto());
-        Result result1 = joinDto1.result;
+        Result result1 = joinDto1.getResult();
         JoinDto joinDto2 = joinService.findOne(matchDto.getAwayDto(), matchDto.getRoomDto());
-        Result result2 = joinDto2.result;
+        Result result2 = joinDto2.getResult();
 
         if (matchDto.getMatchStatus().equals(MatchStatus.END)) {
             if (matchDto.getScore().getHomeScore() > matchDto.getScore().getAwayScore()) {
