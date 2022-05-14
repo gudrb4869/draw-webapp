@@ -4,8 +4,6 @@ import hongik.ce.jolup.domain.match.Match;
 import hongik.ce.jolup.dto.MatchDto;
 import hongik.ce.jolup.dto.RoomDto;
 import hongik.ce.jolup.repository.MatchRepository;
-import hongik.ce.jolup.repository.RoomRepository;
-import hongik.ce.jolup.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;

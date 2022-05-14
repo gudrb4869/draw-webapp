@@ -10,12 +10,12 @@ import lombok.*;
 @AllArgsConstructor
 @Builder
 public class ScoreDto {
-    private Integer user1Score;
-    private Integer user2Score;
+    private Integer homeScore;
+    private Integer awayScore;
 
     public Score toEntity() {
         return Score.builder()
-                .user1Score(user1Score)
-                .user2Score(user2Score).build();
+                .homeScore(homeScore)
+                .awayScore(awayScore).build();
     }
 }

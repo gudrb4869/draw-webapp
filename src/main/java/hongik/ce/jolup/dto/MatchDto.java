@@ -14,8 +14,8 @@ import lombok.*;
 public class MatchDto {
     private Long id;
     private RoomDto roomDto;
-    private UserDto user1Dto;
-    private UserDto user2Dto;
+    private MemberDto homeDto;
+    private MemberDto awayDto;
     private Score score;
     private MatchStatus matchStatus;
     private Integer roundNo;
@@ -25,8 +25,8 @@ public class MatchDto {
         return Match.builder()
                 .id(id)
                 .room(roomDto.toEntity())
-                .user1(user1Dto == null ? null : user1Dto.toEntity())
-                .user2(user2Dto == null ? null : user2Dto.toEntity())
+                .home(homeDto == null ? null : homeDto.toEntity())
+                .away(awayDto == null ? null : awayDto.toEntity())
                 .score(score)
                 .matchStatus(matchStatus)
                 .roundNo(roundNo)

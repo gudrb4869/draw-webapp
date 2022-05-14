@@ -1,8 +1,8 @@
 package hongik.ce.jolup.controller;
 
-import hongik.ce.jolup.domain.user.User;
-import hongik.ce.jolup.dto.UserDto;
-import hongik.ce.jolup.service.UserService;
+import hongik.ce.jolup.domain.member.Member;
+import hongik.ce.jolup.dto.MemberDto;
+import hongik.ce.jolup.service.MemberService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.AnonymousAuthenticationToken;
@@ -25,30 +25,30 @@ import javax.validation.Valid;
 @Slf4j
 @RequiredArgsConstructor
 @Controller
-public class UserController {
-    private final UserService userService;
+public class MemberController {
+    private final MemberService memberService;
 
     @GetMapping("/signup")
     public String signup(Model model) {
         if (isAuthenticated()) {
             return "redirect:/";
         }
-        model.addAttribute("userForm", new UserForm());
+        model.addAttribute("userForm", new MemberForm());
         return "signup";
     }
 
     @PostMapping("/signup")
-    public /*ModelAndView*/ String signup(@Valid UserForm userForm, BindingResult result, Model model) {
+    public /*ModelAndView*/ String signup(@Valid MemberForm memberForm, BindingResult result, Model model) {
 
         if (result.hasErrors()) {
             return "signup";
         }
-        UserDto userDto = UserDto.builder()
-                .email(userForm.getEmail())
-                .password(userForm.getPassword())
-                .name(userForm.getName()).build();
+        MemberDto memberDto = MemberDto.builder()
+                .email(memberForm.getEmail())
+                .password(memberForm.getPassword())
+                .name(memberForm.getName()).build();
         try {
-            userService.saveUser(userDto);
+            memberService.saveMember(memberDto);
         } catch (IllegalStateException e) {
             model.addAttribute("errorMessage", e.getMessage());
             return "signup";
@@ -74,31 +74,31 @@ public class UserController {
     }
 
     @GetMapping("/edit")
-    public String edit(Model model, @AuthenticationPrincipal User user) {
-        UserEditForm userEditForm = new UserEditForm();
-        userEditForm.setName(user.getName());
-        model.addAttribute("userEditForm", userEditForm);
+    public String edit(Model model, @AuthenticationPrincipal Member member) {
+        MemberEditForm memberEditForm = new MemberEditForm();
+        memberEditForm.setName(member.getName());
+        model.addAttribute("memberEditForm", memberEditForm);
         return "edit";
     }
 
     @PostMapping("edit")
-    public String edit(@ModelAttribute @Valid UserEditForm userEditForm,
-                       BindingResult result, @AuthenticationPrincipal User user,
+    public String edit(@ModelAttribute @Valid MemberEditForm memberEditForm,
+                       BindingResult result, @AuthenticationPrincipal Member member,
                        Model model) {
         if (result.hasErrors()) {
             return "edit";
         }
-        UserDto userDto = userService.getUser(user.getId());
-        log.info("userDto={}", userDto);
-        log.info("userEditForm = {}", userEditForm);
+        MemberDto memberDto = memberService.getMember(member.getId());
+        log.info("memberDto={}", memberDto);
+        log.info("memberEditForm = {}", memberEditForm);
         BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
-        if (!encoder.matches(userEditForm.getPassword_current(), userDto.getPassword())) {
+        if (!encoder.matches(memberEditForm.getPassword_current(), memberDto.getPassword())) {
             model.addAttribute("errorMessage", "에러 발생");
             return "edit";
         }
-        userDto.setPassword(userEditForm.getPassword_new());
-        userDto.setName(userEditForm.getName());
-        userService.UpdateUser(userDto);
+        memberDto.setPassword(memberEditForm.getPassword_new());
+        memberDto.setName(memberEditForm.getName());
+        memberService.updateMember(memberDto);
         return "redirect:/";
     }
 

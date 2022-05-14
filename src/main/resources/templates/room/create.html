@@ -36,12 +36,12 @@
 
         <div class="py-2">
             <div>대회 참여 인원</div>
-            <select th:field="*{memNum}" class="form-select-sm"
+            <select th:field="*{headCount}" class="form-select-sm"
                     onchange="updateForm()">
             <!--th:onchange="|location.href='@{/room/create?title=' + form.title.value
             + '&roomType='+ form.roomType.value + '&memNum=' + this.value +  '}'|">-->
-                <option th:each="memNum : ${#numbers.sequence(2, 20)}" th:value="${memNum}" th:text="${memNum}"
-                        th:selected="${memNum} == ${form.memNum}"></option>
+                <option th:each="headCount : ${#numbers.sequence(2, 20)}" th:value="${headCount}" th:text="${headCount}"
+                        th:selected="${headCount} == ${form.headCount}"></option>
             </select>
         </div>
 
@@ -82,9 +82,9 @@
     function updateForm() {
         let title = document.getElementById("title").value;
         let roomType = document.getElementById("roomType").value;
-        let memNum = document.getElementById("memNum").value;
+        let headCount = document.getElementById("headCount").value;
         let emails = []
-        for (var i = 0; i < memNum; i++) {
+        for (var i = 0; i < headCount; i++) {
             if (document.getElementById("emails" + String(i))) {
                 emails.push(document.getElementById("emails" + String(i)).value)
             }
@@ -92,7 +92,7 @@
                 emails.push("")
             }
         }
-        location.href="/room/create?title=" + title + "&roomType=" + roomType + "&memNum=" + memNum + "&emails=" + emails;
+        location.href="/room/create?title=" + title + "&roomType=" + roomType + "&headCount=" + headCount + "&emails=" + emails;
     }
 </script>
 </html>

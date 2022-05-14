@@ -1,10 +1,9 @@
 package hongik.ce.jolup.service;
 
-import hongik.ce.jolup.domain.user.User;
 import hongik.ce.jolup.domain.join.Join;
 import hongik.ce.jolup.dto.JoinDto;
 import hongik.ce.jolup.dto.RoomDto;
-import hongik.ce.jolup.dto.UserDto;
+import hongik.ce.jolup.dto.MemberDto;
 import hongik.ce.jolup.repository.JoinRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -25,8 +24,8 @@ public class JoinService {
         return joinRepository.save(joinDto.toEntity()).getId();
     }
 
-    public List<JoinDto> findByUser(UserDto userDto) {
-        List<Join> joins = joinRepository.findByUser(userDto.toEntity());
+    public List<JoinDto> findByUser(MemberDto memberDto) {
+        List<Join> joins = joinRepository.findByMember(memberDto.toEntity());
         List<JoinDto> joinDtos = joins.stream()
                 .map(Join::toDto)
                 .collect(Collectors.toList());
@@ -41,8 +40,8 @@ public class JoinService {
         return joinDtos;
     }
 
-    public JoinDto findOne(UserDto userDto, RoomDto roomDto) {
-        Optional<Join> optionalJoin = joinRepository.findByUserAndRoom(userDto.toEntity(), roomDto.toEntity());
+    public JoinDto findOne(MemberDto memberDto, RoomDto roomDto) {
+        Optional<Join> optionalJoin = joinRepository.findByMemberAndRoom(memberDto.toEntity(), roomDto.toEntity());
         if (optionalJoin.isEmpty())
             return null;
         Join join = optionalJoin.get();

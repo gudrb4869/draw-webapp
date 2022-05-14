@@ -1,9 +1,8 @@
-package hongik.ce.jolup.domain.user;
+package hongik.ce.jolup.domain.member;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import hongik.ce.jolup.domain.Time;
 import hongik.ce.jolup.domain.join.Join;
-import hongik.ce.jolup.dto.UserDto;
+import hongik.ce.jolup.dto.MemberDto;
 import lombok.*;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -11,13 +10,13 @@ import org.springframework.security.core.userdetails.UserDetails;
 
 import javax.persistence.*;
 import java.util.*;
-import java.util.stream.Collectors;
 
 @Entity
 @Getter
-@Table(name = "user")
+@Table(name = "member")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class User extends Time implements UserDetails {
+@ToString(of = {"id", "email", "name", "role"})
+public class Member extends Time implements UserDetails {
     /*
     drop table if exists account CASCADE;
     create table account(
@@ -31,7 +30,7 @@ public class User extends Time implements UserDetails {
     */
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "user_id")
+    @Column(name = "member_id")
     private Long id;
 
     @Column(unique = true, nullable = false, updatable = false)
@@ -45,40 +44,40 @@ public class User extends Time implements UserDetails {
 
     @Column(nullable = false)
     @Enumerated(EnumType.STRING)
-    private UserRole role;
+    private MemberAuth auth;
 
-    @OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "member", cascade = CascadeType.ALL)
     private List<Join> joins = new ArrayList<>();
 
     @Builder
-    public User(Long id, String email, String password, String name, UserRole role, List<Join> joins) {
+    public Member(Long id, String email, String password, String name, MemberAuth auth/*, List<Join> joins*/) {
         this.id = id;
         this.email = email;
         this.password = password;
         this.name = name;
-        this.role = role;
-        this.joins = joins;
+        this.auth = auth;
+//        this.joins = joins;
     }
 
-    public UserDto toDto() {
-        return UserDto.builder()
+    public MemberDto toDto() {
+        return MemberDto.builder()
                 .id(id)
                 .email(email)
                 .password(password)
                 .name(name)
-                .role(role)
+                .auth(auth)
 //                .joinDtos(joins.stream().map(Join::toDto).collect(Collectors.toList()))
                 .build();
     }
 
-    public User update(String password, String name) {
+    public Member update(String password, String name) {
         this.password = password;
         this.name = name;
         return this;
     }
 
-    public String getRoleKey() {
-        return this.role.getKey();
+    public String getAuthDescription() {
+        return this.auth.getDescription();
     }
 
     // 필수 override 메소드를 구현
@@ -87,7 +86,7 @@ public class User extends Time implements UserDetails {
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         Set<GrantedAuthority> roles = new HashSet<>();
-        roles.add(new SimpleGrantedAuthority(role.getKey()));
+        roles.add(new SimpleGrantedAuthority(auth.getDescription()));
         return roles;
     }
 

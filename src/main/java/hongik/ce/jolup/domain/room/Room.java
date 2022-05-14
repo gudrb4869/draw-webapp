@@ -14,6 +14,7 @@ import java.util.stream.Collectors;
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Table(name = "room")
+@ToString(of = {"id", "title", "roomType", "headCount"})
 public class Room extends Time {
     /*
     drop table if exists room CASCADE;
@@ -38,17 +39,17 @@ public class Room extends Time {
     private RoomType roomType;
 
     @Column(nullable = false)
-    private Long memNum;
+    private Long headCount;
 
-    @OneToMany(mappedBy = "room", fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "room", cascade = CascadeType.ALL)
     private List<Join> joins = new ArrayList<>();
 
     @Builder
-    public Room(Long id, String title, RoomType roomType, Long memNum/*, List<Join> joins*/) {
+    public Room(Long id, String title, RoomType roomType, Long headCount/*, List<Join> joins*/) {
         this.id = id;
         this.title = title;
         this.roomType = roomType;
-        this.memNum = memNum;
+        this.headCount = headCount;
 //        this.joins = joins;
     }
 
@@ -57,15 +58,15 @@ public class Room extends Time {
                 .id(id)
                 .title(title)
                 .roomType(roomType)
-                .memNum(memNum)
+                .headCount(headCount)
 //                .joinDtos(joins.stream().map(Join::toDto).collect(Collectors.toList()));
                 .build();
     }
 
-    public Room update(String title, RoomType roomType, Long memNum) {
+    public Room update(String title, RoomType roomType, Long headCount) {
         this.title = title;
         this.roomType = roomType;
-        this.memNum = memNum;
+        this.headCount = headCount;
         return this;
     }
 }

@@ -3,7 +3,7 @@ package hongik.ce.jolup.domain.join;
 import hongik.ce.jolup.domain.Time;
 import hongik.ce.jolup.domain.result.Result;
 import hongik.ce.jolup.domain.room.Room;
-import hongik.ce.jolup.domain.user.User;
+import hongik.ce.jolup.domain.member.Member;
 import hongik.ce.jolup.dto.JoinDto;
 import lombok.*;
 
@@ -13,6 +13,7 @@ import javax.persistence.*;
 @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Table(name = "joins")
+@ToString
 public class Join extends Time {
     /*
     drop table if exists join_room CASCADE;
@@ -32,8 +33,8 @@ public class Join extends Time {
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id")
-    private User user;
+    @JoinColumn(name = "member_id")
+    private Member member;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "room_id")
@@ -47,10 +48,14 @@ public class Join extends Time {
     private JoinRole joinRole;
 
     @Builder
-    public Join(Long id, User user, Room room, Result result, JoinRole joinRole) {
+    public Join(Long id, Member member, Room room, Result result, JoinRole joinRole) {
         this.id = id;
-        this.user = user;
-        this.room = room;
+        if (member != null) {
+            changeMember(member);
+        }
+        if (room != null) {
+            changeRoom(room);
+        }
         this.result = result;
         this.joinRole = joinRole;
     }
@@ -58,7 +63,7 @@ public class Join extends Time {
     public JoinDto toDto () {
         return JoinDto.builder()
                 .id(id)
-                .userDto(user.toDto())
+                .memberDto(member.toDto())
                 .roomDto(room.toDto())
                 .result(result)
                 .joinRole(joinRole)
@@ -70,18 +75,12 @@ public class Join extends Time {
         return this;
     }
 
-    public void setUser(User user) {
-        if (this.user != null) {
-            this.user.getJoins().remove(this);
-        }
-        this.user = user;
-        user.getJoins().add(this);
+    public void changeMember(Member member) {
+        this.member = member;
+        member.getJoins().add(this);
     }
 
-    public void setRoom(Room room) {
-        if (this.room != null) {
-            this.room.getJoins().remove(this);
-        }
+    public void changeRoom(Room room) {
         this.room = room;
         room.getJoins().add(this);
     }

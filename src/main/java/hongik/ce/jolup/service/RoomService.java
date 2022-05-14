@@ -4,6 +4,7 @@ import hongik.ce.jolup.domain.room.Room;
 import hongik.ce.jolup.repository.RoomRepository;
 import hongik.ce.jolup.dto.RoomDto;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -11,6 +12,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+@Slf4j
 @RequiredArgsConstructor
 @Service
 @Transactional
@@ -34,6 +36,7 @@ public class RoomService {
             return null;
         }
         Room room = roomWrapper.get();
+        log.info("room.joins = {}", room.getJoins());
         return room.toDto();
     }
 

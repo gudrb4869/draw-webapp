@@ -3,7 +3,7 @@ package hongik.ce.jolup.domain.match;
 import hongik.ce.jolup.domain.Time;
 import hongik.ce.jolup.domain.score.Score;
 import hongik.ce.jolup.domain.room.Room;
-import hongik.ce.jolup.domain.user.User;
+import hongik.ce.jolup.domain.member.Member;
 import hongik.ce.jolup.dto.MatchDto;
 import lombok.*;
 
@@ -13,6 +13,7 @@ import javax.persistence.*;
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Table(name = "match")
+@ToString
 public class Match extends Time {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -25,11 +26,11 @@ public class Match extends Time {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "home_id")
-    private User user1;
+    private Member home;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "away_id")
-    private User user2;
+    private Member away;
 
     @Embedded
     private Score score;
@@ -45,11 +46,11 @@ public class Match extends Time {
     private Integer matchNo;
 
     @Builder
-    public Match(Long id, Room room, User user1, User user2, Score score, MatchStatus matchStatus, Integer roundNo, Integer matchNo) {
+    public Match(Long id, Room room, Member home, Member away, Score score, MatchStatus matchStatus, Integer roundNo, Integer matchNo) {
         this.id = id;
         this.room = room;
-        this.user1 = user1;
-        this.user2 = user2;
+        this.home = home;
+        this.away = away;
         this.score = score;
         this.matchStatus = matchStatus;
         this.roundNo = roundNo;
@@ -60,8 +61,8 @@ public class Match extends Time {
         return MatchDto.builder()
                 .id(id)
                 .roomDto(room.toDto())
-                .user1Dto(user1==null?null:user1.toDto())
-                .user2Dto(user2==null?null:user2.toDto())
+                .homeDto(home==null?null:home.toDto())
+                .awayDto(away==null?null:away.toDto())
                 .matchStatus(matchStatus)
                 .score(score)
                 .roundNo(roundNo)

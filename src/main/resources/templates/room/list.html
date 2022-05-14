@@ -29,13 +29,13 @@
             </tr>
             <tr th:each="join : ${joins}">
                 <td th:text="${joinStat.count}"></td>
-                <td th:text="${join.getRoomDto().getTitle()}"></td>
-                <td th:text="${join.getRoomDto().getRoomType().getDescription()}"></td>
-                <td th:text="${join.getRoomDto().getMemNum()}"></td>
+                <td th:text="${join.roomDto.title}"></td>
+                <td th:text="${join.roomDto.roomType.description}"></td>
+                <td th:text="${join.roomDto.headCount}"></td>
                 <td>
                     <div>
-                        <form class="form-check-inline my-2 my-lg-0" th:action="@{'/room/' + ${join.getRoomDto().getId()}}" method="post">
-                            <a class="btn btn-primary my-2 my-sm-0" th:href="'/room/'+${join.getRoomDto().getId()}">조회</a>
+                        <form class="form-check-inline my-2 my-lg-0" th:action="@{|/room/${join.roomDto.id}|}" method="post">
+                            <a class="btn btn-primary my-2 my-sm-0" th:href="@{|/room/${join.roomDto.id}|}">조회</a>
                             <input type="hidden" name="_method" value="delete"/>
                             <button class="btn btn-danger my-2 my-sm-0" type="submit" th:disabled="${join.joinRole.name() != 'MASTER'}">삭제</button>
                         </form>

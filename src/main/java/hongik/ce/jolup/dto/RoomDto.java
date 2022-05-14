@@ -17,7 +17,7 @@ public class RoomDto {
     private Long id;
     private String title;
     private RoomType roomType;
-    private Long memNum;
+    private Long headCount;
 //    private List<JoinDto> joinDtos;
 
     public Room toEntity() {
@@ -25,7 +25,7 @@ public class RoomDto {
                 .id(id)
                 .title(title)
                 .roomType(roomType)
-                .memNum(memNum)
+                .headCount(headCount)
 //                .joins(joinDtos.stream().map(JoinDto::toEntity).collect(Collectors.toList()))
                 .build();
     }

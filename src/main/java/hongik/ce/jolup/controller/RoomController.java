@@ -4,11 +4,11 @@ import hongik.ce.jolup.domain.join.JoinRole;
 import hongik.ce.jolup.domain.match.MatchStatus;
 import hongik.ce.jolup.domain.result.Result;
 import hongik.ce.jolup.domain.score.Score;
-import hongik.ce.jolup.domain.user.User;
+import hongik.ce.jolup.domain.member.Member;
 import hongik.ce.jolup.domain.room.RoomType;
 import hongik.ce.jolup.dto.JoinDto;
 import hongik.ce.jolup.dto.MatchDto;
-import hongik.ce.jolup.dto.UserDto;
+import hongik.ce.jolup.dto.MemberDto;
 import hongik.ce.jolup.service.*;
 import hongik.ce.jolup.dto.RoomDto;
 import lombok.RequiredArgsConstructor;
@@ -31,20 +31,20 @@ public class RoomController {
 
     private final RoomService roomService;
     private final JoinService joinService;
-    private final UserService userService;
+    private final MemberService memberService;
     private final MatchService matchService;
 
     @GetMapping("/create")
     public String createRoom(@RequestParam(name = "title", defaultValue = "") String title,
                              @RequestParam(name = "roomType", defaultValue = "LEAGUE") RoomType roomType,
-                             @RequestParam(name = "memNum", defaultValue = "2") Long memNum,
+                             @RequestParam(name = "headCount", defaultValue = "2") Long headCount,
                              @RequestParam(name = "emails", defaultValue = ",") List<String> emails,
                              Model model) {
         RoomForm roomForm = new RoomForm();
         roomForm.setTitle(title);
         roomForm.setRoomType(roomType);
-        roomForm.setMemNum(memNum);
-        for(int i = 0; i < memNum; i++) {
+        roomForm.setHeadCount(headCount);
+        for(int i = 0; i < headCount; i++) {
             if (i < emails.size()) {
                 roomForm.addEmail(emails.get(i));
                 continue;
@@ -59,7 +59,7 @@ public class RoomController {
     @PostMapping("/create")
     public String createRoom(@ModelAttribute("form") @Valid RoomForm roomForm,
                              BindingResult bindingResult,
-                             @AuthenticationPrincipal User user,
+                             @AuthenticationPrincipal Member member,
                              Model model) {
 
         log.info("roomForm = {}", roomForm);
@@ -68,8 +68,8 @@ public class RoomController {
         }
 
         for(String email : roomForm.getEmails()) {
-            UserDto userDto = userService.findOne(email);
-            if (userDto == null) {
+            MemberDto memberDto = memberService.findOne(email);
+            if (memberDto == null) {
                 model.addAttribute("data", new Message("존재하지 않는 ID입니다!", "/room/create"));
                 return "message";
             }
@@ -83,28 +83,28 @@ public class RoomController {
         RoomDto roomRequestDto = RoomDto.builder()
                 .title(roomForm.getTitle())
                 .roomType(roomForm.getRoomType())
-                .memNum(roomForm.getMemNum()).build();
+                .headCount(roomForm.getHeadCount()).build();
         log.info("roomRequestDto = {}", roomRequestDto);
         Long roomId = roomService.saveRoom(roomRequestDto);
 
         RoomDto roomDto = roomService.getRoom(roomId);
         log.info("roomDto = {}", roomDto);
         for(String email : roomForm.getEmails()) {
-            UserDto userDto = userService.findOne(email);
+            MemberDto memberDto = memberService.findOne(email);
             JoinDto joinDto = JoinDto.builder()
-                    .userDto(userDto)
+                    .memberDto(memberDto)
                     .roomDto(roomDto)
                     .result(Result.builder().plays(0).win(0).draw(0).lose(0).goalFor(0)
                             .goalAgainst(0).goalDifference(0).points(0).build())
                     .joinRole(JoinRole.GUEST)
                     .build();
-            if (userDto.getId().equals(user.getId()))
+            if (memberDto.getId().equals(member.getId()))
                 joinDto.setJoinRole(JoinRole.MASTER);
             joinService.saveJoin(joinDto);
         }
 
-        List<UserDto> userDtoList = joinService.findByRoom(roomDto)
-                .stream().map(JoinDto::getUserDto).collect(Collectors.toList());
+        List<MemberDto> userDtoList = joinService.findByRoom(roomDto)
+                .stream().map(JoinDto::getMemberDto).collect(Collectors.toList());
 
 //        MatchDto[][] matrix = new MatchDto[roomDto.getMemNum().intValue()][roomDto.getMemNum().intValue()];
 
@@ -117,37 +117,37 @@ public class RoomController {
                 for (int i = 0; i < count; i++) {
                     for (int j = 0; j < count/2; j++) {
                         MatchDto matchDto = MatchDto.builder().roomDto(roomDto)
-                                .user1Dto(userDtoList.get((i + j) % count))
-                                .user2Dto(userDtoList.get((i + count - j - 2) % count))
+                                .homeDto(userDtoList.get((i + j) % count))
+                                .awayDto(userDtoList.get((i + count - j - 2) % count))
                                 .matchStatus(MatchStatus.READY)
                                 .roundNo(i)
                                 .matchNo(j)
-                                .score(Score.builder().user1Score(0).user2Score(0).build()).build();
+                                .score(Score.builder().homeScore(0).awayScore(0).build()).build();
                         matchService.saveMatch(matchDto);
                     }
                 }
             }
             else {
                 int j;
-                UserDto fixed = userDtoList.remove(0);
+                MemberDto fixed = userDtoList.remove(0);
                 for (int i = 0; i < count - 1; i++) {
                     for (j = 0; j < count/2 - 1; j++) {
                         MatchDto matchDto = MatchDto.builder().roomDto(roomDto)
-                                .user1Dto(userDtoList.get((i + j) % (count - 1)))
-                                .user2Dto(userDtoList.get((i + count - j - 2) % (count - 1)))
+                                .homeDto(userDtoList.get((i + j) % (count - 1)))
+                                .awayDto(userDtoList.get((i + count - j - 2) % (count - 1)))
                                 .matchStatus(MatchStatus.READY)
                                 .roundNo(i)
                                 .matchNo(j)
-                                .score(Score.builder().user1Score(0).user2Score(0).build()).build();
+                                .score(Score.builder().homeScore(0).awayScore(0).build()).build();
                         matchService.saveMatch(matchDto);
                     }
                     MatchDto matchDto = MatchDto.builder().roomDto(roomDto)
-                            .user1Dto(i % 2 == 0 ? userDtoList.get((i + j) % (count - 1)) : fixed)
-                            .user2Dto(i % 2 == 0 ? fixed : userDtoList.get((i + j) % (count - 1)))
+                            .homeDto(i % 2 == 0 ? userDtoList.get((i + j) % (count - 1)) : fixed)
+                            .awayDto(i % 2 == 0 ? fixed : userDtoList.get((i + j) % (count - 1)))
                             .matchStatus(MatchStatus.READY)
                             .roundNo(i)
                             .matchNo(j)
-                            .score(Score.builder().user1Score(0).user2Score(0).build()).build();
+                            .score(Score.builder().homeScore(0).awayScore(0).build()).build();
                     matchService.saveMatch(matchDto);
                 }
             }
@@ -162,7 +162,7 @@ public class RoomController {
             int match = (int) Math.ceil(Math.pow(2, round - 1));
             int auto_win_num = (int)Math.pow(2, round) - count;
 
-            List<UserDto> autoWinList = new ArrayList<>();
+            List<MemberDto> autoWinList = new ArrayList<>();
             for (int i = 0; i < auto_win_num; i++) {
                 autoWinList.add(userDtoList.remove(0));
             }
@@ -181,14 +181,14 @@ public class RoomController {
                         continue;
                     }
                     MatchDto matchDto = MatchDto.builder().roomDto(roomDto)
-                            .user1Dto(i == 0 ? userDtoList.remove(0) :
+                            .homeDto(i == 0 ? userDtoList.remove(0) :
                                     (autoWinList.size() > 0 && list.contains(j * 2) ? autoWinList.remove(0) : null))
-                            .user2Dto(i == 0 ? userDtoList.remove(0) :
+                            .awayDto(i == 0 ? userDtoList.remove(0) :
                                     (autoWinList.size() > 0 && list.contains(j * 2 + 1)? autoWinList.remove(0) : null))
                             .matchStatus(MatchStatus.READY)
                             .roundNo(i)
                             .matchNo(j)
-                            .score(Score.builder().user1Score(0).user2Score(0).build()).build();
+                            .score(Score.builder().homeScore(0).awayScore(0).build()).build();
                     matchService.saveMatch(matchDto);
                 }
                 match /= 2;
@@ -198,8 +198,9 @@ public class RoomController {
     }
 
     @GetMapping
-    public String myRoomList(Model model, @AuthenticationPrincipal User user) {
-        List<JoinDto> joins = joinService.findByUser(user.toDto());
+    public String myRoomList(Model model, @AuthenticationPrincipal Member member) {
+        List<JoinDto> joins = joinService.findByUser(member.toDto());
+        log.info("member = {}", memberService.getMember(member.getId()));
         model.addAttribute("joins", joins);
         return "room/list";
     }
@@ -219,13 +220,13 @@ public class RoomController {
     }
 
     @GetMapping("/{roomId}")
-    public String detail(@PathVariable("roomId") Long roomId, Model model, @AuthenticationPrincipal User user) {
+    public String detail(@PathVariable("roomId") Long roomId, Model model, @AuthenticationPrincipal Member user) {
         RoomDto roomDto = roomService.getRoom(roomId);
         if (roomDto == null) {
             return "error";
         }
 
-        List<Long> list = joinService.findByRoom(roomDto).stream().map(JoinDto::getUserDto).map(UserDto::getId).collect(Collectors.toList());
+        List<Long> list = joinService.findByRoom(roomDto).stream().map(JoinDto::getMemberDto).map(MemberDto::getId).collect(Collectors.toList());
         if (!list.contains(user.toDto().getId())) {
             return "error";
         }

@@ -12,21 +12,21 @@ import javax.persistence.*;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Score {
     @Column(nullable = false, name = "home_score")
-    private Integer user1Score;
+    private Integer homeScore;
 
     @Column(nullable = false, name = "away_score")
-    private Integer user2Score;
+    private Integer awayScore;
 
     @Builder
-    public Score(Integer user1Score, Integer user2Score) {
-        this.user1Score = user1Score;
-        this.user2Score = user2Score;
+    public Score(Integer homeScore, Integer awayScore) {
+        this.homeScore = homeScore;
+        this.awayScore = awayScore;
     }
 
     public ScoreDto toDto() {
         return ScoreDto.builder()
-                .user1Score(user1Score)
-                .user2Score(user2Score)
+                .homeScore(homeScore)
+                .awayScore(awayScore)
                 .build();
     }
 }

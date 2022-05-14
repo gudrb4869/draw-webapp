@@ -6,7 +6,7 @@
 <div class="container">
     <div th:replace="fragments/bodyheader" :: bodyheader />
     <div class="jumbotron">
-        <form class="form-horizontal" th:action="@{'/match/update/' + ${matchDto.getId()}}" method="post">
+        <form class="form-horizontal" th:action="@{|/match/update/${matchDto.id}|}" method="post">
             <input type="hidden" name="_method" value="put"/>
             <table class="table table-striped">
                 <thead>
@@ -19,17 +19,17 @@
                 </tr>
                 </thead>
                 <tbody>
-                <td th:text="${matchDto.getUser1Dto() == null} ? 'null': ${matchDto.getUser1Dto().getEmail() + '('+ matchDto.getUser1Dto().getName() + ')'}"></td>
+                <td th:text="${matchDto.homeDto == null} ? 'null': ${matchDto.homeDto.email + '('+ matchDto.homeDto.name + ')'}"></td>
                 <td>
-                    <input type="number" class="form-control input-large" min="0" max="100" th:default="${scoreDto.getUser1Score()}"
-                           name="user1Score" th:value="${scoreDto.user1Score}" required="required">
+                    <input type="number" class="form-control input-large" min="0" max="100" th:default="${scoreDto.homeScore}"
+                           name="homeScore" th:value="${scoreDto.homeScore}" required="required">
                 </td>
                 <td>:</td>
                 <td>
-                    <input type="number" class="form-control input-large" min="0" max="100" th:default="${scoreDto.getUser2Score()}"
-                           name="user2Score"th:value="${scoreDto.user2Score}" required="required">
+                    <input type="number" class="form-control input-large" min="0" max="100" th:default="${scoreDto.awayScore}"
+                           name="awayScore"th:value="${scoreDto.awayScore}" required="required">
                 </td>
-                <td th:text="${matchDto.getUser2Dto() == null} ? 'null': ${matchDto.getUser2Dto().getEmail() + '('+ matchDto.getUser2Dto().getName() + ')'}"></td>
+                <td th:text="${matchDto.awayDto == null} ? 'null': ${matchDto.awayDto.email + '('+ matchDto.awayDto.name + ')'}"></td>
                 </tr>
                 </tbody>
             </table>
@@ -38,7 +38,7 @@
                 <div class="col-sm-offset-1 col-sm-10">
                     <button type="submit" class="btn btn-info" th:name="matchStatus" th:value="READY">초기화</button>
                     <button type="submit" class="btn btn-success" th:name="matchStatus" th:value="END">저장</button>
-                    <a th:href="'/room/'+${matchDto.getRoomDto().getId()}" class="btn btn-warning">취소</a>
+                    <a th:href="@{|/room/${matchDto.roomDto.id}|}" class="btn btn-warning">취소</a>
                 </div>
             </div>
         </form>

@@ -1,16 +1,16 @@
 package hongik.ce.jolup.controller;
 
+import hongik.ce.jolup.domain.join.JoinRole;
 import hongik.ce.jolup.domain.match.MatchStatus;
 import hongik.ce.jolup.domain.result.Result;
 import hongik.ce.jolup.domain.room.RoomType;
 import hongik.ce.jolup.domain.score.Score;
-import hongik.ce.jolup.dto.JoinDto;
-import hongik.ce.jolup.dto.MatchDto;
-import hongik.ce.jolup.dto.RoomDto;
-import hongik.ce.jolup.dto.ScoreDto;
+import hongik.ce.jolup.domain.member.Member;
+import hongik.ce.jolup.dto.*;
 import hongik.ce.jolup.service.JoinService;
 import hongik.ce.jolup.service.MatchService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -24,11 +24,12 @@ public class MatchController {
     private final JoinService joinService;
 
     @GetMapping("/{matchId}")
-    public String matchDetail(@PathVariable("matchId") Long matchId, Model model) {
+    public String matchDetail(@PathVariable("matchId") Long matchId, @AuthenticationPrincipal Member member, Model model) {
         MatchDto matchDto = matchService.getMatch(matchId);
-        if (matchDto == null) {
+        if (matchDto == null || !hasAuth(member.toDto(), matchDto)) {
             return "error";
         }
+
         ScoreDto scoreDto = matchDto.getScore().toDto();
         model.addAttribute("matchDto", matchDto);
         model.addAttribute("scoreDto", scoreDto);
@@ -36,33 +37,46 @@ public class MatchController {
         return "match/update";
     }
 
+    private Boolean hasAuth(MemberDto memberDto, MatchDto matchDto) {
+        JoinDto joinDto = joinService.findOne(memberDto, matchDto.getRoomDto());
+        if (joinDto == null || joinDto.getJoinRole().equals(JoinRole.GUEST)) {
+            return false;
+        }
+        return true;
+    }
+
     @PutMapping("/update/{matchId}")
-    public String update(@PathVariable("matchId") Long matchId,
+    public String update(@PathVariable("matchId") Long matchId, @AuthenticationPrincipal Member member,
                          Score score, MatchStatus matchStatus) {
         if (matchStatus.equals(MatchStatus.READY)) {
-            score.setUser1Score(0);
-            score.setUser2Score(0);
+            score.setHomeScore(0);
+            score.setAwayScore(0);
         }
         MatchDto matchDto = matchService.getMatch(matchId);
+
+        if (matchDto == null || !hasAuth(member.toDto(), matchDto)) {
+            return "error";
+        }
+
         RoomDto roomDto = matchDto.getRoomDto();
-        JoinDto joinDto1 = joinService.findOne(matchDto.getUser1Dto(), matchDto.getRoomDto());
-        Result result1 = joinDto1.getResult();
-        JoinDto joinDto2 = joinService.findOne(matchDto.getUser2Dto(), matchDto.getRoomDto());
-        Result result2 = joinDto2.getResult();
+        JoinDto joinDto1 = joinService.findOne(matchDto.getHomeDto(), matchDto.getRoomDto());
+        Result result1 = joinDto1.result;
+        JoinDto joinDto2 = joinService.findOne(matchDto.getAwayDto(), matchDto.getRoomDto());
+        Result result2 = joinDto2.result;
 
         if (matchDto.getMatchStatus().equals(MatchStatus.END)) {
-            if (matchDto.getScore().getUser1Score() > matchDto.getScore().getUser2Score()) {
+            if (matchDto.getScore().getHomeScore() > matchDto.getScore().getAwayScore()) {
                 result1.setWin(result1.getWin() - 1);
                 result2.setLose(result2.getLose() - 1);
 
-                if (roomDto.getRoomType().equals(RoomType.TOURNAMENT) && !(score.getUser1Score() > score.getUser2Score())) {
+                if (roomDto.getRoomType().equals(RoomType.TOURNAMENT) && !(score.getHomeScore() > score.getAwayScore())) {
                     resetTournamentMatch(matchDto, roomDto);
                 }
 
-            } else if (matchDto.getScore().getUser1Score() < matchDto.getScore().getUser2Score()) {
+            } else if (matchDto.getScore().getHomeScore() < matchDto.getScore().getAwayScore()) {
                 result1.setLose(result1.getLose() - 1);
                 result2.setWin(result2.getWin() - 1);
-                if (roomDto.getRoomType().equals(RoomType.TOURNAMENT) && !(score.getUser1Score() < score.getUser2Score())) {
+                if (roomDto.getRoomType().equals(RoomType.TOURNAMENT) && !(score.getHomeScore() < score.getAwayScore())) {
                     resetTournamentMatch(matchDto, roomDto);
                 }
             } else {
@@ -70,43 +84,43 @@ public class MatchController {
                 result2.setDraw(result2.getDraw() - 1);
             }
             result1.setPlays(result1.getPlays() - 1);
-            result1.setGoalFor(result1.getGoalFor() - matchDto.getScore().getUser1Score());
-            result1.setGoalAgainst(result1.getGoalAgainst() - matchDto.getScore().getUser2Score());
+            result1.setGoalFor(result1.getGoalFor() - matchDto.getScore().getHomeScore());
+            result1.setGoalAgainst(result1.getGoalAgainst() - matchDto.getScore().getAwayScore());
             result1.setGoalDifference(result1.getGoalFor() - result1.getGoalAgainst());
             result1.setPoints(result1.getWin() * 3 + result1.getDraw());
 
             result2.setPlays(result2.getPlays() - 1);
-            result2.setGoalFor(result2.getGoalFor() - matchDto.getScore().getUser2Score());
-            result2.setGoalAgainst(result2.getGoalAgainst() - matchDto.getScore().getUser1Score());
+            result2.setGoalFor(result2.getGoalFor() - matchDto.getScore().getAwayScore());
+            result2.setGoalAgainst(result2.getGoalAgainst() - matchDto.getScore().getHomeScore());
             result2.setGoalDifference(result2.getGoalFor() - result2.getGoalAgainst());
             result2.setPoints(result2.getWin() * 3 + result2.getDraw());
         }
 
         if (matchStatus.equals(MatchStatus.END)) {
-            if (score.getUser1Score() > score.getUser2Score()) {
+            if (score.getHomeScore() > score.getAwayScore()) {
                 result1.setWin(result1.getWin() + 1);
                 result2.setLose(result2.getLose() + 1);
                 if (roomDto.getRoomType().equals(RoomType.TOURNAMENT)) {
                     MatchDto nextMatchDto = matchService.findOne(roomDto, matchDto.getRoundNo() + 1, matchDto.getMatchNo() / 2);
                     if (nextMatchDto != null) {
                         if (matchDto.getMatchNo() % 2 == 0) {
-                            nextMatchDto.setUser1Dto(matchDto.getUser1Dto());
+                            nextMatchDto.setHomeDto(matchDto.getHomeDto());
                         } else {
-                            nextMatchDto.setUser2Dto(matchDto.getUser1Dto());
+                            nextMatchDto.setAwayDto(matchDto.getHomeDto());
                         }
                         matchService.saveMatch(nextMatchDto);
                     }
                 }
-            } else if (score.getUser1Score() < score.getUser2Score()) {
+            } else if (score.getHomeScore() < score.getAwayScore()) {
                 result1.setLose(result1.getLose() + 1);
                 result2.setWin(result2.getWin() + 1);
                 if (roomDto.getRoomType().equals(RoomType.TOURNAMENT)) {
                     MatchDto nextMatchDto = matchService.findOne(roomDto, matchDto.getRoundNo() + 1, matchDto.getMatchNo() / 2);
                     if (nextMatchDto != null) {
                         if (matchDto.getMatchNo() % 2 == 0) {
-                            nextMatchDto.setUser1Dto(matchDto.getUser2Dto());
+                            nextMatchDto.setHomeDto(matchDto.getAwayDto());
                         } else {
-                            nextMatchDto.setUser2Dto(matchDto.getUser2Dto());
+                            nextMatchDto.setAwayDto(matchDto.getAwayDto());
                         }
                         matchService.saveMatch(nextMatchDto);
                     }
@@ -116,14 +130,14 @@ public class MatchController {
                 result2.setDraw(result2.getDraw() + 1);
             }
             result1.setPlays(result1.getPlays() + 1);
-            result1.setGoalFor(result1.getGoalFor() + score.getUser1Score());
-            result1.setGoalAgainst(result1.getGoalAgainst() + score.getUser2Score());
+            result1.setGoalFor(result1.getGoalFor() + score.getHomeScore());
+            result1.setGoalAgainst(result1.getGoalAgainst() + score.getAwayScore());
             result1.setGoalDifference(result1.getGoalFor() - result1.getGoalAgainst());
             result1.setPoints(result1.getWin() * 3 + result1.getDraw());
 
             result2.setPlays(result2.getPlays() + 1);
-            result2.setGoalFor(result2.getGoalFor() + score.getUser2Score());
-            result2.setGoalAgainst(result2.getGoalAgainst() + score.getUser1Score());
+            result2.setGoalFor(result2.getGoalFor() + score.getAwayScore());
+            result2.setGoalAgainst(result2.getGoalAgainst() + score.getHomeScore());
             result2.setGoalDifference(result2.getGoalFor() - result2.getGoalAgainst());
             result2.setPoints(result2.getWin() * 3 + result2.getDraw());
         }
@@ -142,11 +156,11 @@ public class MatchController {
         MatchDto nextMatchDto = matchService.findOne(roomDto, curMatchDto.getRoundNo() + 1, curMatchDto.getMatchNo() / 2);
         while (nextMatchDto != null) {
             if (curMatchDto.getMatchNo() % 2 == 0) {
-                nextMatchDto.setUser1Dto(null);
+                nextMatchDto.setHomeDto(null);
             } else {
-                nextMatchDto.setUser2Dto(null);
+                nextMatchDto.setAwayDto(null);
             }
-            nextMatchDto.setScore(Score.builder().user1Score(0).user2Score(0).build());
+            nextMatchDto.setScore(Score.builder().homeScore(0).awayScore(0).build());
             nextMatchDto.setMatchStatus(MatchStatus.READY);
             matchService.saveMatch(nextMatchDto);
             curMatchDto = nextMatchDto;
