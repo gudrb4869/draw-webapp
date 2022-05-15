@@ -2,7 +2,7 @@ package hongik.ce.jolup.domain.match;
 
 import hongik.ce.jolup.domain.Time;
 import hongik.ce.jolup.domain.score.Score;
-import hongik.ce.jolup.domain.room.Room;
+import hongik.ce.jolup.domain.competition.Competition;
 import hongik.ce.jolup.domain.member.Member;
 import hongik.ce.jolup.dto.MatchDto;
 import lombok.*;
@@ -21,8 +21,8 @@ public class Match extends Time {
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "room_id")
-    private Room room;
+    @JoinColumn(name = "competition_id")
+    private Competition competition;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "home_id")
@@ -46,9 +46,9 @@ public class Match extends Time {
     private Integer matchNo;
 
     @Builder
-    public Match(Long id, Room room, Member home, Member away, Score score, MatchStatus matchStatus, Integer roundNo, Integer matchNo) {
+    public Match(Long id, Competition competition, Member home, Member away, Score score, MatchStatus matchStatus, Integer roundNo, Integer matchNo) {
         this.id = id;
-        this.room = room;
+        this.competition = competition;
         this.home = home;
         this.away = away;
         this.score = score;
@@ -60,7 +60,7 @@ public class Match extends Time {
     public MatchDto toDto() {
         return MatchDto.builder()
                 .id(id)
-                .roomDto(room.toDto())
+                .competitionDto(competition.toDto())
                 .homeDto(home==null?null:home.toDto())
                 .awayDto(away==null?null:away.toDto())
                 .matchStatus(matchStatus)

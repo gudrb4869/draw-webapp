@@ -36,7 +36,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .formLogin() // 로그인에 대한 설정
                 .loginPage("/login")
                 .loginProcessingUrl("/login_proc")
-                .defaultSuccessUrl("/room") // 로그인 성공시 연결되는 주소
+                .defaultSuccessUrl("/") // 로그인 성공시 연결되는 주소
 //                .usernameParameter()
                 .and()
                 .logout() // 로그아웃 관련 설정

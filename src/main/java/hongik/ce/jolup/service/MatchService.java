@@ -2,7 +2,7 @@ package hongik.ce.jolup.service;
 
 import hongik.ce.jolup.domain.match.Match;
 import hongik.ce.jolup.dto.MatchDto;
-import hongik.ce.jolup.dto.RoomDto;
+import hongik.ce.jolup.dto.CompetitionDto;
 import hongik.ce.jolup.repository.MatchRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -23,8 +23,8 @@ public class MatchService {
         return matchRepository.save(matchDto.toEntity()).getId();
     }
 
-    public List<MatchDto> findByRoom(RoomDto roomDto) {
-        List<Match> matches = matchRepository.findByRoom(roomDto.toEntity());
+    public List<MatchDto> findByCompetition(CompetitionDto competitionDto) {
+        List<Match> matches = matchRepository.findByCompetition(competitionDto.toEntity());
         List<MatchDto> matchDtos = matches.stream()
                 .map(Match::toDto)
                 .collect(Collectors.toList());
@@ -41,8 +41,8 @@ public class MatchService {
         return matchDto;
     }
 
-    public MatchDto findOne(RoomDto roomDto, Integer roundNo, Integer matchNo) {
-        Optional<Match> optionalMatch = matchRepository.findByRoomAndRoundNoAndMatchNo(roomDto.toEntity(), roundNo, matchNo);
+    public MatchDto findOne(CompetitionDto competitionDto, Integer roundNo, Integer matchNo) {
+        Optional<Match> optionalMatch = matchRepository.findByCompetitionAndRoundNoAndMatchNo(competitionDto.toEntity(), roundNo, matchNo);
         if (optionalMatch.isEmpty()) {
             return null;
         }

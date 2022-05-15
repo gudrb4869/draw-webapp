@@ -7,7 +7,7 @@
 <div class="container">
     <div th:replace="fragments/bodyheader" :: bodyheader />
     <div class="jumbotron">
-        <<a class="btn btn-lg btn-info" th:href="@{/room/create}" role="button">방만들기</a> <br>
+        <<a class="btn btn-lg btn-info" th:href="@{/competition/create}" role="button">방만들기</a> <br>
         <h1><span class="text-white mr-2 mx-2" sec:authentication="name">사용자</span>님 목록</h1>
         <table>
             <thead>
@@ -21,16 +21,16 @@
             </thead>
             <tbody>
             <tr th:if="${joins.empty}">
-                <td colspan="4">No Rooms Available</td>
+                <td colspan="4">No competitions Available</td>
             </tr>
             <tr th:each="join, i : ${joins}">
                 <td th:text="${i.index+1}"></td>
                 <td>
-                    <a th:href="'/room/'+${join.getRoomDto().getId()}" th:text="${join.getRoomDto().getId()}"></a>
+                    <a th:href="'/competition/'+${join.getcompetitionDto().getId()}" th:text="${join.getcompetitionDto().getId()}"></a>
                 </td>
-                <td th:text="${join.getRoomDto().getTitle()}"></td>
-                <td th:text="${join.getRoomDto().getRoomType().getDescription()}"></td>
-                <!--            <td th:text="${joinRoom.room.getMemNum()}"></td>-->
+                <td th:text="${join.getcompetitionDto().getTitle()}"></td>
+                <td th:text="${join.getcompetitionDto().getcompetitionType().getDescription()}"></td>
+                <!--            <td th:text="${joincompetition.competition.getMemNum()}"></td>-->
             </tr>
             </tbody>
         </table>

@@ -13,7 +13,7 @@ import lombok.*;
 @AllArgsConstructor
 public class MatchDto {
     private Long id;
-    private RoomDto roomDto;
+    private CompetitionDto competitionDto;
     private MemberDto homeDto;
     private MemberDto awayDto;
     private Score score;
@@ -24,7 +24,7 @@ public class MatchDto {
     public Match toEntity() {
         return Match.builder()
                 .id(id)
-                .room(roomDto.toEntity())
+                .competition(competitionDto.toEntity())
                 .home(homeDto == null ? null : homeDto.toEntity())
                 .away(awayDto == null ? null : awayDto.toEntity())
                 .score(score)

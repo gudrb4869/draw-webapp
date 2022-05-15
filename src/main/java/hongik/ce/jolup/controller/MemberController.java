@@ -33,7 +33,7 @@ public class MemberController {
         if (isAuthenticated()) {
             return "redirect:/";
         }
-        model.addAttribute("userForm", new MemberForm());
+        model.addAttribute("memberForm", new MemberForm());
         return "signup";
     }
 

@@ -1,11 +1,8 @@
 package hongik.ce.jolup.dto;
 
-import hongik.ce.jolup.domain.room.Room;
-import hongik.ce.jolup.domain.room.RoomType;
+import hongik.ce.jolup.domain.competition.Competition;
+import hongik.ce.jolup.domain.competition.CompetitionType;
 import lombok.*;
-
-import java.util.List;
-import java.util.stream.Collectors;
 
 @Getter
 @Setter
@@ -13,18 +10,18 @@ import java.util.stream.Collectors;
 @ToString
 @NoArgsConstructor
 @AllArgsConstructor
-public class RoomDto {
+public class CompetitionDto {
     private Long id;
     private String title;
-    private RoomType roomType;
+    private CompetitionType competitionType;
     private Long headCount;
 //    private List<JoinDto> joinDtos;
 
-    public Room toEntity() {
-        return Room.builder()
+    public Competition toEntity() {
+        return Competition.builder()
                 .id(id)
                 .title(title)
-                .roomType(roomType)
+                .competitionType(competitionType)
                 .headCount(headCount)
 //                .joins(joinDtos.stream().map(JoinDto::toEntity).collect(Collectors.toList()))
                 .build();

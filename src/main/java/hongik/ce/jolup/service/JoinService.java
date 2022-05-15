@@ -2,7 +2,7 @@ package hongik.ce.jolup.service;
 
 import hongik.ce.jolup.domain.join.Join;
 import hongik.ce.jolup.dto.JoinDto;
-import hongik.ce.jolup.dto.RoomDto;
+import hongik.ce.jolup.dto.CompetitionDto;
 import hongik.ce.jolup.dto.MemberDto;
 import hongik.ce.jolup.repository.JoinRepository;
 import lombok.RequiredArgsConstructor;
@@ -24,7 +24,7 @@ public class JoinService {
         return joinRepository.save(joinDto.toEntity()).getId();
     }
 
-    public List<JoinDto> findByUser(MemberDto memberDto) {
+    public List<JoinDto> findByMember(MemberDto memberDto) {
         List<Join> joins = joinRepository.findByMember(memberDto.toEntity());
         List<JoinDto> joinDtos = joins.stream()
                 .map(Join::toDto)
@@ -32,16 +32,16 @@ public class JoinService {
         return joinDtos;
     }
 
-    public List<JoinDto> findByRoom(RoomDto roomDto) {
-        List<Join> joins = joinRepository.findByRoom(roomDto.toEntity());
+    public List<JoinDto> findByCompetition(CompetitionDto competitionDto) {
+        List<Join> joins = joinRepository.findByCompetition(competitionDto.toEntity());
         List<JoinDto> joinDtos = joins.stream()
                 .map(Join::toDto)
                 .collect(Collectors.toList());
         return joinDtos;
     }
 
-    public JoinDto findOne(MemberDto memberDto, RoomDto roomDto) {
-        Optional<Join> optionalJoin = joinRepository.findByMemberAndRoom(memberDto.toEntity(), roomDto.toEntity());
+    public JoinDto findOne(MemberDto memberDto, CompetitionDto competitionDto) {
+        Optional<Join> optionalJoin = joinRepository.findByMemberAndCompetition(memberDto.toEntity(), competitionDto.toEntity());
         if (optionalJoin.isEmpty())
             return null;
         Join join = optionalJoin.get();
@@ -49,16 +49,16 @@ public class JoinService {
         return joinDto;
     }
 
-    public List<JoinDto> findByRoomSort(RoomDto roomDto) {
-        List<Join> joins = joinRepository.findByRoomSort(roomDto.toEntity());
+    public List<JoinDto> findByCompetitionSort(CompetitionDto competitionDto) {
+        List<Join> joins = joinRepository.findByCompetitionSort(competitionDto.toEntity());
         List<JoinDto> joinDtos = joins.stream()
                 .map(Join::toDto)
                 .collect(Collectors.toList());
         return joinDtos;
     }
 
-    public List<JoinDto> findByRoomOrderByJoinRole(RoomDto roomDto) {
-        List<Join> joins = joinRepository.findByRoomOrderByJoinRoleDesc(roomDto.toEntity());
+    public List<JoinDto> findByCompetitionOrderByJoinRole(CompetitionDto competitionDto) {
+        List<Join> joins = joinRepository.findByCompetitionOrderByJoinRoleDesc(competitionDto.toEntity());
         List<JoinDto> joinDtos = joins.stream()
                 .map(Join::toDto)
                 .collect(Collectors.toList());

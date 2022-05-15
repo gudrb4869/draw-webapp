@@ -38,7 +38,7 @@
                 <div class="col-sm-offset-1 col-sm-10">
                     <button type="submit" class="btn btn-info" th:name="matchStatus" th:value="READY">초기화</button>
                     <button type="submit" class="btn btn-success" th:name="matchStatus" th:value="END">저장</button>
-                    <a th:href="@{|/room/${matchDto.roomDto.id}|}" class="btn btn-warning">취소</a>
+                    <a th:href="@{|/competition/${matchDto.competitionDto.id}|}" class="btn btn-warning">취소</a>
                 </div>
             </div>
         </form>

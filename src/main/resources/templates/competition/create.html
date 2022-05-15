@@ -17,7 +17,7 @@
     <div class="py-5 text-center">
         <h2>대회 만들기</h2>
     </div>
-    <form th:action="@{/room/create}" th:object="${form}" method="post">
+    <form th:action="@{/competition/create}" th:object="${form}" method="post">
         <div>
             <label th:for="title">대회 이름</label>
             <input type="text" th:field="*{title}" placeholder="대회 이름을 입력하세요"
@@ -27,10 +27,10 @@
 
         <div class="py-2">
             <div>대회 방식</div>
-            <select th:field="*{roomType}" class="form-select-sm"
+            <select th:field="*{competitionType}" class="form-select-sm"
                     onchange="updateForm()">
-                <option th:each="roomType : ${T(hongik.ce.jolup.domain.room.RoomType).values()}" th:value="${roomType.name()}"
-                        th:text="${roomType.description}" th:selected="${roomType == form.roomType}"></option>
+                <option th:each="competitionType : ${T(hongik.ce.jolup.domain.competition.CompetitionType).values()}" th:value="${competitionType.name()}"
+                        th:text="${competitionType.description}" th:selected="${competitionType == form.competitionType}"></option>
             </select>
         </div>
 
@@ -38,8 +38,8 @@
             <div>대회 참여 인원</div>
             <select th:field="*{headCount}" class="form-select-sm"
                     onchange="updateForm()">
-            <!--th:onchange="|location.href='@{/room/create?title=' + form.title.value
-            + '&roomType='+ form.roomType.value + '&memNum=' + this.value +  '}'|">-->
+            <!--th:onchange="|location.href='@{/competition/create?title=' + form.title.value
+            + '&competitionType='+ form.competitionType.value + '&memNum=' + this.value +  '}'|">-->
                 <option th:each="headCount : ${#numbers.sequence(2, 20)}" th:value="${headCount}" th:text="${headCount}"
                         th:selected="${headCount} == ${form.headCount}"></option>
             </select>
@@ -69,7 +69,7 @@
         <div class="row">
             <div class="col">
                 <button type="submit" class="btn btn-primary btn-lg">생성</button>
-                <a th:href="@{/room}" class="btn btn-warning btn-lg">취소</a>
+                <a th:href="@{/competition}" class="btn btn-warning btn-lg">취소</a>
             </div>
         </div>
 
@@ -81,7 +81,7 @@
 <script th:inline="javascript">
     function updateForm() {
         let title = document.getElementById("title").value;
-        let roomType = document.getElementById("roomType").value;
+        let competitionType = document.getElementById("competitionType").value;
         let headCount = document.getElementById("headCount").value;
         let emails = []
         for (var i = 0; i < headCount; i++) {
@@ -92,7 +92,7 @@
                 emails.push("")
             }
         }
-        location.href="/room/create?title=" + title + "&roomType=" + roomType + "&headCount=" + headCount + "&emails=" + emails;
+        location.href="/competition/create?title=" + title + "&competitionType=" + competitionType + "&headCount=" + headCount + "&emails=" + emails;
     }
 </script>
 </html>

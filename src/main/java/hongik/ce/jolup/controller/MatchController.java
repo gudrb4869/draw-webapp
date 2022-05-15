@@ -3,7 +3,7 @@ package hongik.ce.jolup.controller;
 import hongik.ce.jolup.domain.join.JoinRole;
 import hongik.ce.jolup.domain.match.MatchStatus;
 import hongik.ce.jolup.domain.result.Result;
-import hongik.ce.jolup.domain.room.RoomType;
+import hongik.ce.jolup.domain.competition.CompetitionType;
 import hongik.ce.jolup.domain.score.Score;
 import hongik.ce.jolup.domain.member.Member;
 import hongik.ce.jolup.dto.*;
@@ -26,7 +26,7 @@ public class MatchController {
     @GetMapping("/{matchId}")
     public String matchDetail(@PathVariable("matchId") Long matchId, @AuthenticationPrincipal Member member, Model model) {
         MatchDto matchDto = matchService.getMatch(matchId);
-        if (matchDto == null || !hasAuth(member.toDto(), matchDto)) {
+        if (matchDto == null || matchDto.getHomeDto() == null || matchDto.getAwayDto() == null || !hasAuth(member.toDto(), matchDto)) {
             return "error";
         }
 
@@ -38,7 +38,7 @@ public class MatchController {
     }
 
     private Boolean hasAuth(MemberDto memberDto, MatchDto matchDto) {
-        JoinDto joinDto = joinService.findOne(memberDto, matchDto.getRoomDto());
+        JoinDto joinDto = joinService.findOne(memberDto, matchDto.getCompetitionDto());
         if (joinDto == null || joinDto.getJoinRole().equals(JoinRole.GUEST)) {
             return false;
         }
@@ -54,14 +54,14 @@ public class MatchController {
         }
         MatchDto matchDto = matchService.getMatch(matchId);
 
-        if (matchDto == null || !hasAuth(member.toDto(), matchDto)) {
+        if (matchDto == null || matchDto.getHomeDto() == null || matchDto.getAwayDto() == null || !hasAuth(member.toDto(), matchDto)) {
             return "error";
         }
 
-        RoomDto roomDto = matchDto.getRoomDto();
-        JoinDto joinDto1 = joinService.findOne(matchDto.getHomeDto(), matchDto.getRoomDto());
+        CompetitionDto competitionDto = matchDto.getCompetitionDto();
+        JoinDto joinDto1 = joinService.findOne(matchDto.getHomeDto(), matchDto.getCompetitionDto());
         Result result1 = joinDto1.getResult();
-        JoinDto joinDto2 = joinService.findOne(matchDto.getAwayDto(), matchDto.getRoomDto());
+        JoinDto joinDto2 = joinService.findOne(matchDto.getAwayDto(), matchDto.getCompetitionDto());
         Result result2 = joinDto2.getResult();
 
         if (matchDto.getMatchStatus().equals(MatchStatus.END)) {
@@ -69,15 +69,15 @@ public class MatchController {
                 result1.setWin(result1.getWin() - 1);
                 result2.setLose(result2.getLose() - 1);
 
-                if (roomDto.getRoomType().equals(RoomType.TOURNAMENT) && !(score.getHomeScore() > score.getAwayScore())) {
-                    resetTournamentMatch(matchDto, roomDto);
+                if (competitionDto.getCompetitionType().equals(CompetitionType.TOURNAMENT) && !(score.getHomeScore() > score.getAwayScore())) {
+                    resetTournamentMatch(matchDto, competitionDto);
                 }
 
             } else if (matchDto.getScore().getHomeScore() < matchDto.getScore().getAwayScore()) {
                 result1.setLose(result1.getLose() - 1);
                 result2.setWin(result2.getWin() - 1);
-                if (roomDto.getRoomType().equals(RoomType.TOURNAMENT) && !(score.getHomeScore() < score.getAwayScore())) {
-                    resetTournamentMatch(matchDto, roomDto);
+                if (competitionDto.getCompetitionType().equals(CompetitionType.TOURNAMENT) && !(score.getHomeScore() < score.getAwayScore())) {
+                    resetTournamentMatch(matchDto, competitionDto);
                 }
             } else {
                 result1.setDraw(result1.getDraw() - 1);
@@ -100,8 +100,8 @@ public class MatchController {
             if (score.getHomeScore() > score.getAwayScore()) {
                 result1.setWin(result1.getWin() + 1);
                 result2.setLose(result2.getLose() + 1);
-                if (roomDto.getRoomType().equals(RoomType.TOURNAMENT)) {
-                    MatchDto nextMatchDto = matchService.findOne(roomDto, matchDto.getRoundNo() + 1, matchDto.getMatchNo() / 2);
+                if (competitionDto.getCompetitionType().equals(CompetitionType.TOURNAMENT)) {
+                    MatchDto nextMatchDto = matchService.findOne(competitionDto, matchDto.getRoundNo() + 1, matchDto.getMatchNo() / 2);
                     if (nextMatchDto != null) {
                         if (matchDto.getMatchNo() % 2 == 0) {
                             nextMatchDto.setHomeDto(matchDto.getHomeDto());
@@ -114,8 +114,8 @@ public class MatchController {
             } else if (score.getHomeScore() < score.getAwayScore()) {
                 result1.setLose(result1.getLose() + 1);
                 result2.setWin(result2.getWin() + 1);
-                if (roomDto.getRoomType().equals(RoomType.TOURNAMENT)) {
-                    MatchDto nextMatchDto = matchService.findOne(roomDto, matchDto.getRoundNo() + 1, matchDto.getMatchNo() / 2);
+                if (competitionDto.getCompetitionType().equals(CompetitionType.TOURNAMENT)) {
+                    MatchDto nextMatchDto = matchService.findOne(competitionDto, matchDto.getRoundNo() + 1, matchDto.getMatchNo() / 2);
                     if (nextMatchDto != null) {
                         if (matchDto.getMatchNo() % 2 == 0) {
                             nextMatchDto.setHomeDto(matchDto.getAwayDto());
@@ -148,12 +148,12 @@ public class MatchController {
         joinDto2.setResult(result2);
         joinService.saveJoin(joinDto1);
         joinService.saveJoin(joinDto2);
-        return "redirect:/room/" + roomDto.getId();
+        return "redirect:/competition/" + competitionDto.getId();
     }
 
-    private void resetTournamentMatch(MatchDto matchDto, RoomDto roomDto) {
+    private void resetTournamentMatch(MatchDto matchDto, CompetitionDto competitionDto) {
         MatchDto curMatchDto = matchDto;
-        MatchDto nextMatchDto = matchService.findOne(roomDto, curMatchDto.getRoundNo() + 1, curMatchDto.getMatchNo() / 2);
+        MatchDto nextMatchDto = matchService.findOne(competitionDto, curMatchDto.getRoundNo() + 1, curMatchDto.getMatchNo() / 2);
         while (nextMatchDto != null) {
             if (curMatchDto.getMatchNo() % 2 == 0) {
                 nextMatchDto.setHomeDto(null);
@@ -164,7 +164,7 @@ public class MatchController {
             nextMatchDto.setMatchStatus(MatchStatus.READY);
             matchService.saveMatch(nextMatchDto);
             curMatchDto = nextMatchDto;
-            nextMatchDto = matchService.findOne(roomDto, curMatchDto.getRoundNo() + 1, curMatchDto.getMatchNo() / 2);
+            nextMatchDto = matchService.findOne(competitionDto, curMatchDto.getRoundNo() + 1, curMatchDto.getMatchNo() / 2);
         }
     }
 }

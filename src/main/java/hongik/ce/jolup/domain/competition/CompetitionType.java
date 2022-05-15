@@ -1,11 +1,11 @@
-package hongik.ce.jolup.domain.room;
+package hongik.ce.jolup.domain.competition;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
 @Getter
 @RequiredArgsConstructor
-public enum RoomType {
+public enum CompetitionType {
     LEAGUE("리그"),
     TOURNAMENT("토너먼트");
 
