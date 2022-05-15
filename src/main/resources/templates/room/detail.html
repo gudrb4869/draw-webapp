@@ -5,10 +5,29 @@
 <body>
 <div class="container">
     <div th:replace="fragments/bodyheader" :: bodyheader />
-    <h1 th:text="${roomDto.id}">방id</h1>
-    <h2 th:text="${roomDto.title}">방이름</h2>
+    <hr class="my-4">
+    <table class="table table-striped">
+        <thead>
+        <tr>
+            <th>방 제목</th>
+            <th>방 공개여부</th>
+            <th>방 인원</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr>
+            <td th:text="${roomDto.title}"></td>
+            <td th:text="${roomDto.roomSetting.description}"></td>
+            <td th:text="${belongDtos.size()}"></td>
+        </tr>
+        </tbody>
+    </table>
     <div class="my-2 my-lg-0">
         <a th:href="@{/room}" class="btn btn-warning">목록</a>
+        <!--<button class="btn btn-primary my-2 my-sm-0"
+                th:onclick="|location.href='@{/room/}' + ${roomId} + '/invite'|"
+                th:disabled="${}" type="button">초대</button>-->
+        <a class="btn btn-primary my-2 my-sm-0" th:href="@{/room/{roomId}/invite(roomId = ${roomDto.id})}">초대</a>
     </div>
     <div class="text-center py-2" style="max-width: 600px">
         <hr class="my-4">
@@ -17,13 +36,13 @@
             <thead>
             <tr>
                 <th>이름</th>
-<!--                <th>권한</th>-->
+                <th>권한</th>
             </tr>
             </thead>
             <tbody>
             <tr th:each="belongDto : ${belongDtos}">
                 <td th:text="${belongDto.memberDto.email + '('+ belongDto.memberDto.name + ')'}"></td>
-<!--                <td th:text="${belongDto.belongRole.description}"></td>-->
+                <td th:text="${belongDto.belongType.description}"></td>
             </tr>
             </tbody>
         </table>

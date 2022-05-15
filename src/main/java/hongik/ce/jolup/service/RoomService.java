@@ -32,9 +32,8 @@ public class RoomService {
 
     public RoomDto findOne(Long roomId) {
         Optional<Room> optionalRoom = roomRepository.findById(roomId);
-        if (optionalRoom.isEmpty()) {
+        if (optionalRoom.isEmpty())
             return null;
-        }
         Room room = optionalRoom.get();
         return room.toDto();
     }

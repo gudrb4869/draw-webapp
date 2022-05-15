@@ -25,8 +25,12 @@ public class Belong {
     @JoinColumn(name = "room_id")
     private Room room;
 
+    @Column(nullable = false)
+    @Enumerated(EnumType.STRING)
+    private BelongType belongType;
+
     @Builder
-    public Belong(Long id, Member member, Room room) {
+    public Belong(Long id, Member member, Room room, BelongType belongType) {
         this.id = id;
         if (member != null) {
             changeMember(member);
@@ -34,10 +38,11 @@ public class Belong {
         if (room != null) {
             changeRoom(room);
         }
+        this.belongType = belongType;
     }
 
     public BelongDto toDto() {
-        return BelongDto.builder().id(id).memberDto(member.toDto()).roomDto(room.toDto()).build();
+        return BelongDto.builder().id(id).memberDto(member.toDto()).roomDto(room.toDto()).belongType(belongType).build();
     }
 
     public void changeMember(Member member) {
@@ -48,5 +53,9 @@ public class Belong {
     public void changeRoom(Room room) {
         this.room = room;
         room.getBelongs().add(this);
+    }
+
+    public void changeBelongType(BelongType belongType) {
+        this.belongType = belongType;
     }
 }

@@ -26,7 +26,7 @@ public class CompetitionForm {
     @NotNull(message = "대회 참여 인원 수는 필수 입력 값입니다!")
     private Long headCount;
 
-    @Size(min = 2, message = "최소 인원 오류")
+    @Size(min = 2, max = 20, message = "최소 인원 오류")
     @NotNull(message = "null 오류")
     private List<@NotBlank(message = "참가자 아이디는 필수 입력 값입니다!") String> emails = new ArrayList<>();
 

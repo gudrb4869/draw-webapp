@@ -22,20 +22,29 @@ public class Room extends Time {
     @Column(nullable = false, length = 30)
     private String title;
 
+    @Column(nullable = false)
+    @Enumerated(EnumType.STRING)
+    private RoomSetting roomSetting;
+
     @OneToMany(mappedBy = "room", cascade = CascadeType.ALL)
     private List<Belong> belongs = new ArrayList<>();
 
     @Builder
-    public Room(Long id, String title) {
+    public Room(Long id, String title, RoomSetting roomSetting) {
         this.id = id;
         this.title = title;
+        this.roomSetting = roomSetting;
     }
 
     public RoomDto toDto() {
-        return RoomDto.builder().id(id).title(title).build();
+        return RoomDto.builder().id(id).title(title).roomSetting(roomSetting).build();
     }
 
     public void updateTitle(String title) {
         this.title = title;
+    }
+
+    public void updateRoomSetting(RoomSetting roomSetting) {
+        this.roomSetting = roomSetting;
     }
 }
