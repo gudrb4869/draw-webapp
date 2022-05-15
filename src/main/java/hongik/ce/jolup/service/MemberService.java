@@ -1,6 +1,8 @@
 package hongik.ce.jolup.service;
 
+import hongik.ce.jolup.domain.belong.Belong;
 import hongik.ce.jolup.domain.member.Member;
+import hongik.ce.jolup.dto.BelongDto;
 import hongik.ce.jolup.repository.MemberRepository;
 import hongik.ce.jolup.domain.member.MemberAuth;
 import hongik.ce.jolup.dto.MemberDto;
@@ -89,5 +91,15 @@ public class MemberService implements UserDetailsService {
         HashMap<String, Object> map = new HashMap<String, Object>();
         map.put("result", memberRepository.existsByEmail(email));
         return map;
+    }
+
+    public List<BelongDto> getBelongs(Long memberId) {
+        Optional<Member> optionalMember = memberRepository.findById(memberId);
+        if (optionalMember.isEmpty()) {
+            return null;
+        }
+        Member member = optionalMember.get();
+        List<BelongDto> belongDtos = member.getBelongs().stream().map(Belong::toDto).collect(Collectors.toList());
+        return belongDtos;
     }
 }

@@ -7,10 +7,10 @@
 <div class="container" style="max-width: 600px">
     <div th:replace="fragments/bodyheader" :: bodyheader />
     <div class="py-5 text-center">
-        <h1><span class="text-black mx-2" sec:authentication="name">사용자</span>님의 대회 목록</h1>
+        <h1><span class="text-black mx-2" sec:authentication="name">사용자</span>님의 방 목록</h1>
     </div>
     <hr class="my-4">
-    <a class="btn btn-info" th:href="@{/competition/create}" role="button" style="float:right;">대회 만들기</a>
+    <a class="btn btn-info" th:href="@{/room/create}" role="button" style="float:right;">방 만들기</a>
     <div>
         <table class="table">
             <thead>
@@ -18,26 +18,23 @@
                 <th>구분</th>
                 <!--                <th>방id</th>-->
                 <th>제목</th>
-                <th>타입</th>
-                <th>참여인원수</th>
                 <th></th>
             </tr>
             </thead>
             <tbody>
-            <tr th:if="${joins.isEmpty()}">
-                <td class="text-center" colspan="5">참여중인 대회가 없습니다!</td>
+            <tr th:if="${belongs.isEmpty()}">
+                <td class="text-center" colspan="5">방이 존재하지 않습니다.</td>
             </tr>
-            <tr th:each="join : ${joins}">
-                <td th:text="${joinStat.count}"></td>
-                <td th:text="${join.competitionDto.title}"></td>
-                <td th:text="${join.competitionDto.competitionType.description}"></td>
-                <td th:text="${join.competitionDto.headCount}"></td>
+            <tr th:each="belong : ${belongs}">
+                <td th:text="${belongStat.count}"></td>
+                <td th:text="${belong.roomDto.title}"></td>
                 <td>
                     <div>
-                        <form class="form-check-inline my-2 my-lg-0" th:action="@{|/competition/${join.competitionDto.id}|}" method="post">
-                            <a class="btn btn-primary my-2 my-sm-0" th:href="@{|/competition/${join.competitionDto.id}|}">조회</a>
+                        <form class="form-check-inline my-2 my-lg-0" th:action="@{|/room/${belong.roomDto.id}|}" method="post">
+                            <a class="btn btn-primary my-2 my-sm-0" th:href="@{|/room/${belong.roomDto.id}|}">조회</a>
                             <input type="hidden" name="_method" value="delete"/>
-                            <button class="btn btn-danger my-2 my-sm-0" type="submit" th:disabled="${join.joinRole.name() != 'MASTER'}">삭제</button>
+                            <button class="btn btn-danger my-2 my-sm-0" type="submit">삭제</button>
+<!--                                    th:disabled="${belong.belongRole.name() != 'MASTER'}"-->
                         </form>
                     </div>
                 </td>

@@ -220,20 +220,20 @@ public class CompetitionController {
     }
 
     @GetMapping("/{competitionId}")
-    public String detail(@PathVariable("competitionId") Long competitionId, Model model, @AuthenticationPrincipal Member user) {
+    public String detail(@PathVariable("competitionId") Long competitionId, Model model, @AuthenticationPrincipal Member member) {
         CompetitionDto competitionDto = competitionService.getCompetition(competitionId);
         if (competitionDto == null) {
             return "error";
         }
 
         List<Long> list = joinService.findByCompetition(competitionDto).stream().map(JoinDto::getMemberDto).map(MemberDto::getId).collect(Collectors.toList());
-        if (!list.contains(user.toDto().getId())) {
+        if (!list.contains(member.toDto().getId())) {
             return "error";
         }
 
         List<MatchDto> matchDtos = matchService.findByCompetition(competitionDto);
 
-        JoinDto myJoinDto = joinService.findOne(user.toDto(), competitionDto);
+        JoinDto myJoinDto = joinService.findOne(member.toDto(), competitionDto);
         log.info("myJoinDto = {}", myJoinDto);
         model.addAttribute("competitionDto", competitionDto);
         model.addAttribute("matchDtos", matchDtos);
