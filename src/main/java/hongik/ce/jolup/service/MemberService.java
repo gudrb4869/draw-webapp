@@ -1,8 +1,10 @@
 package hongik.ce.jolup.service;
 
 import hongik.ce.jolup.domain.belong.Belong;
+import hongik.ce.jolup.domain.join.Join;
 import hongik.ce.jolup.domain.member.Member;
 import hongik.ce.jolup.dto.BelongDto;
+import hongik.ce.jolup.dto.JoinDto;
 import hongik.ce.jolup.repository.MemberRepository;
 import hongik.ce.jolup.domain.member.MemberAuth;
 import hongik.ce.jolup.dto.MemberDto;
@@ -101,5 +103,14 @@ public class MemberService implements UserDetailsService {
         Member member = optionalMember.get();
         List<BelongDto> belongDtos = member.getBelongs().stream().map(Belong::toDto).collect(Collectors.toList());
         return belongDtos;
+    }
+
+    public List<JoinDto> getJoins(Long memberId) {
+        Optional<Member> optionalMember = memberRepository.findById(memberId);
+        if (optionalMember.isEmpty())
+            return null;
+        Member member = optionalMember.get();
+        List<JoinDto> joinDtos = member.getJoins().stream().map(Join::toDto).collect(Collectors.toList());
+        return joinDtos;
     }
 }

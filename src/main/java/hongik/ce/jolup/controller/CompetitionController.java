@@ -26,7 +26,7 @@ import java.util.stream.Collectors;
 @Slf4j
 @RequiredArgsConstructor
 @Controller
-@RequestMapping("/competition")
+@RequestMapping("room/{roomId}/competition")
 public class CompetitionController {
 
     private final CompetitionService competitionService;
@@ -35,7 +35,8 @@ public class CompetitionController {
     private final MatchService matchService;
 
     @GetMapping("/create")
-    public String createCompetition(@RequestParam(name = "title", defaultValue = "") String title,
+    public String createCompetition(@PathVariable("roomId") Long roomId,
+                                    @RequestParam(name = "title", defaultValue = "") String title,
                                     @RequestParam(name = "competitionType", defaultValue = "LEAGUE") CompetitionType competitionType,
                                     @RequestParam(name = "headCount", defaultValue = "2") Long headCount,
                                     @RequestParam(name = "emails", defaultValue = ",") List<String> emails,
@@ -57,7 +58,8 @@ public class CompetitionController {
     }
 
     @PostMapping("/create")
-    public String createCompetition(@ModelAttribute("form") @Valid CompetitionForm competitionForm,
+    public String createCompetition(@PathVariable("roomId") Long roomId,
+                                    @ModelAttribute("form") @Valid CompetitionForm competitionForm,
                                     BindingResult bindingResult,
                                     @AuthenticationPrincipal Member member,
                                     Model model) {
@@ -194,11 +196,11 @@ public class CompetitionController {
                 match /= 2;
             }
         }
-        return "redirect:/competition";
+        return "redirect:/room/{roomId}/competition";
     }
 
     @GetMapping
-    public String Competitions(Model model, @AuthenticationPrincipal Member member) {
+    public String Competitions(@PathVariable("roomId") Long roomId, Model model, @AuthenticationPrincipal Member member) {
         List<JoinDto> joins = joinService.findByMember(member.toDto());
         log.info("member = {}", memberService.getMember(member.getId()));
         model.addAttribute("joins", joins);
@@ -206,7 +208,7 @@ public class CompetitionController {
     }
 
     @DeleteMapping("/{competitionId}")
-    public String deleteCompetition(@PathVariable("competitionId") Long competitionId) {
+    public String deleteCompetition(@PathVariable("roomId") Long roomId, @PathVariable("competitionId") Long competitionId) {
         List<Long> matchList = matchService.findByCompetition(competitionService.getCompetition(competitionId))
                 .stream().map(MatchDto::getId).collect(Collectors.toList());
         List<Long> joinList = joinService.findByCompetition(competitionService.getCompetition(competitionId))
@@ -216,11 +218,11 @@ public class CompetitionController {
         for (Long joinId : joinList)
             joinService.deleteJoin(joinId);
         competitionService.deleteCompetition(competitionId);
-        return "redirect:/competition";
+        return "redirect:/room/{roomId}/competition";
     }
 
     @GetMapping("/{competitionId}")
-    public String detail(@PathVariable("competitionId") Long competitionId, Model model, @AuthenticationPrincipal Member member) {
+    public String detail(@PathVariable("roomId") Long roomId, @PathVariable("competitionId") Long competitionId, Model model, @AuthenticationPrincipal Member member) {
         CompetitionDto competitionDto = competitionService.getCompetition(competitionId);
         if (competitionDto == null) {
             return "error";

@@ -1,5 +1,6 @@
 package hongik.ce.jolup.domain.belong;
 
+import hongik.ce.jolup.domain.Time;
 import hongik.ce.jolup.domain.member.Member;
 import hongik.ce.jolup.domain.room.Room;
 import hongik.ce.jolup.dto.BelongDto;
@@ -12,16 +13,16 @@ import javax.persistence.*;
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @ToString
-public class Belong {
+public class Belong extends Time {
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "belong_id")
     private Long id;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "member_id")
     private Member member;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "room_id")
     private Room room;
 

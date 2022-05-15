@@ -17,7 +17,7 @@
     <div class="py-5 text-center">
         <h2>대회 만들기</h2>
     </div>
-    <form th:action="@{/competition/create}" th:object="${form}" method="post">
+    <form th:action="@{|/room/${roomId}/competition/create|}" th:object="${form}" method="post">
         <div>
             <label th:for="title">대회 이름</label>
             <input type="text" th:field="*{title}" placeholder="대회 이름을 입력하세요"
@@ -69,7 +69,7 @@
         <div class="row">
             <div class="col">
                 <button type="submit" class="btn btn-primary btn-lg">생성</button>
-                <a th:href="@{/competition}" class="btn btn-warning btn-lg">취소</a>
+                <a th:href="@{|/room/${roomId}/competition|}" class="btn btn-warning btn-lg">취소</a>
             </div>
         </div>
 
@@ -80,6 +80,7 @@
 
 <script th:inline="javascript">
     function updateForm() {
+        let roomId = [[${roomId}]]
         let title = document.getElementById("title").value;
         let competitionType = document.getElementById("competitionType").value;
         let headCount = document.getElementById("headCount").value;
@@ -92,7 +93,7 @@
                 emails.push("")
             }
         }
-        location.href="/competition/create?title=" + title + "&competitionType=" + competitionType + "&headCount=" + headCount + "&emails=" + emails;
+        location.href="room/" + roomId + "/competition/create?title=" + title + "&competitionType=" + competitionType + "&headCount=" + headCount + "&emails=" + emails;
     }
 </script>
 </html>

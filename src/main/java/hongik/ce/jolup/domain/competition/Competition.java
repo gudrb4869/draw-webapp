@@ -2,6 +2,7 @@ package hongik.ce.jolup.domain.competition;
 
 import hongik.ce.jolup.domain.Time;
 import hongik.ce.jolup.domain.join.Join;
+import hongik.ce.jolup.domain.room.Room;
 import hongik.ce.jolup.dto.CompetitionDto;
 import lombok.*;
 
@@ -43,12 +44,19 @@ public class Competition extends Time {
     @OneToMany(mappedBy = "competition", cascade = CascadeType.ALL)
     private List<Join> joins = new ArrayList<>();
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "room_id")
+    private Room room;
+
     @Builder
-    public Competition(Long id, String title, CompetitionType competitionType, Long headCount/*, List<Join> joins*/) {
+    public Competition(Long id, String title, CompetitionType competitionType, Long headCount, Room room/*, List<Join> joins*/) {
         this.id = id;
         this.title = title;
         this.competitionType = competitionType;
         this.headCount = headCount;
+        if (room != null) {
+            changeRoom(room);
+        }
 //        this.joins = joins;
     }
 
@@ -67,5 +75,10 @@ public class Competition extends Time {
         this.competitionType = competitionType;
         this.headCount = headCount;
         return this;
+    }
+
+    public void changeRoom(Room room) {
+        this.room = room;
+        room.getCompetitions().add(this);
     }
 }

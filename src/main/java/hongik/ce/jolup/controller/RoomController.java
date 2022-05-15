@@ -4,6 +4,7 @@ import hongik.ce.jolup.domain.belong.BelongType;
 import hongik.ce.jolup.domain.member.Member;
 import hongik.ce.jolup.domain.room.RoomSetting;
 import hongik.ce.jolup.dto.BelongDto;
+import hongik.ce.jolup.dto.JoinDto;
 import hongik.ce.jolup.dto.MemberDto;
 import hongik.ce.jolup.dto.RoomDto;
 import hongik.ce.jolup.service.BelongService;
@@ -81,8 +82,12 @@ public class RoomController {
                         .stream().map(MemberDto::getId).collect(Collectors.toList()).contains(member.getId()))
             return "error";
 
+        List<JoinDto> joinDtos = memberService.getJoins(member.getId());
+
+        model.addAttribute("memberBelongDto", belongService.findOne(member.getId(), roomId));
         model.addAttribute("roomDto", roomDto);
         model.addAttribute("belongDtos", belongDtos);
+        model.addAttribute("joinDtos", joinDtos);
         return "room/detail";
     }
 

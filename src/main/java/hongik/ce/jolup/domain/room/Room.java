@@ -2,6 +2,7 @@ package hongik.ce.jolup.domain.room;
 
 import hongik.ce.jolup.domain.Time;
 import hongik.ce.jolup.domain.belong.Belong;
+import hongik.ce.jolup.domain.competition.Competition;
 import hongik.ce.jolup.dto.RoomDto;
 import lombok.*;
 
@@ -28,6 +29,9 @@ public class Room extends Time {
 
     @OneToMany(mappedBy = "room", cascade = CascadeType.ALL)
     private List<Belong> belongs = new ArrayList<>();
+
+    @OneToMany(mappedBy = "room", cascade = CascadeType.ALL)
+    private List<Competition> competitions = new ArrayList<>();
 
     @Builder
     public Room(Long id, String title, RoomSetting roomSetting) {
