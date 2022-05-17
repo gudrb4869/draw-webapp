@@ -28,7 +28,6 @@ public class Competition extends Time {
     */
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "competition_id")
     private Long id;
 
     @Column(length = 30, nullable = false)

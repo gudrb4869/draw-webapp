@@ -37,7 +37,7 @@
             </thead>
             <tbody>
             <tr th:each="joinDto : ${joinDtos}">
-                <td th:text="${joinDto.memberDto.email + '('+ joinDto.memberDto.name + ')'}"></td>
+                <td th:text="${joinDto.belongDto.memberDto.email + '('+ joinDto.belongDto.memberDto.name + ')'}"></td>
                 <td th:text="${joinDto.joinRole.description}"></td>
             </tr>
             </tbody>

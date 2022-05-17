@@ -6,11 +6,8 @@ import hongik.ce.jolup.domain.result.Result;
 import hongik.ce.jolup.domain.score.Score;
 import hongik.ce.jolup.domain.member.Member;
 import hongik.ce.jolup.domain.competition.CompetitionType;
-import hongik.ce.jolup.dto.JoinDto;
-import hongik.ce.jolup.dto.MatchDto;
-import hongik.ce.jolup.dto.MemberDto;
+import hongik.ce.jolup.dto.*;
 import hongik.ce.jolup.service.*;
-import hongik.ce.jolup.dto.CompetitionDto;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -36,6 +33,7 @@ public class CompetitionController {
     private final MemberService memberService;
     private final MatchService matchService;
     private final RoomService roomService;
+    private final BelongService belongService;
 
     @GetMapping("/create")
     public String createCompetition(@PathVariable("roomId") Long roomId,
@@ -68,26 +66,43 @@ public class CompetitionController {
                                     Model model) {
 
         log.info("competitionForm = {}", competitionForm);
+        List<String> emails = competitionForm.getEmails();
+        if (competitionForm.getHeadCount() != emails.size()) {
+            bindingResult.addError(new ObjectError("form", null, null, "오류가 발생했습니다1."));
+            return "competition/create";
+        }
 
-        if (competitionForm.getHeadCount() != competitionForm.getEmails().size()) {
-            bindingResult.addError(new ObjectError("form", null, null, "오류가 발생했습니다."));
+        Boolean flag = false;
+
+        for(int i = 0; i < emails.size(); i++) {
+            String email = emails.get(i);
+            MemberDto memberDto = memberService.findOne(email);
+            if (email.equals(member.getEmail())) {
+                flag = true;
+            }
+            if (memberDto == null) {
+                bindingResult.addError(new FieldError("form", "emails[" + i + "]", email, false, null, null, "존재하지 않는 회원입니다."));
+                continue;
+            }
+            BelongDto belongDto = belongService.findOne(memberDto.getId(), roomId);
+            if (belongDto == null) {
+                bindingResult.addError(new FieldError("form", "emails[" + i + "]", email, false, null, null, "존재하지 않는 회원입니다."));
+                continue;
+            }
+        }
+
+        if (!flag) {
+            bindingResult.addError(new ObjectError("form", null, null, "오류가 발생했습니다2."));
+            return "competition/create";
+        }
+
+        if (emails.size() != emails.stream().distinct().count()) {
+            bindingResult.addError(new ObjectError("form", null, null, "동일한 아이디를 입력할 수 없습니다."));
+            return "competition/create";
         }
 
         if (bindingResult.hasErrors()) {
             return "competition/create";
-        }
-
-        for(String email : competitionForm.getEmails()) {
-            MemberDto memberDto = memberService.findOne(email);
-            if (memberDto == null) {
-                model.addAttribute("data", new Message("존재하지 않는 ID입니다!", "/competition/create"));
-                return "message";
-            }
-        }
-
-        if (competitionForm.getEmails().size() != competitionForm.getEmails().stream().distinct().count()) {
-            model.addAttribute("data", new Message("동일한 ID를 입력하실 수 없습니다!", "/competition/create"));
-            return "message";
         }
 
         CompetitionDto competitionRequestDto = CompetitionDto.builder()
@@ -101,10 +116,11 @@ public class CompetitionController {
 
         CompetitionDto competitionDto = competitionService.getCompetition(competitionId);
         log.info("competitionDto = {}", competitionDto);
-        for(String email : competitionForm.getEmails()) {
+        for(String email : emails) {
             MemberDto memberDto = memberService.findOne(email);
+            BelongDto belongDto = belongService.findOne(memberDto.getId(), roomId);
             JoinDto joinDto = JoinDto.builder()
-                    .memberDto(memberDto)
+                    .belongDto(belongDto)
                     .competitionDto(competitionDto)
                     .result(Result.builder().plays(0).win(0).draw(0).lose(0).goalFor(0)
                             .goalAgainst(0).goalDifference(0).points(0).build())
@@ -115,22 +131,23 @@ public class CompetitionController {
             joinService.saveJoin(joinDto);
         }
 
-        List<MemberDto> userDtoList = joinService.findByCompetition(competitionDto)
-                .stream().map(JoinDto::getMemberDto).collect(Collectors.toList());
+        List<MemberDto> memberDtos = joinService.findByCompetition(competitionDto)
+                .stream().map(JoinDto::getBelongDto).collect(Collectors.toList())
+                .stream().map(BelongDto::getMemberDto).collect(Collectors.toList());
 
 //        MatchDto[][] matrix = new MatchDto[competitionDto.getMemNum().intValue()][competitionDto.getMemNum().intValue()];
 
         if (competitionDto.getCompetitionType().equals(CompetitionType.LEAGUE)) {
             // 리그
-            Collections.shuffle(userDtoList);
-            int count = userDtoList.size();
+            Collections.shuffle(memberDtos);
+            int count = memberDtos.size();
             int round = count % 2 == 1 ? count : count - 1;
             if (count % 2 == 1) {
                 for (int i = 0; i < count; i++) {
                     for (int j = 0; j < count/2; j++) {
                         MatchDto matchDto = MatchDto.builder().competitionDto(competitionDto)
-                                .homeDto(userDtoList.get((i + j) % count))
-                                .awayDto(userDtoList.get((i + count - j - 2) % count))
+                                .homeDto(memberDtos.get((i + j) % count))
+                                .awayDto(memberDtos.get((i + count - j - 2) % count))
                                 .matchStatus(MatchStatus.READY)
                                 .roundNo(i)
                                 .matchNo(j)
@@ -141,12 +158,12 @@ public class CompetitionController {
             }
             else {
                 int j;
-                MemberDto fixed = userDtoList.remove(0);
+                MemberDto fixed = memberDtos.remove(0);
                 for (int i = 0; i < count - 1; i++) {
                     for (j = 0; j < count/2 - 1; j++) {
                         MatchDto matchDto = MatchDto.builder().competitionDto(competitionDto)
-                                .homeDto(userDtoList.get((i + j) % (count - 1)))
-                                .awayDto(userDtoList.get((i + count - j - 2) % (count - 1)))
+                                .homeDto(memberDtos.get((i + j) % (count - 1)))
+                                .awayDto(memberDtos.get((i + count - j - 2) % (count - 1)))
                                 .matchStatus(MatchStatus.READY)
                                 .roundNo(i)
                                 .matchNo(j)
@@ -154,8 +171,8 @@ public class CompetitionController {
                         matchService.saveMatch(matchDto);
                     }
                     MatchDto matchDto = MatchDto.builder().competitionDto(competitionDto)
-                            .homeDto(i % 2 == 0 ? userDtoList.get((i + j) % (count - 1)) : fixed)
-                            .awayDto(i % 2 == 0 ? fixed : userDtoList.get((i + j) % (count - 1)))
+                            .homeDto(i % 2 == 0 ? memberDtos.get((i + j) % (count - 1)) : fixed)
+                            .awayDto(i % 2 == 0 ? fixed : memberDtos.get((i + j) % (count - 1)))
                             .matchStatus(MatchStatus.READY)
                             .roundNo(i)
                             .matchNo(j)
@@ -166,8 +183,8 @@ public class CompetitionController {
         }
         else if (competitionDto.getCompetitionType().equals(CompetitionType.TOURNAMENT)) {
             // 토너먼트
-            Collections.shuffle(userDtoList);
-            int count = userDtoList.size();
+            Collections.shuffle(memberDtos);
+            int count = memberDtos.size();
             int round = (int)Math.ceil(Math.log(count) / Math.log(2));
 //            int round = 0;
 //            int match = 0;
@@ -176,7 +193,7 @@ public class CompetitionController {
 
             List<MemberDto> autoWinList = new ArrayList<>();
             for (int i = 0; i < auto_win_num; i++) {
-                autoWinList.add(userDtoList.remove(0));
+                autoWinList.add(memberDtos.remove(0));
             }
 
             Set<Integer> set = new HashSet<>();
@@ -193,9 +210,9 @@ public class CompetitionController {
                         continue;
                     }
                     MatchDto matchDto = MatchDto.builder().competitionDto(competitionDto)
-                            .homeDto(i == 0 ? userDtoList.remove(0) :
+                            .homeDto(i == 0 ? memberDtos.remove(0) :
                                     (autoWinList.size() > 0 && list.contains(j * 2) ? autoWinList.remove(0) : null))
-                            .awayDto(i == 0 ? userDtoList.remove(0) :
+                            .awayDto(i == 0 ? memberDtos.remove(0) :
                                     (autoWinList.size() > 0 && list.contains(j * 2 + 1)? autoWinList.remove(0) : null))
                             .matchStatus(MatchStatus.READY)
                             .roundNo(i)
@@ -209,14 +226,14 @@ public class CompetitionController {
         return "redirect:/room/{roomId}";
     }
 
-    @GetMapping
+    /*@GetMapping
     public String Competitions(@PathVariable("roomId") Long roomId,
                                Model model, @AuthenticationPrincipal Member member) {
         List<JoinDto> joins = joinService.findByMember(member.toDto());
         log.info("member = {}", memberService.getMember(member.getId()));
         model.addAttribute("joins", joins);
         return "competition/list";
-    }
+    }*/
 
     @DeleteMapping("/{competitionId}")
     public String deleteCompetition(@PathVariable("roomId") Long roomId,
@@ -243,15 +260,23 @@ public class CompetitionController {
             return "error";
         }
 
-        List<Long> list = joinService.findByCompetition(competitionDto).stream().map(JoinDto::getMemberDto).map(MemberDto::getId).collect(Collectors.toList());
+        List<Long> list = joinService.findByCompetition(competitionDto)
+                .stream().map(JoinDto::getBelongDto).map(BelongDto::getMemberDto)
+                .map(MemberDto::getId).collect(Collectors.toList());
         if (!list.contains(member.toDto().getId())) {
             return "error";
         }
 
         List<MatchDto> matchDtos = matchService.findByCompetition(competitionDto);
 
-        JoinDto myJoinDto = joinService.findOne(member.toDto(), competitionDto);
-        log.info("myJoinDto = {}", myJoinDto);
+        Optional<JoinDto> optionalJoinDto = belongService.getJoins(member.getId(), roomId).stream()
+                .filter(joinDto -> joinDto.getCompetitionDto().getId().equals(competitionId)).findFirst();
+
+        if (optionalJoinDto.isEmpty()) {
+            return "error";
+        }
+        JoinDto myJoinDto = optionalJoinDto.get();
+//        log.info("myJoinDto = {}", myJoinDto);
         model.addAttribute("competitionDto", competitionDto);
         model.addAttribute("matchDtos", matchDtos);
         model.addAttribute("myJoinDto", myJoinDto);

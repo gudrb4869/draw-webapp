@@ -13,7 +13,7 @@ import lombok.*;
 @AllArgsConstructor
 public class JoinDto {
     private Long id;
-    private MemberDto memberDto;
+    private BelongDto belongDto;
     private CompetitionDto competitionDto;
     private Result result;
     private JoinRole joinRole;
@@ -21,7 +21,7 @@ public class JoinDto {
     public Join toEntity() {
         return Join.builder()
                 .id(id)
-                .member(memberDto.toEntity())
+                .belong(belongDto.toEntity())
                 .competition(competitionDto.toEntity())
                 .result(result)
                 .joinRole(joinRole)

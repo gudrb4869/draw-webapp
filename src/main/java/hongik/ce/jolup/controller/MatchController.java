@@ -7,6 +7,7 @@ import hongik.ce.jolup.domain.competition.CompetitionType;
 import hongik.ce.jolup.domain.score.Score;
 import hongik.ce.jolup.domain.member.Member;
 import hongik.ce.jolup.dto.*;
+import hongik.ce.jolup.service.BelongService;
 import hongik.ce.jolup.service.JoinService;
 import hongik.ce.jolup.service.MatchService;
 import lombok.RequiredArgsConstructor;
@@ -22,6 +23,7 @@ public class MatchController {
 
     private final MatchService matchService;
     private final JoinService joinService;
+    private final BelongService belongService;
 
     @GetMapping("/{matchId}")
     public String matchDetail(@PathVariable("roomId") Long roomId,
@@ -30,7 +32,7 @@ public class MatchController {
                               @AuthenticationPrincipal Member member,
                               Model model) {
         MatchDto matchDto = matchService.getMatch(matchId);
-        if (matchDto == null || matchDto.getHomeDto() == null || matchDto.getAwayDto() == null || !hasAuth(member.toDto(), matchDto)) {
+        if (matchDto == null || matchDto.getHomeDto() == null || matchDto.getAwayDto() == null/* || !hasAuth(member.toDto(), matchDto)*/) {
             return "error";
         }
 
@@ -41,13 +43,13 @@ public class MatchController {
         return "match/update";
     }
 
-    private Boolean hasAuth(MemberDto memberDto, MatchDto matchDto) {
+    /*private Boolean hasAuth(MemberDto memberDto, MatchDto matchDto) {
         JoinDto joinDto = joinService.findOne(memberDto, matchDto.getCompetitionDto());
         if (joinDto == null || joinDto.getJoinRole().equals(JoinRole.GUEST)) {
             return false;
         }
         return true;
-    }
+    }*/
 
     @PutMapping("/update/{matchId}")
     public String update(@PathVariable("roomId") Long roomId,
@@ -60,14 +62,15 @@ public class MatchController {
         }
         MatchDto matchDto = matchService.getMatch(matchId);
 
-        if (matchDto == null || matchDto.getHomeDto() == null || matchDto.getAwayDto() == null || !hasAuth(member.toDto(), matchDto)) {
+        if (matchDto == null || matchDto.getHomeDto() == null || matchDto.getAwayDto() == null/* || !hasAuth(member.toDto(), matchDto)*/) {
             return "error";
         }
 
         CompetitionDto competitionDto = matchDto.getCompetitionDto();
-        JoinDto joinDto1 = joinService.findOne(matchDto.getHomeDto(), matchDto.getCompetitionDto());
+
+        JoinDto joinDto1 = joinService.findOne(extractBelongDto(roomId, matchDto.getHomeDto().getId()), competitionDto);
         Result result1 = joinDto1.getResult();
-        JoinDto joinDto2 = joinService.findOne(matchDto.getAwayDto(), matchDto.getCompetitionDto());
+        JoinDto joinDto2 = joinService.findOne(extractBelongDto(roomId, matchDto.getAwayDto().getId()), competitionDto);
         Result result2 = joinDto2.getResult();
 
         if (matchDto.getMatchStatus().equals(MatchStatus.END)) {
@@ -155,6 +158,10 @@ public class MatchController {
         joinService.saveJoin(joinDto1);
         joinService.saveJoin(joinDto2);
         return "redirect:/room/{roomId}/competition/{competitionId}";
+    }
+
+    private BelongDto extractBelongDto(Long roomId, Long memberId) {
+        return belongService.findOne(memberId, roomId);
     }
 
     private void resetTournamentMatch(MatchDto matchDto, CompetitionDto competitionDto) {

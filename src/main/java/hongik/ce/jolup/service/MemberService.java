@@ -72,7 +72,6 @@ public class MemberService implements UserDetailsService {
         if (optionalMember.isEmpty())
             return null;
         Member member = optionalMember.get();
-        log.info("member.joins = {}", member.getJoins());
         return member.toDto();
     }
 
@@ -103,14 +102,5 @@ public class MemberService implements UserDetailsService {
         Member member = optionalMember.get();
         List<BelongDto> belongDtos = member.getBelongs().stream().map(Belong::toDto).collect(Collectors.toList());
         return belongDtos;
-    }
-
-    public List<JoinDto> getJoins(Long memberId) {
-        Optional<Member> optionalMember = memberRepository.findById(memberId);
-        if (optionalMember.isEmpty())
-            return null;
-        Member member = optionalMember.get();
-        List<JoinDto> joinDtos = member.getJoins().stream().map(Join::toDto).collect(Collectors.toList());
-        return joinDtos;
     }
 }

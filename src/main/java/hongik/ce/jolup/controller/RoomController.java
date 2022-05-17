@@ -32,7 +32,6 @@ public class RoomController {
     private final MemberService memberService;
     private final BelongService belongService;
     private final RoomService roomService;
-    private final CompetitionService competitionService;
 
     @GetMapping
     public String rooms(Model model, @AuthenticationPrincipal Member member) {
@@ -84,8 +83,7 @@ public class RoomController {
         }
 
 //        List<JoinDto> joinDtos = memberService.getJoins(member.getId());
-        List<CompetitionDto> competitionDtos = competitionService.getCompetitions(roomId);
-
+        List<CompetitionDto> competitionDtos = roomService.getCompetitions(roomId);
         model.addAttribute("memberBelongDto", belongService.findOne(member.getId(), roomId));
         model.addAttribute("roomDto", roomDto);
         model.addAttribute("belongDtos", belongDtos);

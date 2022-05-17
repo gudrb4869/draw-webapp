@@ -31,7 +31,6 @@ public class Member extends Time implements UserDetails {
     */
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "member_id")
     private Long id;
 
     @Column(unique = true, nullable = false, updatable = false)
@@ -46,9 +45,6 @@ public class Member extends Time implements UserDetails {
     @Column(nullable = false)
     @Enumerated(EnumType.STRING)
     private MemberAuth auth;
-
-    @OneToMany(mappedBy = "member", cascade = CascadeType.ALL)
-    private List<Join> joins = new ArrayList<>();
 
     @OneToMany(mappedBy = "member", cascade = CascadeType.ALL)
     private List<Belong> belongs = new ArrayList<>();

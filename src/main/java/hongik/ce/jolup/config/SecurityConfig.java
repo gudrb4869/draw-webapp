@@ -28,21 +28,29 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     protected void configure(HttpSecurity http) throws Exception {
         http
                 .csrf().disable().headers().frameOptions().disable()// h2-console 화면 사용하기 위함
-                .and()
+                    .and()
                 .authorizeRequests()
-                .antMatchers("/", "/login", "/signup", "/css/**", "/js/**", "/images/**", "/error").permitAll() // 누구나 접근 가능
-                .anyRequest().authenticated() // 나머지는 권한이 있기만 하면 접근 가능
-                .and()
+                    .antMatchers("/", "/login", "/signup", "/css/**", "/js/**", "/images/**", "/error").permitAll() // 누구나 접근 가능
+                    .anyRequest().authenticated() // 나머지는 권한이 있기만 하면 접근 가능
+                    .and()
                 .formLogin() // 로그인에 대한 설정
-                .loginPage("/login")
-                .loginProcessingUrl("/login_proc")
-                .defaultSuccessUrl("/") // 로그인 성공시 연결되는 주소
-//                .usernameParameter()
-                .and()
+                    .loginPage("/login")
+                    .loginProcessingUrl("/login_proc")
+                .usernameParameter("email")
+                .passwordParameter("password")
+                    .defaultSuccessUrl("/") // 로그인 성공시 연결되는 주소
+//                  .usernameParameter()
+                    .and()
                 .logout() // 로그아웃 관련 설정
-                .logoutSuccessUrl("/") // 로그아웃 성공시 연결되는 주소
-//                .deleteCookies()
-                .invalidateHttpSession(true); // 로그아웃시 저장해 둔 세션 날리기
+                    .logoutSuccessUrl("/") // 로그아웃 성공시 연결되는 주소
+                    .deleteCookies("JSESSIONID")
+                .clearAuthentication(true)
+                    .invalidateHttpSession(true)
+                .and()
+                .sessionManagement()
+                .maximumSessions(1)
+                .expiredUrl("/")
+                .maxSessionsPreventsLogin(false); // 로그아웃시 저장해 둔 세션 날리기
     }
 
     @Override

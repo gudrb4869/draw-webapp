@@ -1,9 +1,9 @@
 package hongik.ce.jolup.domain.join;
 
 import hongik.ce.jolup.domain.Time;
+import hongik.ce.jolup.domain.belong.Belong;
 import hongik.ce.jolup.domain.result.Result;
 import hongik.ce.jolup.domain.competition.Competition;
-import hongik.ce.jolup.domain.member.Member;
 import hongik.ce.jolup.dto.JoinDto;
 import lombok.*;
 
@@ -13,7 +13,7 @@ import javax.persistence.*;
 @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Table(name = "joins")
-@ToString
+@ToString(of = {"id", "belong", "competition", "joinRole", "result"})
 public class Join extends Time {
     /*
     drop table if exists join_competition CASCADE;
@@ -29,12 +29,11 @@ public class Join extends Time {
     */
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "join_id")
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "member_id")
-    private Member member;
+    @JoinColumn(name = "belong_id")
+    private Belong belong;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "competition_id")
@@ -48,10 +47,10 @@ public class Join extends Time {
     private JoinRole joinRole;
 
     @Builder
-    public Join(Long id, Member member, Competition competition, Result result, JoinRole joinRole) {
+    public Join(Long id, Belong belong, Competition competition, Result result, JoinRole joinRole) {
         this.id = id;
-        if (member != null) {
-            changeMember(member);
+        if (belong != null) {
+            changeBelong(belong);
         }
         if (competition != null) {
             changeCompetition(competition);
@@ -63,7 +62,7 @@ public class Join extends Time {
     public JoinDto toDto () {
         return JoinDto.builder()
                 .id(id)
-                .memberDto(member.toDto())
+                .belongDto(belong.toDto())
                 .competitionDto(competition.toDto())
                 .result(result)
                 .joinRole(joinRole)
@@ -75,9 +74,9 @@ public class Join extends Time {
         return this;
     }
 
-    public void changeMember(Member member) {
-        this.member = member;
-        member.getJoins().add(this);
+    public void changeBelong(Belong belong) {
+        this.belong = belong;
+        belong.getJoins().add(this);
     }
 
     public void changeCompetition(Competition competition) {

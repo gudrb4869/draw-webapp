@@ -1,21 +1,23 @@
 package hongik.ce.jolup.domain.belong;
 
 import hongik.ce.jolup.domain.Time;
+import hongik.ce.jolup.domain.join.Join;
 import hongik.ce.jolup.domain.member.Member;
 import hongik.ce.jolup.domain.room.Room;
 import hongik.ce.jolup.dto.BelongDto;
 import lombok.*;
 
 import javax.persistence.*;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Table(name = "belong")
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@ToString
+@ToString(of = {"id", "belongType"})
 public class Belong extends Time {
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "belong_id")
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
@@ -29,6 +31,9 @@ public class Belong extends Time {
     @Column(nullable = false)
     @Enumerated(EnumType.STRING)
     private BelongType belongType;
+
+    @OneToMany(mappedBy = "belong", cascade = CascadeType.ALL)
+    private List<Join> joins = new ArrayList<>();
 
     @Builder
     public Belong(Long id, Member member, Room room, BelongType belongType) {
