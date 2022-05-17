@@ -13,4 +13,5 @@ public interface MatchRepository extends JpaRepository<Match, Long> {
     List<Match> findByHome(Member home);
     List<Match> findByAway(Member away);
     Optional<Match> findByCompetitionAndRoundNoAndMatchNo(Competition competition, Integer roundNo, Integer matchNo);
+    Optional<Match> findByIdAndCompetitionId(Long id, Long competitionId);
 }

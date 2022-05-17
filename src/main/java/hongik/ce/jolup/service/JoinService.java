@@ -39,8 +39,8 @@ public class JoinService {
                 .collect(Collectors.toList());
     }
 
-    public JoinDto findOne(BelongDto belongDto, CompetitionDto competitionDto) {
-        Optional<Join> optionalJoin = joinRepository.findByBelongIdAndCompetitionId(belongDto.getId(), competitionDto.getId());
+    public JoinDto findOne(Long belongId, Long competitionId) {
+        Optional<Join> optionalJoin = joinRepository.findByBelongIdAndCompetitionId(belongId, competitionId);
         if (optionalJoin.isEmpty())
             return null;
         Join join = optionalJoin.get();

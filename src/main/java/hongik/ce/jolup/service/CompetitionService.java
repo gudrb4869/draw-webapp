@@ -48,6 +48,15 @@ public class CompetitionService {
         return competitions.stream().map(Competition::toDto).collect(Collectors.toList());
     }
 
+    public CompetitionDto findOne(Long competitionId, Long roomId) {
+        Optional<Competition> optionalCompetition = competitionRepository.findByIdAndRoomId(competitionId, roomId);
+        if (optionalCompetition.isEmpty()) {
+            return null;
+        }
+        Competition competition = optionalCompetition.get();
+        return competition.toDto();
+    }
+
     public void deleteCompetition(Long id) {
         competitionRepository.deleteById(id);
     }

@@ -1,5 +1,6 @@
 package hongik.ce.jolup.controller;
 
+import hongik.ce.jolup.domain.belong.BelongType;
 import hongik.ce.jolup.domain.join.JoinRole;
 import hongik.ce.jolup.domain.match.MatchStatus;
 import hongik.ce.jolup.domain.result.Result;
@@ -8,14 +9,17 @@ import hongik.ce.jolup.domain.score.Score;
 import hongik.ce.jolup.domain.member.Member;
 import hongik.ce.jolup.dto.*;
 import hongik.ce.jolup.service.BelongService;
+import hongik.ce.jolup.service.CompetitionService;
 import hongik.ce.jolup.service.JoinService;
 import hongik.ce.jolup.service.MatchService;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
+@Slf4j
 @Controller
 @RequiredArgsConstructor
 @RequestMapping("/room/{roomId}/competition/{competitionId}/match")
@@ -24,15 +28,34 @@ public class MatchController {
     private final MatchService matchService;
     private final JoinService joinService;
     private final BelongService belongService;
+    private final CompetitionService competitionService;
 
-    @GetMapping("/{matchId}")
-    public String matchDetail(@PathVariable("roomId") Long roomId,
-                              @PathVariable("competitionId") Long competitionId,
-                              @PathVariable("matchId") Long matchId,
-                              @AuthenticationPrincipal Member member,
-                              Model model) {
-        MatchDto matchDto = matchService.getMatch(matchId);
-        if (matchDto == null || matchDto.getHomeDto() == null || matchDto.getAwayDto() == null/* || !hasAuth(member.toDto(), matchDto)*/) {
+    @GetMapping("/update/{matchId}")
+    public String update(@PathVariable("roomId") Long roomId,
+                         @PathVariable("competitionId") Long competitionId,
+                         @PathVariable("matchId") Long matchId,
+                         @AuthenticationPrincipal Member member,
+                         Model model) {
+        log.info("matchController /update/{matchId} GET");
+        BelongDto myBelongDto = belongService.findOne(member.getId(), roomId);
+        if (myBelongDto == null) {
+            log.info("방의 회원이 아님");
+            return "error";
+        }
+        CompetitionDto competitionDto = competitionService.findOne(competitionId, roomId);
+        if (competitionDto == null) {
+            log.info("방ID와 대회ID가 맞지 않음");
+            return "error";
+        }
+
+        JoinDto myJoinDto = joinService.findOne(myBelongDto.getId(), competitionId);
+        if (myJoinDto == null || myJoinDto.getJoinRole().equals(JoinRole.USER)) {
+            log.info("방ID와 대회ID가 맞지 않음");
+            return "error";
+        }
+
+        MatchDto matchDto = matchService.findByIdAndCompetitionId(matchId, competitionId);
+        if (matchDto == null || matchDto.getHomeDto() == null || matchDto.getAwayDto() == null) {
             return "error";
         }
 
@@ -43,34 +66,37 @@ public class MatchController {
         return "match/update";
     }
 
-    /*private Boolean hasAuth(MemberDto memberDto, MatchDto matchDto) {
-        JoinDto joinDto = joinService.findOne(memberDto, matchDto.getCompetitionDto());
-        if (joinDto == null || joinDto.getJoinRole().equals(JoinRole.GUEST)) {
-            return false;
-        }
-        return true;
-    }*/
-
     @PutMapping("/update/{matchId}")
     public String update(@PathVariable("roomId") Long roomId,
                          @PathVariable("competitionId") Long competitionId,
                          @PathVariable("matchId") Long matchId, @AuthenticationPrincipal Member member,
                          Score score, MatchStatus matchStatus) {
+        log.info("matchController /update/{matchId} PUT");
+        BelongDto myBelongDto = belongService.findOne(member.getId(), roomId);
+        if (myBelongDto == null) {
+            return "error";
+        }
+        CompetitionDto competitionDto = competitionService.findOne(competitionId, roomId);
+        if (competitionDto == null) {
+            return "error";
+        }
+        JoinDto myJoinDto = joinService.findOne(myBelongDto.getId(), competitionId);
+        if (myJoinDto == null || myJoinDto.getJoinRole().equals(JoinRole.USER)) {
+            return "error";
+        }
+        MatchDto matchDto = matchService.findByIdAndCompetitionId(matchId, competitionId);
+        if (matchDto == null || matchDto.getHomeDto() == null || matchDto.getAwayDto() == null) {
+            return "error";
+        }
+
         if (matchStatus.equals(MatchStatus.READY)) {
             score.setHomeScore(0);
             score.setAwayScore(0);
         }
-        MatchDto matchDto = matchService.getMatch(matchId);
 
-        if (matchDto == null || matchDto.getHomeDto() == null || matchDto.getAwayDto() == null/* || !hasAuth(member.toDto(), matchDto)*/) {
-            return "error";
-        }
-
-        CompetitionDto competitionDto = matchDto.getCompetitionDto();
-
-        JoinDto joinDto1 = joinService.findOne(extractBelongDto(roomId, matchDto.getHomeDto().getId()), competitionDto);
+        JoinDto joinDto1 = joinService.findOne(extractBelongDto(roomId, matchDto.getHomeDto().getId()), competitionId);
         Result result1 = joinDto1.getResult();
-        JoinDto joinDto2 = joinService.findOne(extractBelongDto(roomId, matchDto.getAwayDto().getId()), competitionDto);
+        JoinDto joinDto2 = joinService.findOne(extractBelongDto(roomId, matchDto.getAwayDto().getId()), competitionId);
         Result result2 = joinDto2.getResult();
 
         if (matchDto.getMatchStatus().equals(MatchStatus.END)) {
@@ -160,8 +186,11 @@ public class MatchController {
         return "redirect:/room/{roomId}/competition/{competitionId}";
     }
 
-    private BelongDto extractBelongDto(Long roomId, Long memberId) {
-        return belongService.findOne(memberId, roomId);
+    private Long extractBelongDto(Long roomId, Long memberId) {
+        BelongDto belongDto = belongService.findOne(memberId, roomId);
+        if (belongDto == null)
+            return null;
+        return belongDto.getId();
     }
 
     private void resetTournamentMatch(MatchDto matchDto, CompetitionDto competitionDto) {

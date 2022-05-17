@@ -5,7 +5,7 @@ import hongik.ce.jolup.domain.member.Member;
 import hongik.ce.jolup.domain.room.RoomSetting;
 import hongik.ce.jolup.dto.*;
 import hongik.ce.jolup.service.BelongService;
-import hongik.ce.jolup.service.CompetitionService;
+import hongik.ce.jolup.service.JoinService;
 import hongik.ce.jolup.service.MemberService;
 import hongik.ce.jolup.service.RoomService;
 import lombok.*;
@@ -32,6 +32,7 @@ public class RoomController {
     private final MemberService memberService;
     private final BelongService belongService;
     private final RoomService roomService;
+    private final JoinService joinService;
 
     @GetMapping
     public String rooms(Model model, @AuthenticationPrincipal Member member) {
@@ -72,19 +73,16 @@ public class RoomController {
         if (roomDto == null) {
             return "error";
         }
+        BelongDto myBelongDto = belongService.findOne(member.getId(), roomId);
 
-        List<BelongDto> belongDtos = roomService.getBelongs(roomId);
-
-        if (roomDto.getRoomSetting().equals(RoomSetting.PRIVATE) &&
-                !belongDtos.stream().map(BelongDto::getMemberDto).collect(Collectors.toList())
-                        .stream().map(MemberDto::getId).collect(Collectors.toList()).contains(member.getId())) {
+        if (roomDto.getRoomSetting().equals(RoomSetting.PRIVATE) && myBelongDto == null) {
             log.info("비공개 방, 회원이 아님");
             return "error";
         }
 
-//        List<JoinDto> joinDtos = memberService.getJoins(member.getId());
+        List<BelongDto> belongDtos = roomService.getBelongs(roomId);
         List<CompetitionDto> competitionDtos = roomService.getCompetitions(roomId);
-        model.addAttribute("memberBelongDto", belongService.findOne(member.getId(), roomId));
+        model.addAttribute("myBelongDto", myBelongDto);
         model.addAttribute("roomDto", roomDto);
         model.addAttribute("belongDtos", belongDtos);
 //        model.addAttribute("joinDtos", joinDtos);
@@ -93,16 +91,37 @@ public class RoomController {
     }
 
     @DeleteMapping("/{roomId}")
-    public String deleteRoom(@PathVariable Long roomId) {
+    public String deleteRoom(@PathVariable Long roomId, @AuthenticationPrincipal Member member) {
+        RoomDto roomDto = roomService.findOne(roomId);
+        if (roomDto == null) {
+            return "error";
+        }
+        BelongDto myBelongDto = belongService.findOne(member.getId(), roomId);
+
+        if (myBelongDto == null || !myBelongDto.getBelongType().equals(BelongType.MASTER)) {
+            return "error";
+        }
         roomService.deleteRoom(roomId);
-        return "redirect:/room/";
+        return "redirect:/room";
     }
 
     @GetMapping("/{roomId}/invite")
     public String inviteMember(@PathVariable Long roomId,
                                @RequestParam(name = "count", defaultValue = "1") Long count,
                                @RequestParam(name = "emails", defaultValue = "") List<String> emails,
+                               @AuthenticationPrincipal Member member,
                                Model model) {
+
+        RoomDto roomDto = roomService.findOne(roomId);
+        if (roomDto == null) {
+            return "error";
+        }
+        BelongDto myBelongDto = belongService.findOne(member.getId(), roomId);
+
+        if (myBelongDto == null || myBelongDto.getBelongType().equals(BelongType.USER)) {
+            return "error";
+        }
+
         InviteForm inviteForm = new InviteForm();
         inviteForm.setCount(count);
         for (int i = 0; i < count; i++) {
@@ -121,9 +140,19 @@ public class RoomController {
     public String inviteMember(@PathVariable Long roomId,
                                @Valid InviteForm inviteForm,
                                BindingResult result,
+                               @AuthenticationPrincipal Member member,
                                Model model) {
 
         RoomDto roomDto = roomService.findOne(roomId);
+        if (roomDto == null) {
+            return "error";
+        }
+        BelongDto myBelongDto = belongService.findOne(member.getId(), roomId);
+
+        if (myBelongDto == null || myBelongDto.getBelongType().equals(BelongType.USER)) {
+            log.info("비공개 방, 회원이 아님");
+            return "error";
+        }
 
         List<String> collect = roomService.getBelongs(roomId).stream().map(BelongDto::getMemberDto).collect(Collectors.toList())
                 .stream().map(MemberDto::getEmail).collect(Collectors.toList());

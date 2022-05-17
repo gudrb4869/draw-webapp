@@ -24,9 +24,9 @@
     </table>
     <div class="my-2 my-lg-0">
         <a th:href="@{/room}" class="btn btn-warning">목록</a>
-        <a class="btn btn-primary my-2 my-sm-0" th:if="${memberBelongDto != null && memberBelongDto.belongType.name() != 'USER'}"
+        <a class="btn btn-primary my-2 my-sm-0" th:if="${myBelongDto != null && myBelongDto.belongType.name() != 'USER'}"
            th:href="@{/room/{roomId}/invite(roomId = ${roomDto.id})}">초대</a>
-        <a class="btn btn-info" th:if="${memberBelongDto != null && memberBelongDto.belongType.name() != 'USER'}"
+        <a class="btn btn-info" th:if="${myBelongDto != null && myBelongDto.belongType.name() != 'USER'}"
            th:href="@{|/room/${roomId}/competition/create|}" role="button" style="float:right;">대회 만들기</a>
     </div>
     <div class="text-center py-2" style="max-width: 600px">
@@ -73,7 +73,7 @@
                         <form class="form-check-inline my-2 my-lg-0" th:action="@{|/room/${roomDto.id}/competition/${competitionDto.id}|}" method="post">
                             <a class="btn btn-primary my-2 my-sm-0" th:href="@{|/room/${roomDto.id}/competition/${competitionDto.id}|}">조회</a>
                             <input type="hidden" name="_method" value="delete"/>
-<!--                            th:if="${competitionDto.joinRole.name() == 'MASTER'}"-->
+<!--                            th:if="${competitionDto.joinRole.name() == 'MASTER'}"/>-->
                             <button class="btn btn-danger my-2 my-sm-0" type="submit">삭제</button>
 <!--                            th:if="${competitionDto.joinRole.name() == 'MASTER'}">-->
                         </form>

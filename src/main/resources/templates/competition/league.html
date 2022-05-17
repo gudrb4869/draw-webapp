@@ -53,8 +53,8 @@
             <td th:text="${matchDto.matchStatus.description}"></td>
             <td>
                 <input type="button" class="btn btn-primary" th:value="'수정'"
-                       th:onclick="|location.href='/room/' + ${roomId} + '/competition/'+ ${competitionId} + '/match/' + ${matchDto.id}|"
-                       th:disabled="${myJoinDto.joinRole.name() == 'GUEST'}"/>
+                       th:onclick="|location.href='/room/' + ${roomId} + '/competition/'+ ${competitionId} + '/match/update/' + ${matchDto.id}|"
+                       th:if="${myJoinDto.joinRole.name() != 'USER'}"/>
             </td>
         </tr>
         </tbody>

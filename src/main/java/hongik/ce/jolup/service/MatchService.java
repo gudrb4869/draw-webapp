@@ -41,6 +41,14 @@ public class MatchService {
         return matchDto;
     }
 
+    public MatchDto findByIdAndCompetitionId(Long id, Long competitionId) {
+        Optional<Match> optionalMatch = matchRepository.findByIdAndCompetitionId(id, competitionId);
+        if (optionalMatch.isEmpty())
+            return null;
+        Match match = optionalMatch.get();
+        return match.toDto();
+    }
+
     public MatchDto findOne(CompetitionDto competitionDto, Integer roundNo, Integer matchNo) {
         Optional<Match> optionalMatch = matchRepository.findByCompetitionAndRoundNoAndMatchNo(competitionDto.toEntity(), roundNo, matchNo);
         if (optionalMatch.isEmpty()) {
