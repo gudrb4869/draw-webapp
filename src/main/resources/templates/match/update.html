@@ -5,44 +5,46 @@
 <body>
 <div class="container">
     <div th:replace="fragments/bodyheader" :: bodyheader />
-    <div class="jumbotron">
-        <form class="form-horizontal" th:action="@{|/room/${roomId}/competition/${competitionId}/match/update/${matchDto.id}|}" method="post">
-            <input type="hidden" name="_method" value="put"/>
-            <table class="table table-striped">
-                <thead>
-                <tr>
-                    <th> 홈 </th>
-                    <th></th>
-                    <th></th>
-                    <th></th>
-                    <th> 어웨이 </th>
-                </tr>
-                </thead>
-                <tbody>
-                <td th:text="${matchDto.homeDto == null} ? 'null': ${matchDto.homeDto.email + '('+ matchDto.homeDto.name + ')'}"></td>
-                <td>
-                    <input type="number" class="form-control input-large" min="0" max="100" th:default="${scoreDto.homeScore}"
-                           name="homeScore" th:value="${scoreDto.homeScore}" required="required">
-                </td>
-                <td>:</td>
-                <td>
-                    <input type="number" class="form-control input-large" min="0" max="100" th:default="${scoreDto.awayScore}"
-                           name="awayScore"th:value="${scoreDto.awayScore}" required="required">
-                </td>
-                <td th:text="${matchDto.awayDto == null} ? 'null': ${matchDto.awayDto.email + '('+ matchDto.awayDto.name + ')'}"></td>
-                </tr>
-                </tbody>
-            </table>
-
-            <div class="form-group">
-                <div class="col-sm-offset-1 col-sm-10">
-                    <button type="submit" class="btn btn-info" th:name="matchStatus" th:value="READY">초기화</button>
-                    <button type="submit" class="btn btn-success" th:name="matchStatus" th:value="END">저장</button>
-                    <a th:href="@{|/room/${roomId}/competition/${matchDto.competitionDto.id}|}" class="btn btn-warning">취소</a>
-                </div>
-            </div>
-        </form>
+    <div class="py-5 text-center">
+        <h1>경기 결과 수정</h1>
     </div>
+    <hr class="my-4">
+    <form class="form-horizontal" th:action="@{|/room/${roomId}/competition/${competitionId}/match/update/${matchDto.id}|}" method="post">
+        <input type="hidden" name="_method" value="put"/>
+        <table class="table table-striped">
+            <thead>
+            <tr>
+                <th> 홈 </th>
+                <th></th>
+                <th></th>
+                <th></th>
+                <th> 어웨이 </th>
+            </tr>
+            </thead>
+            <tbody>
+            <td th:text="${matchDto.homeDto == null} ? 'null': ${matchDto.homeDto.email + '('+ matchDto.homeDto.name + ')'}"></td>
+            <td>
+                <input type="number" class="form-control input-large" min="0" max="100" th:default="${scoreDto.homeScore}"
+                       name="homeScore" th:value="${scoreDto.homeScore}" required="required">
+            </td>
+            <td>:</td>
+            <td>
+                <input type="number" class="form-control input-large" min="0" max="100" th:default="${scoreDto.awayScore}"
+                       name="awayScore"th:value="${scoreDto.awayScore}" required="required">
+            </td>
+            <td th:text="${matchDto.awayDto == null} ? 'null': ${matchDto.awayDto.email + '('+ matchDto.awayDto.name + ')'}"></td>
+            </tr>
+            </tbody>
+        </table>
+
+        <div class="form-group">
+            <div class="col-sm-offset-1 col-sm-10">
+                <button type="submit" class="btn btn-info" th:name="matchStatus" th:value="READY">초기화</button>
+                <button type="submit" class="btn btn-success" th:name="matchStatus" th:value="END">저장</button>
+                <a th:href="@{|/room/${roomId}/competition/${matchDto.competitionDto.id}|}" class="btn btn-warning">취소</a>
+            </div>
+        </div>
+    </form>
     <div th:replace="fragments/footer" :: footer />
 </div> <!-- /container -->
 </body>

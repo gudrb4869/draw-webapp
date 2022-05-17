@@ -1,0 +1,45 @@
+<!DOCTYPE HTML>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org">
+<head th:replace="fragments/header :: header" />
+<style>
+    .container {
+        max-width: 560px;
+    }
+    .field-error {
+        border-color: #dc3545;
+        color: #dc3545;
+    }
+</style>
+<body>
+<div class="container" style="max-width: 600px">
+    <div th:replace="fragments/bodyheader" :: bodyheader />
+    <div class="py-5 text-center">
+        <h2>대회 수정</h2>
+    </div>
+    <form th:action th:object="${competitionDto}" method="post">
+        <input type="hidden" name="_method" value="put"/>
+        <input type="hidden" th:field="*{id}"/>
+        <div>
+            <label th:for="title">대회 이름</label>
+            <input type="text" th:field="*{title}" placeholder="대회 이름을 입력하세요"
+                   class="form-control" th:errorclass="field-error">
+            <p th:errors="*{title}" class="field-error">대회 이름 오류</p>
+        </div>
+        <input type="hidden" th:field="*{competitionType}"/>
+        <input type="hidden" th:field="*{headCount}"/>
+        <input type="hidden" th:field="*{roomDto.id}"/>
+        <input type="hidden" th:field="*{roomDto.title}"/>
+        <input type="hidden" th:field="*{roomDto.roomSetting}"/>
+        <div class="row">
+            <div class="col">
+                <button type="submit" class="btn btn-primary btn-lg">생성</button>
+                <a th:href="@{|/room/${roomId}/competition/${competitionId}|}" class="btn btn-warning btn-lg">취소</a>
+            </div>
+        </div>
+
+    </form>
+    <div th:replace="fragments/footer" :: footer />
+</div> <!-- /container -->
+</body>
+</html>

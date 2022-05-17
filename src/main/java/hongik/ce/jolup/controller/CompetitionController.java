@@ -273,17 +273,9 @@ public class CompetitionController {
         model.addAttribute("matchDtos", matchDtos);
         model.addAttribute("myJoinDto", myJoinDto);
 
-        if (competitionDto.getCompetitionType().equals(CompetitionType.LEAGUE)) {
-            List<JoinDto> joinDtos = joinService.findByCompetitionSort(competitionDto);
-            model.addAttribute("joinDtos", joinDtos);
-            return "competition/league";
-        }
-        else if (competitionDto.getCompetitionType().equals(CompetitionType.TOURNAMENT)) {
-            List<JoinDto> joinDtos = joinService.findByCompetitionOrderByJoinRole(competitionDto);
-            model.addAttribute("joinDtos", joinDtos);
-            return "competition/tournament";
-        }
-        return "error";
+        List<JoinDto> joinDtos = joinService.findByCompetitionSort(competitionDto);
+        model.addAttribute("joinDtos", joinDtos);
+        return "competition/detail";
     }
 
     @DeleteMapping("/{competitionId}")
@@ -304,7 +296,7 @@ public class CompetitionController {
         }
 
         JoinDto myJoinDto = joinService.findOne(myBelongDto.getId(), competitionId);
-        if ((!myBelongDto.getBelongType().equals(BelongType.MASTER) && myJoinDto == null) || !myJoinDto.getJoinRole().equals(JoinRole.MASTER)) {
+        if ((myJoinDto == null || !myJoinDto.getJoinRole().equals(JoinRole.MASTER)) && !myBelongDto.getBelongType().equals(BelongType.MASTER)) {
             return "error";
         }
 
@@ -318,5 +310,62 @@ public class CompetitionController {
             joinService.deleteJoin(joinId);
         competitionService.deleteCompetition(competitionId);
         return "redirect:/room/{roomId}";
+    }
+
+    @GetMapping("/{competitionId}/edit")
+    public String editCompetition(@PathVariable("roomId") Long roomId,
+                                  @PathVariable("competitionId") Long competitionId,
+                                  @AuthenticationPrincipal Member member,
+                                  Model model) {
+
+        BelongDto myBelongDto = belongService.findOne(member.getId(), roomId);
+        if (myBelongDto == null) {
+            return "error";
+        }
+
+        CompetitionDto competitionDto = competitionService.findOne(competitionId, roomId);
+        if (competitionDto == null) {
+            return "error";
+        }
+
+        JoinDto myJoinDto = joinService.findOne(myBelongDto.getId(), competitionId);
+        if (myJoinDto == null || !myJoinDto.getJoinRole().equals(JoinRole.MASTER)) {
+            return "error";
+        }
+        log.info("GET : competitionDto = {}", competitionDto);
+
+        model.addAttribute("competitionDto", competitionDto);
+        return "competition/edit";
+    }
+
+    @PutMapping("/{competitionId}/edit")
+    public String edit(@PathVariable("roomId") Long roomId,
+                       @PathVariable("competitionId") Long competitionId,
+                       @AuthenticationPrincipal Member member,
+                       @ModelAttribute CompetitionDto competitionDto,
+                       BindingResult result) {
+
+        log.info("PUT : competitionDto = {}", competitionDto);
+
+        if (competitionDto == null) {
+            return "error";
+        }
+
+        BelongDto myBelongDto = belongService.findOne(member.getId(), roomId);
+        if (myBelongDto == null) {
+            return "error";
+        }
+
+        JoinDto myJoinDto = joinService.findOne(myBelongDto.getId(), competitionId);
+        if (myJoinDto == null || !myJoinDto.getJoinRole().equals(JoinRole.MASTER)) {
+            return "error";
+        }
+
+        if (result.hasErrors()) {
+            return "competition/edit";
+        }
+
+        competitionService.saveCompetition(competitionDto);
+        return "redirect:/room/{roomId}/competition/{competitionId}";
     }
 }

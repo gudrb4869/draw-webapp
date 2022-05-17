@@ -1,0 +1,52 @@
+<!DOCTYPE HTML>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org">
+<head th:replace="fragments/header :: header" />
+<style>
+    .container {
+        max-width: 560px;
+    }
+    .field-error {
+        border-color: #dc3545;
+        color: #dc3545;
+    }
+</style>
+<body>
+<div class="container" style="max-width: 600px">
+    <div th:replace="fragments/bodyheader" :: bodyheader />
+    <div class="py-5 text-center">
+        <h2>방 수정</h2>
+    </div>
+    <form th:action th:object="${roomDto}" method="post">
+        <input type="hidden" name="_method" value="put"/>
+        <input type="hidden" th:field="*{id}"/>
+        <div>
+            <label th:for="title">방 이름</label>
+            <input type="text" th:field="*{title}" placeholder="방 이름을 입력하세요"
+                   class="form-control" th:errorclass="field-error">
+            <p th:errors="*{title}" class="field-error">방 이름 오류</p>
+        </div>
+
+        <div class="py-2">
+            <div>방 공개 여부</div>
+            <select th:field="*{roomSetting}" class="form-select-sm">
+                <option value="">==방 공개 여부 선택==</option>
+                <option th:each="roomSetting : ${T(hongik.ce.jolup.domain.room.RoomSetting).values()}" th:value="${roomSetting.name()}"
+                        th:text="${roomSetting.description}"></option>
+            </select>
+            <p th:errors="*{roomSetting}" class="field-error">공개 여부 오류</p>
+        </div>
+
+        <hr class="my-4">
+
+        <div class="row">
+            <div class="col">
+                <button type="submit" class="btn btn-primary btn-lg">수정</button>
+                <a th:href="@{|/room/*{id}|}" class="btn btn-warning btn-lg">취소</a>
+            </div>
+        </div>
+    </form>
+    <div th:replace="fragments/footer" :: footer />
+</div> <!-- /container -->
+</body>
+</html>

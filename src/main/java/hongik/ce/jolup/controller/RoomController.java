@@ -32,7 +32,6 @@ public class RoomController {
     private final MemberService memberService;
     private final BelongService belongService;
     private final RoomService roomService;
-    private final JoinService joinService;
 
     @GetMapping
     public String rooms(Model model, @AuthenticationPrincipal Member member) {
@@ -101,8 +100,44 @@ public class RoomController {
         if (myBelongDto == null || !myBelongDto.getBelongType().equals(BelongType.MASTER)) {
             return "error";
         }
+
         roomService.deleteRoom(roomId);
         return "redirect:/room";
+    }
+
+    @GetMapping("/{roomId}/edit")
+    public String editRoom (@PathVariable Long roomId, Model model, @AuthenticationPrincipal Member member) {
+        RoomDto roomDto = roomService.findOne(roomId);
+        if (roomDto == null) {
+            return "error";
+        }
+        BelongDto myBelongDto = belongService.findOne(member.getId(), roomId);
+        if (myBelongDto == null || !myBelongDto.getBelongType().equals(BelongType.MASTER)) {
+            return "error";
+        }
+        model.addAttribute("roomDto", roomDto);
+        return "room/edit";
+    }
+
+    @PutMapping("/{roomId}/edit")
+    public String edit(@PathVariable Long roomId,
+                       @ModelAttribute RoomDto roomDto,
+                       BindingResult result,
+                       @AuthenticationPrincipal Member member) {
+        if (roomDto == null) {
+            return "error";
+        }
+        BelongDto myBelongDto = belongService.findOne(member.getId(), roomId);
+        if (myBelongDto == null || !myBelongDto.getBelongType().equals(BelongType.MASTER)) {
+            return "error";
+        }
+
+        if (result.hasErrors()) {
+            return "room/edit";
+        }
+        log.info("roomDto = {}", roomDto);
+        roomService.saveRoom(roomDto);
+        return "redirect:/room/{roomId}";
     }
 
     @GetMapping("/{roomId}/invite")

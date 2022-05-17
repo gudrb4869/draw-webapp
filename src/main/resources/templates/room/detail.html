@@ -26,6 +26,13 @@
         <a th:href="@{/room}" class="btn btn-warning">목록</a>
         <a class="btn btn-primary my-2 my-sm-0" th:if="${myBelongDto != null && myBelongDto.belongType.name() != 'USER'}"
            th:href="@{/room/{roomId}/invite(roomId = ${roomDto.id})}">초대</a>
+        <a class="btn btn-secondary my-2 my-sm-0" th:if="${myBelongDto != null && myBelongDto.belongType.name() == 'MASTER'}"
+           th:href="@{|/room/${roomId}/edit|}">수정</a>
+        <form class="form-check-inline my-2 my-lg-0" th:action="@{|/room/${roomDto.id}|}" method="post">
+            <input type="hidden" th:if="${myBelongDto != null && myBelongDto.belongType.name() == 'MASTER'}" name="_method" value="delete"/>
+            <button class="btn btn-danger my-2 my-sm-0" type="submit"
+                    th:if="${myBelongDto != null && myBelongDto.belongType.name() == 'MASTER'}">삭제</button>
+        </form>
         <a class="btn btn-info" th:if="${myBelongDto != null && myBelongDto.belongType.name() != 'USER'}"
            th:href="@{|/room/${roomId}/competition/create|}" role="button" style="float:right;">대회 만들기</a>
     </div>

@@ -4,6 +4,8 @@ import hongik.ce.jolup.domain.competition.Competition;
 import hongik.ce.jolup.domain.competition.CompetitionType;
 import lombok.*;
 
+import javax.validation.constraints.NotBlank;
+
 @Getter
 @Setter
 @Builder
@@ -12,6 +14,7 @@ import lombok.*;
 @AllArgsConstructor
 public class CompetitionDto {
     private Long id;
+    @NotBlank(message = "대회 이름을 입력해주세요!")
     private String title;
     private CompetitionType competitionType;
     private Long headCount;

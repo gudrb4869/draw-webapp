@@ -1,0 +1,197 @@
+<!DOCTYPE HTML>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org">
+<head th:replace="fragments/header :: header" />
+<body>
+<div class="container">
+    <div th:replace="fragments/bodyheader" :: bodyheader />
+    <table class="table table-striped">
+        <thead>
+        <tr>
+            <th>대회 제목</th>
+            <th>대회 방식</th>
+            <th>참여 인원수</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr>
+            <td th:text="${competitionDto.title}"></td>
+            <td th:text="${competitionDto.competitionType}"></td>
+            <td th:text="${competitionDto.headCount}"></td>
+        </tr>
+        </tbody>
+    </table>
+
+    <div class="my-2 my-lg-0">
+        <a th:href="@{|/room/${roomId}|}" class="btn btn-warning">목록</a>
+        <a class="btn btn-secondary my-2 my-sm-0" th:if="${myJoinDto != null && myJoinDto.joinRole.name() == 'MASTER'}"
+           th:href="@{|/room/${roomId}/competition/${competitionId}/edit|}">수정</a>
+        <form class="form-check-inline my-2 my-lg-0" th:action="@{|/room/${roomId}/competition/${competitionId}|}" method="post">
+            <input type="hidden" th:if="${myJoinDto != null && myJoinDto.joinRole.name() == 'MASTER'}" name="_method" value="delete"/>
+            <button class="btn btn-danger my-2 my-sm-0" type="submit"
+                    th:if="${myJoinDto != null && myJoinDto.joinRole.name() == 'MASTER'}">삭제</button>
+        </form>
+    </div>
+
+    <h1>대회 참여자 목록</h1>
+    <table class="table table-light">
+        <thead>
+        <tr>
+            <th>이름</th>
+            <th>권한</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="joinDto : ${joinDtos}">
+            <td th:text="${joinDto.belongDto.memberDto.email + '('+ joinDto.belongDto.memberDto.name + ')'}"></td>
+            <td th:text="${joinDto.joinRole.description}"></td>
+        </tr>
+        </tbody>
+    </table>
+
+    <hr class="my-4">
+    <h1>일정</h1>
+    <table class="table table-bordered">
+        <thead>
+        <tr>
+            <th>라운드</th>
+            <th>경기#</th>
+            <th> 홈 </th>
+            <th></th>
+            <th></th>
+            <th></th>
+            <th> 어웨이 </th>
+            <th></th>
+            <th></th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="matchDto, i : ${matchDtos}">
+            <td th:text="${matchDto.roundNo}"></td>
+            <td th:text="${matchDto.matchNo}"></td>
+            <td th:text="${matchDto.homeDto == null} ? ${matchDto.roundNo - 1} + '라운드 ' + ${matchDto.matchNo * 2} + '경기 승자'
+                : ${matchDto.homeDto.email + '('+ matchDto.homeDto.name + ')'}"></td>
+            <td th:text="${matchDto.score.homeScore}"></td>
+            <td>:</td>
+            <td th:text="${matchDto.score.awayScore}"></td>
+            <td th:text="${matchDto.awayDto == null} ? ${matchDto.roundNo - 1} + '라운드' + ${matchDto.matchNo * 2 + 1} + '경기 승자'
+                : ${matchDto.awayDto.email + '('+ matchDto.awayDto.name + ')'}"></td>
+            <td th:text="${matchDto.matchStatus.description}"></td>
+            <td>
+                <input type="button" class="btn btn-primary" th:value="'수정'"
+                       th:onclick="|location.href='/room/' + ${roomId} + '/competition/'+ ${competitionId} + '/match/update/' + ${matchDto.id}|"
+                       th:if="${matchDto.homeDto != null} and ${matchDto.awayDto != null} and ${myJoinDto != null} and ${myJoinDto.joinRole.name() != 'USER'}"/>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+
+    <div th:if="${competitionDto.competitionType.name() == 'LEAGUE'}">
+        <hr class="my-4">
+        <h1>순위</h1>
+        <table class="table table-light">
+            <thead>
+            <tr>
+                <th>#</th>
+                <th>이름</th>
+                <th>경기수</th>
+                <th>승</th>
+                <th>무</th>
+                <th>패</th>
+                <th>득점</th>
+                <th>실점</th>
+                <th>득실차</th>
+                <th>승점</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="joinDto, i : ${joinDtos}">
+                <td th:text="${i.index+1}"></td>
+                <td th:text="${joinDto.belongDto.memberDto.email + '('+ joinDto.belongDto.memberDto.name + ')'}"></td>
+                <td th:text="${joinDto.result.plays}"></td>
+                <td th:text="${joinDto.result.win}"></td>
+                <td th:text="${joinDto.result.draw}"></td>
+                <td th:text="${joinDto.result.lose}"></td>
+                <td th:text="${joinDto.result.goalFor}"></td>
+                <td th:text="${joinDto.result.goalAgainst}"></td>
+                <td th:text="${joinDto.result.goalDifference}"></td>
+                <td th:text="${joinDto.result.points}"></td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+    <div th:replace="fragments/footer" :: footer />
+</div> <!-- /container -->
+</body>
+</html>
+<!--
+<!DOCTYPE HTML>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org">
+<head th:replace="fragments/header :: header" />
+<body>
+<div class="container">
+    <div th:replace="fragments/bodyheader" :: bodyheader />
+    <table class="table table-striped">
+        <thead>
+        <tr>
+            <th>대회 제목</th>
+            <th>대회 방식</th>
+            <th>참여 인원수</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr>
+            <td th:text="${competitionDto.title}"></td>
+            <td th:text="${competitionDto.competitionType}"></td>
+            <td th:text="${competitionDto.headCount}"></td>
+        </tr>
+        </tbody>
+    </table>
+
+    <div class="my-2 my-lg-0">
+        <a th:href="@{|/room/${roomId}|}" class="btn btn-warning">목록</a>
+    </div>
+    <div class="text-center py-2" style="max-width: 600px">
+        <hr class="my-4">
+    </div>
+    <hr class="my-4">
+    <h1>일정</h1>
+    <table class="table table-bordered">
+        <thead>
+        <tr>
+            <th>라운드</th>
+            <th>경기#</th>
+            <th> 홈 </th>
+            <th></th>
+            <th></th>
+            <th></th>
+            <th> 어웨이 </th>
+            <th></th>
+            <th></th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="matchDto, i : ${matchDtos}">
+            <td th:text="${matchDto.roundNo}"></td>
+            <td th:text="${matchDto.matchNo}"></td>
+            <td th:text="${matchDto.homeDto == null} ? ${matchDto.roundNo - 1} + '라운드 ' + ${matchDto.matchNo * 2} + '경기 승자'
+                : ${matchDto.homeDto.email + '('+ matchDto.homeDto.name + ')'}"></td>
+            <td th:text="${matchDto.score.homeScore}"></td>
+            <td>:</td>
+            <td th:text="${matchDto.score.awayScore}"></td>
+            <td th:text="${matchDto.awayDto == null} ? ${matchDto.roundNo - 1} + '라운드' + ${matchDto.matchNo * 2 + 1} + '경기 승자'
+                : ${matchDto.awayDto.email + '('+ matchDto.awayDto.name + ')'}"></td>
+            <td th:text="${matchDto.matchStatus.description}"></td>
+            <td>
+                <input type="button" class="btn btn-primary" th:value="'수정'"
+                       th:onclick="|location.href='/room/' + ${roomId} + '/competition/'+ ${competitionId} + '/match/update/' + ${matchDto.id}|"
+                       th:if="${matchDto.homeDto != null} and ${matchDto.awayDto != null} and ${myJoinDto != null} and ${myJoinDto.joinRole.name() != 'USER'}"/>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+    <div th:replace="fragments/footer" :: footer />
+</div> &lt;!&ndash; /container &ndash;&gt;
+</body>
+</html>-->
