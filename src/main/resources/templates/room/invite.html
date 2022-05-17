@@ -65,6 +65,7 @@
 </body>
 
 <script th:inline="javascript">
+    history.replaceState({}, null, location.pathname);
     function updateForm() {
         let roomId = [[${roomId}]];
         let count = document.getElementById("count").value;

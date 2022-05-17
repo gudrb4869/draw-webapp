@@ -17,6 +17,8 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
+import org.springframework.validation.FieldError;
+import org.springframework.validation.ObjectError;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
@@ -33,6 +35,7 @@ public class CompetitionController {
     private final JoinService joinService;
     private final MemberService memberService;
     private final MatchService matchService;
+    private final RoomService roomService;
 
     @GetMapping("/create")
     public String createCompetition(@PathVariable("roomId") Long roomId,
@@ -65,6 +68,11 @@ public class CompetitionController {
                                     Model model) {
 
         log.info("competitionForm = {}", competitionForm);
+
+        if (competitionForm.getHeadCount() != competitionForm.getEmails().size()) {
+            bindingResult.addError(new ObjectError("form", null, null, "오류가 발생했습니다."));
+        }
+
         if (bindingResult.hasErrors()) {
             return "competition/create";
         }
@@ -85,7 +93,9 @@ public class CompetitionController {
         CompetitionDto competitionRequestDto = CompetitionDto.builder()
                 .title(competitionForm.getTitle())
                 .competitionType(competitionForm.getCompetitionType())
-                .headCount(competitionForm.getHeadCount()).build();
+                .headCount(competitionForm.getHeadCount())
+                .roomDto(roomService.findOne(roomId))
+                .build();
         log.info("competitionRequestDto = {}", competitionRequestDto);
         Long competitionId = competitionService.saveCompetition(competitionRequestDto);
 
@@ -196,11 +206,12 @@ public class CompetitionController {
                 match /= 2;
             }
         }
-        return "redirect:/room/{roomId}/competition";
+        return "redirect:/room/{roomId}";
     }
 
     @GetMapping
-    public String Competitions(@PathVariable("roomId") Long roomId, Model model, @AuthenticationPrincipal Member member) {
+    public String Competitions(@PathVariable("roomId") Long roomId,
+                               Model model, @AuthenticationPrincipal Member member) {
         List<JoinDto> joins = joinService.findByMember(member.toDto());
         log.info("member = {}", memberService.getMember(member.getId()));
         model.addAttribute("joins", joins);
@@ -208,7 +219,8 @@ public class CompetitionController {
     }
 
     @DeleteMapping("/{competitionId}")
-    public String deleteCompetition(@PathVariable("roomId") Long roomId, @PathVariable("competitionId") Long competitionId) {
+    public String deleteCompetition(@PathVariable("roomId") Long roomId,
+                                    @PathVariable("competitionId") Long competitionId) {
         List<Long> matchList = matchService.findByCompetition(competitionService.getCompetition(competitionId))
                 .stream().map(MatchDto::getId).collect(Collectors.toList());
         List<Long> joinList = joinService.findByCompetition(competitionService.getCompetition(competitionId))
@@ -218,11 +230,14 @@ public class CompetitionController {
         for (Long joinId : joinList)
             joinService.deleteJoin(joinId);
         competitionService.deleteCompetition(competitionId);
-        return "redirect:/room/{roomId}/competition";
+        return "redirect:/room/{roomId}";
     }
 
     @GetMapping("/{competitionId}")
-    public String detail(@PathVariable("roomId") Long roomId, @PathVariable("competitionId") Long competitionId, Model model, @AuthenticationPrincipal Member member) {
+    public String detail(@PathVariable("roomId") Long roomId,
+                         @PathVariable("competitionId") Long competitionId,
+                         @AuthenticationPrincipal Member member,
+                         Model model) {
         CompetitionDto competitionDto = competitionService.getCompetition(competitionId);
         if (competitionDto == null) {
             return "error";

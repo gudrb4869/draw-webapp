@@ -17,14 +17,18 @@ import org.springframework.web.bind.annotation.*;
 
 @Controller
 @RequiredArgsConstructor
-@RequestMapping("/match")
+@RequestMapping("/room/{roomId}/competition/{competitionId}/match")
 public class MatchController {
 
     private final MatchService matchService;
     private final JoinService joinService;
 
     @GetMapping("/{matchId}")
-    public String matchDetail(@PathVariable("matchId") Long matchId, @AuthenticationPrincipal Member member, Model model) {
+    public String matchDetail(@PathVariable("roomId") Long roomId,
+                              @PathVariable("competitionId") Long competitionId,
+                              @PathVariable("matchId") Long matchId,
+                              @AuthenticationPrincipal Member member,
+                              Model model) {
         MatchDto matchDto = matchService.getMatch(matchId);
         if (matchDto == null || matchDto.getHomeDto() == null || matchDto.getAwayDto() == null || !hasAuth(member.toDto(), matchDto)) {
             return "error";
@@ -46,7 +50,9 @@ public class MatchController {
     }
 
     @PutMapping("/update/{matchId}")
-    public String update(@PathVariable("matchId") Long matchId, @AuthenticationPrincipal Member member,
+    public String update(@PathVariable("roomId") Long roomId,
+                         @PathVariable("competitionId") Long competitionId,
+                         @PathVariable("matchId") Long matchId, @AuthenticationPrincipal Member member,
                          Score score, MatchStatus matchStatus) {
         if (matchStatus.equals(MatchStatus.READY)) {
             score.setHomeScore(0);
@@ -148,7 +154,7 @@ public class MatchController {
         joinDto2.setResult(result2);
         joinService.saveJoin(joinDto1);
         joinService.saveJoin(joinDto2);
-        return "redirect:/competition/" + competitionDto.getId();
+        return "redirect:/room/{roomId}/competition/{competitionId}";
     }
 
     private void resetTournamentMatch(MatchDto matchDto, CompetitionDto competitionDto) {

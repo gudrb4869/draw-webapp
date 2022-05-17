@@ -6,7 +6,7 @@
 <div class="container">
     <div th:replace="fragments/bodyheader" :: bodyheader />
     <div class="jumbotron">
-        <form class="form-horizontal" th:action="@{|/match/update/${matchDto.id}|}" method="post">
+        <form class="form-horizontal" th:action="@{|/room/${roomId}/competition/${competitionId}/match/update/${matchDto.id}|}" method="post">
             <input type="hidden" name="_method" value="put"/>
             <table class="table table-striped">
                 <thead>
@@ -38,7 +38,7 @@
                 <div class="col-sm-offset-1 col-sm-10">
                     <button type="submit" class="btn btn-info" th:name="matchStatus" th:value="READY">초기화</button>
                     <button type="submit" class="btn btn-success" th:name="matchStatus" th:value="END">저장</button>
-                    <a th:href="@{|/competition/${matchDto.competitionDto.id}|}" class="btn btn-warning">취소</a>
+                    <a th:href="@{|/room/${roomId}/competition/${matchDto.competitionDto.id}|}" class="btn btn-warning">취소</a>
                 </div>
             </div>
         </form>

@@ -15,6 +15,7 @@ public class CompetitionDto {
     private String title;
     private CompetitionType competitionType;
     private Long headCount;
+    private RoomDto roomDto;
 //    private List<JoinDto> joinDtos;
 
     public Competition toEntity() {
@@ -23,6 +24,7 @@ public class CompetitionDto {
                 .title(title)
                 .competitionType(competitionType)
                 .headCount(headCount)
+                .room(roomDto.toEntity())
 //                .joins(joinDtos.stream().map(JoinDto::toEntity).collect(Collectors.toList()))
                 .build();
     }

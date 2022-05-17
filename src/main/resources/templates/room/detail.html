@@ -24,9 +24,10 @@
     </table>
     <div class="my-2 my-lg-0">
         <a th:href="@{/room}" class="btn btn-warning">목록</a>
-        <a class="btn btn-primary my-2 my-sm-0" th:unless="${memberBelongDto.belongType.name() == 'USER'}"
+        <a class="btn btn-primary my-2 my-sm-0" th:if="${memberBelongDto != null && memberBelongDto.belongType.name() != 'USER'}"
            th:href="@{/room/{roomId}/invite(roomId = ${roomDto.id})}">초대</a>
-        <a class="btn btn-info" th:href="@{|/room/${roomId}/competition/create|}" role="button" style="float:right;">대회 만들기</a>
+        <a class="btn btn-info" th:if="${memberBelongDto != null && memberBelongDto.belongType.name() != 'USER'}"
+           th:href="@{|/room/${roomId}/competition/create|}" role="button" style="float:right;">대회 만들기</a>
     </div>
     <div class="text-center py-2" style="max-width: 600px">
         <hr class="my-4">
@@ -59,20 +60,22 @@
             </tr>
             </thead>
             <tbody>
-            <tr th:if="${joinDtos.isEmpty()}">
+            <tr th:if="${competitionDtos.isEmpty()}">
                 <td class="text-center" colspan="5">참여중인 대회가 없습니다!</td>
             </tr>
-            <tr th:each="joinDto : ${joinDtos}">
-                <td th:text="${joinDtoStat.count}"></td>
-                <td th:text="${joinDto.competitionDto.title}"></td>
-                <td th:text="${joinDto.competitionDto.competitionType.description}"></td>
-                <td th:text="${joinDto.competitionDto.headCount}"></td>
+            <tr th:each="competitionDto : ${competitionDtos}">
+                <td th:text="${competitionDtoStat.count}"></td>
+                <td th:text="${competitionDto.title}"></td>
+                <td th:text="${competitionDto.competitionType.description}"></td>
+                <td th:text="${competitionDto.headCount}"></td>
                 <td>
                     <div>
-                        <form class="form-check-inline my-2 my-lg-0" th:action="@{|/room/${roomDto.id}/competition/${joinDto.competitionDto.id}|}" method="post">
-                            <a class="btn btn-primary my-2 my-sm-0" th:href="@{|/room/${roomDto.id}/competition/${joinDto.competitionDto.id}|}">조회</a>
-                            <input th:if="${joinDto.joinRole.name() == 'MASTER'}" type="hidden" name="_method" value="delete"/>
-                            <button class="btn btn-danger my-2 my-sm-0" type="submit" th:if="${joinDto.joinRole.name() == 'MASTER'}">삭제</button>
+                        <form class="form-check-inline my-2 my-lg-0" th:action="@{|/room/${roomDto.id}/competition/${competitionDto.id}|}" method="post">
+                            <a class="btn btn-primary my-2 my-sm-0" th:href="@{|/room/${roomDto.id}/competition/${competitionDto.id}|}">조회</a>
+                            <input type="hidden" name="_method" value="delete"/>
+<!--                            th:if="${competitionDto.joinRole.name() == 'MASTER'}"-->
+                            <button class="btn btn-danger my-2 my-sm-0" type="submit">삭제</button>
+<!--                            th:if="${competitionDto.joinRole.name() == 'MASTER'}">-->
                         </form>
                     </div>
                 </td>

@@ -66,6 +66,7 @@ public class Competition extends Time {
                 .title(title)
                 .competitionType(competitionType)
                 .headCount(headCount)
+                .roomDto(room.toDto())
 //                .joinDtos(joins.stream().map(Join::toDto).collect(Collectors.toList()));
                 .build();
     }

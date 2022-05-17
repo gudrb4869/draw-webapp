@@ -40,6 +40,14 @@ public class CompetitionService {
         return competition.toDto();
     }
 
+    public List<CompetitionDto> getCompetitions(Long roomId) {
+        List<Competition> competitions = competitionRepository.findByRoomId(roomId);
+        if (competitions == null) {
+            return null;
+        }
+        return competitions.stream().map(Competition::toDto).collect(Collectors.toList());
+    }
+
     public void deleteCompetition(Long id) {
         competitionRepository.deleteById(id);
     }

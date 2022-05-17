@@ -3,11 +3,9 @@ package hongik.ce.jolup.controller;
 import hongik.ce.jolup.domain.belong.BelongType;
 import hongik.ce.jolup.domain.member.Member;
 import hongik.ce.jolup.domain.room.RoomSetting;
-import hongik.ce.jolup.dto.BelongDto;
-import hongik.ce.jolup.dto.JoinDto;
-import hongik.ce.jolup.dto.MemberDto;
-import hongik.ce.jolup.dto.RoomDto;
+import hongik.ce.jolup.dto.*;
 import hongik.ce.jolup.service.BelongService;
+import hongik.ce.jolup.service.CompetitionService;
 import hongik.ce.jolup.service.MemberService;
 import hongik.ce.jolup.service.RoomService;
 import lombok.*;
@@ -34,6 +32,7 @@ public class RoomController {
     private final MemberService memberService;
     private final BelongService belongService;
     private final RoomService roomService;
+    private final CompetitionService competitionService;
 
     @GetMapping
     public String rooms(Model model, @AuthenticationPrincipal Member member) {
@@ -79,15 +78,19 @@ public class RoomController {
 
         if (roomDto.getRoomSetting().equals(RoomSetting.PRIVATE) &&
                 !belongDtos.stream().map(BelongDto::getMemberDto).collect(Collectors.toList())
-                        .stream().map(MemberDto::getId).collect(Collectors.toList()).contains(member.getId()))
+                        .stream().map(MemberDto::getId).collect(Collectors.toList()).contains(member.getId())) {
+            log.info("비공개 방, 회원이 아님");
             return "error";
+        }
 
-        List<JoinDto> joinDtos = memberService.getJoins(member.getId());
+//        List<JoinDto> joinDtos = memberService.getJoins(member.getId());
+        List<CompetitionDto> competitionDtos = competitionService.getCompetitions(roomId);
 
         model.addAttribute("memberBelongDto", belongService.findOne(member.getId(), roomId));
         model.addAttribute("roomDto", roomDto);
         model.addAttribute("belongDtos", belongDtos);
-        model.addAttribute("joinDtos", joinDtos);
+//        model.addAttribute("joinDtos", joinDtos);
+        model.addAttribute("competitionDtos", competitionDtos);
         return "room/detail";
     }
 
@@ -134,6 +137,10 @@ public class RoomController {
             } else if (collect.contains(email)) {
                 result.addError(new FieldError("inviteForm", "emails[" + i + "]", email,false,null, null, "이미 참여중인 회원입니다."));
             }
+        }
+
+        if (emails.size() != inviteForm.getCount()) {
+            result.addError(new ObjectError("inviteForm", null, null, "오류가 발생했습니다."));
         }
 
         if (result.hasErrors()) {

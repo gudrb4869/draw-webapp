@@ -18,6 +18,11 @@
         <h2>대회 만들기</h2>
     </div>
     <form th:action="@{|/room/${roomId}/competition/create|}" th:object="${form}" method="post">
+
+        <div th:if="${#fields.hasGlobalErrors()}">
+            <p class="field-error" th:each="err : ${#fields.globalErrors()}" th:text="${err}">전체 오류 메시지</p>
+        </div>
+
         <div>
             <label th:for="title">대회 이름</label>
             <input type="text" th:field="*{title}" placeholder="대회 이름을 입력하세요"
@@ -69,7 +74,7 @@
         <div class="row">
             <div class="col">
                 <button type="submit" class="btn btn-primary btn-lg">생성</button>
-                <a th:href="@{|/room/${roomId}/competition|}" class="btn btn-warning btn-lg">취소</a>
+                <a th:href="@{|/room/${roomId}|}" class="btn btn-warning btn-lg">취소</a>
             </div>
         </div>
 
@@ -79,6 +84,7 @@
 </body>
 
 <script th:inline="javascript">
+    history.replaceState({}, null, location.pathname);
     function updateForm() {
         let roomId = [[${roomId}]]
         let title = document.getElementById("title").value;
@@ -93,7 +99,7 @@
                 emails.push("")
             }
         }
-        location.href="room/" + roomId + "/competition/create?title=" + title + "&competitionType=" + competitionType + "&headCount=" + headCount + "&emails=" + emails;
+        location.href="/room/" + roomId + "/competition/create?title=" + title + "&competitionType=" + competitionType + "&headCount=" + headCount + "&emails=" + emails;
     }
 </script>
 </html>
