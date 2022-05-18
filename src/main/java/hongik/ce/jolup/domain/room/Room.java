@@ -1,6 +1,6 @@
 package hongik.ce.jolup.domain.room;
 
-import hongik.ce.jolup.domain.Time;
+import hongik.ce.jolup.domain.BaseTimeEntity;
 import hongik.ce.jolup.domain.belong.Belong;
 import hongik.ce.jolup.domain.competition.Competition;
 import hongik.ce.jolup.dto.RoomDto;
@@ -15,11 +15,11 @@ import java.util.List;
 @Table(name = "room")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @ToString
-public class Room extends Time {
+public class Room extends BaseTimeEntity {
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable = false, length = 30)
+    @Column(nullable = false)
     private String title;
 
     @Column(nullable = false)

@@ -1,7 +1,7 @@
 package hongik.ce.jolup.controller;
 
 import hongik.ce.jolup.domain.belong.BelongType;
-import hongik.ce.jolup.domain.join.JoinRole;
+//import hongik.ce.jolup.domain.join.JoinRole;
 import hongik.ce.jolup.domain.match.MatchStatus;
 import hongik.ce.jolup.domain.result.Result;
 import hongik.ce.jolup.domain.competition.CompetitionType;
@@ -36,21 +36,15 @@ public class MatchController {
                          @PathVariable("matchId") Long matchId,
                          @AuthenticationPrincipal Member member,
                          Model model) {
-        log.info("matchController /update/{matchId} GET");
+
+        log.info("GET : updateMatch = {}", roomId, competitionId, matchId);
         BelongDto myBelongDto = belongService.findOne(member.getId(), roomId);
-        if (myBelongDto == null) {
-            log.info("방의 회원이 아님");
-            return "error";
-        }
-        CompetitionDto competitionDto = competitionService.findOne(competitionId, roomId);
-        if (competitionDto == null) {
-            log.info("방ID와 대회ID가 맞지 않음");
+        if (myBelongDto == null || !myBelongDto.getBelongType().equals(BelongType.MASTER)) {
             return "error";
         }
 
-        JoinDto myJoinDto = joinService.findOne(myBelongDto.getId(), competitionId);
-        if (myJoinDto == null || myJoinDto.getJoinRole().equals(JoinRole.USER)) {
-            log.info("방ID와 대회ID가 맞지 않음");
+        CompetitionDto competitionDto = competitionService.findOne(competitionId, roomId);
+        if (competitionDto == null) {
             return "error";
         }
 
@@ -62,7 +56,6 @@ public class MatchController {
         ScoreDto scoreDto = matchDto.getScore().toDto();
         model.addAttribute("matchDto", matchDto);
         model.addAttribute("scoreDto", scoreDto);
-//        model.addAttribute("matchStatuses", MatchStatus.values());
         return "match/update";
     }
 
@@ -71,19 +64,17 @@ public class MatchController {
                          @PathVariable("competitionId") Long competitionId,
                          @PathVariable("matchId") Long matchId, @AuthenticationPrincipal Member member,
                          Score score, MatchStatus matchStatus) {
-        log.info("matchController /update/{matchId} PUT");
+
+        log.info("PUT : updateMatch = {}", roomId, competitionId, matchId);
         BelongDto myBelongDto = belongService.findOne(member.getId(), roomId);
-        if (myBelongDto == null) {
+        if (myBelongDto == null || !myBelongDto.getBelongType().equals(BelongType.MASTER)) {
             return "error";
         }
         CompetitionDto competitionDto = competitionService.findOne(competitionId, roomId);
         if (competitionDto == null) {
             return "error";
         }
-        JoinDto myJoinDto = joinService.findOne(myBelongDto.getId(), competitionId);
-        if (myJoinDto == null || myJoinDto.getJoinRole().equals(JoinRole.USER)) {
-            return "error";
-        }
+
         MatchDto matchDto = matchService.findByIdAndCompetitionId(matchId, competitionId);
         if (matchDto == null || matchDto.getHomeDto() == null || matchDto.getAwayDto() == null) {
             return "error";

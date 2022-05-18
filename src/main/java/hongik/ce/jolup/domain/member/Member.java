@@ -1,6 +1,6 @@
 package hongik.ce.jolup.domain.member;
 
-import hongik.ce.jolup.domain.Time;
+import hongik.ce.jolup.domain.BaseTimeEntity;
 import hongik.ce.jolup.domain.belong.Belong;
 import hongik.ce.jolup.dto.MemberDto;
 import lombok.*;
@@ -16,7 +16,7 @@ import java.util.*;
 @Table(name = "member")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @ToString(of = {"id", "email", "name", "role"})
-public class Member extends Time implements UserDetails {
+public class Member extends BaseTimeEntity implements UserDetails {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;

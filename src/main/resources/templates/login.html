@@ -4,7 +4,7 @@
       xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 <head th:replace="fragments/header :: header" />
 <body>
-<div class="container" style="max-width: 600px">
+<div class="container">
     <div th:replace="fragments/bodyheader" :: bodyheader />
     <div class="py-5 text-center">
         <h5>아이디와 비밀번호를 입력해주세요</h5>
@@ -16,12 +16,11 @@
             </div>
 
             <div class="py-5">
-                <form th:action="@{/login_proc}" method="post">
+                <form th:action method="post">
                     <!--            <form name="frm" id="frm" action="#" method="post" onsubmit="return false" class="form-signin">-->
                     <!--                <input th:type="hidden" th:value="secret" name="secret_key">-->
                     <div>
-                        아이디 : <input type="text" class="form-control" name="email" placeholder="아이디"
-                                     autofocus="autofocus"> <br>
+                        아이디 : <input type="text" class="form-control" name="email" placeholder="아이디" autofocus="autofocus"> <br>
                     </div>
                     <div>
                         비밀번호 : <input type="password" class="form-control" name="password" placeholder="비밀번호"> <br>

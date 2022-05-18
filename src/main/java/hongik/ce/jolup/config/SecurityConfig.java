@@ -2,6 +2,9 @@ package hongik.ce.jolup.config;
 
 import hongik.ce.jolup.service.MemberService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.boot.autoconfigure.security.servlet.PathRequest;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.builders.WebSecurity;
@@ -9,18 +12,25 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
+@Configuration
 @RequiredArgsConstructor
 @EnableWebSecurity
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     private final MemberService memberService;
 
+    @Bean
+    public BCryptPasswordEncoder bCryptPasswordEncoder() {
+        return new BCryptPasswordEncoder();
+    }
+
+
     @Override
     // 인증을 무시할 경로 설정
-    public void configure(WebSecurity web) {
-        web.ignoring().antMatchers("/favicon.ico", "/resources/**", "/error");
+    public void configure(WebSecurity web) throws Exception {
+        web.ignoring().antMatchers("/resources/**", "/error");
 //        web.ignoring().antMatchers("/css/**", "/js/**", "/img/**", "h2-console/**");
-//        web.ignoring().requestMatchers(PathRequest.toStaticResources().atCommonLocations());
+        web.ignoring().requestMatchers(PathRequest.toStaticResources().atCommonLocations());
     }
 
     @Override
@@ -35,7 +45,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                     .and()
                 .formLogin() // 로그인에 대한 설정
                     .loginPage("/login")
-                    .loginProcessingUrl("/login_proc")
+                    .loginProcessingUrl("/login")
                 .usernameParameter("email")
                 .passwordParameter("password")
                     .defaultSuccessUrl("/") // 로그인 성공시 연결되는 주소
@@ -57,6 +67,6 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     // 로그인 시 필요한 정보를 가져옴
     public void configure(AuthenticationManagerBuilder auth) throws Exception {
         auth.userDetailsService(memberService) // 유저 정보는 userService 에서 가져온다
-                .passwordEncoder(new BCryptPasswordEncoder()); // 패스워드 인코더는 passwordEncoder(BCrypt 사용)
+                .passwordEncoder(bCryptPasswordEncoder()); // 패스워드 인코더는 passwordEncoder(BCrypt 사용)
     }
 }

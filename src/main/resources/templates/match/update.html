@@ -9,7 +9,7 @@
         <h1>경기 결과 수정</h1>
     </div>
     <hr class="my-4">
-    <form class="form-horizontal" th:action="@{|/room/${roomId}/competition/${competitionId}/match/update/${matchDto.id}|}" method="post">
+    <form class="form-horizontal" th:action method="post">
         <input type="hidden" name="_method" value="put"/>
         <table class="table table-striped">
             <thead>

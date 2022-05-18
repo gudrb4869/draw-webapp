@@ -16,7 +16,7 @@ import java.util.List;
 @ToString @Builder
 public class CompetitionForm {
     @NotBlank(message = "대회 이름은 필수 입력 값입니다!")
-    @Size(max = 30, message = "대회 이름의 최대 길이는 30글자입니다!")
+    @Size(min = 3, max = 30, message = "최소 3글자 최대 30글자로 입력해주세요!")
 //    @Pattern(regexp = "^(?:\\w+\\.?)*\\w+@(?:\\w+\\.)+\\w+$", message = "대회 이름 형식이 올바르지 않습니다.")
     private String title;
 

@@ -4,16 +4,13 @@
       xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 <head th:replace="fragments/header :: header" />
 <style>
-    .container {
-        max-width: 560px;
-    }
     .field-error {
         border-color: #dc3545;
         color: #dc3545;
     }
 </style>
 <body>
-<div class="container" style="max-width: 600px">
+<div class="container">
     <div th:replace="fragments/bodyheader" :: bodyheader />
     <div class="py-5 text-center">
         <h2>회원 가입</h2>

@@ -55,13 +55,6 @@ public class JoinService {
                 .collect(Collectors.toList());
     }
 
-    public List<JoinDto> findByCompetitionOrderByJoinRole(CompetitionDto competitionDto) {
-        List<Join> joins = joinRepository.findByCompetitionIdOrderByJoinRoleDesc(competitionDto.getId());
-        return joins.stream()
-                .map(Join::toDto)
-                .collect(Collectors.toList());
-    }
-
     public void deleteJoin(Long id) {
         joinRepository.deleteById(id);
     }

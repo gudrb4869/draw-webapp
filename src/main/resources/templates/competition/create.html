@@ -17,7 +17,7 @@
     <div class="py-5 text-center">
         <h2>대회 만들기</h2>
     </div>
-    <form th:action="@{|/room/${roomId}/competition/create|}" th:object="${form}" method="post">
+    <form th:action th:object="${form}" method="post">
 
         <div th:if="${#fields.hasGlobalErrors()}">
             <p class="field-error" th:each="err : ${#fields.globalErrors()}" th:text="${err}">전체 오류 메시지</p>

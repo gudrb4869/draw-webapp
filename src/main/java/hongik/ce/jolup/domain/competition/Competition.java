@@ -1,6 +1,6 @@
 package hongik.ce.jolup.domain.competition;
 
-import hongik.ce.jolup.domain.Time;
+import hongik.ce.jolup.domain.BaseTimeEntity;
 import hongik.ce.jolup.domain.join.Join;
 import hongik.ce.jolup.domain.match.Match;
 import hongik.ce.jolup.domain.room.Room;
@@ -16,7 +16,7 @@ import java.util.List;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Table(name = "competition")
 @ToString(of = {"id", "title", "competitionType", "headCount"})
-public class Competition extends Time {
+public class Competition extends BaseTimeEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;

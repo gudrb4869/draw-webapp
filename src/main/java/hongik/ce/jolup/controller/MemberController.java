@@ -38,7 +38,7 @@ public class MemberController {
     }
 
     @PostMapping("/signup")
-    public /*ModelAndView*/ String signup(@Valid MemberForm memberForm, BindingResult result, Model model) {
+    public String signup(@Valid MemberForm memberForm, BindingResult result, Model model) {
 
         if (result.hasErrors()) {
             return "signup";

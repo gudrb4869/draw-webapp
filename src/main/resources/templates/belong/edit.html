@@ -1,0 +1,46 @@
+<!DOCTYPE HTML>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org">
+<head th:replace="fragments/header :: header" />
+<style>
+    .field-error {
+        border-color: #dc3545;
+        color: #dc3545;
+    }
+</style>
+<body>
+<div class="container">
+    <div th:replace="fragments/bodyheader" :: bodyheader />
+    <div class="py-5 text-center">
+        <h2>회원 권한 수정</h2>
+    </div>
+    <form th:action th:object="${belongDto}" method="post">
+        <input type="hidden" name="_method" value="put"/>
+        <input type="hidden" th:field="*{id}"/><input type="hidden" th:field="*{memberDto.id}"/><input type="hidden" th:field="*{roomDto.id}"/>
+        <div>
+            <label th:for="*{memberDto.name}">회원명</label>
+            <input type="text" class="form-control" th:field="*{memberDto.name}" readonly>
+        </div>
+        <div class="py-2">
+            <div>권한</div>
+            <select th:field="*{belongType}" class="form-select-sm">
+                <option value="">==권한 선택==</option>
+                <option value="MANAGER">매니저</option>
+                <option value="USER">일반사용자</option>
+            </select>
+            <p th:errors="*{belongType}" class="field-error">공개 여부 오류</p>
+        </div>
+
+        <hr class="my-4">
+
+        <div class="row">
+            <div class="col">
+                <button type="submit" class="btn btn-primary btn-lg">수정</button>
+                <a th:href="@{|/room/${roomId}|}" class="btn btn-warning btn-lg">취소</a>
+            </div>
+        </div>
+    </form>
+    <div th:replace="fragments/footer" :: footer />
+</div> <!-- /container -->
+</body>
+</html>

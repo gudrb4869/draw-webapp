@@ -1,7 +1,7 @@
 package hongik.ce.jolup.controller;
 
 import hongik.ce.jolup.domain.belong.BelongType;
-import hongik.ce.jolup.domain.join.JoinRole;
+//import hongik.ce.jolup.domain.join.JoinRole;
 import hongik.ce.jolup.domain.match.MatchStatus;
 import hongik.ce.jolup.domain.result.Result;
 import hongik.ce.jolup.domain.score.Score;
@@ -46,7 +46,7 @@ public class CompetitionController {
                                     Model model) {
 
         BelongDto myBelongDto = belongService.findOne(member.getId(), roomId);
-        if (myBelongDto == null || myBelongDto.getBelongType().equals(BelongType.USER)) {
+        if (myBelongDto == null || !myBelongDto.getBelongType().equals(BelongType.MASTER)) {
             return "error";
         }
 
@@ -61,7 +61,7 @@ public class CompetitionController {
             }
                 competitionForm.addEmail(new String());
         }
-        log.info("form = {}", competitionForm);
+        log.info("GET: create, competitionForm = {}", competitionForm);
         model.addAttribute("form", competitionForm);
         return "competition/create";
     }
@@ -73,26 +73,22 @@ public class CompetitionController {
                                     @AuthenticationPrincipal Member member,
                                     Model model) {
 
+        log.info("POST : create, competitionForm = {}", competitionForm);
+
         BelongDto myBelongDto = belongService.findOne(member.getId(), roomId);
-        if (myBelongDto == null || myBelongDto.getBelongType().equals(BelongType.USER)) {
+        if (myBelongDto == null || !myBelongDto.getBelongType().equals(BelongType.MASTER)) {
             return "error";
         }
 
-        log.info("competitionForm = {}", competitionForm);
         List<String> emails = competitionForm.getEmails();
         if (competitionForm.getHeadCount() != emails.size()) {
             bindingResult.addError(new ObjectError("form", null, null, "오류가 발생했습니다1."));
             return "competition/create";
         }
 
-        Boolean flag = false;
-
         for(int i = 0; i < emails.size(); i++) {
             String email = emails.get(i);
             MemberDto memberDto = memberService.findOne(email);
-            if (email.equals(member.getEmail())) {
-                flag = true;
-            }
             if (memberDto == null) {
                 bindingResult.addError(new FieldError("form", "emails[" + i + "]", email, false, null, null, "존재하지 않는 회원입니다."));
                 continue;
@@ -102,11 +98,6 @@ public class CompetitionController {
                 bindingResult.addError(new FieldError("form", "emails[" + i + "]", email, false, null, null, "존재하지 않는 회원입니다."));
                 continue;
             }
-        }
-
-        if (!flag) {
-            bindingResult.addError(new ObjectError("form", null, null, "오류가 발생했습니다2."));
-            return "competition/create";
         }
 
         if (emails.size() != emails.stream().distinct().count()) {
@@ -124,11 +115,11 @@ public class CompetitionController {
                 .headCount(competitionForm.getHeadCount())
                 .roomDto(roomService.findOne(roomId))
                 .build();
-        log.info("competitionRequestDto = {}", competitionRequestDto);
+        log.info("POST : create, competitionRequestDto = {}", competitionRequestDto);
         Long competitionId = competitionService.saveCompetition(competitionRequestDto);
 
         CompetitionDto competitionDto = competitionService.getCompetition(competitionId);
-        log.info("competitionDto = {}", competitionDto);
+        log.info("POST : create, competitionDto = {}", competitionDto);
         for(String email : emails) {
             MemberDto memberDto = memberService.findOne(email);
             BelongDto belongDto = belongService.findOne(memberDto.getId(), roomId);
@@ -137,10 +128,7 @@ public class CompetitionController {
                     .competitionDto(competitionDto)
                     .result(Result.builder().plays(0).win(0).draw(0).lose(0).goalFor(0)
                             .goalAgainst(0).goalDifference(0).points(0).build())
-                    .joinRole(JoinRole.USER)
                     .build();
-            if (memberDto.getId().equals(member.getId()))
-                joinDto.setJoinRole(JoinRole.MASTER);
             joinService.saveJoin(joinDto);
         }
 
@@ -239,15 +227,6 @@ public class CompetitionController {
         return "redirect:/room/{roomId}";
     }
 
-    /*@GetMapping
-    public String Competitions(@PathVariable("roomId") Long roomId,
-                               Model model, @AuthenticationPrincipal Member member) {
-        List<JoinDto> joins = joinService.findByMember(member.toDto());
-        log.info("member = {}", memberService.getMember(member.getId()));
-        model.addAttribute("joins", joins);
-        return "competition/list";
-    }*/
-
     @GetMapping("/{competitionId}")
     public String detail(@PathVariable("roomId") Long roomId,
                          @PathVariable("competitionId") Long competitionId,
@@ -256,15 +235,16 @@ public class CompetitionController {
 
         log.info("CompetitionController GET /{competitionId}");
 
+        CompetitionDto competitionDto = competitionService.findOne(competitionId, roomId);
+        if (competitionDto == null) {
+            return "error";
+        }
+
         BelongDto myBelongDto = belongService.findOne(member.getId(), roomId);
         if (myBelongDto == null) {
             return "error";
         }
 
-        CompetitionDto competitionDto = competitionService.findOne(competitionId, roomId);
-        if (competitionDto == null) {
-            return "error";
-        }
         JoinDto myJoinDto = joinService.findOne(myBelongDto.getId(), competitionId);
 
         List<MatchDto> matchDtos = matchService.findByCompetition(competitionDto);
@@ -272,7 +252,7 @@ public class CompetitionController {
         model.addAttribute("competitionDto", competitionDto);
         model.addAttribute("matchDtos", matchDtos);
         model.addAttribute("myJoinDto", myJoinDto);
-
+        model.addAttribute("myBelongDto", myBelongDto);
         List<JoinDto> joinDtos = joinService.findByCompetitionSort(competitionDto);
         model.addAttribute("joinDtos", joinDtos);
         return "competition/detail";
@@ -285,29 +265,24 @@ public class CompetitionController {
 
         log.info("CompetitionController DELETE /{competitionId}");
 
-        BelongDto myBelongDto = belongService.findOne(member.getId(), roomId);
-        if (myBelongDto == null || myBelongDto.getBelongType().equals(BelongType.USER)) {
-            return "error";
-        }
-
         CompetitionDto competitionDto = competitionService.findOne(competitionId, roomId);
         if (competitionDto == null) {
             return "error";
         }
 
-        JoinDto myJoinDto = joinService.findOne(myBelongDto.getId(), competitionId);
-        if ((myJoinDto == null || !myJoinDto.getJoinRole().equals(JoinRole.MASTER)) && !myBelongDto.getBelongType().equals(BelongType.MASTER)) {
+        BelongDto myBelongDto = belongService.findOne(member.getId(), roomId);
+        if (myBelongDto == null || !myBelongDto.getBelongType().equals(BelongType.MASTER)) {
             return "error";
         }
 
-        List<Long> matchList = matchService.findByCompetition(competitionService.getCompetition(competitionId))
+        /*List<Long> matchList = matchService.findByCompetition(competitionService.getCompetition(competitionId))
                 .stream().map(MatchDto::getId).collect(Collectors.toList());
         List<Long> joinList = joinService.findByCompetition(competitionService.getCompetition(competitionId))
                 .stream().map(JoinDto::getId).collect(Collectors.toList());
         for (Long matchId : matchList)
             matchService.deleteMatch(matchId);
         for (Long joinId : joinList)
-            joinService.deleteJoin(joinId);
+            joinService.deleteJoin(joinId);*/
         competitionService.deleteCompetition(competitionId);
         return "redirect:/room/{roomId}";
     }
@@ -317,22 +292,16 @@ public class CompetitionController {
                                   @PathVariable("competitionId") Long competitionId,
                                   @AuthenticationPrincipal Member member,
                                   Model model) {
-
-        BelongDto myBelongDto = belongService.findOne(member.getId(), roomId);
-        if (myBelongDto == null) {
-            return "error";
-        }
-
         CompetitionDto competitionDto = competitionService.findOne(competitionId, roomId);
+        log.info("GET : editCompetition, competitionDto = {}", competitionDto);
         if (competitionDto == null) {
             return "error";
         }
 
-        JoinDto myJoinDto = joinService.findOne(myBelongDto.getId(), competitionId);
-        if (myJoinDto == null || !myJoinDto.getJoinRole().equals(JoinRole.MASTER)) {
+        BelongDto myBelongDto = belongService.findOne(member.getId(), roomId);
+        if (myBelongDto == null || !myBelongDto.getBelongType().equals(BelongType.MASTER)) {
             return "error";
         }
-        log.info("GET : competitionDto = {}", competitionDto);
 
         model.addAttribute("competitionDto", competitionDto);
         return "competition/edit";
@@ -344,25 +313,19 @@ public class CompetitionController {
                        @AuthenticationPrincipal Member member,
                        @ModelAttribute CompetitionDto competitionDto,
                        BindingResult result) {
+        log.info("PUT : edit, competitionDto = {}", competitionDto);
 
-        log.info("PUT : competitionDto = {}", competitionDto);
+        if (result.hasErrors()) {
+            return "competition/edit";
+        }
 
-        if (competitionDto == null) {
+        if (competitionService.findOne(competitionId, roomId) == null) {
             return "error";
         }
 
         BelongDto myBelongDto = belongService.findOne(member.getId(), roomId);
-        if (myBelongDto == null) {
+        if (myBelongDto == null || !myBelongDto.getBelongType().equals(BelongType.MASTER)) {
             return "error";
-        }
-
-        JoinDto myJoinDto = joinService.findOne(myBelongDto.getId(), competitionId);
-        if (myJoinDto == null || !myJoinDto.getJoinRole().equals(JoinRole.MASTER)) {
-            return "error";
-        }
-
-        if (result.hasErrors()) {
-            return "competition/edit";
         }
 
         competitionService.saveCompetition(competitionDto);

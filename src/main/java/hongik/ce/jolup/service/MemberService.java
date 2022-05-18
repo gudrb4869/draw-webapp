@@ -58,13 +58,6 @@ public class MemberService implements UserDetailsService {
         }
     }
 
-    public List<MemberDto> findAll() {
-        List<Member> memberList = memberRepository.findAll();
-        return memberList.stream()
-                .map(Member::toDto)
-                .collect(Collectors.toList());
-    }
-
     public MemberDto getMember(Long memberId) {
         Optional<Member> optionalMember = memberRepository.findById(memberId);
         if (optionalMember.isEmpty())

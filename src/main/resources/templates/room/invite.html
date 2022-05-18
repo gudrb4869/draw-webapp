@@ -3,21 +3,18 @@
       xmlns:th="http://www.thymeleaf.org">
 <head th:replace="fragments/header :: header" />
 <style>
-    .container {
-        max-width: 560px;
-    }
     .field-error {
         border-color: #dc3545;
         color: #dc3545;
     }
 </style>
 <body>
-<div class="container" style="max-width: 600px">
+<div class="container">
     <div th:replace="fragments/bodyheader" :: bodyheader />
     <div class="py-5 text-center">
         <h2>멤버 초대</h2>
     </div>
-    <form th:action="@{/room/{roomId}/invite(roomId = ${roomId})}" th:object="${inviteForm}" method="post">
+    <form th:action th:object="${inviteForm}" method="post">
 
         <div th:if="${#fields.hasGlobalErrors()}">
             <p class="field-error" th:each="err : ${#fields.globalErrors()}" th:text="${err}">전체 오류 메시지</p>
@@ -54,7 +51,7 @@
 
         <div class="row">
             <div class="col">
-                <button type="submit" class="btn btn-primary btn-lg">생성</button>
+                <button type="submit" class="btn btn-primary btn-lg">초대</button>
                 <a th:href="@{/room/{roomId}(roomId = ${roomId})}" class="btn btn-warning btn-lg">취소</a>
             </div>
         </div>

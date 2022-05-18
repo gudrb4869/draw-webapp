@@ -30,6 +30,14 @@ public class BelongService {
         belongRepository.deleteById(belongId);
     }
 
+    public BelongDto findByIdAndRoomId(Long id, Long roomId) {
+        Optional<Belong> optionalBelong = belongRepository.findByIdAndRoomId(id, roomId);
+        if (optionalBelong.isPresent()) {
+            return optionalBelong.get().toDto();
+        }
+        return null;
+    }
+
     public BelongDto findOne(Long memberId, Long roomId) {
         Optional<Belong> optionalBelong = belongRepository.findByMemberIdAndRoomId(memberId, roomId);
         if (optionalBelong.isEmpty())

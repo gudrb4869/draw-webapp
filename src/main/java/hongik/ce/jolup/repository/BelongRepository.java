@@ -7,4 +7,5 @@ import java.util.Optional;
 
 public interface BelongRepository extends JpaRepository<Belong, Long> {
     Optional<Belong> findByMemberIdAndRoomId(Long memberId, Long roomId);
+    Optional<Belong> findByIdAndRoomId(Long id, Long roomId);
 }

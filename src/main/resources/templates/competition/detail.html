@@ -24,12 +24,12 @@
 
     <div class="my-2 my-lg-0">
         <a th:href="@{|/room/${roomId}|}" class="btn btn-warning">목록</a>
-        <a class="btn btn-secondary my-2 my-sm-0" th:if="${myJoinDto != null && myJoinDto.joinRole.name() == 'MASTER'}"
+        <a class="btn btn-secondary my-2 my-sm-0" th:if="${myBelongDto != null && myBelongDto.belongType.name() == 'MASTER'}"
            th:href="@{|/room/${roomId}/competition/${competitionId}/edit|}">수정</a>
         <form class="form-check-inline my-2 my-lg-0" th:action="@{|/room/${roomId}/competition/${competitionId}|}" method="post">
-            <input type="hidden" th:if="${myJoinDto != null && myJoinDto.joinRole.name() == 'MASTER'}" name="_method" value="delete"/>
+            <input type="hidden" th:if="${myBelongDto != null && myBelongDto.belongType.name() == 'MASTER'}" name="_method" value="delete"/>
             <button class="btn btn-danger my-2 my-sm-0" type="submit"
-                    th:if="${myJoinDto != null && myJoinDto.joinRole.name() == 'MASTER'}">삭제</button>
+                    th:if="${myBelongDto != null && myBelongDto.belongType.name() == 'MASTER'}">삭제</button>
         </form>
     </div>
 
@@ -38,13 +38,11 @@
         <thead>
         <tr>
             <th>이름</th>
-            <th>권한</th>
         </tr>
         </thead>
         <tbody>
         <tr th:each="joinDto : ${joinDtos}">
             <td th:text="${joinDto.belongDto.memberDto.email + '('+ joinDto.belongDto.memberDto.name + ')'}"></td>
-            <td th:text="${joinDto.joinRole.description}"></td>
         </tr>
         </tbody>
     </table>
@@ -80,7 +78,7 @@
             <td>
                 <input type="button" class="btn btn-primary" th:value="'수정'"
                        th:onclick="|location.href='/room/' + ${roomId} + '/competition/'+ ${competitionId} + '/match/update/' + ${matchDto.id}|"
-                       th:if="${matchDto.homeDto != null} and ${matchDto.awayDto != null} and ${myJoinDto != null} and ${myJoinDto.joinRole.name() != 'USER'}"/>
+                       th:if="${matchDto.homeDto != null} and ${matchDto.awayDto != null} and ${myBelongDto != null} and ${myBelongDto.belongType.name() == 'MASTER'}"/>
             </td>
         </tr>
         </tbody>

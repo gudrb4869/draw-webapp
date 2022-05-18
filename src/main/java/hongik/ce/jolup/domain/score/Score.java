@@ -11,10 +11,10 @@ import javax.persistence.*;
 @ToString
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Score {
-    @Column(nullable = false, name = "home_score")
+    @Column(nullable = false)
     private Integer homeScore;
 
-    @Column(nullable = false, name = "away_score")
+    @Column(nullable = false)
     private Integer awayScore;
 
     @Builder

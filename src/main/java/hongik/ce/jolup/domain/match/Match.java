@@ -1,6 +1,6 @@
 package hongik.ce.jolup.domain.match;
 
-import hongik.ce.jolup.domain.Time;
+import hongik.ce.jolup.domain.BaseTimeEntity;
 import hongik.ce.jolup.domain.score.Score;
 import hongik.ce.jolup.domain.competition.Competition;
 import hongik.ce.jolup.domain.member.Member;
@@ -14,10 +14,9 @@ import javax.persistence.*;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Table(name = "matches")
 @ToString
-public class Match extends Time {
+public class Match extends BaseTimeEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id")
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)

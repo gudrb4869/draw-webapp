@@ -1,6 +1,6 @@
 package hongik.ce.jolup.domain.belong;
 
-import hongik.ce.jolup.domain.Time;
+import hongik.ce.jolup.domain.BaseTimeEntity;
 import hongik.ce.jolup.domain.join.Join;
 import hongik.ce.jolup.domain.member.Member;
 import hongik.ce.jolup.domain.room.Room;
@@ -16,7 +16,7 @@ import java.util.List;
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @ToString(of = {"id", "belongType"})
-public class Belong extends Time {
+public class Belong extends BaseTimeEntity {
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
