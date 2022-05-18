@@ -48,7 +48,9 @@ public class Match extends Time {
     @Builder
     public Match(Long id, Competition competition, Member home, Member away, Score score, MatchStatus matchStatus, Integer roundNo, Integer matchNo) {
         this.id = id;
-        this.competition = competition;
+        if (competition != null) {
+            changeCompetition(competition);
+        }
         this.home = home;
         this.away = away;
         this.score = score;
@@ -68,6 +70,11 @@ public class Match extends Time {
                 .roundNo(roundNo)
                 .matchNo(matchNo)
                 .build();
+    }
+
+    public void changeCompetition(Competition competition) {
+        this.competition = competition;
+        competition.getMatches().add(this);
     }
 
     public Match update(Score score, MatchStatus matchStatus) {

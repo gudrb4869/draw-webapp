@@ -1,12 +1,10 @@
 package hongik.ce.jolup.service;
 
 import hongik.ce.jolup.domain.belong.Belong;
-import hongik.ce.jolup.domain.join.Join;
 import hongik.ce.jolup.domain.member.Member;
 import hongik.ce.jolup.dto.BelongDto;
-import hongik.ce.jolup.dto.JoinDto;
 import hongik.ce.jolup.repository.MemberRepository;
-import hongik.ce.jolup.domain.member.MemberAuth;
+import hongik.ce.jolup.domain.member.Role;
 import hongik.ce.jolup.dto.MemberDto;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -42,7 +40,7 @@ public class MemberService implements UserDetailsService {
 
         BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
         memberDto.setPassword(encoder.encode(memberDto.getPassword()));
-        memberDto.setAuth(MemberAuth.USER);
+        memberDto.setRole(Role.USER);
 
         return memberRepository.save(memberDto.toEntity()).getId();
     }

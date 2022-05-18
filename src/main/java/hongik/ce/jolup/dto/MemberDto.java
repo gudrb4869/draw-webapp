@@ -1,7 +1,7 @@
 package hongik.ce.jolup.dto;
 
 import hongik.ce.jolup.domain.member.Member;
-import hongik.ce.jolup.domain.member.MemberAuth;
+import hongik.ce.jolup.domain.member.Role;
 import lombok.*;
 
 import java.util.List;
@@ -15,16 +15,15 @@ public class MemberDto {
     private String email;
     private String password;
     private String name;
-    private MemberAuth auth;
-    private List<JoinDto> joinDtos;
+    private Role role;
 
     @Builder
-    public MemberDto(Long id, String email, String password, String name, MemberAuth auth) {
+    public MemberDto(Long id, String email, String password, String name, Role role) {
         this.id = id;
         this.email = email;
         this.password = password;
         this.name = name;
-        this.auth = auth;
+        this.role = role;
     }
 
     public Member toEntity() {
@@ -33,8 +32,7 @@ public class MemberDto {
                 .email(email)
                 .password(password)
                 .name(name)
-                .auth(auth)
-//                .joins(joinDtos.stream().map(JoinDto::toEntity).collect(Collectors.toList()))
+                .role(role)
                 .build();
     }
 }
