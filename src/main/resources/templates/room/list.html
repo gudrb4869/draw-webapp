@@ -10,7 +10,7 @@
         <h1><span class="text-black mx-2" sec:authentication="name">사용자</span>님의 방 목록</h1>
     </div>
     <hr class="my-4">
-    <a class="btn btn-info" th:href="@{/room/create}" role="button" style="float:right;">방 만들기</a>
+    <a class="btn btn-info" th:href="@{/rooms/create}" role="button" style="float:right;">방 만들기</a>
     <div>
         <table class="table">
             <thead>
@@ -30,8 +30,8 @@
                 <td th:text="${belong.roomDto.title}"></td>
                 <td>
                     <div>
-                        <form class="form-check-inline my-2 my-lg-0" th:action="@{|/room/${belong.roomDto.id}|}" method="post">
-                            <a class="btn btn-primary my-2 my-sm-0" th:href="@{|/room/${belong.roomDto.id}|}">조회</a>
+                        <form class="form-check-inline my-2 my-lg-0" th:action="@{|/rooms/${belong.roomDto.id}|}" method="post">
+                            <a class="btn btn-primary my-2 my-sm-0" th:href="@{|/rooms/${belong.roomDto.id}|}">조회</a>
                             <input type="hidden" th:if="${belong.belongType.name() == 'MASTER'}" name="_method" value="delete"/>
                             <button class="btn btn-danger my-2 my-sm-0" type="submit"
                                     th:if="${belong.belongType.name() == 'MASTER'}">삭제</button>

@@ -26,7 +26,7 @@ import java.util.stream.Collectors;
 @Slf4j
 @RequiredArgsConstructor
 @Controller
-@RequestMapping("room/{roomId}/competition")
+@RequestMapping("rooms/{roomId}/competitions")
 public class CompetitionController {
 
     private final CompetitionService competitionService;
@@ -224,7 +224,7 @@ public class CompetitionController {
                 match /= 2;
             }
         }
-        return "redirect:/room/{roomId}";
+        return "redirect:/rooms/{roomId}";
     }
 
     @GetMapping("/{competitionId}")
@@ -284,7 +284,7 @@ public class CompetitionController {
         for (Long joinId : joinList)
             joinService.deleteJoin(joinId);*/
         competitionService.deleteCompetition(competitionId);
-        return "redirect:/room/{roomId}";
+        return "redirect:/rooms/{roomId}";
     }
 
     @GetMapping("/{competitionId}/edit")
@@ -311,7 +311,7 @@ public class CompetitionController {
     public String edit(@PathVariable("roomId") Long roomId,
                        @PathVariable("competitionId") Long competitionId,
                        @AuthenticationPrincipal Member member,
-                       @ModelAttribute CompetitionDto competitionDto,
+                       @ModelAttribute @Valid CompetitionDto competitionDto,
                        BindingResult result) {
         log.info("PUT : edit, competitionDto = {}", competitionDto);
 
@@ -329,6 +329,6 @@ public class CompetitionController {
         }
 
         competitionService.saveCompetition(competitionDto);
-        return "redirect:/room/{roomId}/competition/{competitionId}";
+        return "redirect:/rooms/{roomId}/competitions/{competitionId}";
     }
 }

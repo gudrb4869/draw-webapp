@@ -26,7 +26,7 @@ import java.util.stream.Collectors;
 
 @Slf4j
 @Controller
-@RequestMapping("/room")
+@RequestMapping("/rooms")
 @RequiredArgsConstructor
 public class RoomController {
     private final MemberService memberService;
@@ -61,7 +61,7 @@ public class RoomController {
         BelongDto belongDto = BelongDto.builder().memberDto(member.toDto()).
                 roomDto(roomService.findOne(roomId)).belongType(BelongType.MASTER).build();
         belongService.saveBelong(belongDto);
-        return "redirect:/room";
+        return "redirect:/rooms";
     }
 
     @GetMapping("/{roomId}")
@@ -102,7 +102,7 @@ public class RoomController {
         }
 
         roomService.deleteRoom(roomId);
-        return "redirect:/room";
+        return "redirect:/rooms";
     }
 
     @GetMapping("/{roomId}/edit")
@@ -121,7 +121,7 @@ public class RoomController {
 
     @PutMapping("/{roomId}/edit")
     public String edit(@PathVariable Long roomId,
-                       @ModelAttribute RoomDto roomDto,
+                       @ModelAttribute @Valid RoomDto roomDto,
                        BindingResult result,
                        @AuthenticationPrincipal Member member) {
         if (roomDto == null) {
@@ -137,7 +137,7 @@ public class RoomController {
         }
         log.info("roomDto = {}", roomDto);
         roomService.saveRoom(roomDto);
-        return "redirect:/room/{roomId}";
+        return "redirect:/rooms/{roomId}";
     }
 
     @GetMapping("/{roomId}/invite")
@@ -215,7 +215,7 @@ public class RoomController {
                     memberDto(memberService.findOne(email)).roomDto(roomDto).belongType(BelongType.USER).build());
         }
 
-        return "redirect:/room/{roomId}";
+        return "redirect:/rooms/{roomId}";
     }
 
     @Getter @Setter @NoArgsConstructor

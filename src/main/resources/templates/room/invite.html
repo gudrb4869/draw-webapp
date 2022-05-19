@@ -52,7 +52,7 @@
         <div class="row">
             <div class="col">
                 <button type="submit" class="btn btn-primary btn-lg">초대</button>
-                <a th:href="@{/room/{roomId}(roomId = ${roomId})}" class="btn btn-warning btn-lg">취소</a>
+                <a th:href="@{|/rooms/${roomId}|}" class="btn btn-warning btn-lg">취소</a>
             </div>
         </div>
 
@@ -75,7 +75,7 @@
                 emails.push("")
             }
         }
-        location.href="/room/" + roomId + "/invite?count=" + count + "&emails=" + emails;
+        location.href="/rooms/" + roomId + "/invite?count=" + count + "&emails=" + emails;
     }
 </script>
 </html>

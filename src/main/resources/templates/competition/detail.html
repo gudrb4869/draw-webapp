@@ -23,10 +23,10 @@
     </table>
 
     <div class="my-2 my-lg-0">
-        <a th:href="@{|/room/${roomId}|}" class="btn btn-warning">목록</a>
+        <a th:href="@{|/rooms/${roomId}|}" class="btn btn-warning">목록</a>
         <a class="btn btn-secondary my-2 my-sm-0" th:if="${myBelongDto != null && myBelongDto.belongType.name() == 'MASTER'}"
-           th:href="@{|/room/${roomId}/competition/${competitionId}/edit|}">수정</a>
-        <form class="form-check-inline my-2 my-lg-0" th:action="@{|/room/${roomId}/competition/${competitionId}|}" method="post">
+           th:href="@{|/rooms/${roomId}/competitions/${competitionId}/edit|}">수정</a>
+        <form class="form-check-inline my-2 my-lg-0" th:action="@{|/rooms/${roomId}/competitions/${competitionId}|}" method="post">
             <input type="hidden" th:if="${myBelongDto != null && myBelongDto.belongType.name() == 'MASTER'}" name="_method" value="delete"/>
             <button class="btn btn-danger my-2 my-sm-0" type="submit"
                     th:if="${myBelongDto != null && myBelongDto.belongType.name() == 'MASTER'}">삭제</button>
@@ -76,9 +76,8 @@
                 : ${matchDto.awayDto.email + '('+ matchDto.awayDto.name + ')'}"></td>
             <td th:text="${matchDto.matchStatus.description}"></td>
             <td>
-                <input type="button" class="btn btn-primary" th:value="'수정'"
-                       th:onclick="|location.href='/room/' + ${roomId} + '/competition/'+ ${competitionId} + '/match/update/' + ${matchDto.id}|"
-                       th:if="${matchDto.homeDto != null} and ${matchDto.awayDto != null} and ${myBelongDto != null} and ${myBelongDto.belongType.name() == 'MASTER'}"/>
+                <a class="btn btn-primary" th:if="${matchDto.homeDto != null} and ${matchDto.awayDto != null} and ${myBelongDto != null} and ${myBelongDto.belongType.name() == 'MASTER'}"
+                   th:href="@{|/rooms/${roomId}/competitions/${competitionId}/matches/${matchDto.id}/update|}">수정</a>
             </td>
         </tr>
         </tbody>

@@ -74,7 +74,7 @@
         <div class="row">
             <div class="col">
                 <button type="submit" class="btn btn-primary btn-lg">생성</button>
-                <a th:href="@{|/room/${roomId}|}" class="btn btn-warning btn-lg">취소</a>
+                <a th:href="@{|/rooms/${roomId}|}" class="btn btn-warning btn-lg">취소</a>
             </div>
         </div>
 
@@ -99,7 +99,7 @@
                 emails.push("")
             }
         }
-        location.href="/room/" + roomId + "/competition/create?title=" + title + "&competitionType=" + competitionType + "&headCount=" + headCount + "&emails=" + emails;
+        location.href="/rooms/" + roomId + "/competitions/create?title=" + title + "&competitionType=" + competitionType + "&headCount=" + headCount + "&emails=" + emails;
     }
 </script>
 </html>

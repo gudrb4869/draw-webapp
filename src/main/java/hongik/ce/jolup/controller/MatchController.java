@@ -22,7 +22,7 @@ import org.springframework.web.bind.annotation.*;
 @Slf4j
 @Controller
 @RequiredArgsConstructor
-@RequestMapping("/room/{roomId}/competition/{competitionId}/match")
+@RequestMapping("/rooms/{roomId}/competitions/{competitionId}/matches")
 public class MatchController {
 
     private final MatchService matchService;
@@ -30,7 +30,7 @@ public class MatchController {
     private final BelongService belongService;
     private final CompetitionService competitionService;
 
-    @GetMapping("/update/{matchId}")
+    @GetMapping("/{matchId}/update")
     public String update(@PathVariable("roomId") Long roomId,
                          @PathVariable("competitionId") Long competitionId,
                          @PathVariable("matchId") Long matchId,
@@ -59,7 +59,7 @@ public class MatchController {
         return "match/update";
     }
 
-    @PutMapping("/update/{matchId}")
+    @PutMapping("/{matchId}/update")
     public String update(@PathVariable("roomId") Long roomId,
                          @PathVariable("competitionId") Long competitionId,
                          @PathVariable("matchId") Long matchId, @AuthenticationPrincipal Member member,
@@ -174,7 +174,7 @@ public class MatchController {
         joinDto2.setResult(result2);
         joinService.saveJoin(joinDto1);
         joinService.saveJoin(joinDto2);
-        return "redirect:/room/{roomId}/competition/{competitionId}";
+        return "redirect:/rooms/{roomId}/competitions/{competitionId}";
     }
 
     private Long extractBelongDto(Long roomId, Long memberId) {

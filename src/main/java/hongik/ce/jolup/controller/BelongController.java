@@ -18,7 +18,7 @@ import javax.validation.Valid;
 @Slf4j
 @Controller
 @RequiredArgsConstructor
-@RequestMapping("/room/{roomId}/belong")
+@RequestMapping("/rooms/{roomId}/belongs")
 public class BelongController {
 
     private final RoomService roomService;
@@ -62,6 +62,6 @@ public class BelongController {
 
         belongService.saveBelong(belongDto);
 
-        return "redirect:/room/{roomId}";
+        return "redirect:/rooms/{roomId}";
     }
 }
