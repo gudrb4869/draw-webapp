@@ -17,6 +17,7 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -81,7 +82,7 @@ public class MemberController {
         return "edit";
     }
 
-    @PostMapping("edit")
+    @PutMapping("edit")
     public String edit(@ModelAttribute @Valid MemberEditForm memberEditForm,
                        BindingResult result, @AuthenticationPrincipal Member member,
                        Model model) {

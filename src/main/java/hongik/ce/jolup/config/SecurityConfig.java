@@ -24,7 +24,6 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         return new BCryptPasswordEncoder();
     }
 
-
     @Override
     // 인증을 무시할 경로 설정
     public void configure(WebSecurity web) throws Exception {
@@ -46,27 +45,26 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .formLogin() // 로그인에 대한 설정
                     .loginPage("/login")
                     .loginProcessingUrl("/login")
-                .usernameParameter("email")
-                .passwordParameter("password")
+                    .usernameParameter("email")
+                    .passwordParameter("password")
                     .defaultSuccessUrl("/") // 로그인 성공시 연결되는 주소
-//                  .usernameParameter()
                     .and()
                 .logout() // 로그아웃 관련 설정
                     .logoutSuccessUrl("/") // 로그아웃 성공시 연결되는 주소
                     .deleteCookies("JSESSIONID")
                 .clearAuthentication(true)
-                    .invalidateHttpSession(true)
-                .and()
+                    .invalidateHttpSession(true); // 로그아웃시 저장해 둔 세션 날리기
+                /*.and()
                 .sessionManagement()
                 .maximumSessions(1)
                 .expiredUrl("/")
-                .maxSessionsPreventsLogin(false); // 로그아웃시 저장해 둔 세션 날리기
+                .maxSessionsPreventsLogin(false)*/
     }
 
     @Override
     // 로그인 시 필요한 정보를 가져옴
     public void configure(AuthenticationManagerBuilder auth) throws Exception {
-        auth.userDetailsService(memberService) // 유저 정보는 userService 에서 가져온다
+        auth.userDetailsService(memberService) // 유저 정보는 memberService 에서 가져온다
                 .passwordEncoder(bCryptPasswordEncoder()); // 패스워드 인코더는 passwordEncoder(BCrypt 사용)
     }
 }

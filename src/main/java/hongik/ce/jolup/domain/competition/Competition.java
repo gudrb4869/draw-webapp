@@ -15,7 +15,7 @@ import java.util.List;
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Table(name = "competition")
-@ToString(of = {"id", "title", "competitionType", "headCount"})
+@ToString(of = {"id", "title", "competitionType"})
 public class Competition extends BaseTimeEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -28,8 +28,8 @@ public class Competition extends BaseTimeEntity {
     @Enumerated(EnumType.STRING)
     private CompetitionType competitionType;
 
-    @Column(nullable = false)
-    private Long headCount;
+/*    @Column(nullable = false)
+    private Long headCount;*/
 
     @OneToMany(mappedBy = "competition", cascade = CascadeType.ALL)
     private List<Join> joins = new ArrayList<>();
@@ -42,11 +42,11 @@ public class Competition extends BaseTimeEntity {
     private List<Match> matches = new ArrayList<>();
 
     @Builder
-    public Competition(Long id, String title, CompetitionType competitionType, Long headCount, Room room) {
+    public Competition(Long id, String title, CompetitionType competitionType, /*Long headCount, */Room room) {
         this.id = id;
         this.title = title;
         this.competitionType = competitionType;
-        this.headCount = headCount;
+//        this.headCount = headCount;
         if (room != null) {
             changeRoom(room);
         }
@@ -57,7 +57,7 @@ public class Competition extends BaseTimeEntity {
                 .id(id)
                 .title(title)
                 .competitionType(competitionType)
-                .headCount(headCount)
+//                .headCount(headCount)
                 .roomDto(room.toDto())
                 .build();
     }
@@ -65,7 +65,7 @@ public class Competition extends BaseTimeEntity {
     public Competition update(String title, CompetitionType competitionType, Long headCount) {
         this.title = title;
         this.competitionType = competitionType;
-        this.headCount = headCount;
+//        this.headCount = headCount;
         return this;
     }
 

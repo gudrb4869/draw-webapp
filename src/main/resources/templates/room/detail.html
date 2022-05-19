@@ -33,7 +33,7 @@
             <button class="btn btn-danger my-2 my-sm-0" type="submit"
                     th:if="${myBelongDto != null && myBelongDto.belongType.name() == 'MASTER'}">삭제</button>
         </form>
-        <a class="btn btn-info" th:if="${myBelongDto != null && myBelongDto.belongType.name() != 'USER'}"
+        <a class="btn btn-info" th:if="${myBelongDto != null && myBelongDto.belongType.name() == 'MASTER'}"
            th:href="@{|/room/${roomId}/competition/create|}" role="button" style="float:right;">대회 만들기</a>
     </div>
     <div class="text-center py-2" style="max-width: 600px">
@@ -62,7 +62,6 @@
                 <!--                <th>방id</th>-->
                 <th>제목</th>
                 <th>타입</th>
-                <th>참여인원수</th>
                 <th></th>
             </tr>
             </thead>
@@ -74,7 +73,6 @@
                 <td th:text="${competitionDtoStat.count}"></td>
                 <td th:text="${competitionDto.title}"></td>
                 <td th:text="${competitionDto.competitionType.description}"></td>
-                <td th:text="${competitionDto.headCount}"></td>
                 <td>
                     <div>
                         <form class="form-check-inline my-2 my-lg-0" th:action="@{|/room/${roomDto.id}/competition/${competitionDto.id}|}" method="post">

@@ -112,7 +112,7 @@ public class CompetitionController {
         CompetitionDto competitionRequestDto = CompetitionDto.builder()
                 .title(competitionForm.getTitle())
                 .competitionType(competitionForm.getCompetitionType())
-                .headCount(competitionForm.getHeadCount())
+//                .headCount(competitionForm.getHeadCount())
                 .roomDto(roomService.findOne(roomId))
                 .build();
         log.info("POST : create, competitionRequestDto = {}", competitionRequestDto);

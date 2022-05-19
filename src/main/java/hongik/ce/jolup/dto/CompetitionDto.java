@@ -20,7 +20,7 @@ public class CompetitionDto {
     @Size(min = 3, max = 30, message = "최소 3글자 최대 30글자로 입력해주세요!")
     private String title;
     private CompetitionType competitionType;
-    private Long headCount;
+//    private Long headCount;
     private RoomDto roomDto;
 //    private List<JoinDto> joinDtos;
 
@@ -29,7 +29,7 @@ public class CompetitionDto {
                 .id(id)
                 .title(title)
                 .competitionType(competitionType)
-                .headCount(headCount)
+//                .headCount(headCount)
                 .room(roomDto.toEntity())
 //                .joins(joinDtos.stream().map(JoinDto::toEntity).collect(Collectors.toList()))
                 .build();

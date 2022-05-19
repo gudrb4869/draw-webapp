@@ -14,7 +14,7 @@ import java.util.List;
 @Getter
 @Table(name = "room")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@ToString
+@ToString(of = {"id", "title", "roomSetting"})
 public class Room extends BaseTimeEntity {
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
