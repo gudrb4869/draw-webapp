@@ -67,12 +67,12 @@
         <tr th:each="matchDto, i : ${matchDtos}">
             <td th:text="${matchDto.roundNo}"></td>
             <td th:text="${matchDto.matchNo}"></td>
-            <td th:text="${matchDto.homeDto == null} ? ${matchDto.roundNo - 1} + '라운드 ' + ${matchDto.matchNo * 2} + '경기 승자'
+            <td th:text="${matchDto.homeDto == null} ? ${matchDto.roundNo + 1} + '라운드 ' + ${matchDto.matchNo * 2} + '경기 승자'
                 : ${matchDto.homeDto.email + '('+ matchDto.homeDto.name + ')'}"></td>
             <td th:text="${matchDto.score.homeScore}"></td>
             <td>:</td>
             <td th:text="${matchDto.score.awayScore}"></td>
-            <td th:text="${matchDto.awayDto == null} ? ${matchDto.roundNo - 1} + '라운드' + ${matchDto.matchNo * 2 + 1} + '경기 승자'
+            <td th:text="${matchDto.awayDto == null} ? ${matchDto.roundNo + 1} + '라운드' + ${matchDto.matchNo * 2 + 1} + '경기 승자'
                 : ${matchDto.awayDto.email + '('+ matchDto.awayDto.name + ')'}"></td>
             <td th:text="${matchDto.matchStatus.description}"></td>
             <td>

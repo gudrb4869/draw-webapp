@@ -127,7 +127,7 @@ public class MatchController {
                 result1.setWin(result1.getWin() + 1);
                 result2.setLose(result2.getLose() + 1);
                 if (competitionDto.getCompetitionType().equals(CompetitionType.TOURNAMENT)) {
-                    MatchDto nextMatchDto = matchService.findOne(competitionDto, matchDto.getRoundNo() + 1, matchDto.getMatchNo() / 2);
+                    MatchDto nextMatchDto = matchService.findOne(competitionDto, matchDto.getRoundNo() - 1, matchDto.getMatchNo() / 2);
                     if (nextMatchDto != null) {
                         if (matchDto.getMatchNo() % 2 == 0) {
                             nextMatchDto.setHomeDto(matchDto.getHomeDto());
@@ -141,7 +141,7 @@ public class MatchController {
                 result1.setLose(result1.getLose() + 1);
                 result2.setWin(result2.getWin() + 1);
                 if (competitionDto.getCompetitionType().equals(CompetitionType.TOURNAMENT)) {
-                    MatchDto nextMatchDto = matchService.findOne(competitionDto, matchDto.getRoundNo() + 1, matchDto.getMatchNo() / 2);
+                    MatchDto nextMatchDto = matchService.findOne(competitionDto, matchDto.getRoundNo() - 1, matchDto.getMatchNo() / 2);
                     if (nextMatchDto != null) {
                         if (matchDto.getMatchNo() % 2 == 0) {
                             nextMatchDto.setHomeDto(matchDto.getAwayDto());
@@ -186,7 +186,7 @@ public class MatchController {
 
     private void resetTournamentMatch(MatchDto matchDto, CompetitionDto competitionDto) {
         MatchDto curMatchDto = matchDto;
-        MatchDto nextMatchDto = matchService.findOne(competitionDto, curMatchDto.getRoundNo() + 1, curMatchDto.getMatchNo() / 2);
+        MatchDto nextMatchDto = matchService.findOne(competitionDto, curMatchDto.getRoundNo() - 1, curMatchDto.getMatchNo() / 2);
         while (nextMatchDto != null) {
             if (curMatchDto.getMatchNo() % 2 == 0) {
                 nextMatchDto.setHomeDto(null);
@@ -197,7 +197,7 @@ public class MatchController {
             nextMatchDto.setMatchStatus(MatchStatus.READY);
             matchService.saveMatch(nextMatchDto);
             curMatchDto = nextMatchDto;
-            nextMatchDto = matchService.findOne(competitionDto, curMatchDto.getRoundNo() + 1, curMatchDto.getMatchNo() / 2);
+            nextMatchDto = matchService.findOne(competitionDto, curMatchDto.getRoundNo() - 1, curMatchDto.getMatchNo() / 2);
         }
     }
 }

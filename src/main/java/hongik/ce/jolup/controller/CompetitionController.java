@@ -185,21 +185,14 @@ public class CompetitionController {
         else if (competitionDto.getCompetitionType().equals(CompetitionType.TOURNAMENT)) {
             // 토너먼트
             Collections.shuffle(memberDtos);
-            int count = memberDtos.size();
-            int round = (int)Math.ceil(Math.log(count) / Math.log(2));
-//            int round = 0;
-//            int match = 0;
-            int match = (int) Math.ceil(Math.pow(2, round - 1));
-            int auto_win_num = (int)Math.pow(2, round) - count;
+            int count = memberDtos.size(); // 참가 인원 수
+            int round = (int)Math.ceil(Math.log(count) / Math.log(2)); // 총 라운드
+            int match = 1;
+            int auto_win_num = (int)Math.pow(2, round) - count; // 부전승 인원 수
 
-            List<MemberDto> autoWinList = new ArrayList<>();
-            for (int i = 0; i < auto_win_num; i++) {
-                autoWinList.add(memberDtos.remove(0));
-            }
-
-            Set<Integer> set = new HashSet<>();
+            Set<Integer> set = new HashSet<>(); //
             while (set.size() < auto_win_num) {
-                Double value = Math.random() * match;
+                Double value = Math.random() * (int)Math.pow(2, round - 1);
                 set.add(value.intValue());
             }
             List<Integer> list = new ArrayList<>(set);
@@ -207,21 +200,22 @@ public class CompetitionController {
 
             for (int i = 0; i < round; i++) {
                 for (int j = 0; j < match; j++) {
-                    if (i == 0 && list.contains(j)) {
+                    if (i == round - 1 && auto_win_num > 0 && list.contains(j)) {
+                        log.info("i, j = {}, {}", i, j);
                         continue;
                     }
                     MatchDto matchDto = MatchDto.builder().competitionDto(competitionDto)
-                            .homeDto(i == 0 ? memberDtos.remove(0) :
-                                    (autoWinList.size() > 0 && list.contains(j * 2) ? autoWinList.remove(0) : null))
-                            .awayDto(i == 0 ? memberDtos.remove(0) :
-                                    (autoWinList.size() > 0 && list.contains(j * 2 + 1)? autoWinList.remove(0) : null))
+                            .homeDto(i == round - 1 ? memberDtos.remove(0) :
+                                    (i == round - 2 && auto_win_num > 0 && list.contains(j * 2) ? memberDtos.remove(0) : null))
+                            .awayDto(i == round - 1 ? memberDtos.remove(0) :
+                                    (i == round - 2 && auto_win_num > 0 && list.contains(j * 2 + 1) ? memberDtos.remove(0) : null))
                             .matchStatus(MatchStatus.READY)
                             .roundNo(i)
                             .matchNo(j)
                             .score(Score.builder().homeScore(0).awayScore(0).build()).build();
                     matchService.saveMatch(matchDto);
                 }
-                match /= 2;
+                match *= 2;
             }
         }
         return "redirect:/rooms/{roomId}";
