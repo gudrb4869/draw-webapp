@@ -54,7 +54,7 @@ public class MemberController {
             model.addAttribute("errorMessage", e.getMessage());
             return "signup";
         }
-        return "redirect:/";
+        return "redirect:/login";
     }
 
     @GetMapping("/login")
