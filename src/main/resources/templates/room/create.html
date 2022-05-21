@@ -9,12 +9,12 @@
     }
 </style>
 <body>
-<div class="container">
+<div class="container" style="max-width: 600px">
     <div th:replace="fragments/bodyheader" :: bodyheader />
     <div class="py-5 text-center">
         <h2>방 만들기</h2>
     </div>
-    <form th:action th:object="${roomForm}" method="post">
+    <form th:action th:object="${roomDto}" method="post">
         <div>
             <label th:for="title">방 이름</label>
             <input type="text" th:field="*{title}" placeholder="방 이름을 입력하세요"

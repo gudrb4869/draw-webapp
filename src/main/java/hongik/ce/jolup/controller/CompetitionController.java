@@ -80,6 +80,10 @@ public class CompetitionController {
             return "error";
         }
 
+        if (bindingResult.hasErrors()) {
+            return "competition/create";
+        }
+
         List<String> emails = competitionForm.getEmails();
         if (competitionForm.getHeadCount() != emails.size()) {
             bindingResult.addError(new ObjectError("form", null, null, "오류가 발생했습니다1."));
@@ -102,10 +106,6 @@ public class CompetitionController {
 
         if (emails.size() != emails.stream().distinct().count()) {
             bindingResult.addError(new ObjectError("form", null, null, "동일한 아이디를 입력할 수 없습니다."));
-            return "competition/create";
-        }
-
-        if (bindingResult.hasErrors()) {
             return "competition/create";
         }
 

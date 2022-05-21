@@ -42,12 +42,12 @@ public class RoomController {
 
     @GetMapping("/create")
     public String createRoom(Model model) {
-        model.addAttribute("roomForm", new RoomDto());
+        model.addAttribute("roomDto", new RoomDto());
         return "room/create";
     }
 
     @PostMapping("/create")
-    public String createRoom(@ModelAttribute("roomForm") @Valid RoomDto roomDto,
+    public String createRoom(@ModelAttribute @Valid RoomDto roomDto,
                              BindingResult result,
                              @AuthenticationPrincipal Member member,
                              Model model) {

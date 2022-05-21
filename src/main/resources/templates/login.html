@@ -4,12 +4,12 @@
       xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 <head th:replace="fragments/header :: header" />
 <body>
-<div class="container">
+<div class="container" style="max-width: 600px">
     <div th:replace="fragments/bodyheader" :: bodyheader />
     <div class="py-5 text-center">
         <h5>아이디와 비밀번호를 입력해주세요</h5>
     </div>
-    <form class="form-control" style="max-width: 600px; margin-left: 350px;" th:action method="post">
+    <form class="form-control" style="max-width: 600px" th:action method="post">
         <div class="py-2" th:if="${param.error}">
             <span th:text="'아이디 또는 비밀번호가 맞지 않습니다.'" class="alert alert-danger">예외가 발생했습니다.</span>
         </div>
