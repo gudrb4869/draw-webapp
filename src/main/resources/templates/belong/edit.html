@@ -24,9 +24,9 @@
         <div class="py-2">
             <div>권한</div>
             <select th:field="*{belongType}" class="form-select-sm">
-                <option value="">==권한 선택==</option>
-                <option value="MANAGER">매니저</option>
-                <option value="USER">일반사용자</option>
+                <option value="">==방 공개 여부 선택==</option>
+                <option th:each="belongType : ${T(hongik.ce.jolup.domain.belong.BelongType).values()}" th:value="${belongType.name()}"
+                        th:text="${belongType.description}" th:if="${belongType.name() != 'MASTER'}"></option>
             </select>
             <p th:errors="*{belongType}" class="field-error">공개 여부 오류</p>
         </div>
