@@ -34,7 +34,7 @@
     </div>
 
     <h1>대회 참여자 목록</h1>
-    <table class="table table-light">
+    <table class="table table-light" style="max-width: 600px">
         <thead>
         <tr>
             <th>이름</th>
@@ -116,6 +116,18 @@
             </tr>
             </tbody>
         </table>
+    </div>
+    <div th:if="${competitionDto.competitionType.name() == 'TOURNAMENT'}">
+        <hr class="my-4">
+        <h1>우승팀</h1>
+        <h2 th:if="${matchDtos[0].score.homeScore > matchDtos.get(0).score.awayScore}"
+            th:text="${matchDtos[0].homeDto == null} ? 'null'
+                : ${matchDtos[0].homeDto.email + '('+ matchDtos[0].homeDto.name + ')'}">우승자</h2>
+        <h2 th:if="${matchDtos[0].score.homeScore < matchDtos.get(0).score.awayScore}"
+            th:text="${matchDtos[0].awayDto == null} ? 'null'
+                : ${matchDtos[0].awayDto.email + '('+ matchDtos[0].awayDto.name + ')'}">우승자</h2>
+        <h2 th:if="${matchDtos[0].score.homeScore == matchDtos.get(0).score.awayScore}"
+            th:text="'대회 진행중'">우승자</h2>
     </div>
     <div th:replace="fragments/footer" :: footer />
 </div> <!-- /container -->
