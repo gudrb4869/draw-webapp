@@ -112,7 +112,6 @@ public class CompetitionController {
         CompetitionDto competitionRequestDto = CompetitionDto.builder()
                 .title(competitionForm.getTitle())
                 .competitionType(competitionForm.getCompetitionType())
-//                .headCount(competitionForm.getHeadCount())
                 .roomDto(roomService.findOne(roomId))
                 .build();
         log.info("POST : create, competitionRequestDto = {}", competitionRequestDto);
@@ -243,8 +242,24 @@ public class CompetitionController {
 
         List<MatchDto> matchDtos = matchService.findByCompetition(competitionDto);
 
+        LinkedHashMap<Integer, List<MatchDto>> hashMap = new LinkedHashMap<>();
+
+        for (MatchDto matchDto : matchDtos) {
+            hashMap.computeIfAbsent(matchDto.getRoundNo(), k -> new ArrayList<>()).add(matchDto);
+        }
+
+        for (Map.Entry<Integer, List<MatchDto>> entry : hashMap.entrySet()) {
+            log.info("test = {}", entry.getValue());
+        }
+
+        log.info("final = {}", hashMap.get(0).get(0));
+
+        log.info("hashMap = {}", hashMap);
+
+
         model.addAttribute("competitionDto", competitionDto);
-        model.addAttribute("matchDtos", matchDtos);
+//        model.addAttribute("matchDtos", matchDtos);
+        model.addAttribute("hashMap", hashMap);
         model.addAttribute("myJoinDto", myJoinDto);
         model.addAttribute("myBelongDto", myBelongDto);
         List<JoinDto> joinDtos = joinService.findByCompetitionSort(competitionDto);
@@ -269,14 +284,6 @@ public class CompetitionController {
             return "error";
         }
 
-        /*List<Long> matchList = matchService.findByCompetition(competitionService.getCompetition(competitionId))
-                .stream().map(MatchDto::getId).collect(Collectors.toList());
-        List<Long> joinList = joinService.findByCompetition(competitionService.getCompetition(competitionId))
-                .stream().map(JoinDto::getId).collect(Collectors.toList());
-        for (Long matchId : matchList)
-            matchService.deleteMatch(matchId);
-        for (Long joinId : joinList)
-            joinService.deleteJoin(joinId);*/
         competitionService.deleteCompetition(competitionId);
         return "redirect:/rooms/{roomId}";
     }
