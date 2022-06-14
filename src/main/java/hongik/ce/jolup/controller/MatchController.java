@@ -1,7 +1,6 @@
 package hongik.ce.jolup.controller;
 
 import hongik.ce.jolup.domain.belong.BelongType;
-//import hongik.ce.jolup.domain.join.JoinRole;
 import hongik.ce.jolup.domain.match.MatchStatus;
 import hongik.ce.jolup.domain.result.Result;
 import hongik.ce.jolup.domain.competition.CompetitionType;
@@ -85,9 +84,9 @@ public class MatchController {
             score.setAwayScore(0);
         }
 
-        JoinDto joinDto1 = joinService.findOne(extractBelongDto(roomId, matchDto.getHomeDto().getId()), competitionId);
+        JoinDto joinDto1 = joinService.findOne(extractBelongDto(matchDto.getHomeDto().getId(), roomId), competitionId);
         Result result1 = joinDto1.getResult();
-        JoinDto joinDto2 = joinService.findOne(extractBelongDto(roomId, matchDto.getAwayDto().getId()), competitionId);
+        JoinDto joinDto2 = joinService.findOne(extractBelongDto(matchDto.getAwayDto().getId(), roomId), competitionId);
         Result result2 = joinDto2.getResult();
 
         if (matchDto.getMatchStatus().equals(MatchStatus.END)) {
@@ -177,7 +176,7 @@ public class MatchController {
         return "redirect:/rooms/{roomId}/competitions/{competitionId}";
     }
 
-    private Long extractBelongDto(Long roomId, Long memberId) {
+    private Long extractBelongDto(Long memberId, Long roomId) {
         BelongDto belongDto = belongService.findOne(memberId, roomId);
         if (belongDto == null)
             return null;

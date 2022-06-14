@@ -5,7 +5,6 @@ import hongik.ce.jolup.domain.member.Member;
 import hongik.ce.jolup.domain.room.RoomSetting;
 import hongik.ce.jolup.dto.*;
 import hongik.ce.jolup.service.BelongService;
-import hongik.ce.jolup.service.JoinService;
 import hongik.ce.jolup.service.MemberService;
 import hongik.ce.jolup.service.RoomService;
 import lombok.*;
@@ -84,7 +83,6 @@ public class RoomController {
         model.addAttribute("myBelongDto", myBelongDto);
         model.addAttribute("roomDto", roomDto);
         model.addAttribute("belongDtos", belongDtos);
-//        model.addAttribute("joinDtos", joinDtos);
         model.addAttribute("competitionDtos", competitionDtos);
         return "room/detail";
     }
