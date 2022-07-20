@@ -14,9 +14,11 @@ import javax.persistence.*;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Table(name = "joins")
 @ToString
+@EqualsAndHashCode(of = "id")
 public class Join extends BaseTimeEntity {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+
+    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "join_id")
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)

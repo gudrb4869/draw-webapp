@@ -13,12 +13,13 @@ import java.util.*;
 
 @Entity
 @Getter
-@Table(name = "member")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @ToString(of = {"id", "email", "name", "role"})
+@EqualsAndHashCode(of = "id")
 public class Member extends BaseTimeEntity implements UserDetails {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+
+    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "member_id")
     private Long id;
 
     @Column(unique = true, nullable = false, updatable = false)

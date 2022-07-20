@@ -117,7 +117,7 @@ public class RoomController {
         return "room/edit";
     }
 
-    @PutMapping("/{roomId}/edit")
+    @PostMapping("/{roomId}/edit")
     public String edit(@PathVariable Long roomId,
                        @ModelAttribute @Valid RoomDto roomDto,
                        BindingResult result,

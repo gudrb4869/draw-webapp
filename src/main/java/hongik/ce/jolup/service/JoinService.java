@@ -16,24 +16,25 @@ import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
 @Service
-@Transactional
+@Transactional(readOnly = true)
 public class JoinService {
 
     private final JoinRepository joinRepository;
 
+    @Transactional
     public Long saveJoin(JoinDto joinDto) {
         return joinRepository.save(joinDto.toEntity()).getId();
     }
 
-    public List<JoinDto> findByBelong(BelongDto belongDto) {
-        List<Join> joins = joinRepository.findByBelongId(belongDto.getId());
+    public List<JoinDto> findByBelong(Long belongId) {
+        List<Join> joins = joinRepository.findByBelongId(belongId);
         return joins.stream()
                 .map(Join::toDto)
                 .collect(Collectors.toList());
     }
 
-    public List<JoinDto> findByCompetition(CompetitionDto competitionDto) {
-        List<Join> joins = joinRepository.findByCompetitionId(competitionDto.getId());
+    public List<JoinDto> findByCompetition(Long competitionId) {
+        List<Join> joins = joinRepository.findByCompetitionId(competitionId);
         return joins.stream()
                 .map(Join::toDto)
                 .collect(Collectors.toList());
@@ -48,13 +49,14 @@ public class JoinService {
         return joinDto;
     }
 
-    public List<JoinDto> findByCompetitionSort(CompetitionDto competitionDto) {
-        List<Join> joins = joinRepository.findByCompetitionIdSort(competitionDto.getId());
+    public List<JoinDto> findByCompetitionSort(Long competitionId) {
+        List<Join> joins = joinRepository.findByCompetitionIdSort(competitionId);
         return joins.stream()
                 .map(Join::toDto)
                 .collect(Collectors.toList());
     }
 
+    @Transactional
     public void deleteJoin(Long id) {
         joinRepository.deleteById(id);
     }

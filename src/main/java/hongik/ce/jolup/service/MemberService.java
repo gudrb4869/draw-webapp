@@ -23,7 +23,7 @@ import java.util.stream.Collectors;
 @Slf4j
 @RequiredArgsConstructor
 @Service
-@Transactional
+@Transactional(readOnly = true)
 public class MemberService implements UserDetailsService {
 
     private final MemberRepository memberRepository;
@@ -35,8 +35,9 @@ public class MemberService implements UserDetailsService {
                 .orElseThrow(() -> new UsernameNotFoundException("Could not found : " + email));
     }
 
+    @Transactional
     public Long saveMember(MemberDto memberDto) {
-        validateDuplicateUser(memberDto);
+        validateDuplicateUser(memberDto.getEmail());
 
         BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
         memberDto.setPassword(encoder.encode(memberDto.getPassword()));
@@ -45,20 +46,21 @@ public class MemberService implements UserDetailsService {
         return memberRepository.save(memberDto.toEntity()).getId();
     }
 
+    @Transactional
     public Long updateMember(MemberDto memberDto) {
         BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
         memberDto.setPassword(encoder.encode(memberDto.getPassword()));
-        return memberRepository.save(memberDto.toEntity()).getId();
+        return memberDto.getId();
     }
 
-    private void validateDuplicateUser(MemberDto memberDto) {
-        Optional<Member> optionalMember = memberRepository.findByEmail(memberDto.getEmail());
+    private void validateDuplicateUser(String email) {
+        Optional<Member> optionalMember = memberRepository.findByEmail(email);
         if (!optionalMember.isEmpty()) {
             throw new IllegalStateException("이미 존재하는 아이디입니다!");
         }
     }
 
-    public MemberDto getMember(Long memberId) {
+    public MemberDto findOne(Long memberId) {
         Optional<Member> optionalMember = memberRepository.findById(memberId);
         if (optionalMember.isEmpty())
             return null;
@@ -75,6 +77,7 @@ public class MemberService implements UserDetailsService {
         return member.toDto();
     }
 
+    @Transactional
     public void deleteMember(Long id) {
         memberRepository.deleteById(id);
     }

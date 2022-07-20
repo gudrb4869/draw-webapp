@@ -12,11 +12,13 @@ import java.util.List;
 
 @Entity
 @Getter
-@Table(name = "room")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @ToString(of = {"id", "title", "roomSetting"})
+@EqualsAndHashCode(of = "id")
 public class Room extends BaseTimeEntity {
+
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "room_id")
     private Long id;
 
     @Column(nullable = false)

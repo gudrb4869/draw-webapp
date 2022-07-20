@@ -14,17 +14,18 @@ import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
 @Service
-@Transactional
+@Transactional(readOnly = true)
 public class MatchService {
 
     private final MatchRepository matchRepository;
 
+    @Transactional
     public Long saveMatch(MatchDto matchDto) {
         return matchRepository.save(matchDto.toEntity()).getId();
     }
 
-    public List<MatchDto> findByCompetition(CompetitionDto competitionDto) {
-        List<Match> matches = matchRepository.findByCompetition(competitionDto.toEntity());
+    public List<MatchDto> findByCompetition(Long competitionId) {
+        List<Match> matches = matchRepository.findByCompetitionId(competitionId);
         List<MatchDto> matchDtos = matches.stream()
                 .map(Match::toDto)
                 .collect(Collectors.toList());
@@ -49,8 +50,8 @@ public class MatchService {
         return match.toDto();
     }
 
-    public MatchDto findOne(CompetitionDto competitionDto, Integer roundNo, Integer matchNo) {
-        Optional<Match> optionalMatch = matchRepository.findByCompetitionAndRoundNoAndMatchNo(competitionDto.toEntity(), roundNo, matchNo);
+    public MatchDto findOne(Long competitionId, Integer roundNo, Integer matchNo) {
+        Optional<Match> optionalMatch = matchRepository.findByCompetitionIdAndRoundNoAndMatchNo(competitionId, roundNo, matchNo);
         if (optionalMatch.isEmpty()) {
             return null;
         }
@@ -59,6 +60,7 @@ public class MatchService {
         return matchDto;
     }
 
+    @Transactional
     public void deleteMatch(Long id) {
         matchRepository.deleteById(id);
     }

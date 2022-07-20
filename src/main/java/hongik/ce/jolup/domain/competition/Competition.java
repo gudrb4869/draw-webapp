@@ -14,11 +14,12 @@ import java.util.List;
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@Table(name = "competition")
-@ToString(of = {"id", "title", "competitionType"})
+@ToString(of = {"id", "title", "competitionType", "room"})
+@EqualsAndHashCode(of = "id")
 public class Competition extends BaseTimeEntity {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+
+    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "competition_id")
     private Long id;
 
     @Column(length = 30, nullable = false)

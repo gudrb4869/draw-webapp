@@ -14,9 +14,11 @@ import javax.persistence.*;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Table(name = "matches")
 @ToString
+@EqualsAndHashCode(of = "id")
 public class Match extends BaseTimeEntity {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+
+    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "match_id")
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)

@@ -12,12 +12,14 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Entity
-@Table(name = "belong")
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @ToString(of = {"id", "belongType"})
+@EqualsAndHashCode(of = "id")
 public class Belong extends BaseTimeEntity {
+
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "belong_id")
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)

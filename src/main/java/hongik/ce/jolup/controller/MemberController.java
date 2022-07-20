@@ -89,7 +89,7 @@ public class MemberController {
         if (result.hasErrors()) {
             return "edit";
         }
-        MemberDto memberDto = memberService.getMember(member.getId());
+        MemberDto memberDto = memberService.findOne(member.getId());
         log.info("memberDto={}", memberDto);
         log.info("memberEditForm = {}", memberEditForm);
         BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();

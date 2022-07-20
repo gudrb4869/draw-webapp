@@ -131,7 +131,7 @@ public class CompetitionController {
             joinService.saveJoin(joinDto);
         }
 
-        List<MemberDto> memberDtos = joinService.findByCompetition(competitionDto)
+        List<MemberDto> memberDtos = joinService.findByCompetition(competitionId)
                 .stream().map(JoinDto::getBelongDto).collect(Collectors.toList())
                 .stream().map(BelongDto::getMemberDto).collect(Collectors.toList());
 
@@ -240,7 +240,7 @@ public class CompetitionController {
 
         JoinDto myJoinDto = joinService.findOne(myBelongDto.getId(), competitionId);
 
-        List<MatchDto> matchDtos = matchService.findByCompetition(competitionDto);
+        List<MatchDto> matchDtos = matchService.findByCompetition(competitionId);
 
         LinkedHashMap<Integer, List<MatchDto>> hashMap = new LinkedHashMap<>();
 
@@ -262,7 +262,7 @@ public class CompetitionController {
         model.addAttribute("hashMap", hashMap);
         model.addAttribute("myJoinDto", myJoinDto);
         model.addAttribute("myBelongDto", myBelongDto);
-        List<JoinDto> joinDtos = joinService.findByCompetitionSort(competitionDto);
+        List<JoinDto> joinDtos = joinService.findByCompetitionSort(competitionId);
         model.addAttribute("joinDtos", joinDtos);
         return "competition/detail";
     }
