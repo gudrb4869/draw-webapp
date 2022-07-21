@@ -2,7 +2,6 @@ package hongik.ce.jolup.service;
 
 import hongik.ce.jolup.domain.match.Match;
 import hongik.ce.jolup.dto.MatchDto;
-import hongik.ce.jolup.dto.CompetitionDto;
 import hongik.ce.jolup.repository.MatchRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;

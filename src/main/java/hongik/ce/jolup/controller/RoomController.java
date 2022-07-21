@@ -34,7 +34,7 @@ public class RoomController {
 
     @GetMapping
     public String rooms(Model model, @AuthenticationPrincipal Member member) {
-        List<BelongDto> belongs = memberService.getBelongs(member.getId());
+        List<BelongDto> belongs = belongService.findByMemberId(member.getId());
         model.addAttribute("belongs", belongs);
         return "room/list";
     }

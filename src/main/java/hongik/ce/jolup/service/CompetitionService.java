@@ -15,11 +15,12 @@ import java.util.stream.Collectors;
 @Slf4j
 @RequiredArgsConstructor
 @Service
-@Transactional
+@Transactional(readOnly = true)
 public class CompetitionService {
 
     private final CompetitionRepository competitionRepository;
 
+    @Transactional
     public Long saveCompetition(CompetitionDto competitionDto) {
         return competitionRepository.save(competitionDto.toEntity()).getId();
     }
@@ -57,6 +58,7 @@ public class CompetitionService {
         return competition.toDto();
     }
 
+    @Transactional
     public void deleteCompetition(Long id) {
         competitionRepository.deleteById(id);
     }

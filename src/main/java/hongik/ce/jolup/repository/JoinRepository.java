@@ -1,9 +1,6 @@
 package hongik.ce.jolup.repository;
 
-import hongik.ce.jolup.domain.belong.Belong;
 import hongik.ce.jolup.domain.join.Join;
-import hongik.ce.jolup.domain.competition.Competition;
-import hongik.ce.jolup.domain.member.Member;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;

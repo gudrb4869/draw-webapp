@@ -8,26 +8,37 @@ import hongik.ce.jolup.repository.BelongRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
-import javax.transaction.Transactional;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-@Transactional
 @Service
 @RequiredArgsConstructor
+@Transactional(readOnly = true)
 @Slf4j
 public class BelongService {
 
     private final BelongRepository belongRepository;
 
+    @Transactional
     public Long saveBelong(BelongDto belongDto) {
         return belongRepository.save(belongDto.toEntity()).getId();
     }
 
+    @Transactional
     public void deleteBelong(Long belongId) {
         belongRepository.deleteById(belongId);
+    }
+
+    public List<BelongDto> findByMemberId(Long memberId) {
+        List<Belong> belongs = belongRepository.findByMemberId(memberId);
+        List<BelongDto> belongDtos = belongs.stream()
+                .map(Belong::toDto)
+                .collect(Collectors.toList());
+
+        return belongDtos;
     }
 
     public BelongDto findByIdAndRoomId(Long id, Long roomId) {

@@ -1,10 +1,7 @@
 package hongik.ce.jolup.service;
 
 import hongik.ce.jolup.domain.join.Join;
-import hongik.ce.jolup.dto.BelongDto;
 import hongik.ce.jolup.dto.JoinDto;
-import hongik.ce.jolup.dto.CompetitionDto;
-import hongik.ce.jolup.dto.MemberDto;
 import hongik.ce.jolup.repository.JoinRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
