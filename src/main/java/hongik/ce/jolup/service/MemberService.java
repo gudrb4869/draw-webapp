@@ -36,21 +36,30 @@ public class MemberService implements UserDetailsService {
     }
 
     @Transactional
-    public Long saveMember(MemberDto memberDto) {
-        validateDuplicateUser(memberDto.getEmail());
+    public Long saveMember(Member member) {
+        validateDuplicateUser(member.getEmail());
 
         BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
-        memberDto.setPassword(encoder.encode(memberDto.getPassword()));
-        memberDto.setRole(Role.USER);
+        member.updatePassword(encoder.encode(member.getPassword()));
+        member.updateRole(Role.USER);
 
-        return memberRepository.save(memberDto.toEntity()).getId();
+        return memberRepository.save(member).getId();
     }
 
     @Transactional
-    public Long updateMember(MemberDto memberDto) {
+    public Long updateMember(Long memberId, String oldPassword, String newPassword, String name) {
+        Optional<Member> optionalMember = memberRepository.findById(memberId);
+        if (optionalMember.isEmpty()) {
+            return null;
+        }
+        Member member = optionalMember.get();
         BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
-        memberDto.setPassword(encoder.encode(memberDto.getPassword()));
-        return memberDto.getId();
+        if (!encoder.matches(oldPassword, member.getPassword())) {
+            throw new IllegalStateException("비밀번호가 틀렸습니다.");
+        }
+        member.updatePassword(encoder.encode(newPassword));
+        member.updateName(name);
+        return member.getId();
     }
 
     private void validateDuplicateUser(String email) {

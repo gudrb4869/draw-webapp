@@ -1,7 +1,9 @@
 package hongik.ce.jolup.controller;
 
+import hongik.ce.jolup.domain.belong.Belong;
 import hongik.ce.jolup.domain.belong.BelongType;
 import hongik.ce.jolup.domain.member.Member;
+import hongik.ce.jolup.domain.room.Room;
 import hongik.ce.jolup.domain.room.RoomSetting;
 import hongik.ce.jolup.dto.*;
 import hongik.ce.jolup.service.BelongService;
@@ -41,22 +43,23 @@ public class RoomController {
 
     @GetMapping("/create")
     public String createRoom(Model model) {
-        model.addAttribute("roomDto", new RoomDto());
+        model.addAttribute("roomForm", new RoomForm());
         return "room/create";
     }
 
     @PostMapping("/create")
-    public String createRoom(@ModelAttribute @Valid RoomDto roomDto,
+    public String createRoom(@ModelAttribute @Valid RoomForm roomForm,
                              BindingResult result,
                              @AuthenticationPrincipal Member member,
                              Model model) {
         if (result.hasErrors()) {
             return "room/create";
         }
-        log.info("roomForm = {}", roomDto);
+        log.info("roomForm = {}", roomForm);
 
-        Long roomId = roomService.saveRoom(roomDto);
+        Room room = Room.builder().title(roomForm.getTitle()).roomSetting(roomForm.getRoomSetting()).build();
 
+        Long roomId = roomService.saveRoom(room);
         BelongDto belongDto = BelongDto.builder().memberDto(member.toDto()).
                 roomDto(roomService.findOne(roomId)).belongType(BelongType.MASTER).build();
         belongService.saveBelong(belongDto);
@@ -89,6 +92,7 @@ public class RoomController {
 
     @DeleteMapping("/{roomId}")
     public String deleteRoom(@PathVariable Long roomId, @AuthenticationPrincipal Member member) {
+        log.info("delete room");
         RoomDto roomDto = roomService.findOne(roomId);
         if (roomDto == null) {
             return "error";
@@ -113,16 +117,16 @@ public class RoomController {
         if (myBelongDto == null || !myBelongDto.getBelongType().equals(BelongType.MASTER)) {
             return "error";
         }
-        model.addAttribute("roomDto", roomDto);
+        model.addAttribute("roomForm", roomDto);
         return "room/edit";
     }
 
     @PostMapping("/{roomId}/edit")
     public String edit(@PathVariable Long roomId,
-                       @ModelAttribute @Valid RoomDto roomDto,
+                       @ModelAttribute @Valid RoomForm roomForm,
                        BindingResult result,
                        @AuthenticationPrincipal Member member) {
-        if (roomDto == null) {
+        if (roomForm == null) {
             return "error";
         }
         BelongDto myBelongDto = belongService.findOne(member.getId(), roomId);
@@ -133,8 +137,8 @@ public class RoomController {
         if (result.hasErrors()) {
             return "room/edit";
         }
-        log.info("roomDto = {}", roomDto);
-        roomService.saveRoom(roomDto);
+        log.info("roomDto = {}", roomForm);
+        roomService.updateRoom(roomId, roomForm.getTitle(), roomForm.getRoomSetting());
         return "redirect:/rooms/{roomId}";
     }
 
@@ -216,9 +220,21 @@ public class RoomController {
         return "redirect:/rooms/{roomId}";
     }
 
+    @Getter @Setter
+    static class RoomForm {
+
+        @NotBlank(message = "방 이름을 입력해주세요!")
+        @Size(min = 3, max = 30, message = "최소 3글자 최대 30글자로 입력해주세요!")
+        private String title;
+
+        @NotNull(message = "방 공개 여부를 선택해주세요!")
+        private RoomSetting roomSetting;
+    }
+
     @Getter @Setter @NoArgsConstructor
     @ToString @AllArgsConstructor @Builder
     private static class InviteForm {
+
         @NotNull(message = "초대 인원 수는 필수 입력 값입니다.")
         @Min(value = 1, message = "최소 1명에서 최대 100명까지 초대 가능합니다.")
         @Max(value = 100, message = "최소 1명에서 최대 100명까지 초대 가능합니다.")

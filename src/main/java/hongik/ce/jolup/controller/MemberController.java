@@ -17,7 +17,6 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -44,12 +43,12 @@ public class MemberController {
         if (result.hasErrors()) {
             return "signup";
         }
-        MemberDto memberDto = MemberDto.builder()
-                .email(memberForm.getEmail())
+
+        Member member = Member.builder().email(memberForm.getEmail())
                 .password(memberForm.getPassword())
                 .name(memberForm.getName()).build();
         try {
-            memberService.saveMember(memberDto);
+            memberService.saveMember(member);
         } catch (IllegalStateException e) {
             model.addAttribute("errorMessage", e.getMessage());
             return "signup";
@@ -82,24 +81,19 @@ public class MemberController {
         return "edit";
     }
 
-    @PutMapping("edit")
-    public String edit(@ModelAttribute @Valid MemberEditForm memberEditForm,
+    @PostMapping("edit")
+    public String edit(@ModelAttribute @Valid MemberEditForm form,
                        BindingResult result, @AuthenticationPrincipal Member member,
                        Model model) {
         if (result.hasErrors()) {
             return "edit";
         }
-        MemberDto memberDto = memberService.findOne(member.getId());
-        log.info("memberDto={}", memberDto);
-        log.info("memberEditForm = {}", memberEditForm);
-        BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
-        if (!encoder.matches(memberEditForm.getPassword_current(), memberDto.getPassword())) {
-            model.addAttribute("errorMessage", "에러 발생");
+        try {
+            memberService.updateMember(member.getId(), form.getPassword_current(), form.getPassword_new(), form.getName());
+        } catch (Exception e) {
+            model.addAttribute("errorMessage", e.getMessage());
             return "edit";
         }
-        memberDto.setPassword(memberEditForm.getPassword_new());
-        memberDto.setName(memberEditForm.getName());
-        memberService.updateMember(memberDto);
         return "redirect:/";
     }
 

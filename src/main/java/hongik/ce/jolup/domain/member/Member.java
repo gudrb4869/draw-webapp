@@ -57,9 +57,16 @@ public class Member extends BaseTimeEntity implements UserDetails {
                 .build();
     }
 
-    public void update(String password, String name) {
+    public void updatePassword(String password) {
         this.password = password;
+    }
+
+    public void updateName(String name) {
         this.name = name;
+    }
+
+    public void updateRole(Role role) {
+        this.role = role;
     }
 
     public String getRoleKey() {

@@ -3,6 +3,7 @@ package hongik.ce.jolup.service;
 import hongik.ce.jolup.domain.belong.Belong;
 import hongik.ce.jolup.domain.competition.Competition;
 import hongik.ce.jolup.domain.room.Room;
+import hongik.ce.jolup.domain.room.RoomSetting;
 import hongik.ce.jolup.dto.BelongDto;
 import hongik.ce.jolup.dto.CompetitionDto;
 import hongik.ce.jolup.dto.RoomDto;
@@ -25,8 +26,8 @@ public class RoomService {
     private final RoomRepository roomRepository;
 
     @Transactional
-    public Long saveRoom(RoomDto roomDto) {
-        return roomRepository.save(roomDto.toEntity()).getId();
+    public Long saveRoom(Room room) {
+        return roomRepository.save(room).getId();
     }
 
     @Transactional
@@ -58,5 +59,16 @@ public class RoomService {
         Room room = optionalRoom.get();
         List<CompetitionDto> competitionDtos = room.getCompetitions().stream().map(Competition::toDto).collect(Collectors.toList());
         return competitionDtos;
+    }
+
+    @Transactional
+    public Long updateRoom(Long roomId, String title, RoomSetting roomSetting) {
+        Optional<Room> optionalRoom = roomRepository.findById(roomId);
+        if (optionalRoom.isEmpty())
+            return null;
+        Room room = optionalRoom.get();
+        room.updateTitle(title);
+        room.updateRoomSetting(roomSetting);
+        return room.getId();
     }
 }

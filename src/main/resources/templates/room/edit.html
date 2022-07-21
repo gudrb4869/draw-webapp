@@ -14,7 +14,7 @@
     <div class="py-5 text-center">
         <h2>방 수정</h2>
     </div>
-    <form th:action th:object="${roomDto}" method="post">
+    <form th:action th:object="${roomForm}" method="post">
         <input type="hidden" name="_method" value="put"/>
         <input type="hidden" th:field="*{id}"/>
         <div>

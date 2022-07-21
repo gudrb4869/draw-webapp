@@ -41,12 +41,12 @@ public class BelongController {
         return "belong/edit";
     }
 
-    @PutMapping("/{belongId}")
+    @PostMapping("/{belongId}")
     public String edit(@PathVariable Long roomId, @PathVariable Long belongId,
                        @AuthenticationPrincipal Member member,
                        @ModelAttribute @Valid BelongDto belongDto, BindingResult result) {
 
-        log.info("PUT : edit Belong, belongDto = {}", belongDto);
+        log.info("POST : edit Belong, belongDto = {}", belongDto);
         if (result.hasErrors()) {
             return "belong/edit";
         }

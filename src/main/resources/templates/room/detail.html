@@ -26,16 +26,16 @@
     </div>
     <div class="my-2 my-lg-0">
         <a th:href="@{/rooms}" class="btn btn-warning">목록</a>
-        <a class="btn btn-primary my-2 my-sm-0" th:if="${myBelongDto != null && myBelongDto.belongType.name() != 'USER'}"
+        <a class="btn btn-primary my-2 my-sm-0" th:if="${myBelongDto?.belongType.name() != 'USER'}"
            th:href="@{/rooms/{roomId}/invite(roomId = ${roomDto.id})}">초대</a>
-        <a class="btn btn-secondary my-2 my-sm-0" th:if="${myBelongDto != null && myBelongDto.belongType.name() == 'MASTER'}"
+        <a class="btn btn-secondary my-2 my-sm-0" th:if="${myBelongDto?.belongType.name() == 'MASTER'}"
            th:href="@{|/rooms/${roomId}/edit|}">수정</a>
         <form class="form-check-inline my-2 my-lg-0" th:action="@{|/rooms/${roomDto.id}|}" method="post">
-            <input type="hidden" th:if="${myBelongDto != null && myBelongDto.belongType.name() == 'MASTER'}" name="_method" value="delete"/>
+            <input type="hidden" th:if="${myBelongDto?.belongType.name() == 'MASTER'}" name="_method" value="delete"/>
             <button class="btn btn-danger my-2 my-sm-0" type="submit"
                     th:if="${myBelongDto != null && myBelongDto.belongType.name() == 'MASTER'}">삭제</button>
         </form>
-        <a class="btn btn-info" th:if="${myBelongDto != null && myBelongDto.belongType.name() == 'MASTER'}"
+        <a class="btn btn-info" th:if="${myBelongDto?.belongType.name() == 'MASTER'}"
            th:href="@{|/rooms/${roomId}/competitions/create|}" role="button" style="float:right;">대회 만들기</a>
     </div>
 
@@ -86,9 +86,9 @@
                             <form class="form-check-inline my-2 my-lg-0" th:action="@{|/rooms/${roomDto.id}/competitions/${competitionDto.id}|}" method="post">
                                 <a class="btn btn-primary my-2 my-sm-0" th:href="@{|/rooms/${roomDto.id}/competitions/${competitionDto.id}|}">조회</a>
                                 <input type="hidden" name="_method" value="delete"
-                                       th:if="${myBelongDto != null && myBelongDto.belongType.name() == 'MASTER'}"/>
+                                       th:if="${myBelongDto?.belongType.name() == 'MASTER'}"/>
                                 <button class="btn btn-danger my-2 my-sm-0" type="submit"
-                                        th:if="${myBelongDto != null && myBelongDto.belongType.name() == 'MASTER'}">삭제</button>
+                                        th:if="${myBelongDto?.belongType.name() == 'MASTER'}">삭제</button>
                             </form>
                         </div>
                     </td>
