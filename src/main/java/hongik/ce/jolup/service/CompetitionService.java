@@ -25,6 +25,11 @@ public class CompetitionService {
         return competitionRepository.save(competitionDto.toEntity()).getId();
     }
 
+    @Transactional
+    public void deleteCompetition(Long id) {
+        competitionRepository.deleteById(id);
+    }
+
     public List<CompetitionDto> findAll() {
         return competitionRepository.findAll().stream()
                 .map(Competition::toDto)
@@ -56,10 +61,5 @@ public class CompetitionService {
         }
         Competition competition = optionalCompetition.get();
         return competition.toDto();
-    }
-
-    @Transactional
-    public void deleteCompetition(Long id) {
-        competitionRepository.deleteById(id);
     }
 }

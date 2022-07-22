@@ -4,8 +4,6 @@ import hongik.ce.jolup.domain.belong.Belong;
 import hongik.ce.jolup.domain.belong.BelongType;
 import lombok.*;
 
-import javax.validation.constraints.NotNull;
-
 @Getter @Setter @ToString
 @NoArgsConstructor
 public class BelongDto {

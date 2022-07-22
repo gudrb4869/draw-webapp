@@ -15,7 +15,6 @@
         <h2>방 수정</h2>
     </div>
     <form th:action th:object="${roomForm}" method="post">
-        <input type="hidden" name="_method" value="put"/>
         <input type="hidden" th:field="*{id}"/>
         <div>
             <label th:for="title">방 이름</label>

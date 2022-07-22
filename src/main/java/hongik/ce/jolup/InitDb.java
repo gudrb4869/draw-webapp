@@ -120,12 +120,19 @@ public class InitDb {
         }
 
         private Member createMember(int i) {
-            BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
+//            BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
+//            Member member = Member.builder()
+//                    .email(Integer.toString(i))
+//                    .password(encoder.encode("1"))
+//                    .name("user" + i)
+//                    .role(Role.USER)
+//                    .build();
+//            return member;
+
             Member member = Member.builder()
                     .email(Integer.toString(i))
-                    .password(encoder.encode("1"))
+                    .password("1")
                     .name("user" + i)
-                    .role(Role.USER)
                     .build();
             return member;
         }

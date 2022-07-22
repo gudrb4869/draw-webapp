@@ -6,6 +6,7 @@ import hongik.ce.jolup.domain.room.Room;
 import hongik.ce.jolup.domain.room.RoomSetting;
 import hongik.ce.jolup.dto.*;
 import hongik.ce.jolup.service.BelongService;
+import hongik.ce.jolup.service.CompetitionService;
 import hongik.ce.jolup.service.MemberService;
 import hongik.ce.jolup.service.RoomService;
 import lombok.*;
@@ -29,9 +30,11 @@ import java.util.stream.Collectors;
 @RequestMapping("/rooms")
 @RequiredArgsConstructor
 public class RoomController {
+
     private final MemberService memberService;
     private final BelongService belongService;
     private final RoomService roomService;
+    private final CompetitionService competitionService;
 
     @GetMapping
     public String rooms(Model model, @AuthenticationPrincipal Member member) {
@@ -59,7 +62,6 @@ public class RoomController {
 
         Room room = Room.builder().title(roomForm.getTitle()).roomSetting(roomForm.getRoomSetting()).build();
 
-
         Long roomId = roomService.saveRoom(room);
         BelongDto belongDto = BelongDto.builder().memberDto(member.toDto()).
                 roomDto(roomService.findOne(roomId)).belongType(BelongType.MASTER).build();
@@ -70,21 +72,21 @@ public class RoomController {
     @GetMapping("/{roomId}")
     public String roomDetail(@PathVariable Long roomId, Model model, @AuthenticationPrincipal Member member) {
         log.info("roomDetail");
-        RoomDto roomDto = roomService.findOne(roomId);
+        BelongDto belongDto = belongService.findOne(member.getId(), roomId);
+        RoomDto roomDto = belongDto.getRoomDto();
 
-        if (roomDto == null) {
-            return "error";
-        }
-        BelongDto myBelongDto = belongService.findOne(member.getId(), roomId);
-
-        if (roomDto.getRoomSetting().equals(RoomSetting.PRIVATE) && myBelongDto == null) {
-            log.info("비공개 방, 회원이 아님");
+        if (belongDto == null && roomDto.getRoomSetting().equals(RoomSetting.PRIVATE)) {
+            log.info("존재하지 않는 방이거나 비공개 방이고 회원이 아님");
             return "error";
         }
 
-        List<BelongDto> belongDtos = roomService.getBelongs(roomId);
-        List<CompetitionDto> competitionDtos = roomService.getCompetitions(roomId);
-        model.addAttribute("myBelongDto", myBelongDto);
+        log.info("belongDtos");
+        List<BelongDto> belongDtos = belongService.findByRoomId(roomId);
+
+        log.info("competitionDtos");
+        List<CompetitionDto> competitionDtos = competitionService.getCompetitions(roomId);
+
+        model.addAttribute("myBelongDto", belongDto);
         model.addAttribute("roomDto", roomDto);
         model.addAttribute("belongDtos", belongDtos);
         model.addAttribute("competitionDtos", competitionDtos);
@@ -94,31 +96,24 @@ public class RoomController {
     @DeleteMapping("/{roomId}")
     public String deleteRoom(@PathVariable Long roomId, @AuthenticationPrincipal Member member) {
         log.info("delete room");
-        RoomDto roomDto = roomService.findOne(roomId);
-        if (roomDto == null) {
-            return "error";
-        }
-        BelongDto myBelongDto = belongService.findOne(member.getId(), roomId);
-
-        if (myBelongDto == null || !myBelongDto.getBelongType().equals(BelongType.MASTER)) {
+        BelongDto belongDto = belongService.findOne(member.getId(), roomId);
+        if (belongDto == null || !belongDto.getBelongType().equals(BelongType.MASTER)) {
             return "error";
         }
 
+        log.info("delete room");
         roomService.deleteRoom(roomId);
         return "redirect:/rooms";
     }
 
     @GetMapping("/{roomId}/edit")
     public String editRoom (@PathVariable Long roomId, Model model, @AuthenticationPrincipal Member member) {
-        RoomDto roomDto = roomService.findOne(roomId);
-        if (roomDto == null) {
+        BelongDto belongDto = belongService.findOne(member.getId(), roomId);
+        RoomDto roomDto = belongDto.getRoomDto();
+        if (belongDto == null || !belongDto.getBelongType().equals(BelongType.MASTER)) {
             return "error";
         }
-        BelongDto myBelongDto = belongService.findOne(member.getId(), roomId);
-        if (myBelongDto == null || !myBelongDto.getBelongType().equals(BelongType.MASTER)) {
-            return "error";
-        }
-        model.addAttribute("roomForm", new RoomForm(roomDto.getTitle(), roomDto.getRoomSetting()));
+        model.addAttribute("roomForm", new RoomForm(roomDto.getId(), roomDto.getTitle(), roomDto.getRoomSetting()));
         return "room/edit";
     }
 
@@ -127,11 +122,8 @@ public class RoomController {
                        @ModelAttribute @Valid RoomForm roomForm,
                        BindingResult result,
                        @AuthenticationPrincipal Member member) {
-        if (roomForm == null) {
-            return "error";
-        }
-        BelongDto myBelongDto = belongService.findOne(member.getId(), roomId);
-        if (myBelongDto == null || !myBelongDto.getBelongType().equals(BelongType.MASTER)) {
+        BelongDto belongDto = belongService.findOne(member.getId(), roomId);
+        if (belongDto == null || !belongDto.getBelongType().equals(BelongType.MASTER)) {
             return "error";
         }
 
@@ -139,7 +131,7 @@ public class RoomController {
             return "room/edit";
         }
         log.info("roomDto = {}", roomForm);
-        roomService.updateRoom(roomId, roomForm.getTitle(), roomForm.getRoomSetting());
+        roomService.updateRoom(roomForm.getId(), roomForm.getTitle(), roomForm.getRoomSetting());
         return "redirect:/rooms/{roomId}";
     }
 
@@ -150,13 +142,8 @@ public class RoomController {
                                @AuthenticationPrincipal Member member,
                                Model model) {
 
-        RoomDto roomDto = roomService.findOne(roomId);
-        if (roomDto == null) {
-            return "error";
-        }
-        BelongDto myBelongDto = belongService.findOne(member.getId(), roomId);
-
-        if (myBelongDto == null || myBelongDto.getBelongType().equals(BelongType.USER)) {
+        BelongDto belongDto = belongService.findOne(member.getId(), roomId);
+        if (belongDto == null || belongDto.getBelongType().equals(BelongType.USER)) {
             return "error";
         }
 
@@ -212,7 +199,7 @@ public class RoomController {
             return "/room/invite";
         }
 
-        // 초대
+        log.info("초대");
         belongService.saveMembers(roomId, BelongType.USER, emails);
 
         return "redirect:/rooms/{roomId}";
@@ -221,6 +208,9 @@ public class RoomController {
     @Getter @Setter
     @NoArgsConstructor @AllArgsConstructor
     static class RoomForm {
+
+        @NotNull
+        private Long id;
 
         @NotBlank(message = "방 이름을 입력해주세요!")
         @Size(min = 3, max = 30, message = "최소 3글자 최대 30글자로 입력해주세요!")
