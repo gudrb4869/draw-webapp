@@ -1,6 +1,5 @@
 package hongik.ce.jolup.controller;
 
-import hongik.ce.jolup.domain.belong.Belong;
 import hongik.ce.jolup.domain.belong.BelongType;
 import hongik.ce.jolup.domain.member.Member;
 import hongik.ce.jolup.domain.room.Room;
@@ -36,6 +35,7 @@ public class RoomController {
 
     @GetMapping
     public String rooms(Model model, @AuthenticationPrincipal Member member) {
+        log.info("room_list");
         List<BelongDto> belongs = belongService.findByMemberId(member.getId());
         model.addAttribute("belongs", belongs);
         return "room/list";
@@ -59,10 +59,11 @@ public class RoomController {
 
         Room room = Room.builder().title(roomForm.getTitle()).roomSetting(roomForm.getRoomSetting()).build();
 
+
         Long roomId = roomService.saveRoom(room);
         BelongDto belongDto = BelongDto.builder().memberDto(member.toDto()).
                 roomDto(roomService.findOne(roomId)).belongType(BelongType.MASTER).build();
-        belongService.saveBelong(belongDto);
+        belongService.save(member.getId(), roomId, BelongType.MASTER);
         return "redirect:/rooms";
     }
 
@@ -117,7 +118,7 @@ public class RoomController {
         if (myBelongDto == null || !myBelongDto.getBelongType().equals(BelongType.MASTER)) {
             return "error";
         }
-        model.addAttribute("roomForm", roomDto);
+        model.addAttribute("roomForm", new RoomForm(roomDto.getTitle(), roomDto.getRoomSetting()));
         return "room/edit";
     }
 
@@ -212,15 +213,13 @@ public class RoomController {
         }
 
         // 초대
-        for (String email : emails) {
-            belongService.saveBelong(BelongDto.builder().
-                    memberDto(memberService.findOne(email)).roomDto(roomDto).belongType(BelongType.USER).build());
-        }
+        belongService.saveMembers(roomId, BelongType.USER, emails);
 
         return "redirect:/rooms/{roomId}";
     }
 
     @Getter @Setter
+    @NoArgsConstructor @AllArgsConstructor
     static class RoomForm {
 
         @NotBlank(message = "방 이름을 입력해주세요!")

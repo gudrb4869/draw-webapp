@@ -5,7 +5,7 @@ import hongik.ce.jolup.domain.member.Member;
 import hongik.ce.jolup.dto.BelongDto;
 import hongik.ce.jolup.service.BelongService;
 import hongik.ce.jolup.service.RoomService;
-import lombok.RequiredArgsConstructor;
+import lombok.*;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
@@ -14,6 +14,8 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 
 @Slf4j
 @Controller
@@ -37,16 +39,16 @@ public class BelongController {
             return "error";
         }
 
-        model.addAttribute("belongDto", belongDto);
+        model.addAttribute("belongForm", new BelongForm(member.getName(), belongDto.getBelongType()));
         return "belong/edit";
     }
 
     @PostMapping("/{belongId}")
     public String edit(@PathVariable Long roomId, @PathVariable Long belongId,
                        @AuthenticationPrincipal Member member,
-                       @ModelAttribute @Valid BelongDto belongDto, BindingResult result) {
+                       @ModelAttribute @Valid BelongForm belongForm, BindingResult result) {
 
-        log.info("POST : edit Belong, belongDto = {}", belongDto);
+        log.info("POST : edit Belong, belongForm = {}", belongForm);
         if (result.hasErrors()) {
             return "belong/edit";
         }
@@ -60,8 +62,19 @@ public class BelongController {
             return "error";
         }
 
-        belongService.saveBelong(belongDto);
+        belongService.update(member.getId(), roomId, belongForm.getType());
 
         return "redirect:/rooms/{roomId}";
     }
+
+    @Getter @Setter @ToString
+    @NoArgsConstructor @AllArgsConstructor
+    static class BelongForm {
+
+        @NotBlank
+        private String email;
+        @NotNull(message = "회원 권한을 선택해주세요!")
+        private BelongType type;
+    }
+
 }

@@ -12,7 +12,6 @@ public class BelongDto {
     private Long id;
     private MemberDto memberDto;
     private RoomDto roomDto;
-    @NotNull(message = "회원 권한을 선택해주세요!")
     private BelongType belongType;
 
     @Builder

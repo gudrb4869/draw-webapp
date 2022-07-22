@@ -53,12 +53,12 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                     .logoutSuccessUrl("/") // 로그아웃 성공시 연결되는 주소
                     .deleteCookies("JSESSIONID")
                 .clearAuthentication(true)
-                    .invalidateHttpSession(true); // 로그아웃시 저장해 둔 세션 날리기
-                /*.and()
+                    .invalidateHttpSession(true) // 로그아웃시 저장해 둔 세션 날리기
+                    .and()
                 .sessionManagement()
                 .maximumSessions(1)
                 .expiredUrl("/")
-                .maxSessionsPreventsLogin(false)*/
+                .maxSessionsPreventsLogin(false);
     }
 
     @Override

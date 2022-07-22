@@ -63,7 +63,7 @@ public class Belong extends BaseTimeEntity {
         room.getBelongs().add(this);
     }
 
-    public void changeBelongType(BelongType belongType) {
-        this.belongType = belongType;
+    public void updateType(BelongType type) {
+        this.belongType = type;
     }
 }
