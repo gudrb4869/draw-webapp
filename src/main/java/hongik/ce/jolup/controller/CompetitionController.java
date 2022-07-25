@@ -59,7 +59,7 @@ public class CompetitionController {
                 competitionForm.addEmail(emails.get(i));
                 continue;
             }
-                competitionForm.addEmail(new String());
+            competitionForm.addEmail(new String());
         }
         log.info("GET: create, competitionForm = {}", competitionForm);
         model.addAttribute("form", competitionForm);
@@ -75,8 +75,10 @@ public class CompetitionController {
 
         log.info("POST : create, competitionForm = {}", competitionForm);
 
-        BelongDto myBelongDto = belongService.findOne(member.getId(), roomId);
-        if (myBelongDto == null || !myBelongDto.getBelongType().equals(BelongType.MASTER)) {
+        List<BelongDto> belongDtos = belongService.findByRoomId(roomId);
+
+        Optional<BelongDto> any = belongDtos.stream().filter(b -> b.getMemberDto().getId().equals(member.getId())).findAny();
+        if (any.isEmpty() || !any.get().getBelongType().equals(BelongType.MASTER)) {
             return "error";
         }
 
@@ -86,27 +88,24 @@ public class CompetitionController {
 
         List<String> emails = competitionForm.getEmails();
         if (competitionForm.getHeadCount() != emails.size()) {
-            bindingResult.addError(new ObjectError("form", null, null, "오류가 발생했습니다1."));
+            bindingResult.addError(new ObjectError("form", null, null, "대회 참가 인원과 참가자 아이디의 갯수가 일치하지 않습니다."));
             return "competition/create";
-        }
-
-        for(int i = 0; i < emails.size(); i++) {
-            String email = emails.get(i);
-            MemberDto memberDto = memberService.findOne(email);
-            if (memberDto == null) {
-                bindingResult.addError(new FieldError("form", "emails[" + i + "]", email, false, null, null, "존재하지 않는 회원입니다."));
-                continue;
-            }
-            BelongDto belongDto = belongService.findOne(memberDto.getId(), roomId);
-            if (belongDto == null) {
-                bindingResult.addError(new FieldError("form", "emails[" + i + "]", email, false, null, null, "존재하지 않는 회원입니다."));
-                continue;
-            }
         }
 
         if (emails.size() != emails.stream().distinct().count()) {
             bindingResult.addError(new ObjectError("form", null, null, "동일한 아이디를 입력할 수 없습니다."));
             return "competition/create";
+        }
+
+//        List<BelongDto> belongDtos = belongService.findByRoomId(roomId);
+
+        for(int i = 0; i < emails.size(); i++) {
+            String email = emails.get(i);
+            Optional<BelongDto> findMember = belongDtos.stream().filter(b -> b.getMemberDto().getEmail().equals(email)).findAny();
+            if (findMember.isEmpty()) {
+                bindingResult.addError(new FieldError("form", "emails[" + i + "]", email, false, null, null, "존재하지 않는 회원입니다."));
+                return "competition/create";
+            }
         }
 
         CompetitionDto competitionRequestDto = CompetitionDto.builder()

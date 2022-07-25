@@ -89,7 +89,7 @@
         let competitionType = document.getElementById("competitionType").value;
         let headCount = document.getElementById("headCount").value;
         let emails = []
-        for (var i = 0; i < headCount; i++) {
+        for (let i = 0; i < headCount; i++) {
             if (document.getElementById("emails" + String(i))) {
                 emails.push(document.getElementById("emails" + String(i)).value)
             }

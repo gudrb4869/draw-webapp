@@ -62,6 +62,17 @@ public class MemberService implements UserDetailsService {
         return member.getId();
     }
 
+    @Transactional
+    public void deleteMember(Long id) {
+        memberRepository.deleteById(id);
+    }
+
+    public HashMap<String, Object> emailOverlap(String email) {
+        HashMap<String, Object> map = new HashMap<String, Object>();
+        map.put("result", memberRepository.existsByEmail(email));
+        return map;
+    }
+
     private void validateDuplicateUser(String email) {
         Optional<Member> optionalMember = memberRepository.findByEmail(email);
         if (!optionalMember.isEmpty()) {
@@ -84,17 +95,6 @@ public class MemberService implements UserDetailsService {
         }
         Member member = optionalMember.get();
         return member.toDto();
-    }
-
-    @Transactional
-    public void deleteMember(Long id) {
-        memberRepository.deleteById(id);
-    }
-
-    public HashMap<String, Object> emailOverlap(String email) {
-        HashMap<String, Object> map = new HashMap<String, Object>();
-        map.put("result", memberRepository.existsByEmail(email));
-        return map;
     }
 
     public List<BelongDto> getBelongs(Long memberId) {

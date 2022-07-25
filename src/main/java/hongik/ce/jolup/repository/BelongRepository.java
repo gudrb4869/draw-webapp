@@ -10,15 +10,15 @@ import java.util.Optional;
 
 public interface BelongRepository extends JpaRepository<Belong, Long> {
 
-    @Query("select b from Belong b join fetch b.member where b.member.id = :memberId")
+    @Query("select b from Belong b join fetch b.member join fetch b.room where b.member.id = :memberId")
     List<Belong> findByMemberId(@Param("memberId") Long memberId);
 
     @Query("select b from Belong b join fetch b.member join fetch b.room where b.member.id = :memberId and b.room.id = :roomId")
     Optional<Belong> findByMemberIdAndRoomId(@Param("memberId") Long memberId, @Param("roomId") Long roomId);
 
-    @Query("select b from Belong b join fetch b.room where b.id = :id and b.room.id = :roomId")
+    @Query("select b from Belong b join fetch b.room join fetch b.member where b.id = :id and b.room.id = :roomId")
     Optional<Belong> findByIdAndRoomId(@Param("id") Long id, @Param("roomId") Long roomId);
 
-    @Query("select b from Belong b join fetch b.room where b.room.id = :roomId")
+    @Query("select b from Belong b join fetch b.member join fetch b.room where b.room.id = :roomId")
     List<Belong> findByRoomId(@Param("roomId") Long roomId);
 }
