@@ -23,6 +23,7 @@ import javax.validation.Valid;
 import javax.validation.constraints.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -72,20 +73,16 @@ public class RoomController {
     @GetMapping("/{roomId}")
     public String roomDetail(@PathVariable Long roomId, Model model, @AuthenticationPrincipal Member member) {
         log.info("roomDetail");
-        BelongDto belongDto = belongService.findOne(member.getId(), roomId);
-        RoomDto roomDto = belongDto.getRoomDto();
-
-        if (belongDto == null && roomDto.getRoomSetting().equals(RoomSetting.PRIVATE)) {
+        List<BelongDto> belongDtos = belongService.findByRoomId(roomId);
+        Optional<BelongDto> any = belongDtos.stream()
+                .filter(b -> b.getMemberDto().getId().equals(member.getId())).findAny();
+        if (any.isEmpty() && any.get().getRoomDto().getRoomSetting().equals(RoomSetting.PRIVATE)) {
             log.info("존재하지 않는 방이거나 비공개 방이고 회원이 아님");
             return "error";
         }
-
-        log.info("belongDtos");
-        List<BelongDto> belongDtos = belongService.findByRoomId(roomId);
-
-        log.info("competitionDtos");
-        List<CompetitionDto> competitionDtos = competitionService.getCompetitions(roomId);
-
+        List<CompetitionDto> competitionDtos = competitionService.findCompetitions(roomId);
+        BelongDto belongDto = belongDtos.get(0);
+        RoomDto roomDto = belongDto.getRoomDto();
         model.addAttribute("myBelongDto", belongDto);
         model.addAttribute("roomDto", roomDto);
         model.addAttribute("belongDtos", belongDtos);
@@ -109,10 +106,11 @@ public class RoomController {
     @GetMapping("/{roomId}/edit")
     public String editRoom (@PathVariable Long roomId, Model model, @AuthenticationPrincipal Member member) {
         BelongDto belongDto = belongService.findOne(member.getId(), roomId);
-        RoomDto roomDto = belongDto.getRoomDto();
         if (belongDto == null || !belongDto.getBelongType().equals(BelongType.MASTER)) {
             return "error";
         }
+
+        RoomDto roomDto = belongDto.getRoomDto();
         model.addAttribute("roomForm", new RoomForm(roomDto.getId(), roomDto.getTitle(), roomDto.getRoomSetting()));
         return "room/edit";
     }

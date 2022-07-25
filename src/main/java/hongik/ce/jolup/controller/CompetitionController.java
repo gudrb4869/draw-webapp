@@ -31,9 +31,7 @@ public class CompetitionController {
 
     private final CompetitionService competitionService;
     private final JoinService joinService;
-    private final MemberService memberService;
     private final MatchService matchService;
-    private final RoomService roomService;
     private final BelongService belongService;
 
     @GetMapping("/create")
@@ -77,8 +75,9 @@ public class CompetitionController {
 
         List<BelongDto> belongDtos = belongService.findByRoomId(roomId);
 
-        Optional<BelongDto> any = belongDtos.stream().filter(b -> b.getMemberDto().getId().equals(member.getId())).findAny();
-        if (any.isEmpty() || !any.get().getBelongType().equals(BelongType.MASTER)) {
+        Optional<BelongDto> optional = belongDtos.stream()
+                .filter(b -> b.getMemberDto().getId().equals(member.getId())).findFirst();
+        if (optional.isEmpty() || !optional.get().getBelongType().equals(BelongType.MASTER)) {
             return "error";
         }
 
@@ -97,11 +96,11 @@ public class CompetitionController {
             return "competition/create";
         }
 
-//        List<BelongDto> belongDtos = belongService.findByRoomId(roomId);
 
         for(int i = 0; i < emails.size(); i++) {
             String email = emails.get(i);
-            Optional<BelongDto> findMember = belongDtos.stream().filter(b -> b.getMemberDto().getEmail().equals(email)).findAny();
+            Optional<BelongDto> findMember = belongDtos.stream()
+                    .filter(b -> b.getMemberDto().getEmail().equals(email)).findFirst();
             if (findMember.isEmpty()) {
                 bindingResult.addError(new FieldError("form", "emails[" + i + "]", email, false, null, null, "존재하지 않는 회원입니다."));
                 return "competition/create";
@@ -111,30 +110,26 @@ public class CompetitionController {
         CompetitionDto competitionRequestDto = CompetitionDto.builder()
                 .title(competitionForm.getTitle())
                 .competitionType(competitionForm.getCompetitionType())
-                .roomDto(roomService.findOne(roomId))
+                .roomDto(optional.get().getRoomDto())
                 .build();
-        log.info("POST : create, competitionRequestDto = {}", competitionRequestDto);
         Long competitionId = competitionService.saveCompetition(competitionRequestDto);
-
-        CompetitionDto competitionDto = competitionService.getCompetition(competitionId);
-        log.info("POST : create, competitionDto = {}", competitionDto);
-        for(String email : emails) {
-            MemberDto memberDto = memberService.findOne(email);
-            BelongDto belongDto = belongService.findOne(memberDto.getId(), roomId);
+        CompetitionDto competitionDto = competitionService.findOne(competitionId);
+        log.info("saveJoin Start");
+        for (String email : emails) {
             JoinDto joinDto = JoinDto.builder()
-                    .belongDto(belongDto)
+                    .belongDto(belongDtos.stream().filter(b -> b.getMemberDto().getEmail().equals(email)).findFirst().orElse(null))
                     .competitionDto(competitionDto)
                     .result(Result.builder().plays(0).win(0).draw(0).lose(0).goalFor(0)
                             .goalAgainst(0).goalDifference(0).points(0).build())
                     .build();
             joinService.saveJoin(joinDto);
         }
+        log.info("saveJoin End");
+
 
         List<MemberDto> memberDtos = joinService.findByCompetition(competitionId)
                 .stream().map(JoinDto::getBelongDto).collect(Collectors.toList())
                 .stream().map(BelongDto::getMemberDto).collect(Collectors.toList());
-
-//        MatchDto[][] matrix = new MatchDto[competitionDto.getMemNum().intValue()][competitionDto.getMemNum().intValue()];
 
         if (competitionDto.getCompetitionType().equals(CompetitionType.LEAGUE)) {
             // 리그

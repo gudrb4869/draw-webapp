@@ -4,7 +4,6 @@ import hongik.ce.jolup.domain.competition.Competition;
 import hongik.ce.jolup.repository.CompetitionRepository;
 import hongik.ce.jolup.dto.CompetitionDto;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -12,7 +11,6 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-@Slf4j
 @RequiredArgsConstructor
 @Service
 @Transactional(readOnly = true)
@@ -36,17 +34,16 @@ public class CompetitionService {
                 .collect(Collectors.toList());
     }
 
-    public CompetitionDto getCompetition(Long competitionId) {
-        Optional<Competition> competitionWrapper = competitionRepository.findById(competitionId);
-        if (competitionWrapper.isEmpty()) {
+    public CompetitionDto findOne(Long competitionId) {
+        Optional<Competition> optionalCompetition = competitionRepository.findById(competitionId);
+        if (optionalCompetition.isEmpty()) {
             return null;
         }
-        Competition competition = competitionWrapper.get();
-        log.info("competition.joins = {}", competition.getJoins());
+        Competition competition = optionalCompetition.get();
         return competition.toDto();
     }
 
-    public List<CompetitionDto> getCompetitions(Long roomId) {
+    public List<CompetitionDto> findCompetitions(Long roomId) {
         List<Competition> competitions = competitionRepository.findByRoomId(roomId);
         if (competitions == null) {
             return null;

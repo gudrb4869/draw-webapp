@@ -29,9 +29,6 @@ public class Competition extends BaseTimeEntity {
     @Enumerated(EnumType.STRING)
     private CompetitionType competitionType;
 
-/*    @Column(nullable = false)
-    private Long headCount;*/
-
     @OneToMany(mappedBy = "competition", cascade = CascadeType.ALL)
     private List<Join> joins = new ArrayList<>();
 
@@ -43,11 +40,10 @@ public class Competition extends BaseTimeEntity {
     private List<Match> matches = new ArrayList<>();
 
     @Builder
-    public Competition(Long id, String title, CompetitionType competitionType, /*Long headCount, */Room room) {
+    public Competition(Long id, String title, CompetitionType competitionType, Room room) {
         this.id = id;
         this.title = title;
         this.competitionType = competitionType;
-//        this.headCount = headCount;
         if (room != null) {
             changeRoom(room);
         }
@@ -58,15 +54,13 @@ public class Competition extends BaseTimeEntity {
                 .id(id)
                 .title(title)
                 .competitionType(competitionType)
-//                .headCount(headCount)
                 .roomDto(room.toDto())
                 .build();
     }
 
-    public Competition update(String title, CompetitionType competitionType, Long headCount) {
+    public Competition update(String title, CompetitionType competitionType) {
         this.title = title;
         this.competitionType = competitionType;
-//        this.headCount = headCount;
         return this;
     }
 
