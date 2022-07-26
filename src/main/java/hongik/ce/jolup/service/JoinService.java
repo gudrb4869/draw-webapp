@@ -23,8 +23,8 @@ public class JoinService {
         return joinRepository.save(joinDto.toEntity()).getId();
     }
 
-    public List<JoinDto> findByBelong(Long belongId) {
-        List<Join> joins = joinRepository.findByBelongId(belongId);
+    public List<JoinDto> findByBelong(Long memberId) {
+        List<Join> joins = joinRepository.findByMemberId(memberId);
         return joins.stream()
                 .map(Join::toDto)
                 .collect(Collectors.toList());
@@ -37,8 +37,8 @@ public class JoinService {
                 .collect(Collectors.toList());
     }
 
-    public JoinDto findOne(Long belongId, Long competitionId) {
-        Optional<Join> optionalJoin = joinRepository.findByBelongIdAndCompetitionId(belongId, competitionId);
+    public JoinDto findOne(Long memberId, Long competitionId) {
+        Optional<Join> optionalJoin = joinRepository.findByMemberIdAndCompetitionId(memberId, competitionId);
         if (optionalJoin.isEmpty())
             return null;
         Join join = optionalJoin.get();

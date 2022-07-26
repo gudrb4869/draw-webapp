@@ -74,7 +74,6 @@ public class CompetitionController {
         log.info("POST : create, competitionForm = {}", competitionForm);
 
         List<BelongDto> belongDtos = belongService.findByRoomId(roomId);
-
         Optional<BelongDto> optional = belongDtos.stream()
                 .filter(b -> b.getMemberDto().getId().equals(member.getId())).findFirst();
         if (optional.isEmpty() || !optional.get().getBelongType().equals(BelongType.MASTER)) {
@@ -96,7 +95,6 @@ public class CompetitionController {
             return "competition/create";
         }
 
-
         for(int i = 0; i < emails.size(); i++) {
             String email = emails.get(i);
             Optional<BelongDto> findMember = belongDtos.stream()
@@ -115,9 +113,15 @@ public class CompetitionController {
         Long competitionId = competitionService.saveCompetition(competitionRequestDto);
         CompetitionDto competitionDto = competitionService.findOne(competitionId);
         log.info("saveJoin Start");
+        belongDtos.stream().map(BelongDto::getMemberDto)
+                .collect(Collectors.toList());
         for (String email : emails) {
             JoinDto joinDto = JoinDto.builder()
-                    .belongDto(belongDtos.stream().filter(b -> b.getMemberDto().getEmail().equals(email)).findFirst().orElse(null))
+                    .memberDto(belongDtos.stream()
+                            .filter(b -> b.getMemberDto().getEmail().equals(email))
+                            .findFirst()
+                            .map(BelongDto::getMemberDto)
+                            .orElse(null))
                     .competitionDto(competitionDto)
                     .result(Result.builder().plays(0).win(0).draw(0).lose(0).goalFor(0)
                             .goalAgainst(0).goalDifference(0).points(0).build())
@@ -126,10 +130,9 @@ public class CompetitionController {
         }
         log.info("saveJoin End");
 
-
+        joinService.findByCompetition(competitionId);
         List<MemberDto> memberDtos = joinService.findByCompetition(competitionId)
-                .stream().map(JoinDto::getBelongDto).collect(Collectors.toList())
-                .stream().map(BelongDto::getMemberDto).collect(Collectors.toList());
+                .stream().map(JoinDto::getMemberDto).collect(Collectors.toList());
 
         if (competitionDto.getCompetitionType().equals(CompetitionType.LEAGUE)) {
             // 리그

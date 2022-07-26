@@ -34,9 +34,6 @@ public class Belong extends BaseTimeEntity {
     @Enumerated(EnumType.STRING)
     private BelongType belongType;
 
-    @OneToMany(mappedBy = "belong", cascade = CascadeType.ALL)
-    private List<Join> joins = new ArrayList<>();
-
     @Builder
     public Belong(Long id, Member member, Room room, BelongType belongType) {
         this.id = id;

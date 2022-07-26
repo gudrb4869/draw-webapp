@@ -74,19 +74,18 @@ public class RoomController {
     public String roomDetail(@PathVariable Long roomId, Model model, @AuthenticationPrincipal Member member) {
         log.info("roomDetail");
         List<BelongDto> belongDtos = belongService.findByRoomId(roomId);
-        Optional<BelongDto> any = belongDtos.stream()
-                .filter(b -> b.getMemberDto().getId().equals(member.getId())).findAny();
-        if (any.isEmpty() && any.get().getRoomDto().getRoomSetting().equals(RoomSetting.PRIVATE)) {
+        BelongDto myBelongDto = belongDtos.stream()
+                .filter(b -> b.getMemberDto().getId().equals(member.getId())).findAny().orElse(null);
+        RoomDto roomDto = belongDtos.get(0).getRoomDto();
+        if (myBelongDto == null && roomDto.getRoomSetting().equals(RoomSetting.PRIVATE)) {
             log.info("존재하지 않는 방이거나 비공개 방이고 회원이 아님");
             return "error";
         }
         List<CompetitionDto> competitionDtos = competitionService.findCompetitions(roomId);
-        BelongDto belongDto = belongDtos.get(0);
-        RoomDto roomDto = belongDto.getRoomDto();
-        model.addAttribute("myBelongDto", belongDto);
-        model.addAttribute("roomDto", roomDto);
-        model.addAttribute("belongDtos", belongDtos);
-        model.addAttribute("competitionDtos", competitionDtos);
+        model.addAttribute("myBelong", myBelongDto);
+        model.addAttribute("room", roomDto);
+        model.addAttribute("belongs", belongDtos);
+        model.addAttribute("competitions", competitionDtos);
         return "room/detail";
     }
 

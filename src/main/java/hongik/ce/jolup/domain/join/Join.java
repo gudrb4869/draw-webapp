@@ -1,7 +1,7 @@
 package hongik.ce.jolup.domain.join;
 
 import hongik.ce.jolup.domain.BaseTimeEntity;
-import hongik.ce.jolup.domain.belong.Belong;
+import hongik.ce.jolup.domain.member.Member;
 import hongik.ce.jolup.domain.result.Result;
 import hongik.ce.jolup.domain.competition.Competition;
 import hongik.ce.jolup.dto.JoinDto;
@@ -22,8 +22,8 @@ public class Join extends BaseTimeEntity {
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "belong_id")
-    private Belong belong;
+    @JoinColumn(name = "member_id")
+    private Member member;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "competition_id")
@@ -33,10 +33,10 @@ public class Join extends BaseTimeEntity {
     private Result result;
 
     @Builder
-    public Join(Long id, Belong belong, Competition competition, Result result) {
+    public Join(Long id, Member member, Competition competition, Result result) {
         this.id = id;
-        if (belong != null) {
-            changeBelong(belong);
+        if (member != null) {
+            changeMember(member);
         }
         if (competition != null) {
             changeCompetition(competition);
@@ -47,7 +47,7 @@ public class Join extends BaseTimeEntity {
     public JoinDto toDto () {
         return JoinDto.builder()
                 .id(id)
-                .belongDto(belong.toDto())
+                .memberDto(member.toDto())
                 .competitionDto(competition.toDto())
                 .result(result)
                 .build();
@@ -58,9 +58,9 @@ public class Join extends BaseTimeEntity {
         return this;
     }
 
-    public void changeBelong(Belong belong) {
-        this.belong = belong;
-        belong.getJoins().add(this);
+    public void changeMember(Member member) {
+        this.member = member;
+        member.getJoins().add(this);
     }
 
     public void changeCompetition(Competition competition) {

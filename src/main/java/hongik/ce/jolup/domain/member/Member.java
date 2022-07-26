@@ -2,6 +2,7 @@ package hongik.ce.jolup.domain.member;
 
 import hongik.ce.jolup.domain.BaseTimeEntity;
 import hongik.ce.jolup.domain.belong.Belong;
+import hongik.ce.jolup.domain.join.Join;
 import hongik.ce.jolup.dto.MemberDto;
 import lombok.*;
 import org.springframework.security.core.GrantedAuthority;
@@ -37,6 +38,9 @@ public class Member extends BaseTimeEntity implements UserDetails {
 
     @OneToMany(mappedBy = "member", cascade = CascadeType.ALL)
     private List<Belong> belongs = new ArrayList<>();
+
+    @OneToMany(mappedBy = "member", cascade = CascadeType.ALL)
+    private List<Join> joins = new ArrayList<>();
 
     @Builder
     public Member(Long id, String email, String password, String name, Role role) {

@@ -1,7 +1,6 @@
 package hongik.ce.jolup.dto;
 
 import hongik.ce.jolup.domain.join.Join;
-//import hongik.ce.jolup.domain.join.JoinRole;
 import hongik.ce.jolup.domain.result.Result;
 import lombok.*;
 
@@ -13,14 +12,14 @@ import lombok.*;
 @AllArgsConstructor
 public class JoinDto {
     private Long id;
-    private BelongDto belongDto;
+    private MemberDto memberDto;
     private CompetitionDto competitionDto;
     private Result result;
 
     public Join toEntity() {
         return Join.builder()
                 .id(id)
-                .belong(belongDto.toEntity())
+                .member(memberDto.toEntity())
                 .competition(competitionDto.toEntity())
                 .result(result)
                 .build();

@@ -97,14 +97,6 @@ public class BelongService {
         return belong.toDto();
     }
 
-    public List<JoinDto> getJoins(Long memberId, Long roomId) {
-        Optional<Belong> optionalBelong = belongRepository.findByMemberIdAndRoomId(memberId, roomId);
-        if (optionalBelong.isEmpty())
-            return null;
-        Belong belong = optionalBelong.get();
-        return belong.getJoins().stream().map(Join::toDto).collect(Collectors.toList());
-    }
-
     public List<BelongDto> findByRoomId(Long roomId) {
         List<Belong> belongs = belongRepository.findByRoomId(roomId);
         List<BelongDto> belongDtos = belongs.stream().map(Belong::toDto).collect(Collectors.toList());

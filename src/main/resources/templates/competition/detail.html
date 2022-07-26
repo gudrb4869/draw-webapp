@@ -42,7 +42,7 @@
         </thead>
         <tbody>
         <tr th:each="joinDto : ${joinDtos}">
-            <td th:text="${joinDto.belongDto.memberDto.email + '('+ joinDto.belongDto.memberDto.name + ')'}"></td>
+            <td th:text="${joinDto.getMemberDto.memberDto.email + '('+ joinDto.getMemberDto.memberDto.name + ')'}"></td>
         </tr>
         </tbody>
     </table>
@@ -104,7 +104,7 @@
             <tbody>
             <tr th:each="joinDto, i : ${joinDtos}">
                 <td th:text="${i.index+1}"></td>
-                <td th:text="${joinDto.belongDto.memberDto.email + '('+ joinDto.belongDto.memberDto.name + ')'}"></td>
+                <td th:text="${joinDto.getMemberDto.memberDto.email + '('+ joinDto.getMemberDto.memberDto.name + ')'}"></td>
                 <td th:text="${joinDto.result.plays}"></td>
                 <td th:text="${joinDto.result.win}"></td>
                 <td th:text="${joinDto.result.draw}"></td>
