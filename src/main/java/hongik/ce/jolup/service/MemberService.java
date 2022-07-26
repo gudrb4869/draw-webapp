@@ -97,6 +97,11 @@ public class MemberService implements UserDetailsService {
         return member.toDto();
     }
 
+    public List<MemberDto> findMembers(List<String> emails) {
+        List<Member> members = memberRepository.findByEmailIn(emails);
+        return members.stream().map(Member::toDto).collect(Collectors.toList());
+    }
+
     public List<BelongDto> getBelongs(Long memberId) {
         Optional<Member> optionalMember = memberRepository.findById(memberId);
         if (optionalMember.isEmpty()) {

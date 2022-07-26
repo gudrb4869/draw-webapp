@@ -7,6 +7,8 @@ import hongik.ce.jolup.domain.member.Member;
 import hongik.ce.jolup.domain.room.Room;
 import hongik.ce.jolup.dto.BelongDto;
 import hongik.ce.jolup.dto.JoinDto;
+import hongik.ce.jolup.dto.MemberDto;
+import hongik.ce.jolup.dto.RoomDto;
 import hongik.ce.jolup.repository.BelongRepository;
 import hongik.ce.jolup.repository.MemberRepository;
 import hongik.ce.jolup.repository.RoomRepository;
@@ -44,16 +46,16 @@ public class BelongService {
     }
 
     @Transactional
-    public void saveMembers(Long roomId, BelongType type, List<String> emails) {
+    public void saveMembers(Long roomId, BelongType type, List<MemberDto> memberDtos) {
         Optional<Room> optionalRoom = roomRepository.findById(roomId);
-        List<Member> members = memberRepository.findByEmailIn(emails);
-        if (optionalRoom.isEmpty() || members.size() < emails.size()) {
+        if (optionalRoom.isEmpty()) {
             return;
         }
         Room room = optionalRoom.get();
-        for (Member member : members) {
-            Belong belong = Belong.builder().member(member).room(room).belongType(type).build();
-            belongRepository.save(belong);
+        RoomDto roomDto = room.toDto();
+        for (MemberDto memberDto : memberDtos) {
+            BelongDto belongDto = BelongDto.builder().memberDto(memberDto).roomDto(roomDto).belongType(type).build();
+            belongRepository.save(belongDto.toEntity());
         }
     }
 

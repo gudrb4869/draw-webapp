@@ -73,14 +73,20 @@ public class RoomController {
     @GetMapping("/{roomId}")
     public String roomDetail(@PathVariable Long roomId, Model model, @AuthenticationPrincipal Member member) {
         log.info("roomDetail");
+
         List<BelongDto> belongDtos = belongService.findByRoomId(roomId);
+        if (belongDtos.isEmpty()) {
+            log.info("존재하지 않는 방임");
+            return "error";
+        }
         BelongDto myBelongDto = belongDtos.stream()
                 .filter(b -> b.getMemberDto().getId().equals(member.getId())).findAny().orElse(null);
         RoomDto roomDto = belongDtos.get(0).getRoomDto();
         if (myBelongDto == null && roomDto.getRoomSetting().equals(RoomSetting.PRIVATE)) {
-            log.info("존재하지 않는 방이거나 비공개 방이고 회원이 아님");
+            log.info("비공개 방이고 회원이 아님");
             return "error";
         }
+
         List<CompetitionDto> competitionDtos = competitionService.findCompetitions(roomId);
         model.addAttribute("myBelong", myBelongDto);
         model.addAttribute("room", roomDto);
@@ -165,31 +171,31 @@ public class RoomController {
                                @AuthenticationPrincipal Member member,
                                Model model) {
 
-        RoomDto roomDto = roomService.findOne(roomId);
-        if (roomDto == null) {
-            return "error";
-        }
-        BelongDto myBelongDto = belongService.findOne(member.getId(), roomId);
-
-        if (myBelongDto == null || myBelongDto.getBelongType().equals(BelongType.USER)) {
-            log.info("비공개 방, 회원이 아님");
+        List<BelongDto> belongDtos = belongService.findByRoomId(roomId);
+        BelongDto belongDto = belongDtos.stream().filter(b -> b.getMemberDto().getId().equals(member.getId()))
+                .findFirst().orElse(null);
+        if (belongDto == null || belongDto.getBelongType().equals(BelongType.USER)) {
+            log.info("방의 회원이 아니거나, 방장 또는 매니저가 아니라 초대 불가능!");
             return "error";
         }
 
-        List<String> collect = roomService.getBelongs(roomId).stream().map(BelongDto::getMemberDto).collect(Collectors.toList())
-                .stream().map(MemberDto::getEmail).collect(Collectors.toList());
         List<String> emails = inviteForm.getEmails();
-        for (int i = 0; i < emails.size(); i++) {
-            String email = emails.get(i);
-            if(memberService.findOne(email) == null) {
-                result.addError(new FieldError("inviteForm", "emails[" + i + "]", email,false, null, null, "존재하지 않는 회원입니다."));
-            } else if (collect.contains(email)) {
-                result.addError(new FieldError("inviteForm", "emails[" + i + "]", email,false,null, null, "이미 참여중인 회원입니다."));
-            }
-        }
-
         if (emails.size() != inviteForm.getCount()) {
             result.addError(new ObjectError("inviteForm", null, null, "오류가 발생했습니다."));
+        }
+
+        List<MemberDto> memberDtos = memberService.findMembers(emails);
+        for (int i = 0; i < emails.size(); i++) {
+            String email = emails.get(i);
+            Optional<MemberDto> findMember = memberDtos.stream().filter(m -> m.getEmail().equals(email)).findAny();
+            if(findMember.isEmpty()) {
+                result.addError(new FieldError("inviteForm", "emails[" + i + "]", email,false, null, null, "존재하지 않는 회원입니다."));
+                continue;
+            }
+            Optional<BelongDto> optionalBelongDto = belongDtos.stream().filter(b -> b.getMemberDto().getEmail().equals(email)).findAny();
+            if (optionalBelongDto.isPresent()) {
+                result.addError(new FieldError("inviteForm", "emails[" + i + "]", email,false,null, null, "이미 참여중인 회원입니다."));
+            }
         }
 
         if (result.hasErrors()) {
@@ -197,7 +203,7 @@ public class RoomController {
         }
 
         log.info("초대");
-        belongService.saveMembers(roomId, BelongType.USER, emails);
+        belongService.saveMembers(roomId, BelongType.USER, memberDtos);
 
         return "redirect:/rooms/{roomId}";
     }
