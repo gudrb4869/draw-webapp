@@ -14,8 +14,7 @@
     <div class="py-5 text-center">
         <h2>대회 수정</h2>
     </div>
-    <form th:action th:object="${competitionDto}" method="post">
-        <input type="hidden" name="_method" value="put"/>
+    <form th:action th:object="${form}" method="post">
         <input type="hidden" th:field="*{id}"/>
         <div>
             <label th:for="title">대회 이름</label>
@@ -23,10 +22,6 @@
                    class="form-control" th:errorclass="field-error">
             <p th:errors="*{title}" class="field-error">대회 이름 오류</p>
         </div>
-        <input type="hidden" th:field="*{competitionType}"/>
-        <input type="hidden" th:field="*{roomDto.id}"/>
-        <input type="hidden" th:field="*{roomDto.title}"/>
-        <input type="hidden" th:field="*{roomDto.roomSetting}"/>
         <div class="row">
             <div class="col">
                 <button type="submit" class="btn btn-primary btn-lg">생성</button>

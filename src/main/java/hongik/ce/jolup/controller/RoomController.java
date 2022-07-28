@@ -24,7 +24,6 @@ import javax.validation.constraints.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 @Slf4j
 @Controller
@@ -203,7 +202,7 @@ public class RoomController {
         }
 
         log.info("초대");
-        belongService.saveMembers(roomId, BelongType.USER, memberDtos);
+        belongService.saveBelongs(roomId, BelongType.USER, memberDtos);
 
         return "redirect:/rooms/{roomId}";
     }

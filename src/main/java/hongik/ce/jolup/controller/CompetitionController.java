@@ -1,7 +1,6 @@
 package hongik.ce.jolup.controller;
 
 import hongik.ce.jolup.domain.belong.BelongType;
-//import hongik.ce.jolup.domain.join.JoinRole;
 import hongik.ce.jolup.domain.match.MatchStatus;
 import hongik.ce.jolup.domain.result.Result;
 import hongik.ce.jolup.domain.score.Score;
@@ -9,7 +8,7 @@ import hongik.ce.jolup.domain.member.Member;
 import hongik.ce.jolup.domain.competition.CompetitionType;
 import hongik.ce.jolup.dto.*;
 import hongik.ce.jolup.service.*;
-import lombok.RequiredArgsConstructor;
+import lombok.*;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
@@ -20,6 +19,9 @@ import org.springframework.validation.ObjectError;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -48,10 +50,7 @@ public class CompetitionController {
             return "error";
         }
 
-        CompetitionForm competitionForm = new CompetitionForm();
-        competitionForm.setTitle(title);
-        competitionForm.setCompetitionType(competitionType);
-        competitionForm.setHeadCount(headCount);
+        CreateCompetitionForm competitionForm = new CreateCompetitionForm(title, competitionType, headCount);
         for(int i = 0; i < headCount; i++) {
             if (i < emails.size()) {
                 competitionForm.addEmail(emails.get(i));
@@ -66,7 +65,7 @@ public class CompetitionController {
 
     @PostMapping("/create")
     public String createCompetition(@PathVariable("roomId") Long roomId,
-                                    @ModelAttribute("form") @Valid CompetitionForm competitionForm,
+                                    @ModelAttribute("form") @Valid CreateCompetitionForm competitionForm,
                                     BindingResult bindingResult,
                                     @AuthenticationPrincipal Member member,
                                     Model model) {
@@ -74,9 +73,9 @@ public class CompetitionController {
         log.info("POST : create, competitionForm = {}", competitionForm);
 
         List<BelongDto> belongDtos = belongService.findByRoomId(roomId);
-        Optional<BelongDto> optional = belongDtos.stream()
-                .filter(b -> b.getMemberDto().getId().equals(member.getId())).findFirst();
-        if (optional.isEmpty() || !optional.get().getBelongType().equals(BelongType.MASTER)) {
+        BelongDto belongDto = belongDtos.stream()
+                .filter(b -> b.getMemberDto().getId().equals(member.getId())).findFirst().orElse(null);
+        if (belongDto == null || !belongDto.getBelongType().equals(BelongType.MASTER)) {
             return "error";
         }
 
@@ -108,13 +107,12 @@ public class CompetitionController {
         CompetitionDto competitionRequestDto = CompetitionDto.builder()
                 .title(competitionForm.getTitle())
                 .competitionType(competitionForm.getCompetitionType())
-                .roomDto(optional.get().getRoomDto())
+                .roomDto(belongDto.getRoomDto())
                 .build();
         Long competitionId = competitionService.saveCompetition(competitionRequestDto);
         CompetitionDto competitionDto = competitionService.findOne(competitionId);
+
         log.info("saveJoin Start");
-        belongDtos.stream().map(BelongDto::getMemberDto)
-                .collect(Collectors.toList());
         for (String email : emails) {
             JoinDto joinDto = JoinDto.builder()
                     .memberDto(belongDtos.stream()
@@ -299,18 +297,18 @@ public class CompetitionController {
         if (myBelongDto == null || !myBelongDto.getBelongType().equals(BelongType.MASTER)) {
             return "error";
         }
-
-        model.addAttribute("competitionDto", competitionDto);
+        UpdateCompetitionForm competitionForm = new UpdateCompetitionForm(competitionDto.getId(), competitionDto.getTitle());
+        model.addAttribute("form", competitionForm);
         return "competition/edit";
     }
 
-    @PutMapping("/{competitionId}/edit")
+    @PostMapping("/{competitionId}/edit")
     public String edit(@PathVariable("roomId") Long roomId,
                        @PathVariable("competitionId") Long competitionId,
                        @AuthenticationPrincipal Member member,
-                       @ModelAttribute @Valid CompetitionDto competitionDto,
+                       @ModelAttribute("form") @Valid UpdateCompetitionForm competitionForm,
                        BindingResult result) {
-        log.info("PUT : edit, competitionDto = {}", competitionDto);
+        log.info("POST : UpdateCompetitionForm = {}", competitionForm);
 
         if (result.hasErrors()) {
             return "competition/edit";
@@ -325,7 +323,45 @@ public class CompetitionController {
             return "error";
         }
 
-        competitionService.saveCompetition(competitionDto);
+        competitionService.updateCompetition(competitionForm.getId(), competitionForm.getTitle());
         return "redirect:/rooms/{roomId}/competitions/{competitionId}";
+    }
+
+    @Getter @Setter
+    @NoArgsConstructor @ToString
+    private static class CreateCompetitionForm {
+        @NotBlank(message = "대회 이름은 필수 입력 값입니다!")
+//    @Pattern(regexp = "^(?:\\w+\\.?)*\\w+@(?:\\w+\\.)+\\w+$", message = "대회 이름 형식이 올바르지 않습니다.")
+        private String title;
+
+        @NotNull(message = "대회 방식은 필수 입력 값입니다!")
+        private CompetitionType competitionType;
+
+        @NotNull(message = "대회 참여 인원 수는 필수 입력 값입니다!")
+        private Long headCount;
+
+        @Size(min = 2, max = 20, message = "최소 인원 오류")
+        @NotNull(message = "null 오류")
+        private List<@NotBlank(message = "참가자 아이디는 필수 입력 값입니다!") String> emails = new ArrayList<>();
+
+        public CreateCompetitionForm(String title, CompetitionType competitionType, Long headCount) {
+            this.title = title;
+            this.competitionType = competitionType;
+            this.headCount = headCount;
+        }
+
+        public void addEmail(String email) {
+            this.emails.add(email);
+        }
+    }
+
+    @Getter @Setter @AllArgsConstructor
+    @NoArgsConstructor @ToString
+    private static class UpdateCompetitionForm {
+
+        private Long id;
+
+        @NotBlank(message = "대회 이름은 필수 입력 값입니다.")
+        private String title;
     }
 }

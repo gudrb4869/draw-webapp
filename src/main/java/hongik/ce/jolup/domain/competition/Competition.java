@@ -68,4 +68,8 @@ public class Competition extends BaseTimeEntity {
         this.room = room;
         room.getCompetitions().add(this);
     }
+
+    public void updateTitle(String title) {
+        this.title = title;
+    }
 }

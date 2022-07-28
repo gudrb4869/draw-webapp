@@ -28,6 +28,16 @@ public class CompetitionService {
         competitionRepository.deleteById(id);
     }
 
+    @Transactional
+    public Long updateCompetition(Long id, String title) {
+        Competition competition = competitionRepository.findById(id).orElse(null);
+        if (competition == null) {
+            return null;
+        }
+        competition.updateTitle(title);
+        return competition.getId();
+    }
+
     public List<CompetitionDto> findAll() {
         return competitionRepository.findAll().stream()
                 .map(Competition::toDto)

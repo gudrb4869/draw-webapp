@@ -58,13 +58,13 @@ public class MatchController {
         return "match/update";
     }
 
-    @PutMapping("/{matchId}/update")
+    @PostMapping("/{matchId}/update")
     public String update(@PathVariable("roomId") Long roomId,
                          @PathVariable("competitionId") Long competitionId,
                          @PathVariable("matchId") Long matchId, @AuthenticationPrincipal Member member,
                          Score score, MatchStatus matchStatus) {
 
-        log.info("PUT : updateMatch = {}", roomId, competitionId, matchId);
+        log.info("POST : updateMatch = {}", roomId, competitionId, matchId);
         BelongDto myBelongDto = belongService.findOne(member.getId(), roomId);
         if (myBelongDto == null || !myBelongDto.getBelongType().equals(BelongType.MASTER)) {
             return "error";

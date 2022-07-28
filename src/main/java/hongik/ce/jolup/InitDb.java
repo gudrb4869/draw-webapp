@@ -6,9 +6,7 @@ import hongik.ce.jolup.domain.member.Member;
 import hongik.ce.jolup.domain.member.Role;
 import hongik.ce.jolup.domain.room.Room;
 import hongik.ce.jolup.domain.room.RoomSetting;
-import hongik.ce.jolup.service.BelongService;
-import hongik.ce.jolup.service.MemberService;
-import hongik.ce.jolup.service.RoomService;
+import hongik.ce.jolup.service.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Component;
@@ -79,6 +77,9 @@ public class InitDb {
         private final MemberService memberService;
         private final BelongService belongService;
         private final RoomService roomService;
+        private final CompetitionService competitionService;
+        private final JoinService joinService;
+        private final MatchService matchService;
 
         public void dbInit() {
 

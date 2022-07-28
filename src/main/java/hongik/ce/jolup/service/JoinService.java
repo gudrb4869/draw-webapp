@@ -2,7 +2,10 @@ package hongik.ce.jolup.service;
 
 import hongik.ce.jolup.domain.join.Join;
 import hongik.ce.jolup.dto.JoinDto;
+import hongik.ce.jolup.dto.MemberDto;
+import hongik.ce.jolup.repository.CompetitionRepository;
 import hongik.ce.jolup.repository.JoinRepository;
+import hongik.ce.jolup.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -17,10 +20,22 @@ import java.util.stream.Collectors;
 public class JoinService {
 
     private final JoinRepository joinRepository;
+    private final MemberRepository memberRepository;
+    private final CompetitionRepository competitionRepository;
 
     @Transactional
     public Long saveJoin(JoinDto joinDto) {
         return joinRepository.save(joinDto.toEntity()).getId();
+    }
+
+    @Transactional
+    public void deleteJoin(Long id) {
+        joinRepository.deleteById(id);
+    }
+
+    @Transactional
+    public void saveJoins(Long competitionId, List<MemberDto> memberDtos) {
+
     }
 
     public List<JoinDto> findByBelong(Long memberId) {
@@ -51,10 +66,5 @@ public class JoinService {
         return joins.stream()
                 .map(Join::toDto)
                 .collect(Collectors.toList());
-    }
-
-    @Transactional
-    public void deleteJoin(Long id) {
-        joinRepository.deleteById(id);
     }
 }

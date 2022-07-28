@@ -2,11 +2,9 @@ package hongik.ce.jolup.service;
 
 import hongik.ce.jolup.domain.belong.Belong;
 import hongik.ce.jolup.domain.belong.BelongType;
-import hongik.ce.jolup.domain.join.Join;
 import hongik.ce.jolup.domain.member.Member;
 import hongik.ce.jolup.domain.room.Room;
 import hongik.ce.jolup.dto.BelongDto;
-import hongik.ce.jolup.dto.JoinDto;
 import hongik.ce.jolup.dto.MemberDto;
 import hongik.ce.jolup.dto.RoomDto;
 import hongik.ce.jolup.repository.BelongRepository;
@@ -46,7 +44,7 @@ public class BelongService {
     }
 
     @Transactional
-    public void saveMembers(Long roomId, BelongType type, List<MemberDto> memberDtos) {
+    public void saveBelongs(Long roomId, BelongType type, List<MemberDto> memberDtos) {
         Optional<Room> optionalRoom = roomRepository.findById(roomId);
         if (optionalRoom.isEmpty()) {
             return;
