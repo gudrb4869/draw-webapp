@@ -10,13 +10,15 @@ import java.util.Optional;
 
 public interface MatchRepository extends JpaRepository<Match, Long> {
 
-    @Query("select m from Match m join fetch m.competition left join fetch m.home left join fetch m.away where m.competition.id = :competitionId")
+    @Query("select m from Match m join fetch m.competition" +
+            " left join fetch m.home left join fetch m.away" +
+            " where m.competition.id = :competitionId")
     List<Match> findByCompetitionId(@Param("competitionId") Long competitionId);
-
 
     Optional<Match> findByCompetitionIdAndRoundNoAndMatchNo(Long competitionId, Integer roundNo, Integer matchNo);
 
-    @Query("select m from Match m join fetch m.competition left join fetch m.home left join fetch m.away" +
+    @Query("select m from Match m join fetch m.competition" +
+            " left join fetch m.home left join fetch m.away" +
             " where m.id = :id and m.competition.id = :competitionId")
     Optional<Match> findByIdAndCompetitionId(@Param("id") Long id, @Param("competitionId") Long competitionId);
 }

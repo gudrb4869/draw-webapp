@@ -51,7 +51,7 @@ public class Member extends BaseTimeEntity implements UserDetails {
         this.role = role;
     }
 
-    public MemberDto toDto() {
+    /*public MemberDto toDto() {
         return MemberDto.builder()
                 .id(id)
                 .email(email)
@@ -59,7 +59,7 @@ public class Member extends BaseTimeEntity implements UserDetails {
                 .name(name)
                 .role(role)
                 .build();
-    }
+    }*/
 
     public void updatePassword(String password) {
         this.password = password;

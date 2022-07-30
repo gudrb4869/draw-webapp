@@ -80,35 +80,16 @@ public class MemberService implements UserDetailsService {
         }
     }
 
-    public MemberDto findOne(Long memberId) {
-        Optional<Member> optionalMember = memberRepository.findById(memberId);
-        if (optionalMember.isEmpty())
-            return null;
-        Member member = optionalMember.get();
-        return member.toDto();
+    public Member findOne(Long memberId) {
+        return memberRepository.findById(memberId).orElse(null);
     }
 
-    public MemberDto findOne(String email) {
-        Optional<Member> optionalMember = memberRepository.findByEmail(email);
-        if (optionalMember.isEmpty()) {
-            return null;
-        }
-        Member member = optionalMember.get();
-        return member.toDto();
+    public Member findOne(String email) {
+        return memberRepository.findByEmail(email).orElse(null);
     }
 
-    public List<MemberDto> findMembers(List<String> emails) {
+    public List<Member> findMembers(List<String> emails) {
         List<Member> members = memberRepository.findByEmailIn(emails);
-        return members.stream().map(Member::toDto).collect(Collectors.toList());
-    }
-
-    public List<BelongDto> getBelongs(Long memberId) {
-        Optional<Member> optionalMember = memberRepository.findById(memberId);
-        if (optionalMember.isEmpty()) {
-            return null;
-        }
-        Member member = optionalMember.get();
-        List<BelongDto> belongDtos = member.getBelongs().stream().map(Belong::toDto).collect(Collectors.toList());
-        return belongDtos;
+        return members;
     }
 }

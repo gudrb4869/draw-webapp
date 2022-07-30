@@ -44,19 +44,17 @@ public class Competition extends BaseTimeEntity {
         this.id = id;
         this.title = title;
         this.competitionType = competitionType;
-        if (room != null) {
-            changeRoom(room);
-        }
+        this.room = room;
     }
 
-    public CompetitionDto toDto() {
+    /*public CompetitionDto toDto() {
         return CompetitionDto.builder()
                 .id(id)
                 .title(title)
                 .competitionType(competitionType)
                 .roomDto(room.toDto())
                 .build();
-    }
+    }*/
 
     public Competition update(String title, CompetitionType competitionType) {
         this.title = title;

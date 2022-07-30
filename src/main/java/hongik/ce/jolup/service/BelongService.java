@@ -44,27 +44,26 @@ public class BelongService {
     }
 
     @Transactional
-    public void saveBelongs(Long roomId, BelongType type, List<MemberDto> memberDtos) {
+    public void saveBelongs(Long roomId, BelongType type, List<Member> members) {
         Optional<Room> optionalRoom = roomRepository.findById(roomId);
         if (optionalRoom.isEmpty()) {
             return;
         }
         Room room = optionalRoom.get();
-        RoomDto roomDto = room.toDto();
-        for (MemberDto memberDto : memberDtos) {
-            BelongDto belongDto = BelongDto.builder().memberDto(memberDto).roomDto(roomDto).belongType(type).build();
-            belongRepository.save(belongDto.toEntity());
+        for (Member member : members) {
+            Belong belong = Belong.builder().member(member).room(room).belongType(type).build();
+            belongRepository.save(belong);
         }
     }
 
     @Transactional
-    public void update(Long memberId, Long roomId, BelongType type) {
-        Optional<Belong> optionalBelong = belongRepository.findByMemberIdAndRoomId(memberId, roomId);
-        if (optionalBelong.isEmpty()) {
-            return;
+    public Long update(Long id, BelongType type) {
+        Belong belong = belongRepository.findById(id).orElse(null);
+        if (belong == null) {
+            return null;
         }
-        Belong belong = optionalBelong.get();
         belong.updateType(type);
+        return belong.getId();
     }
 
     @Transactional
@@ -72,34 +71,21 @@ public class BelongService {
         belongRepository.deleteById(belongId);
     }
 
-    public List<BelongDto> findByMemberId(Long memberId) {
+    public List<Belong> findByMemberId(Long memberId) {
         List<Belong> belongs = belongRepository.findByMemberId(memberId);
-        List<BelongDto> belongDtos = belongs.stream()
-                .map(Belong::toDto)
-                .collect(Collectors.toList());
-
-        return belongDtos;
+        return belongs;
     }
 
-    public BelongDto findByIdAndRoomId(Long id, Long roomId) {
-        Optional<Belong> optionalBelong = belongRepository.findByIdAndRoomId(id, roomId);
-        if (optionalBelong.isPresent()) {
-            return optionalBelong.get().toDto();
-        }
-        return null;
+    public Belong findByIdAndRoomId(Long id, Long roomId) {
+        return belongRepository.findByIdAndRoomId(id, roomId).orElse(null);
     }
 
-    public BelongDto findOne(Long memberId, Long roomId) {
-        Optional<Belong> optionalBelong = belongRepository.findByMemberIdAndRoomId(memberId, roomId);
-        if (optionalBelong.isEmpty())
-            return null;
-        Belong belong = optionalBelong.get();
-        return belong.toDto();
+    public Belong findOne(Long memberId, Long roomId) {
+        return belongRepository.findByMemberIdAndRoomId(memberId, roomId).orElse(null);
     }
 
-    public List<BelongDto> findByRoomId(Long roomId) {
+    public List<Belong> findByRoomId(Long roomId) {
         List<Belong> belongs = belongRepository.findByRoomId(roomId);
-        List<BelongDto> belongDtos = belongs.stream().map(Belong::toDto).collect(Collectors.toList());
-        return belongDtos;
+        return belongs;
     }
 }

@@ -49,9 +49,7 @@ public class Match extends BaseTimeEntity {
     @Builder
     public Match(Long id, Competition competition, Member home, Member away, Score score, MatchStatus matchStatus, Integer roundNo, Integer matchNo) {
         this.id = id;
-        if (competition != null) {
-            changeCompetition(competition);
-        }
+        this.competition = competition;
         this.home = home;
         this.away = away;
         this.score = score;
@@ -60,7 +58,7 @@ public class Match extends BaseTimeEntity {
         this.matchNo = matchNo;
     }
 
-    public MatchDto toDto() {
+    /*public MatchDto toDto() {
         return MatchDto.builder()
                 .id(id)
                 .competitionDto(competition.toDto())
@@ -71,6 +69,18 @@ public class Match extends BaseTimeEntity {
                 .roundNo(roundNo)
                 .matchNo(matchNo)
                 .build();
+    }*/
+
+    public void updateHome(Member home) {
+        this.home = home;
+    }
+
+    public void updateAway(Member away) {
+        this.away = away;
+    }
+
+    public void updateScore(Score score) {
+        this.score = score;
     }
 
     public void changeCompetition(Competition competition) {
@@ -82,5 +92,9 @@ public class Match extends BaseTimeEntity {
         this.score = score;
         this.matchStatus = matchStatus;
         return this;
+    }
+
+    public void updateMatchStatus(MatchStatus matchStatus) {
+        this.matchStatus = matchStatus;
     }
 }

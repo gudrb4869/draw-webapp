@@ -1,6 +1,8 @@
 package hongik.ce.jolup.service;
 
 import hongik.ce.jolup.domain.competition.Competition;
+import hongik.ce.jolup.domain.competition.CompetitionType;
+import hongik.ce.jolup.domain.room.Room;
 import hongik.ce.jolup.repository.CompetitionRepository;
 import hongik.ce.jolup.dto.CompetitionDto;
 import lombok.RequiredArgsConstructor;
@@ -19,8 +21,9 @@ public class CompetitionService {
     private final CompetitionRepository competitionRepository;
 
     @Transactional
-    public Long saveCompetition(CompetitionDto competitionDto) {
-        return competitionRepository.save(competitionDto.toEntity()).getId();
+    public Long save(String title, CompetitionType competitionType, Room room) {
+        Competition competition = Competition.builder().title(title).competitionType(competitionType).room(room).build();
+        return competitionRepository.save(competition).getId();
     }
 
     @Transactional
@@ -38,35 +41,20 @@ public class CompetitionService {
         return competition.getId();
     }
 
-    public List<CompetitionDto> findAll() {
-        return competitionRepository.findAll().stream()
-                .map(Competition::toDto)
-                .collect(Collectors.toList());
+    public List<Competition> findAll() {
+        return competitionRepository.findAll();
     }
 
-    public CompetitionDto findOne(Long competitionId) {
-        Optional<Competition> optionalCompetition = competitionRepository.findById(competitionId);
-        if (optionalCompetition.isEmpty()) {
-            return null;
-        }
-        Competition competition = optionalCompetition.get();
-        return competition.toDto();
+    public Competition findOne(Long competitionId) {
+        return competitionRepository.findById(competitionId).orElse(null);
     }
 
-    public List<CompetitionDto> findCompetitions(Long roomId) {
+    public List<Competition> findCompetitions(Long roomId) {
         List<Competition> competitions = competitionRepository.findByRoomId(roomId);
-        if (competitions == null) {
-            return null;
-        }
-        return competitions.stream().map(Competition::toDto).collect(Collectors.toList());
+        return competitions;
     }
 
-    public CompetitionDto findOne(Long competitionId, Long roomId) {
-        Optional<Competition> optionalCompetition = competitionRepository.findByIdAndRoomId(competitionId, roomId);
-        if (optionalCompetition.isEmpty()) {
-            return null;
-        }
-        Competition competition = optionalCompetition.get();
-        return competition.toDto();
+    public Competition findOne(Long competitionId, Long roomId) {
+        return competitionRepository.findByIdAndRoomId(competitionId, roomId).orElse(null);
     }
 }

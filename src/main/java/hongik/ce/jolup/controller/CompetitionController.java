@@ -1,12 +1,15 @@
 package hongik.ce.jolup.controller;
 
+import hongik.ce.jolup.domain.belong.Belong;
 import hongik.ce.jolup.domain.belong.BelongType;
+import hongik.ce.jolup.domain.competition.Competition;
+import hongik.ce.jolup.domain.join.Join;
+import hongik.ce.jolup.domain.match.Match;
 import hongik.ce.jolup.domain.match.MatchStatus;
 import hongik.ce.jolup.domain.result.Result;
 import hongik.ce.jolup.domain.score.Score;
 import hongik.ce.jolup.domain.member.Member;
 import hongik.ce.jolup.domain.competition.CompetitionType;
-import hongik.ce.jolup.dto.*;
 import hongik.ce.jolup.service.*;
 import lombok.*;
 import lombok.extern.slf4j.Slf4j;
@@ -45,8 +48,8 @@ public class CompetitionController {
                                     @AuthenticationPrincipal Member member,
                                     Model model) {
 
-        BelongDto myBelongDto = belongService.findOne(member.getId(), roomId);
-        if (myBelongDto == null || !myBelongDto.getBelongType().equals(BelongType.MASTER)) {
+        Belong myBelong = belongService.findOne(member.getId(), roomId);
+        if (myBelong == null || !myBelong.getBelongType().equals(BelongType.MASTER)) {
             return "error";
         }
 
@@ -67,15 +70,14 @@ public class CompetitionController {
     public String createCompetition(@PathVariable("roomId") Long roomId,
                                     @ModelAttribute("form") @Valid CreateCompetitionForm competitionForm,
                                     BindingResult bindingResult,
-                                    @AuthenticationPrincipal Member member,
-                                    Model model) {
+                                    @AuthenticationPrincipal Member member) {
 
         log.info("POST : create, competitionForm = {}", competitionForm);
 
-        List<BelongDto> belongDtos = belongService.findByRoomId(roomId);
-        BelongDto belongDto = belongDtos.stream()
-                .filter(b -> b.getMemberDto().getId().equals(member.getId())).findFirst().orElse(null);
-        if (belongDto == null || !belongDto.getBelongType().equals(BelongType.MASTER)) {
+        List<Belong> Belongs = belongService.findByRoomId(roomId);
+        Belong belong = Belongs.stream()
+                .filter(b -> b.getMember().getId().equals(member.getId())).findFirst().orElse(null);
+        if (belong == null || !belong.getBelongType().equals(BelongType.MASTER)) {
             return "error";
         }
 
@@ -96,119 +98,110 @@ public class CompetitionController {
 
         for(int i = 0; i < emails.size(); i++) {
             String email = emails.get(i);
-            Optional<BelongDto> findMember = belongDtos.stream()
-                    .filter(b -> b.getMemberDto().getEmail().equals(email)).findFirst();
+            Optional<Belong> findMember = Belongs.stream()
+                    .filter(b -> b.getMember().getEmail().equals(email)).findFirst();
             if (findMember.isEmpty()) {
                 bindingResult.addError(new FieldError("form", "emails[" + i + "]", email, false, null, null, "존재하지 않는 회원입니다."));
                 return "competition/create";
             }
         }
 
-        CompetitionDto competitionRequestDto = CompetitionDto.builder()
-                .title(competitionForm.getTitle())
-                .competitionType(competitionForm.getCompetitionType())
-                .roomDto(belongDto.getRoomDto())
-                .build();
-        Long competitionId = competitionService.saveCompetition(competitionRequestDto);
-        CompetitionDto competitionDto = competitionService.findOne(competitionId);
-
+        Long competitionId = competitionService.save(competitionForm.getTitle(), competitionForm.getCompetitionType(), belong.getRoom());
         log.info("saveJoin Start");
+        Competition competition = competitionService.findOne(competitionId);
         for (String email : emails) {
-            JoinDto joinDto = JoinDto.builder()
-                    .memberDto(belongDtos.stream()
-                            .filter(b -> b.getMemberDto().getEmail().equals(email))
-                            .findFirst()
-                            .map(BelongDto::getMemberDto)
-                            .orElse(null))
-                    .competitionDto(competitionDto)
-                    .result(Result.builder().plays(0).win(0).draw(0).lose(0).goalFor(0)
-                            .goalAgainst(0).goalDifference(0).points(0).build())
-                    .build();
-            joinService.saveJoin(joinDto);
+            Belong findBelong = Belongs.stream().filter(b -> b.getMember().getEmail().equals(email)).findAny().orElse(null);
+            Member findMember = null; 
+            if (findBelong != null) {
+                findMember = findBelong.getMember();
+            }
+            Result result = Result.builder().plays(0).win(0).draw(0).lose(0).goalFor(0)
+                    .goalAgainst(0).goalDifference(0).points(0).build();
+            joinService.save(findMember, competition, result);
         }
         log.info("saveJoin End");
 
-        List<MemberDto> memberDtos = joinService.findByCompetition(competitionId)
-                .stream().map(JoinDto::getMemberDto).collect(Collectors.toList());
+        List<Member> members = joinService.findByCompetitionId(competitionId)
+                .stream().map(Join::getMember).collect(Collectors.toList());
 
-        if (competitionDto.getCompetitionType().equals(CompetitionType.LEAGUE)) {
+        if (competition.getCompetitionType().equals(CompetitionType.LEAGUE)) {
             // 리그
-            Collections.shuffle(memberDtos);
-            int count = memberDtos.size();
+            Collections.shuffle(members);
+            int count = members.size();
             int round = count % 2 == 1 ? count : count - 1;
             if (count % 2 == 1) {
                 for (int i = 0; i < count; i++) {
                     for (int j = 0; j < count/2; j++) {
-                        MatchDto matchDto = MatchDto.builder().competitionDto(competitionDto)
-                                .homeDto(memberDtos.get((i + j) % count))
-                                .awayDto(memberDtos.get((i + count - j - 2) % count))
+                        Match match = Match.builder().competition(competition)
+                                .home(members.get((i + j) % count))
+                                .away(members.get((i + count - j - 2) % count))
                                 .matchStatus(MatchStatus.READY)
                                 .roundNo(i)
                                 .matchNo(j)
                                 .score(Score.builder().homeScore(0).awayScore(0).build()).build();
-                        matchService.saveMatch(matchDto);
+                        matchService.saveMatch(match);
                     }
                 }
             }
             else {
                 int j;
-                MemberDto fixed = memberDtos.remove(0);
+                Member fixed = members.remove(0);
                 for (int i = 0; i < count - 1; i++) {
                     for (j = 0; j < count/2 - 1; j++) {
-                        MatchDto matchDto = MatchDto.builder().competitionDto(competitionDto)
-                                .homeDto(memberDtos.get((i + j) % (count - 1)))
-                                .awayDto(memberDtos.get((i + count - j - 2) % (count - 1)))
+                        Match match = Match.builder().competition(competition)
+                                .home(members.get((i + j) % (count - 1)))
+                                .away(members.get((i + count - j - 2) % (count - 1)))
                                 .matchStatus(MatchStatus.READY)
                                 .roundNo(i)
                                 .matchNo(j)
                                 .score(Score.builder().homeScore(0).awayScore(0).build()).build();
-                        matchService.saveMatch(matchDto);
+                        matchService.saveMatch(match);
                     }
-                    MatchDto matchDto = MatchDto.builder().competitionDto(competitionDto)
-                            .homeDto(i % 2 == 0 ? memberDtos.get((i + j) % (count - 1)) : fixed)
-                            .awayDto(i % 2 == 0 ? fixed : memberDtos.get((i + j) % (count - 1)))
+                    Match match = Match.builder().competition(competition)
+                            .home(i % 2 == 0 ? members.get((i + j) % (count - 1)) : fixed)
+                            .away(i % 2 == 0 ? fixed : members.get((i + j) % (count - 1)))
                             .matchStatus(MatchStatus.READY)
                             .roundNo(i)
                             .matchNo(j)
                             .score(Score.builder().homeScore(0).awayScore(0).build()).build();
-                    matchService.saveMatch(matchDto);
+                    matchService.saveMatch(match);
                 }
             }
         }
-        else if (competitionDto.getCompetitionType().equals(CompetitionType.TOURNAMENT)) {
+        else if (competition.getCompetitionType().equals(CompetitionType.TOURNAMENT)) {
             // 토너먼트
-            Collections.shuffle(memberDtos);
-            int count = memberDtos.size(); // 참가 인원 수
-            int round = (int)Math.ceil(Math.log(count) / Math.log(2)); // 총 라운드
-            int match = 1;
-            int auto_win_num = (int)Math.pow(2, round) - count; // 부전승 인원 수
+            Collections.shuffle(members);
+            int count = members.size(); // 참가 인원 수
+            int round_num = (int)Math.ceil(Math.log(count) / Math.log(2)); // 총 라운드
+            int match_num = 1;
+            int auto_win_num = (int)Math.pow(2, round_num) - count; // 부전승 인원 수
 
             Set<Integer> set = new HashSet<>(); //
             while (set.size() < auto_win_num) {
-                Double value = Math.random() * (int)Math.pow(2, round - 1);
+                Double value = Math.random() * (int)Math.pow(2, round_num - 1);
                 set.add(value.intValue());
             }
             List<Integer> list = new ArrayList<>(set);
             Collections.sort(list);
 
-            for (int i = 0; i < round; i++) {
-                for (int j = 0; j < match; j++) {
-                    if (i == round - 1 && auto_win_num > 0 && list.contains(j)) {
+            for (int i = 0; i < round_num; i++) {
+                for (int j = 0; j < match_num; j++) {
+                    if (i == round_num - 1 && auto_win_num > 0 && list.contains(j)) {
                         log.info("i, j = {}, {}", i, j);
                         continue;
                     }
-                    MatchDto matchDto = MatchDto.builder().competitionDto(competitionDto)
-                            .homeDto(i == round - 1 ? memberDtos.remove(0) :
-                                    (i == round - 2 && auto_win_num > 0 && list.contains(j * 2) ? memberDtos.remove(0) : null))
-                            .awayDto(i == round - 1 ? memberDtos.remove(0) :
-                                    (i == round - 2 && auto_win_num > 0 && list.contains(j * 2 + 1) ? memberDtos.remove(0) : null))
+                    Match match = Match.builder().competition(competition)
+                            .home(i == round_num - 1 ? members.remove(0) :
+                                    (i == round_num - 2 && auto_win_num > 0 && list.contains(j * 2) ? members.remove(0) : null))
+                            .away(i == round_num - 1 ? members.remove(0) :
+                                    (i == round_num - 2 && auto_win_num > 0 && list.contains(j * 2 + 1) ? members.remove(0) : null))
                             .matchStatus(MatchStatus.READY)
                             .roundNo(i)
                             .matchNo(j)
                             .score(Score.builder().homeScore(0).awayScore(0).build()).build();
-                    matchService.saveMatch(matchDto);
+                    matchService.saveMatch(match);
                 }
-                match *= 2;
+                match_num *= 2;
             }
         }
         return "redirect:/rooms/{roomId}";
@@ -222,28 +215,29 @@ public class CompetitionController {
 
         log.info("CompetitionController GET /{competitionId}");
 
-        CompetitionDto competitionDto = competitionService.findOne(competitionId, roomId);
-        if (competitionDto == null) {
+        Belong myBelong = belongService.findOne(member.getId(), roomId);
+        if (myBelong == null) {
             return "error";
         }
 
-        BelongDto myBelongDto = belongService.findOne(member.getId(), roomId);
-        if (myBelongDto == null) {
+        Competition competition = competitionService.findOne(competitionId, roomId);
+        if (competition == null) {
             return "error";
         }
 
-        JoinDto myJoinDto = joinService.findOne(member.getId(), competitionId);
+        List<Match> matches = matchService.findByCompetition(competitionId);
 
-        List<MatchDto> matchDtos = matchService.findByCompetition(competitionId);
+        List<Join> joins = joinService.findByCompetitionSort(competitionId);
+        Join join = joins.stream().filter(j -> j.getMember().getId().equals(member.getId())).findAny().orElse(null);
 
-        log.info("matchDtos = {}", matchDtos);
-        LinkedHashMap<Integer, List<MatchDto>> hashMap = new LinkedHashMap<>();
+        log.info("matches = {}", matches);
+        LinkedHashMap<Integer, List<Match>> hashMap = new LinkedHashMap<>();
 
-        for (MatchDto matchDto : matchDtos) {
-            hashMap.computeIfAbsent(matchDto.getRoundNo(), k -> new ArrayList<>()).add(matchDto);
+        for (Match match : matches) {
+            hashMap.computeIfAbsent(match.getRoundNo(), k -> new ArrayList<>()).add(match);
         }
 
-        for (Map.Entry<Integer, List<MatchDto>> entry : hashMap.entrySet()) {
+        for (Map.Entry<Integer, List<Match>> entry : hashMap.entrySet()) {
             log.info("test = {}", entry.getValue());
         }
 
@@ -252,12 +246,11 @@ public class CompetitionController {
         log.info("hashMap = {}", hashMap);
 
 
-        model.addAttribute("competitionDto", competitionDto);
+        model.addAttribute("competition", competition);
         model.addAttribute("hashMap", hashMap);
-        model.addAttribute("myJoinDto", myJoinDto);
-        model.addAttribute("myBelongDto", myBelongDto);
-        List<JoinDto> joinDtos = joinService.findByCompetitionSort(competitionId);
-        model.addAttribute("joinDtos", joinDtos);
+        model.addAttribute("myJoin", join);
+        model.addAttribute("myBelong", myBelong);
+        model.addAttribute("joins", joins);
         return "competition/detail";
     }
 
@@ -268,13 +261,13 @@ public class CompetitionController {
 
         log.info("CompetitionController DELETE /{competitionId}");
 
-        CompetitionDto competitionDto = competitionService.findOne(competitionId, roomId);
-        if (competitionDto == null) {
+        Competition competition = competitionService.findOne(competitionId, roomId);
+        if (competition == null) {
             return "error";
         }
 
-        BelongDto myBelongDto = belongService.findOne(member.getId(), roomId);
-        if (myBelongDto == null || !myBelongDto.getBelongType().equals(BelongType.MASTER)) {
+        Belong myBelong = belongService.findOne(member.getId(), roomId);
+        if (myBelong == null || !myBelong.getBelongType().equals(BelongType.MASTER)) {
             return "error";
         }
 
@@ -287,17 +280,17 @@ public class CompetitionController {
                                   @PathVariable("competitionId") Long competitionId,
                                   @AuthenticationPrincipal Member member,
                                   Model model) {
-        CompetitionDto competitionDto = competitionService.findOne(competitionId, roomId);
-        log.info("GET : editCompetition, competitionDto = {}", competitionDto);
-        if (competitionDto == null) {
+        Competition competition = competitionService.findOne(competitionId, roomId);
+        log.info("GET : editCompetition, competition = {}", competition);
+        if (competition == null) {
             return "error";
         }
 
-        BelongDto myBelongDto = belongService.findOne(member.getId(), roomId);
-        if (myBelongDto == null || !myBelongDto.getBelongType().equals(BelongType.MASTER)) {
+        Belong myBelong = belongService.findOne(member.getId(), roomId);
+        if (myBelong == null || !myBelong.getBelongType().equals(BelongType.MASTER)) {
             return "error";
         }
-        UpdateCompetitionForm competitionForm = new UpdateCompetitionForm(competitionDto.getId(), competitionDto.getTitle());
+        UpdateCompetitionForm competitionForm = new UpdateCompetitionForm(competition.getId(), competition.getTitle());
         model.addAttribute("form", competitionForm);
         return "competition/edit";
     }
@@ -318,8 +311,8 @@ public class CompetitionController {
             return "error";
         }
 
-        BelongDto myBelongDto = belongService.findOne(member.getId(), roomId);
-        if (myBelongDto == null || !myBelongDto.getBelongType().equals(BelongType.MASTER)) {
+        Belong myBelong = belongService.findOne(member.getId(), roomId);
+        if (myBelong == null || !myBelong.getBelongType().equals(BelongType.MASTER)) {
             return "error";
         }
 

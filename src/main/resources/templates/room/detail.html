@@ -52,7 +52,7 @@
                 </thead>
                 <tbody>
                 <tr th:each="belong : ${belongs}">
-                    <td th:text="${belong.memberDto.email + '('+ belong.memberDto.name + ')'}"></td>
+                    <td th:text="${belong.member.email + '('+ belong.member.name + ')'}"></td>
                     <td th:text="${belong.belongType.description}"></td>
                 </tr>
                 </tbody>

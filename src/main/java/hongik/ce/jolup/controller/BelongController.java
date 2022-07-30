@@ -1,5 +1,6 @@
 package hongik.ce.jolup.controller;
 
+import hongik.ce.jolup.domain.belong.Belong;
 import hongik.ce.jolup.domain.belong.BelongType;
 import hongik.ce.jolup.domain.member.Member;
 import hongik.ce.jolup.dto.BelongDto;
@@ -29,17 +30,17 @@ public class BelongController {
     @GetMapping("/{belongId}")
     public String editRole(@PathVariable Long roomId, @PathVariable Long belongId,
                            @AuthenticationPrincipal Member member, Model model) {
-        BelongDto myBelongDto = belongService.findOne(member.getId(), roomId);
-        if (myBelongDto == null || !myBelongDto.getBelongType().equals(BelongType.MASTER)) {
+        Belong myBelong = belongService.findOne(member.getId(), roomId);
+        if (myBelong == null || !myBelong.getBelongType().equals(BelongType.MASTER)) {
             return "error";
         }
 
-        BelongDto belongDto = belongService.findByIdAndRoomId(belongId, roomId);
-        if (belongDto == null) {
+        Belong belong = belongService.findByIdAndRoomId(belongId, roomId);
+        if (belong == null) {
             return "error";
         }
 
-        model.addAttribute("belongForm", new BelongForm(member.getName(), belongDto.getBelongType()));
+        model.addAttribute("belongForm", new BelongForm(belong.getId(), belong.getMember().getName(), belong.getBelongType()));
         return "belong/edit";
     }
 
@@ -53,16 +54,12 @@ public class BelongController {
             return "belong/edit";
         }
 
-        BelongDto myBelongDto = belongService.findOne(member.getId(), roomId);
-        if (myBelongDto == null || !myBelongDto.getBelongType().equals(BelongType.MASTER)) {
+        Belong myBelong = belongService.findOne(member.getId(), roomId);
+        if (myBelong == null || !myBelong.getBelongType().equals(BelongType.MASTER)) {
             return "error";
         }
 
-        if (belongService.findByIdAndRoomId(belongId, roomId) == null) {
-            return "error";
-        }
-
-        belongService.update(member.getId(), roomId, belongForm.getType());
+        belongService.update(belongForm.getId(), belongForm.getType());
 
         return "redirect:/rooms/{roomId}";
     }
@@ -71,6 +68,8 @@ public class BelongController {
     @NoArgsConstructor @AllArgsConstructor
     static class BelongForm {
 
+        @NotNull
+        private Long id;
         @NotBlank
         private String email;
         @NotNull(message = "회원 권한을 선택해주세요!")

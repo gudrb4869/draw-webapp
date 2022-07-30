@@ -41,9 +41,9 @@ public class Room extends BaseTimeEntity {
         this.roomSetting = roomSetting;
     }
 
-    public RoomDto toDto() {
+    /*public RoomDto toDto() {
         return RoomDto.builder().id(id).title(title).roomSetting(roomSetting).build();
-    }
+    }*/
 
     public void updateTitle(String title) {
         this.title = title;

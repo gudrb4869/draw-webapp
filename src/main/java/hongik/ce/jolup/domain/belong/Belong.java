@@ -1,15 +1,12 @@
 package hongik.ce.jolup.domain.belong;
 
 import hongik.ce.jolup.domain.BaseTimeEntity;
-import hongik.ce.jolup.domain.join.Join;
 import hongik.ce.jolup.domain.member.Member;
 import hongik.ce.jolup.domain.room.Room;
 import hongik.ce.jolup.dto.BelongDto;
 import lombok.*;
 
 import javax.persistence.*;
-import java.util.ArrayList;
-import java.util.List;
 
 @Entity
 @Getter
@@ -37,18 +34,14 @@ public class Belong extends BaseTimeEntity {
     @Builder
     public Belong(Long id, Member member, Room room, BelongType belongType) {
         this.id = id;
-        if (member != null) {
-            changeMember(member);
-        }
-        if (room != null) {
-            changeRoom(room);
-        }
+        this.member = member;
+        this.room = room;
         this.belongType = belongType;
     }
 
-    public BelongDto toDto() {
+    /*public BelongDto toDto() {
         return BelongDto.builder().id(id).memberDto(member.toDto()).roomDto(room.toDto()).belongType(belongType).build();
-    }
+    }*/
 
     public void changeMember(Member member) {
         this.member = member;

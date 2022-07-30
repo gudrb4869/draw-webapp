@@ -4,7 +4,6 @@ import hongik.ce.jolup.domain.BaseTimeEntity;
 import hongik.ce.jolup.domain.member.Member;
 import hongik.ce.jolup.domain.result.Result;
 import hongik.ce.jolup.domain.competition.Competition;
-import hongik.ce.jolup.dto.JoinDto;
 import lombok.*;
 
 import javax.persistence.*;
@@ -35,25 +34,21 @@ public class Join extends BaseTimeEntity {
     @Builder
     public Join(Long id, Member member, Competition competition, Result result) {
         this.id = id;
-        if (member != null) {
-            changeMember(member);
-        }
-        if (competition != null) {
-            changeCompetition(competition);
-        }
+        this.member = member;
+        this.competition = competition;
         this.result = result;
     }
 
-    public JoinDto toDto () {
+    /*public JoinDto toDto () {
         return JoinDto.builder()
                 .id(id)
                 .memberDto(member.toDto())
                 .competitionDto(competition.toDto())
                 .result(result)
                 .build();
-    }
+    }*/
 
-    public Join update(Result result) {
+    public Join updateResult(Result result) {
         this.result = result;
         return this;
     }

@@ -1,6 +1,5 @@
 package hongik.ce.jolup.domain.score;
 
-import hongik.ce.jolup.dto.ScoreDto;
 import lombok.*;
 
 import javax.persistence.*;
@@ -21,12 +20,5 @@ public class Score {
     public Score(Integer homeScore, Integer awayScore) {
         this.homeScore = homeScore;
         this.awayScore = awayScore;
-    }
-
-    public ScoreDto toDto() {
-        return ScoreDto.builder()
-                .homeScore(homeScore)
-                .awayScore(awayScore)
-                .build();
     }
 }

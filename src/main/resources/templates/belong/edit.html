@@ -15,6 +15,7 @@
         <h2>회원 권한 수정</h2>
     </div>
     <form th:action th:object="${belongForm}" method="post">
+        <input type="hidden" th:field="*{id}"/>
         <div>
             <label th:for="*{email}">회원명</label>
             <input type="text" class="form-control" th:field="*{email}" readonly>

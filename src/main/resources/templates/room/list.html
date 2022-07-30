@@ -27,11 +27,11 @@
             </tr>
             <tr th:each="belong : ${belongs}">
                 <td th:text="${belongStat.count}"></td>
-                <td th:text="${belong.roomDto.title}"></td>
+                <td th:text="${belong.room.title}"></td>
                 <td>
                     <div>
-                        <form class="form-check-inline my-2 my-lg-0" th:action="@{|/rooms/${belong.roomDto.id}|}" method="post">
-                            <a class="btn btn-primary my-2 my-sm-0" th:href="@{|/rooms/${belong.roomDto.id}|}">조회</a>
+                        <form class="form-check-inline my-2 my-lg-0" th:action="@{|/rooms/${belong.room.id}|}" method="post">
+                            <a class="btn btn-primary my-2 my-sm-0" th:href="@{|/rooms/${belong.room.id}|}">조회</a>
                             <input type="hidden" th:if="${belong.belongType.name() == 'MASTER'}" name="_method" value="delete"/>
                             <button class="btn btn-danger my-2 my-sm-0" type="submit"
                                     th:if="${belong.belongType.name() == 'MASTER'}">삭제</button>

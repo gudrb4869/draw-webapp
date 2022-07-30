@@ -19,49 +19,38 @@ public class MatchService {
     private final MatchRepository matchRepository;
 
     @Transactional
-    public Long saveMatch(MatchDto matchDto) {
-        return matchRepository.save(matchDto.toEntity()).getId();
+    public Long saveMatch(Match match) {
+        return matchRepository.save(match).getId();
     }
 
-    public List<MatchDto> findByCompetition(Long competitionId) {
-        List<Match> matches = matchRepository.findByCompetitionId(competitionId);
-        List<MatchDto> matchDtos = matches.stream()
-                .map(Match::toDto)
-                .collect(Collectors.toList());
-        return matchDtos;
-    }
-
-    public MatchDto getMatch(Long id) {
-        Optional<Match> matchWrapper = matchRepository.findById(id);
-        if (matchWrapper.isEmpty()) {
+    @Transactional
+    public Long updateMatch(Long id) {
+        Match match = matchRepository.findById(id).orElse(null);
+        if (match == null) {
             return null;
         }
-        Match match = matchWrapper.get();
-        MatchDto matchDto = match.toDto();
-        return matchDto;
+        return match.getId();
     }
-
-    public MatchDto findByIdAndCompetitionId(Long id, Long competitionId) {
-        Optional<Match> optionalMatch = matchRepository.findByIdAndCompetitionId(id, competitionId);
-        if (optionalMatch.isEmpty())
-            return null;
-        Match match = optionalMatch.get();
-        return match.toDto();
-    }
-
-    public MatchDto findOne(Long competitionId, Integer roundNo, Integer matchNo) {
-        Optional<Match> optionalMatch = matchRepository.findByCompetitionIdAndRoundNoAndMatchNo(competitionId, roundNo, matchNo);
-        if (optionalMatch.isEmpty()) {
-            return null;
-        }
-        Match match = optionalMatch.get();
-        MatchDto matchDto = match.toDto();
-        return matchDto;
-    }
-
+    
     @Transactional
     public void deleteMatch(Long id) {
         matchRepository.deleteById(id);
     }
 
+    public List<Match> findByCompetition(Long competitionId) {
+        List<Match> matches = matchRepository.findByCompetitionId(competitionId);
+        return matches;
+    }
+
+    public Match findByIdAndCompetitionId(Long id, Long competitionId) {
+        return matchRepository.findByIdAndCompetitionId(id, competitionId).orElse(null);
+    }
+
+    public Match findOne(Long matchId) {
+        return matchRepository.findById(matchId).orElse(null);
+    }
+
+    public Match findOne(Long competitionId, Integer roundNo, Integer matchNo) {
+        return matchRepository.findByCompetitionIdAndRoundNoAndMatchNo(competitionId, roundNo, matchNo).orElse(null);
+    }
 }
