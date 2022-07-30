@@ -13,7 +13,7 @@ import javax.persistence.*;
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Table(name = "matches")
-@ToString
+@ToString(of = {"id", "score", "matchStatus", "roundNo", "matchNo"})
 @EqualsAndHashCode(of = "id")
 public class Match extends BaseTimeEntity {
 

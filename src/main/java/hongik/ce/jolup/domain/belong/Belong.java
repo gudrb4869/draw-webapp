@@ -11,7 +11,7 @@ import javax.persistence.*;
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@ToString(of = {"id", "belongType"})
+@ToString(of = {"id", "member", "room", "belongType"})
 @EqualsAndHashCode(of = "id")
 public class Belong extends BaseTimeEntity {
 
