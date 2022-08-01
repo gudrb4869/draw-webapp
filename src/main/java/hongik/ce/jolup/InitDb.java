@@ -2,8 +2,11 @@ package hongik.ce.jolup;
 
 import hongik.ce.jolup.domain.belong.Belong;
 import hongik.ce.jolup.domain.belong.BelongType;
+import hongik.ce.jolup.domain.competition.Competition;
+import hongik.ce.jolup.domain.competition.CompetitionType;
 import hongik.ce.jolup.domain.member.Member;
 import hongik.ce.jolup.domain.member.Role;
+import hongik.ce.jolup.domain.result.Result;
 import hongik.ce.jolup.domain.room.Room;
 import hongik.ce.jolup.domain.room.RoomSetting;
 import hongik.ce.jolup.service.*;
@@ -91,7 +94,7 @@ public class InitDb {
             }
 
             Room room1 = createRoom("private", RoomSetting.PRIVATE);
-            roomService.saveRoom(room1);
+            Long room1Id = roomService.saveRoom(room1);
 
             belongService.save(members.get(1).getId(), room1.getId(), BelongType.MASTER);
             for (int i = 2; i < 11; i++) {
@@ -99,7 +102,7 @@ public class InitDb {
             }
 
             Room room2 = createRoom("public", RoomSetting.PUBLIC);
-            roomService.saveRoom(room2);
+            Long room2Id = roomService.saveRoom(room2);
 
             belongService.save(members.get(1).getId(), room2.getId(), BelongType.MASTER);
             for (int i = 11; i < 20; i++) {
@@ -107,7 +110,7 @@ public class InitDb {
             }
 
             Room room3 = createRoom("test123", RoomSetting.PUBLIC);
-            roomService.saveRoom(room3);
+            Long room3Id = roomService.saveRoom(room3);
 
             belongService.save(members.get(1).getId(), room3.getId(), BelongType.MASTER);
             for (int i = 7; i < 14; i++) {

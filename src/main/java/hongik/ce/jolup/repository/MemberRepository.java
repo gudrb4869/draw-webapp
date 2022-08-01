@@ -11,6 +11,8 @@ import java.util.Optional;
 
 public interface MemberRepository extends JpaRepository<Member, Long> {
 
+    List<Member> findAllById(Iterable<Long> ids);
+
     List<Member> findByEmailIn(Collection<String> emails);
     Optional<Member> findByEmail(String email);
     boolean existsByEmail(String email);

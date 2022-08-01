@@ -5,6 +5,7 @@ import hongik.ce.jolup.domain.competition.CompetitionType;
 import hongik.ce.jolup.domain.room.Room;
 import hongik.ce.jolup.repository.CompetitionRepository;
 import hongik.ce.jolup.dto.CompetitionDto;
+import hongik.ce.jolup.repository.RoomRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -19,9 +20,11 @@ import java.util.stream.Collectors;
 public class CompetitionService {
 
     private final CompetitionRepository competitionRepository;
+    private final RoomRepository roomRepository;
 
     @Transactional
-    public Long save(String title, CompetitionType competitionType, Room room) {
+    public Long save(String title, CompetitionType competitionType, Long roomId) {
+        Room room = roomRepository.findById(roomId).orElse(null);
         Competition competition = Competition.builder().title(title).competitionType(competitionType).room(room).build();
         return competitionRepository.save(competition).getId();
     }

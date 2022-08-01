@@ -156,7 +156,7 @@ public class RoomController {
             if (i < emails.size())
                 inviteForm.addEmail(emails.get(i));
             else
-                inviteForm.addEmail(new String());
+                inviteForm.addEmail("");
         }
         log.info("inviteForm = {}", inviteForm);
         model.addAttribute("roomId", roomId);

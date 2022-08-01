@@ -79,6 +79,9 @@
                 <a class="btn btn-primary"
                    th:if="${match.home != null} and ${match.away != null} and ${myBelong ne null and (myBelong.belongType.name() eq 'MASTER')}"
                    th:href="@{|/rooms/${roomId}/competitions/${competitionId}/matches/${match.id}/update|}">수정</a>
+                <a class="btn btn-primary"
+                   th:if="${match.home != null} and ${match.away != null} and ${myBelong ne null and (myBelong.belongType.name() eq 'MASTER')}"
+                   th:href="@{|/rooms/${roomId}/competitions/${competitionId}/matches/${match.id}/update|}">초기화</a>
             </td>
         </tr>
         </tbody>

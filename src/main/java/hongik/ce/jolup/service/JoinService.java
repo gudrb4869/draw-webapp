@@ -26,24 +26,25 @@ public class JoinService {
     private final CompetitionRepository competitionRepository;
 
     @Transactional
-    public Long saveJoin(Join join) {
-        return joinRepository.save(join).getId();
+    public void save(List<Long> memberIds, Long competitionId) {
+        List<Member> members = memberRepository.findAllById(memberIds);
+        Competition competition = competitionRepository.findById(competitionId).orElse(null);
+        for (Member member : members) {
+            Result result = Result.builder().plays(0).win(0).draw(0).lose(0).goalFor(0)
+                    .goalAgainst(0).goalDifference(0).points(0).build();
+            Join join = Join.builder().member(member).competition(competition).result(result).build();
+            joinRepository.save(join);
+        }
     }
-    
+
     @Transactional
-    public Long save(Member member, Competition competition, Result result) {
-        Join join = Join.builder().member(member).competition(competition).result(result).build();
-        return joinRepository.save(join).getId();
+    public Long update() {
+        return null;
     }
     
     @Transactional
     public void deleteJoin(Long id) {
         joinRepository.deleteById(id);
-    }
-
-    @Transactional
-    public void saveJoins(Long competitionId, List<Member> members) {
-
     }
 
     public List<Join> findByMemberId(Long memberId) {

@@ -3,23 +3,27 @@ package hongik.ce.jolup.controller;
 import hongik.ce.jolup.domain.belong.Belong;
 import hongik.ce.jolup.domain.belong.BelongType;
 import hongik.ce.jolup.domain.competition.Competition;
+import hongik.ce.jolup.domain.competition.CompetitionType;
 import hongik.ce.jolup.domain.join.Join;
 import hongik.ce.jolup.domain.match.Match;
 import hongik.ce.jolup.domain.match.MatchStatus;
-import hongik.ce.jolup.domain.result.Result;
-import hongik.ce.jolup.domain.competition.CompetitionType;
-import hongik.ce.jolup.domain.score.Score;
 import hongik.ce.jolup.domain.member.Member;
+import hongik.ce.jolup.domain.result.Result;
+import hongik.ce.jolup.domain.score.Score;
 import hongik.ce.jolup.service.BelongService;
 import hongik.ce.jolup.service.CompetitionService;
 import hongik.ce.jolup.service.JoinService;
 import hongik.ce.jolup.service.MatchService;
-import lombok.RequiredArgsConstructor;
+import lombok.*;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
+
+import javax.validation.Valid;
+import javax.validation.constraints.NotNull;
 
 @Slf4j
 @Controller
@@ -39,7 +43,7 @@ public class MatchController {
                          @AuthenticationPrincipal Member member,
                          Model model) {
 
-        log.info("GET : updateMatch = {}", roomId, competitionId, matchId);
+        log.info("GET updateMatch : roomId = {}, competitionId = {}, matchId = {}", roomId, competitionId, matchId);
         Belong myBelong = belongService.findOne(member.getId(), roomId);
         if (myBelong == null || !myBelong.getBelongType().equals(BelongType.MASTER)) {
             return "error";
@@ -51,11 +55,22 @@ public class MatchController {
         }
 
         Match match = matchService.findByIdAndCompetitionId(matchId, competitionId);
-        if (match == null || match.getHome() == null || match.getAway() == null) {
+        if (match == null) {
             return "error";
         }
 
-        model.addAttribute("match", match);
+        MatchUpdateForm matchUpdateForm = MatchUpdateForm.builder().id(match.getId())
+                .homeScore(match.getScore().getHomeScore()).awayScore(match.getScore().getAwayScore()).build();
+        if (match.getHome() != null) {
+            matchUpdateForm.setHomeId(match.getHome().getId());
+            matchUpdateForm.setHome(match.getHome().getEmail() + "(" + match.getHome().getName() + ")");
+        }
+        if (match.getAway() != null) {
+            matchUpdateForm.setAwayId(match.getAway().getId());
+            matchUpdateForm.setAway(match.getAway().getEmail() + "(" + match.getAway().getName() + ")");
+        }
+        log.info("matchUpdateForm = {}", matchUpdateForm);
+        model.addAttribute("form", matchUpdateForm);
         return "match/update";
     }
 
@@ -63,9 +78,10 @@ public class MatchController {
     public String update(@PathVariable("roomId") Long roomId,
                          @PathVariable("competitionId") Long competitionId,
                          @PathVariable("matchId") Long matchId, @AuthenticationPrincipal Member member,
-                         Score score, MatchStatus matchStatus) {
+                         @ModelAttribute("form") @Valid MatchUpdateForm matchUpdateForm,
+                         BindingResult bindingResult) {
 
-        log.info("POST : updateMatch = {}", roomId, competitionId, matchId);
+        log.info("POST updateMatch : roomId = {}, competitionId = {}, matchId = {}", roomId, competitionId, matchId);
         Belong myBelong = belongService.findOne(member.getId(), roomId);
         if (myBelong == null || !myBelong.getBelongType().equals(BelongType.MASTER)) {
             return "error";
@@ -76,56 +92,60 @@ public class MatchController {
         }
 
         Match match = matchService.findByIdAndCompetitionId(matchId, competitionId);
-        if (match == null || match.getHome() == null || match.getAway() == null) {
+        if (match == null) {
             return "error";
         }
 
-        if (matchStatus.equals(MatchStatus.READY)) {
-            score.setHomeScore(0);
-            score.setAwayScore(0);
+        if (bindingResult.hasErrors()) {
+            return "match/update";
         }
 
-        Join join1 = joinService.findOne(extractBelong(match.getHome().getId(), roomId), competitionId);
-        Result result1 = join1.getResult();
-        Join join2 = joinService.findOne(extractBelong(match.getAway().getId(), roomId), competitionId);
-        Result result2 = join2.getResult();
+        /*if (matchStatus.equals(MatchStatus.READY)) {
+            score.setHomeScore(0);
+            score.setAwayScore(0);
+        }*/
 
-        if (match.getMatchStatus().equals(MatchStatus.END)) {
+        Join homeJoin = joinService.findOne(matchUpdateForm.getHomeId(), competitionId);
+        Result homeResult = homeJoin.getResult();
+        Join awayJoin = joinService.findOne(matchUpdateForm.getAwayId(), competitionId);
+        Result awayResult = awayJoin.getResult();
+
+        /*if (match.getMatchStatus().equals(MatchStatus.END)) {
             if (match.getScore().getHomeScore() > match.getScore().getAwayScore()) {
-                result1.setWin(result1.getWin() - 1);
-                result2.setLose(result2.getLose() - 1);
+                homeResult.setWin(homeResult.getWin() - 1);
+                awayResult.setLose(awayResult.getLose() - 1);
 
                 if (competition.getCompetitionType().equals(CompetitionType.TOURNAMENT) && !(score.getHomeScore() > score.getAwayScore())) {
                     resetTournamentMatch(match, competitionId);
                 }
 
             } else if (match.getScore().getHomeScore() < match.getScore().getAwayScore()) {
-                result1.setLose(result1.getLose() - 1);
-                result2.setWin(result2.getWin() - 1);
+                homeResult.setLose(homeResult.getLose() - 1);
+                awayResult.setWin(awayResult.getWin() - 1);
                 if (competition.getCompetitionType().equals(CompetitionType.TOURNAMENT) && !(score.getHomeScore() < score.getAwayScore())) {
                     resetTournamentMatch(match, competitionId);
                 }
             } else {
-                result1.setDraw(result1.getDraw() - 1);
-                result2.setDraw(result2.getDraw() - 1);
+                homeResult.setDraw(homeResult.getDraw() - 1);
+                awayResult.setDraw(awayResult.getDraw() - 1);
             }
-            result1.setPlays(result1.getPlays() - 1);
-            result1.setGoalFor(result1.getGoalFor() - match.getScore().getHomeScore());
-            result1.setGoalAgainst(result1.getGoalAgainst() - match.getScore().getAwayScore());
-            result1.setGoalDifference(result1.getGoalFor() - result1.getGoalAgainst());
-            result1.setPoints(result1.getWin() * 3 + result1.getDraw());
+            homeResult.setPlays(homeResult.getPlays() - 1);
+            homeResult.setGoalFor(homeResult.getGoalFor() - match.getScore().getHomeScore());
+            homeResult.setGoalAgainst(homeResult.getGoalAgainst() - match.getScore().getAwayScore());
+            homeResult.setGoalDifference(homeResult.getGoalFor() - homeResult.getGoalAgainst());
+            homeResult.setPoints(homeResult.getWin() * 3 + homeResult.getDraw());
 
-            result2.setPlays(result2.getPlays() - 1);
-            result2.setGoalFor(result2.getGoalFor() - match.getScore().getAwayScore());
-            result2.setGoalAgainst(result2.getGoalAgainst() - match.getScore().getHomeScore());
-            result2.setGoalDifference(result2.getGoalFor() - result2.getGoalAgainst());
-            result2.setPoints(result2.getWin() * 3 + result2.getDraw());
+            awayResult.setPlays(awayResult.getPlays() - 1);
+            awayResult.setGoalFor(awayResult.getGoalFor() - match.getScore().getAwayScore());
+            awayResult.setGoalAgainst(awayResult.getGoalAgainst() - match.getScore().getHomeScore());
+            awayResult.setGoalDifference(awayResult.getGoalFor() - awayResult.getGoalAgainst());
+            awayResult.setPoints(awayResult.getWin() * 3 + awayResult.getDraw());
         }
 
         if (matchStatus.equals(MatchStatus.END)) {
             if (score.getHomeScore() > score.getAwayScore()) {
-                result1.setWin(result1.getWin() + 1);
-                result2.setLose(result2.getLose() + 1);
+                homeResult.setWin(homeResult.getWin() + 1);
+                awayResult.setLose(awayResult.getLose() + 1);
                 if (competition.getCompetitionType().equals(CompetitionType.TOURNAMENT)) {
                     Match nextMatch = matchService.findOne(competitionId, match.getRoundNo() - 1, match.getMatchNo() / 2);
                     if (nextMatch != null) {
@@ -138,8 +158,8 @@ public class MatchController {
                     }
                 }
             } else if (score.getHomeScore() < score.getAwayScore()) {
-                result1.setLose(result1.getLose() + 1);
-                result2.setWin(result2.getWin() + 1);
+                homeResult.setLose(homeResult.getLose() + 1);
+                awayResult.setWin(awayResult.getWin() + 1);
                 if (competition.getCompetitionType().equals(CompetitionType.TOURNAMENT)) {
                     Match nextMatch = matchService.findOne(competitionId, match.getRoundNo() - 1, match.getMatchNo() / 2);
                     if (nextMatch != null) {
@@ -152,36 +172,48 @@ public class MatchController {
                     }
                 }
             } else {
-                result1.setDraw(result1.getDraw() + 1);
-                result2.setDraw(result2.getDraw() + 1);
+                homeResult.setDraw(homeResult.getDraw() + 1);
+                awayResult.setDraw(awayResult.getDraw() + 1);
             }
-            result1.setPlays(result1.getPlays() + 1);
-            result1.setGoalFor(result1.getGoalFor() + score.getHomeScore());
-            result1.setGoalAgainst(result1.getGoalAgainst() + score.getAwayScore());
-            result1.setGoalDifference(result1.getGoalFor() - result1.getGoalAgainst());
-            result1.setPoints(result1.getWin() * 3 + result1.getDraw());
+            homeResult.setPlays(homeResult.getPlays() + 1);
+            homeResult.setGoalFor(homeResult.getGoalFor() + score.getHomeScore());
+            homeResult.setGoalAgainst(homeResult.getGoalAgainst() + score.getAwayScore());
+            homeResult.setGoalDifference(homeResult.getGoalFor() - homeResult.getGoalAgainst());
+            homeResult.setPoints(homeResult.getWin() * 3 + homeResult.getDraw());
 
-            result2.setPlays(result2.getPlays() + 1);
-            result2.setGoalFor(result2.getGoalFor() + score.getAwayScore());
-            result2.setGoalAgainst(result2.getGoalAgainst() + score.getHomeScore());
-            result2.setGoalDifference(result2.getGoalFor() - result2.getGoalAgainst());
-            result2.setPoints(result2.getWin() * 3 + result2.getDraw());
+            awayResult.setPlays(awayResult.getPlays() + 1);
+            awayResult.setGoalFor(awayResult.getGoalFor() + score.getAwayScore());
+            awayResult.setGoalAgainst(awayResult.getGoalAgainst() + score.getHomeScore());
+            awayResult.setGoalDifference(awayResult.getGoalFor() - awayResult.getGoalAgainst());
+            awayResult.setPoints(awayResult.getWin() * 3 + awayResult.getDraw());
         }
         match.updateScore(score);
         match.updateMatchStatus(matchStatus);
         matchService.saveMatch(match);
-        join1.updateResult(result1);
-        join2.updateResult(result2);
-        joinService.saveJoin(join1);
-        joinService.saveJoin(join2);
+        homeJoin.updateResult(homeResult);
+        awayJoin.updateResult(awayResult);
+        joinService.saveJoin(homeJoin);
+        joinService.saveJoin(awayJoin);*/
         return "redirect:/rooms/{roomId}/competitions/{competitionId}";
     }
 
-    private Long extractBelong(Long memberId, Long roomId) {
-        Belong belong = belongService.findOne(memberId, roomId);
-        if (belong == null)
-            return null;
-        return belong.getId();
+    @ToString @Getter @Setter @Builder
+    @NoArgsConstructor @AllArgsConstructor
+    private static class MatchUpdateForm {
+        @NotNull
+        private Long id;
+
+        @NotNull
+        private Long homeId;
+        private String home;
+        private String away;
+        @NotNull
+        private Long awayId;
+
+        @NotNull
+        private Integer homeScore;
+        @NotNull
+        private Integer awayScore;
     }
 
     private void resetTournamentMatch(Match match, Long competitionId) {
