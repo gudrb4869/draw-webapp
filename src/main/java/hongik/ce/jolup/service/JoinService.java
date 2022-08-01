@@ -4,7 +4,6 @@ import hongik.ce.jolup.domain.competition.Competition;
 import hongik.ce.jolup.domain.join.Join;
 import hongik.ce.jolup.domain.member.Member;
 import hongik.ce.jolup.domain.result.Result;
-import hongik.ce.jolup.dto.JoinDto;
 import hongik.ce.jolup.repository.CompetitionRepository;
 import hongik.ce.jolup.repository.JoinRepository;
 import hongik.ce.jolup.repository.MemberRepository;
@@ -13,8 +12,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
-import java.util.Optional;
-import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
 @Service
@@ -38,7 +35,7 @@ public class JoinService {
     }
 
     @Transactional
-    public Long update() {
+    public Long update(Long homeId, Long awayId, Long competitionId) {
         return null;
     }
     

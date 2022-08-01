@@ -63,8 +63,8 @@
             <th></th>
         </tr>
         </thead>
-        <tbody th:each="matchs : ${hashMap.entrySet()}">
-        <tr th:each="match : ${matchs.getValue()}">
+        <tbody th:each="matches : ${hashMap.entrySet()}">
+        <tr th:each="match : ${matches.getValue()}">
             <td th:text="${match.roundNo}"></td>
             <td th:text="${match.matchNo}"></td>
             <td th:text="${match.home == null} ? ${match.roundNo + 1} + '-' + ${match.matchNo * 2} + '경기 승자'
@@ -77,11 +77,13 @@
             <td th:text="${match.matchStatus.description}"></td>
             <td>
                 <a class="btn btn-primary"
-                   th:if="${match.home != null} and ${match.away != null} and ${myBelong ne null and (myBelong.belongType.name() eq 'MASTER')}"
+                   th:if="${match.home != null} and ${match.away != null} and ${match.matchStatus.name() eq 'READY'}
+                    and ${myBelong ne null and (myBelong.belongType.name() eq 'MASTER')}"
                    th:href="@{|/rooms/${roomId}/competitions/${competitionId}/matches/${match.id}/update|}">수정</a>
                 <a class="btn btn-primary"
-                   th:if="${match.home != null} and ${match.away != null} and ${myBelong ne null and (myBelong.belongType.name() eq 'MASTER')}"
-                   th:href="@{|/rooms/${roomId}/competitions/${competitionId}/matches/${match.id}/update|}">초기화</a>
+                   th:if="${match.home != null} and ${match.away != null} and ${match.matchStatus.name() eq 'END'}
+                    and ${myBelong ne null and (myBelong.belongType.name() eq 'MASTER')}"
+                   th:href="'javascript:init('+${roomId}+', '+${competitionId}+', '+${match.id}+')'">초기화</a>
             </td>
         </tr>
         </tbody>
@@ -136,6 +138,15 @@
     <div th:replace="fragments/footer" :: footer />
 </div> <!-- /container -->
 </body>
+<script>
+    function init(roomId, competitionId, matchId) {
+        var form = document.createElement("form");
+        form.setAttribute("method", "post");
+        form.setAttribute("action", "/rooms/" + roomId + "/competitions/" + competitionId + "/matches/" + matchId + "/init  ");
+        document.body.appendChild(form);
+        form.submit();
+    }
+</script>
 </html>
 <!--
 <!DOCTYPE HTML>

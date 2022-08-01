@@ -11,6 +11,7 @@ import hongik.ce.jolup.dto.MatchDto;
 import hongik.ce.jolup.repository.CompetitionRepository;
 import hongik.ce.jolup.repository.JoinRepository;
 import hongik.ce.jolup.repository.MatchRepository;
+import hongik.ce.jolup.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -23,19 +24,13 @@ import java.util.stream.Collectors;
 @Transactional(readOnly = true)
 public class MatchService {
 
-    private final JoinRepository joinRepository;
+    private final MemberRepository memberRepository;
     private final CompetitionRepository competitionRepository;
     private final MatchRepository matchRepository;
 
     @Transactional
-    public Long saveMatch(Match match) {
-        return matchRepository.save(match).getId();
-    }
-
-    @Transactional
-    public void saveMatches(Long competitionId) {
-        List<Member> members = joinRepository.findByCompetitionId(competitionId).stream()
-                .map(Join::getMember).collect(Collectors.toList());
+    public void saveMatches(List<Long> memberIds, Long competitionId) {
+        List<Member> members = memberRepository.findAllById(memberIds);
         Competition competition = competitionRepository.findById(competitionId).orElse(null);
 
         assert competition != null;
@@ -120,12 +115,13 @@ public class MatchService {
     }
 
     @Transactional
-    public Long updateMatch(Long id) {
-        Match match = matchRepository.findById(id).orElse(null);
+    public void update(Long matchId, MatchStatus matchStatus, Integer homeScore, Integer awayScore) {
+        Match match = matchRepository.findById(matchId).orElse(null);
         if (match == null) {
-            return null;
+            return;
         }
-        return match.getId();
+        Score score = Score.builder().homeScore(homeScore).awayScore(awayScore).build();
+        match.update(score, matchStatus);
     }
     
     @Transactional

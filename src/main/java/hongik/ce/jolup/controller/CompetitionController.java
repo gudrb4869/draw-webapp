@@ -71,7 +71,7 @@ public class CompetitionController {
                                     BindingResult bindingResult,
                                     @AuthenticationPrincipal Member member) {
 
-        log.info("POST : create, competitionForm = {}", competitionForm);
+        log.info("POST : createCompetition. competitionForm = {}", competitionForm);
 
         List<Belong> belongs = belongService.findByRoomId(roomId);
         Belong myBelong = belongs.stream()
@@ -113,7 +113,7 @@ public class CompetitionController {
         log.info("saveJoin End");
 
         log.info("match Create Start");
-        matchService.saveMatches(competitionId);
+        matchService.saveMatches(memberIds, competitionId);
         log.info("match Create Finish");
         return "redirect:/rooms/{roomId}";
     }
@@ -124,7 +124,7 @@ public class CompetitionController {
                          @AuthenticationPrincipal Member member,
                          Model model) {
 
-        log.info("CompetitionController GET /{competitionId}");
+        log.info("GET : CompetitionDetail. competitionId = {}", competitionId);
 
         Belong myBelong = belongService.findOne(member.getId(), roomId);
         if (myBelong == null) {
@@ -170,7 +170,7 @@ public class CompetitionController {
                                     @PathVariable("competitionId") Long competitionId,
                                     @AuthenticationPrincipal Member member) {
 
-        log.info("CompetitionController DELETE /{competitionId}");
+        log.info("DELETE : competitionId = {}", competitionId);
 
         Competition competition = competitionService.findOne(competitionId, roomId);
         if (competition == null) {
