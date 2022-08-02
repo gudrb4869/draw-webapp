@@ -13,8 +13,6 @@ import javax.persistence.Embeddable;
 @AllArgsConstructor
 @Builder
 public class Result {
-    @Column(nullable = false)
-    private Integer plays;
 
     @Column(nullable = false)
     private Integer win;
@@ -31,9 +29,4 @@ public class Result {
     @Column(nullable = false)
     private Integer goalAgainst;
 
-    @Column(nullable = false)
-    private Integer goalDifference;
-
-    @Column(nullable = false)
-    private Integer points;
 }

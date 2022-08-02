@@ -72,8 +72,7 @@ public class BelongService {
     }
 
     public List<Belong> findByMemberId(Long memberId) {
-        List<Belong> belongs = belongRepository.findByMemberId(memberId);
-        return belongs;
+        return belongRepository.findByMemberId(memberId);
     }
 
     public Belong findByIdAndRoomId(Long id, Long roomId) {
@@ -85,7 +84,6 @@ public class BelongService {
     }
 
     public List<Belong> findByRoomId(Long roomId) {
-        List<Belong> belongs = belongRepository.findByRoomId(roomId);
-        return belongs;
+        return belongRepository.findByRoomId(roomId);
     }
 }

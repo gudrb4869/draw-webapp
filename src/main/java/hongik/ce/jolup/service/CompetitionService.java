@@ -53,8 +53,7 @@ public class CompetitionService {
     }
 
     public List<Competition> findCompetitions(Long roomId) {
-        List<Competition> competitions = competitionRepository.findByRoomId(roomId);
-        return competitions;
+        return competitionRepository.findByRoomId(roomId);
     }
 
     public Competition findOne(Long competitionId, Long roomId) {

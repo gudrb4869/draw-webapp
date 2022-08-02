@@ -75,7 +75,7 @@ public class MemberService implements UserDetailsService {
 
     private void validateDuplicateUser(String email) {
         Optional<Member> optionalMember = memberRepository.findByEmail(email);
-        if (!optionalMember.isEmpty()) {
+        if (optionalMember.isPresent()) {
             throw new IllegalStateException("이미 존재하는 아이디입니다!");
         }
     }
@@ -89,7 +89,6 @@ public class MemberService implements UserDetailsService {
     }
 
     public List<Member> findMembers(List<String> emails) {
-        List<Member> members = memberRepository.findByEmailIn(emails);
-        return members;
+        return memberRepository.findByEmailIn(emails);
     }
 }

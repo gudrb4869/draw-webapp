@@ -130,8 +130,7 @@ public class MatchService {
     }
 
     public List<Match> findByCompetition(Long competitionId) {
-        List<Match> matches = matchRepository.findByCompetitionId(competitionId);
-        return matches;
+        return matchRepository.findByCompetitionId(competitionId);
     }
 
     public Match findByIdAndCompetitionId(Long id, Long competitionId) {

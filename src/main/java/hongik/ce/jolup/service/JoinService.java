@@ -27,16 +27,20 @@ public class JoinService {
         List<Member> members = memberRepository.findAllById(memberIds);
         Competition competition = competitionRepository.findById(competitionId).orElse(null);
         for (Member member : members) {
-            Result result = Result.builder().plays(0).win(0).draw(0).lose(0).goalFor(0)
-                    .goalAgainst(0).goalDifference(0).points(0).build();
+            Result result = Result.builder().win(0).draw(0).lose(0).goalFor(0).goalAgainst(0).build();
             Join join = Join.builder().member(member).competition(competition).result(result).build();
             joinRepository.save(join);
         }
     }
 
     @Transactional
-    public Long update(Long homeId, Long awayId, Long competitionId) {
-        return null;
+    public void update(Long memberId, Long competitionId, Result result) {
+        Join join = joinRepository.findByMemberIdAndCompetitionId(memberId, competitionId).orElse(null);
+        if (join == null) {
+            return;
+        }
+        join.updateResult(result);
+
     }
     
     @Transactional
@@ -45,13 +49,11 @@ public class JoinService {
     }
 
     public List<Join> findByMemberId(Long memberId) {
-        List<Join> joins = joinRepository.findByMemberId(memberId);
-        return joins;
+        return joinRepository.findByMemberId(memberId);
     }
 
     public List<Join> findByCompetitionId(Long competitionId) {
-        List<Join> joins = joinRepository.findByCompetitionId(competitionId);
-        return joins;
+        return joinRepository.findByCompetitionId(competitionId);
     }
 
     public Join findOne(Long memberId, Long competitionId) {
@@ -59,7 +61,6 @@ public class JoinService {
     }
 
     public List<Join> findByCompetitionSort(Long competitionId) {
-        List<Join> joins = joinRepository.findByCompetitionIdSort(competitionId);
-        return joins;
+        return joinRepository.findByCompetitionIdSort(competitionId);
     }
 }

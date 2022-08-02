@@ -101,24 +101,24 @@
                 <th>승</th>
                 <th>무</th>
                 <th>패</th>
+                <th>승점</th>
                 <th>득점</th>
                 <th>실점</th>
-                <th>득실차</th>
-                <th>승점</th>
+                <th>골득실</th>
             </tr>
             </thead>
             <tbody>
-            <tr th:each="join, i : ${joins}">
-                <td th:text="${i.index+1}"></td>
+            <tr th:each="join : ${joins}">
+                <td th:text="${joinStat.count}"></td>
                 <td th:text="${join.member.email + '('+ join.member.name + ')'}"></td>
-                <td th:text="${join.result.plays}"></td>
+                <td th:text="${join.result.win} + ${join.result.draw} + ${join.result.lose}"></td>
                 <td th:text="${join.result.win}"></td>
                 <td th:text="${join.result.draw}"></td>
                 <td th:text="${join.result.lose}"></td>
+                <td th:text="${join.result.win * 3} + ${join.result.draw}"></td>
                 <td th:text="${join.result.goalFor}"></td>
                 <td th:text="${join.result.goalAgainst}"></td>
-                <td th:text="${join.result.goalDifference}"></td>
-                <td th:text="${join.result.points}"></td>
+                <td th:text="${join.result.goalFor} - ${join.result.goalAgainst}"></td>
             </tr>
             </tbody>
         </table>

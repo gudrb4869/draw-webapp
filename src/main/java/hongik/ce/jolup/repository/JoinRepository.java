@@ -22,7 +22,8 @@ public interface JoinRepository extends JpaRepository<Join, Long> {
 
         @Query("SELECT j from Join j join fetch j.competition join fetch j.member" +
                 " where j.competition.id = :competitionId" +
-                " order by j.result.points desc, j.result.goalDifference desc, j.result.goalFor desc, j.member.name asc")
+                " order by j.result.win * 3 + j.result.draw desc, " +
+                "j.result.goalFor - j.result.goalAgainst desc, j.result.goalFor desc, j.member.name asc")
         List<Join> findByCompetitionIdSort(@Param("competitionId") Long competitionId);
 
 }
