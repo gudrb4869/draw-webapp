@@ -33,11 +33,11 @@ public class MatchController {
     private final CompetitionService competitionService;
 
     @GetMapping("/{matchId}/update")
-    public String update(@PathVariable("roomId") Long roomId,
-                         @PathVariable("competitionId") Long competitionId,
-                         @PathVariable("matchId") Long matchId,
-                         @AuthenticationPrincipal Member member,
-                         Model model) {
+    public String updateForm(@PathVariable("roomId") Long roomId,
+                             @PathVariable("competitionId") Long competitionId,
+                             @PathVariable("matchId") Long matchId,
+                             @AuthenticationPrincipal Member member,
+                             Model model) {
 
         log.info("GET updateMatch : roomId = {}, competitionId = {}, matchId = {}", roomId, competitionId, matchId);
         Belong myBelong = belongService.findOne(member.getId(), roomId);
@@ -55,7 +55,7 @@ public class MatchController {
             return "error";
         }
 
-        MatchUpdateForm form = MatchUpdateForm.builder().matchId(match.getId())
+        UpdateMatchForm form = UpdateMatchForm.builder().matchId(match.getId())
                 .homeScore(match.getScore().getHomeScore()).awayScore(match.getScore().getAwayScore()).build();
         if (match.getHome() != null) {
             form.setHomeId(match.getHome().getId());
@@ -67,14 +67,14 @@ public class MatchController {
         }
         log.info("matchUpdateForm = {}", form);
         model.addAttribute("form", form);
-        return "match/update";
+        return "matches/update";
     }
 
     @PostMapping("/{matchId}/update")
     public String update(@PathVariable("roomId") Long roomId,
                          @PathVariable("competitionId") Long competitionId,
                          @PathVariable("matchId") Long matchId, @AuthenticationPrincipal Member member,
-                         @ModelAttribute("form") @Valid MatchUpdateForm form,
+                         @ModelAttribute("form") @Valid UpdateMatchForm form,
                          BindingResult bindingResult) {
 
         log.info("POST updateMatch : roomId = {}, competitionId = {}, matchId = {}", roomId, competitionId, matchId);
@@ -93,7 +93,7 @@ public class MatchController {
         }
 
         if (bindingResult.hasErrors()) {
-            return "match/update";
+            return "matches/update";
         }
 
         log.info("matchUpdateForm = {}", form);
@@ -131,7 +131,7 @@ public class MatchController {
 
     @ToString @Getter @Setter @Builder
     @NoArgsConstructor @AllArgsConstructor
-    private static class MatchUpdateForm {
+    private static class UpdateMatchForm {
 
         @NotNull
         private Long matchId;

@@ -28,16 +28,17 @@ public class MemberController {
     private final MemberService memberService;
 
     @GetMapping("/signup")
-    public String signup(Model model) {
+    public String signupForm(Model model) {
         if (isAuthenticated()) {
             return "redirect:/";
         }
-        model.addAttribute("form", new MemberCreateForm());
+        model.addAttribute("memberForm", new CreateMemberForm());
         return "members/signup";
     }
 
     @PostMapping("/signup")
-    public String signup(@ModelAttribute("form") @Valid MemberCreateForm form, BindingResult result, Model model) {
+    public String signup(@ModelAttribute("memberForm") @Valid CreateMemberForm form,
+                         BindingResult result, Model model) {
 
         if (result.hasErrors()) {
             return "members/signup";
@@ -61,7 +62,8 @@ public class MemberController {
     }
 
     @GetMapping("/logout")
-    public String logoutPage(HttpServletRequest request, HttpServletResponse response) {
+    public String logout(HttpServletRequest request, HttpServletResponse response) {
+
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         if (authentication != null) {
             new SecurityContextLogoutHandler().logout(request, response, authentication);
@@ -70,15 +72,15 @@ public class MemberController {
     }
 
     @GetMapping("/edit")
-    public String edit(Model model, @AuthenticationPrincipal Member member) {
-        model.addAttribute("form", new MemberUpdateForm(member.getName()));
+    public String updateForm(Model model, @AuthenticationPrincipal Member member) {
+        model.addAttribute("memberForm", new UpdateMemberForm(member.getName()));
         return "members/edit";
     }
 
     @PostMapping("/edit")
-    public String edit(@ModelAttribute("form") @Valid MemberUpdateForm form,
-                       BindingResult result, @AuthenticationPrincipal Member member,
-                       Model model) {
+    public String update(@ModelAttribute("memberForm") @Valid UpdateMemberForm form,
+                         BindingResult result, @AuthenticationPrincipal Member member,
+                         Model model) {
         if (result.hasErrors()) {
             return "members/edit";
         }
@@ -102,7 +104,7 @@ public class MemberController {
 
     @Getter @Setter @ToString @Builder
     @NoArgsConstructor @AllArgsConstructor
-    private static class MemberCreateForm {
+    private static class CreateMemberForm {
         @NotBlank(message = "아이디는 필수 입력 값입니다!")
 //    @Pattern(regexp = "^(?:\\w+\\.?)*\\w+@(?:\\w+\\.)+\\w+$", message = "이메일 형식이 올바르지 않습니다.")
         private String email;
@@ -120,7 +122,7 @@ public class MemberController {
 
     @Getter @Setter @Builder @ToString
     @NoArgsConstructor @AllArgsConstructor
-    private static class MemberUpdateForm {
+    private static class UpdateMemberForm {
         @NotBlank(message = "비밀번호는 필수 입력 값입니다!")
 //    @Pattern(regexp = "(?=.*[0-9])(?=.*[a-zA-Z])(?=.*\\W)(?=\\S+$).{8,16}", message = "비밀번호는 8~16자 영문 대 소문자, 숫자, 특수문자를 사용하세요.")
         private String password_current;
@@ -132,7 +134,7 @@ public class MemberController {
         @NotBlank(message = "이름은 필수 입력 값입니다!")
         private String name;
 
-        public MemberUpdateForm(String name) {
+        public UpdateMemberForm(String name) {
             this.name = name;
         }
     }

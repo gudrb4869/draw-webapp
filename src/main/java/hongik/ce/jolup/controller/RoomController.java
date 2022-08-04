@@ -38,28 +38,28 @@ public class RoomController {
     private final CompetitionService competitionService;
 
     @GetMapping
-    public String rooms(Model model, @AuthenticationPrincipal Member member) {
+    public String roomList(Model model, @AuthenticationPrincipal Member member) {
         log.info("room_list");
         List<Belong> belongs = belongService.findByMemberId(member.getId());
         model.addAttribute("belongs", belongs);
-        return "room/list";
+        return "rooms/list";
     }
 
     @GetMapping("/create")
-    public String createRoom(Model model) {
+    public String createForm(Model model) {
         model.addAttribute("roomForm", new CreateRoomForm());
-        return "room/create";
+        return "rooms/create";
     }
 
     @PostMapping("/create")
-    public String createRoom(@ModelAttribute("roomForm") @Valid CreateRoomForm roomForm,
-                             BindingResult result,
-                             @AuthenticationPrincipal Member member) {
+    public String create(@ModelAttribute("roomForm") @Valid CreateRoomForm roomForm,
+                         BindingResult result,
+                         @AuthenticationPrincipal Member member) {
 
         log.info("roomForm = {}", roomForm);
 
         if (result.hasErrors()) {
-            return "room/create";
+            return "rooms/create";
         }
 
         Room room = Room.builder().title(roomForm.getTitle()).roomSetting(roomForm.getRoomSetting()).build();
@@ -92,11 +92,11 @@ public class RoomController {
         model.addAttribute("room", room);
         model.addAttribute("belongs", belongs);
         model.addAttribute("competitions", competitions);
-        return "room/detail";
+        return "rooms/detail";
     }
 
     @DeleteMapping("/{roomId}")
-    public String deleteRoom(@PathVariable Long roomId, @AuthenticationPrincipal Member member) {
+    public String delete(@PathVariable Long roomId, @AuthenticationPrincipal Member member) {
         log.info("delete room");
         Belong belong = belongService.findOne(member.getId(), roomId);
         if (belong == null || !belong.getBelongType().equals(BelongType.MASTER)) {
@@ -109,7 +109,7 @@ public class RoomController {
     }
 
     @GetMapping("/{roomId}/edit")
-    public String editRoom (@PathVariable Long roomId, Model model, @AuthenticationPrincipal Member member) {
+    public String updateForm(@PathVariable Long roomId, Model model, @AuthenticationPrincipal Member member) {
         Belong belong = belongService.findOne(member.getId(), roomId);
         if (belong == null || !belong.getBelongType().equals(BelongType.MASTER)) {
             return "error";
@@ -117,21 +117,21 @@ public class RoomController {
 
         Room room = belong.getRoom();
         model.addAttribute("roomForm", new UpdateRoomForm(room.getId(), room.getTitle(), room.getRoomSetting()));
-        return "room/edit";
+        return "rooms/edit";
     }
 
     @PostMapping("/{roomId}/edit")
-    public String edit(@PathVariable Long roomId,
-                       @ModelAttribute("roomForm") @Valid UpdateRoomForm roomForm,
-                       BindingResult result,
-                       @AuthenticationPrincipal Member member) {
+    public String update(@PathVariable Long roomId,
+                         @ModelAttribute("roomForm") @Valid UpdateRoomForm roomForm,
+                         BindingResult result,
+                         @AuthenticationPrincipal Member member) {
         Belong belong = belongService.findOne(member.getId(), roomId);
         if (belong == null || !belong.getBelongType().equals(BelongType.MASTER)) {
             return "error";
         }
 
         if (result.hasErrors()) {
-            return "room/edit";
+            return "rooms/edit";
         }
         log.info("room = {}", roomForm);
         roomService.updateRoom(roomForm.getId(), roomForm.getTitle(), roomForm.getRoomSetting());
@@ -139,11 +139,11 @@ public class RoomController {
     }
 
     @GetMapping("/{roomId}/invite")
-    public String inviteMember(@PathVariable Long roomId,
-                               @RequestParam(name = "count", defaultValue = "1") Long count,
-                               @RequestParam(name = "emails", defaultValue = "") List<String> emails,
-                               @AuthenticationPrincipal Member member,
-                               Model model) {
+    public String inviteForm(@PathVariable Long roomId,
+                             @RequestParam(name = "count", defaultValue = "1") Long count,
+                             @RequestParam(name = "emails", defaultValue = "") List<String> emails,
+                             @AuthenticationPrincipal Member member,
+                             Model model) {
 
         Belong belong = belongService.findOne(member.getId(), roomId);
         if (belong == null || belong.getBelongType().equals(BelongType.USER)) {
@@ -161,15 +161,15 @@ public class RoomController {
         log.info("inviteForm = {}", inviteForm);
         model.addAttribute("roomId", roomId);
         model.addAttribute("inviteForm", inviteForm);
-        return "room/invite";
+        return "rooms/invite";
     }
 
     @PostMapping("/{roomId}/invite")
-    public String inviteMember(@PathVariable Long roomId,
-                               @Valid InviteForm inviteForm,
-                               BindingResult result,
-                               @AuthenticationPrincipal Member member,
-                               Model model) {
+    public String invite(@PathVariable Long roomId,
+                         @Valid InviteForm inviteForm,
+                         BindingResult result,
+                         @AuthenticationPrincipal Member member,
+                         Model model) {
 
         List<Belong> belongs = belongService.findByRoomId(roomId);
         Belong belong = belongs.stream().filter(b -> b.getMember().getId().equals(member.getId()))
@@ -199,7 +199,7 @@ public class RoomController {
         }
 
         if (result.hasErrors()) {
-            return "/room/invite";
+            return "/rooms/invite";
         }
 
         log.info("초대");

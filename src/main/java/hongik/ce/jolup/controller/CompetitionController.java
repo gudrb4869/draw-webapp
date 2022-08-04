@@ -36,13 +36,13 @@ public class CompetitionController {
     private final BelongService belongService;
 
     @GetMapping("/create")
-    public String createCompetition(@PathVariable("roomId") Long roomId,
-                                    @RequestParam(name = "title", defaultValue = "") String title,
-                                    @RequestParam(name = "competitionType", defaultValue = "LEAGUE") CompetitionType competitionType,
-                                    @RequestParam(name = "headCount", defaultValue = "2") Long headCount,
-                                    @RequestParam(name = "emails", defaultValue = ",") List<String> emails,
-                                    @AuthenticationPrincipal Member member,
-                                    Model model) {
+    public String createForm(@PathVariable("roomId") Long roomId,
+                             @RequestParam(name = "title", defaultValue = "") String title,
+                             @RequestParam(name = "competitionType", defaultValue = "LEAGUE") CompetitionType competitionType,
+                             @RequestParam(name = "headCount", defaultValue = "2") Long headCount,
+                             @RequestParam(name = "emails", defaultValue = ",") List<String> emails,
+                             @AuthenticationPrincipal Member member,
+                             Model model) {
 
         Belong myBelong = belongService.findOne(member.getId(), roomId);
         if (myBelong == null || !myBelong.getBelongType().equals(BelongType.MASTER)) {
@@ -59,14 +59,14 @@ public class CompetitionController {
         }
         log.info("GET: create, competitionForm = {}", competitionForm);
         model.addAttribute("form", competitionForm);
-        return "competition/create";
+        return "competitions/create";
     }
 
     @PostMapping("/create")
-    public String createCompetition(@PathVariable("roomId") Long roomId,
-                                    @ModelAttribute("form") @Valid CreateCompetitionForm competitionForm,
-                                    BindingResult bindingResult,
-                                    @AuthenticationPrincipal Member member) {
+    public String create(@PathVariable("roomId") Long roomId,
+                         @ModelAttribute("form") @Valid CreateCompetitionForm competitionForm,
+                         BindingResult bindingResult,
+                         @AuthenticationPrincipal Member member) {
 
         log.info("POST : createCompetition. competitionForm = {}", competitionForm);
 
@@ -78,18 +78,18 @@ public class CompetitionController {
         }
 
         if (bindingResult.hasErrors()) {
-            return "competition/create";
+            return "competitions/create";
         }
 
         List<String> emails = competitionForm.getEmails();
         if (competitionForm.getHeadCount() != emails.size()) {
             bindingResult.addError(new ObjectError("form", null, null, "대회 참가 인원과 참가자 아이디의 갯수가 일치하지 않습니다."));
-            return "competition/create";
+            return "competitions/create";
         }
 
         if (emails.size() != emails.stream().distinct().count()) {
             bindingResult.addError(new ObjectError("form", null, null, "동일한 아이디를 입력할 수 없습니다."));
-            return "competition/create";
+            return "competitions/create";
         }
 
         List<Long> memberIds = new ArrayList<>();
@@ -99,7 +99,7 @@ public class CompetitionController {
                     .filter(b -> b.getMember().getEmail().equals(email)).findFirst().orElse(null);
             if (belong == null) {
                 bindingResult.addError(new FieldError("form", "emails[" + i + "]", email, false, null, null, "존재하지 않는 회원입니다."));
-                return "competition/create";
+                return "competitions/create";
             }
             memberIds.add(belong.getMember().getId());
         }
@@ -116,10 +116,10 @@ public class CompetitionController {
     }
 
     @GetMapping("/{competitionId}")
-    public String detail(@PathVariable("roomId") Long roomId,
-                         @PathVariable("competitionId") Long competitionId,
-                         @AuthenticationPrincipal Member member,
-                         Model model) {
+    public String competitionDetail(@PathVariable("roomId") Long roomId,
+                                    @PathVariable("competitionId") Long competitionId,
+                                    @AuthenticationPrincipal Member member,
+                                    Model model) {
 
         log.info("GET : CompetitionDetail. competitionId = {}", competitionId);
 
@@ -159,13 +159,13 @@ public class CompetitionController {
         model.addAttribute("myJoin", join);
         model.addAttribute("myBelong", myBelong);
         model.addAttribute("joins", joins);
-        return "competition/detail";
+        return "competitions/detail";
     }
 
     @DeleteMapping("/{competitionId}")
-    public String deleteCompetition(@PathVariable("roomId") Long roomId,
-                                    @PathVariable("competitionId") Long competitionId,
-                                    @AuthenticationPrincipal Member member) {
+    public String delete(@PathVariable("roomId") Long roomId,
+                         @PathVariable("competitionId") Long competitionId,
+                         @AuthenticationPrincipal Member member) {
 
         log.info("DELETE : competitionId = {}", competitionId);
 
@@ -184,10 +184,10 @@ public class CompetitionController {
     }
 
     @GetMapping("/{competitionId}/edit")
-    public String editCompetition(@PathVariable("roomId") Long roomId,
-                                  @PathVariable("competitionId") Long competitionId,
-                                  @AuthenticationPrincipal Member member,
-                                  Model model) {
+    public String updateForm(@PathVariable("roomId") Long roomId,
+                             @PathVariable("competitionId") Long competitionId,
+                             @AuthenticationPrincipal Member member,
+                             Model model) {
         Competition competition = competitionService.findOne(competitionId, roomId);
         log.info("GET : editCompetition, competition = {}", competition);
         if (competition == null) {
@@ -198,21 +198,21 @@ public class CompetitionController {
         if (myBelong == null || !myBelong.getBelongType().equals(BelongType.MASTER)) {
             return "error";
         }
-        UpdateCompetitionForm competitionForm = new UpdateCompetitionForm(competition.getId(), competition.getTitle());
-        model.addAttribute("form", competitionForm);
-        return "competition/edit";
+
+        model.addAttribute("form", new UpdateCompetitionForm(competition.getId(), competition.getTitle()));
+        return "competitions/edit";
     }
 
     @PostMapping("/{competitionId}/edit")
-    public String edit(@PathVariable("roomId") Long roomId,
-                       @PathVariable("competitionId") Long competitionId,
-                       @AuthenticationPrincipal Member member,
-                       @ModelAttribute("form") @Valid UpdateCompetitionForm competitionForm,
-                       BindingResult result) {
+    public String update(@PathVariable("roomId") Long roomId,
+                         @PathVariable("competitionId") Long competitionId,
+                         @AuthenticationPrincipal Member member,
+                         @ModelAttribute("form") @Valid UpdateCompetitionForm competitionForm,
+                         BindingResult result) {
         log.info("POST : UpdateCompetitionForm = {}", competitionForm);
 
         if (result.hasErrors()) {
-            return "competition/edit";
+            return "competitions/edit";
         }
 
         if (competitionService.findOne(competitionId, roomId) == null) {

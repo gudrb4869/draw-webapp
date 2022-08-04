@@ -27,8 +27,8 @@ public class BelongController {
     private final BelongService belongService;
 
     @GetMapping("/{belongId}")
-    public String editRole(@PathVariable Long roomId, @PathVariable Long belongId,
-                           @AuthenticationPrincipal Member member, Model model) {
+    public String updateForm(@PathVariable Long roomId, @PathVariable Long belongId,
+                             @AuthenticationPrincipal Member member, Model model) {
         Belong myBelong = belongService.findOne(member.getId(), roomId);
         if (myBelong == null || !myBelong.getBelongType().equals(BelongType.MASTER)) {
             return "error";
@@ -39,22 +39,23 @@ public class BelongController {
             return "error";
         }
 
-        model.addAttribute("belongForm", new BelongForm(belong.getId(), belong.getMember().getName(), belong.getBelongType()));
-        return "belong/edit";
+        model.addAttribute("belongForm",
+                new UpdateBelongForm(belong.getId(), belong.getMember().getName(), belong.getBelongType()));
+        return "belongs/edit";
     }
 
     @PostMapping("/{belongId}")
-    public String edit(@PathVariable Long roomId, @PathVariable Long belongId,
-                       @AuthenticationPrincipal Member member,
-                       @ModelAttribute @Valid BelongForm belongForm, BindingResult result) {
+    public String update(@PathVariable Long roomId, @PathVariable Long belongId,
+                         @AuthenticationPrincipal Member member,
+                         @ModelAttribute("belongForm") @Valid UpdateBelongForm belongForm, BindingResult result) {
 
         log.info("POST : edit Belong, belongForm = {}", belongForm);
         if (result.hasErrors()) {
-            return "belong/edit";
+            return "belongs/edit";
         }
 
         Belong myBelong = belongService.findOne(member.getId(), roomId);
-        if (myBelong == null || !myBelong.getBelongType().equals(BelongType.MASTER)) {
+        if (myBelong == null || !belongId.equals(belongForm.getId()) || !myBelong.getBelongType().equals(BelongType.MASTER)) {
             return "error";
         }
 
@@ -65,7 +66,7 @@ public class BelongController {
 
     @Getter @Setter @ToString
     @NoArgsConstructor @AllArgsConstructor
-    static class BelongForm {
+    static class UpdateBelongForm {
 
         @NotNull
         private Long id;
