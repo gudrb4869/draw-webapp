@@ -11,7 +11,6 @@ import hongik.ce.jolup.domain.room.Room;
 import hongik.ce.jolup.domain.room.RoomSetting;
 import hongik.ce.jolup.service.*;
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -88,9 +87,7 @@ public class InitDb {
 
             List<Member> members = new ArrayList<>();
             for (int i = 0; i < 20; i++) {
-                Member member = createMember(i);
-                members.add(member);
-                memberService.saveMember(member);
+                members.add(memberService.saveMember(Integer.toString(i), "1", "user" + i));
             }
 
             Room room1 = createRoom("private", RoomSetting.PRIVATE);
@@ -124,15 +121,6 @@ public class InitDb {
         }
 
         private Member createMember(int i) {
-//            BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
-//            Member member = Member.builder()
-//                    .email(Integer.toString(i))
-//                    .password(encoder.encode("1"))
-//                    .name("user" + i)
-//                    .role(Role.USER)
-//                    .build();
-//            return member;
-
             Member member = Member.builder()
                     .email(Integer.toString(i))
                     .password("1")

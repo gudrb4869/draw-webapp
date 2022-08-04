@@ -18,8 +18,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
-@RequiredArgsConstructor
 @Service
+@RequiredArgsConstructor
 @Transactional(readOnly = true)
 public class JoinService {
 
@@ -40,7 +40,7 @@ public class JoinService {
     }
 
     @Transactional
-    public void update(Long homeId, Long awayId, Long competitionId, Long matchId, Integer homeScore, Integer awayScore, Boolean status) {
+    public void update(Long homeId, Long awayId, Long competitionId, Long matchId, Integer homeScore, Integer awayScore, MatchStatus matchStatus) {
         Join homeJoin = joinRepository.findByMemberIdAndCompetitionId(homeId, competitionId).orElse(null);
         Join awayJoin = joinRepository.findByMemberIdAndCompetitionId(awayId, competitionId).orElse(null);
         Competition competition = competitionRepository.findById(competitionId).orElse(null);
@@ -78,36 +78,18 @@ public class JoinService {
             awayResult.subGoalAgainst(match.getScore().getHomeScore());
         }
 
-        if (status) {
+        if (matchStatus.equals(MatchStatus.END)) {
             if (homeScore > awayScore) {
                 homeResult.addWin(1);
                 awayResult.addLose(1);
                 if (competition.getCompetitionType().equals(CompetitionType.TOURNAMENT)) {
-                    Match nextMatch = matchRepository
-                            .findByCompetitionIdAndRoundNoAndMatchNo(competitionId, match.getRoundNo() - 1, match.getMatchNo() / 2)
-                            .orElse(null);
-                    if (nextMatch != null) {
-                        if (match.getMatchNo() % 2 == 0) {
-                            nextMatch.updateHome(match.getHome());
-                        } else {
-                            nextMatch.updateAway(match.getHome());
-                        }
-                    }
+                    setTournamentMatch(competitionId, match, match.getHome());
                 }
             } else if (homeScore < awayScore) {
                 homeResult.addLose(1);
                 awayResult.addWin(1);
                 if (competition.getCompetitionType().equals(CompetitionType.TOURNAMENT)) {
-                    Match nextMatch = matchRepository
-                            .findByCompetitionIdAndRoundNoAndMatchNo(competitionId, match.getRoundNo() - 1, match.getMatchNo() / 2)
-                            .orElse(null);
-                    if (nextMatch != null) {
-                        if (match.getMatchNo() % 2 == 0) {
-                            nextMatch.updateHome(match.getAway());
-                        } else {
-                            nextMatch.updateAway(match.getAway());
-                        }
-                    }
+                    setTournamentMatch(competitionId, match, match.getAway());
                 }
             } else {
                 homeResult.addDraw(1);
@@ -121,6 +103,21 @@ public class JoinService {
 
         homeJoin.updateResult(homeResult);
         awayJoin.updateResult(awayResult);
+        Score score = Score.builder().homeScore(homeScore).awayScore(awayScore).build();
+        match.update(score, matchStatus);
+    }
+
+    private void setTournamentMatch(Long competitionId, Match match, Member member) {
+        Match nextMatch = matchRepository
+                .findByCompetitionIdAndRoundNoAndMatchNo(competitionId, match.getRoundNo() - 1, match.getMatchNo() / 2)
+                .orElse(null);
+        if (nextMatch != null) {
+            if (match.getMatchNo() % 2 == 0) {
+                nextMatch.updateHome(member);
+            } else {
+                nextMatch.updateAway(member);
+            }
+        }
     }
 
     private void resetTournamentMatches(Long competitionId, Match match) {

@@ -1,16 +1,9 @@
 package hongik.ce.jolup.service;
 
-import hongik.ce.jolup.domain.belong.Belong;
 import hongik.ce.jolup.domain.member.Member;
-import hongik.ce.jolup.dto.BelongDto;
 import hongik.ce.jolup.repository.MemberRepository;
 import hongik.ce.jolup.domain.member.Role;
-import hongik.ce.jolup.dto.MemberDto;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -18,32 +11,23 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
-@Slf4j
-@RequiredArgsConstructor
 @Service
+@RequiredArgsConstructor
 @Transactional(readOnly = true)
-public class MemberService implements UserDetailsService {
+public class MemberService {
 
     private final MemberRepository memberRepository;
-    // UserDetailService 상속시 필수로 구현해야 하는 메소드
-    // UserDetail 가 기본 반환 타입, Account 가 이를 상속하고 있으므로 자동으로 다운캐스팅됨
-    @Override
-    public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
-        return memberRepository.findByEmail(email)
-                .orElseThrow(() -> new UsernameNotFoundException("Could not found : " + email));
-    }
+    private final BCryptPasswordEncoder encoder;
 
     @Transactional
-    public Long saveMember(Member member) {
-        validateDuplicateUser(member.getEmail());
+    public Member saveMember(String email, String password, String name) {
+        validateDuplicateUser(email);
+        Member member = Member.builder().email(email)
+                .password(encoder.encode(password))
+                .name(name).role(Role.USER).build();
 
-        BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
-        member.updatePassword(encoder.encode(member.getPassword()));
-        member.updateRole(Role.USER);
-
-        return memberRepository.save(member).getId();
+        return memberRepository.save(member);
     }
 
     @Transactional
@@ -53,7 +37,6 @@ public class MemberService implements UserDetailsService {
             return null;
         }
         Member member = optionalMember.get();
-        BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
         if (!encoder.matches(oldPassword, member.getPassword())) {
             throw new IllegalStateException("비밀번호가 틀렸습니다.");
         }

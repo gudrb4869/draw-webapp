@@ -3,7 +3,6 @@ package hongik.ce.jolup.controller;
 import hongik.ce.jolup.domain.belong.Belong;
 import hongik.ce.jolup.domain.belong.BelongType;
 import hongik.ce.jolup.domain.member.Member;
-import hongik.ce.jolup.dto.BelongDto;
 import hongik.ce.jolup.service.BelongService;
 import hongik.ce.jolup.service.RoomService;
 import lombok.*;

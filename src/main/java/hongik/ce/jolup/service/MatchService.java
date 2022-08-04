@@ -2,14 +2,11 @@ package hongik.ce.jolup.service;
 
 import hongik.ce.jolup.domain.competition.Competition;
 import hongik.ce.jolup.domain.competition.CompetitionType;
-import hongik.ce.jolup.domain.join.Join;
 import hongik.ce.jolup.domain.match.Match;
 import hongik.ce.jolup.domain.match.MatchStatus;
 import hongik.ce.jolup.domain.member.Member;
 import hongik.ce.jolup.domain.score.Score;
-import hongik.ce.jolup.dto.MatchDto;
 import hongik.ce.jolup.repository.CompetitionRepository;
-import hongik.ce.jolup.repository.JoinRepository;
 import hongik.ce.jolup.repository.MatchRepository;
 import hongik.ce.jolup.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
@@ -17,10 +14,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.*;
-import java.util.stream.Collectors;
 
-@RequiredArgsConstructor
 @Service
+@RequiredArgsConstructor
 @Transactional(readOnly = true)
 public class MatchService {
 

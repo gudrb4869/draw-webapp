@@ -4,18 +4,15 @@ import hongik.ce.jolup.domain.competition.Competition;
 import hongik.ce.jolup.domain.competition.CompetitionType;
 import hongik.ce.jolup.domain.room.Room;
 import hongik.ce.jolup.repository.CompetitionRepository;
-import hongik.ce.jolup.dto.CompetitionDto;
 import hongik.ce.jolup.repository.RoomRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
-import java.util.Optional;
-import java.util.stream.Collectors;
 
-@RequiredArgsConstructor
 @Service
+@RequiredArgsConstructor
 @Transactional(readOnly = true)
 public class CompetitionService {
 

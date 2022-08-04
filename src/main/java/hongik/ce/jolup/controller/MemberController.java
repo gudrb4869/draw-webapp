@@ -1,9 +1,8 @@
 package hongik.ce.jolup.controller;
 
 import hongik.ce.jolup.domain.member.Member;
-import hongik.ce.jolup.dto.MemberDto;
 import hongik.ce.jolup.service.MemberService;
-import lombok.RequiredArgsConstructor;
+import lombok.*;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -20,10 +19,11 @@ import org.springframework.web.bind.annotation.PostMapping;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
+import javax.validation.constraints.NotBlank;
 
 @Slf4j
-@RequiredArgsConstructor
 @Controller
+@RequiredArgsConstructor
 public class MemberController {
     private final MemberService memberService;
 
@@ -32,25 +32,22 @@ public class MemberController {
         if (isAuthenticated()) {
             return "redirect:/";
         }
-        model.addAttribute("memberForm", new MemberForm());
-        return "signup";
+        model.addAttribute("form", new MemberCreateForm());
+        return "members/signup";
     }
 
     @PostMapping("/signup")
-    public String signup(@Valid MemberForm memberForm, BindingResult result, Model model) {
+    public String signup(@ModelAttribute("form") @Valid MemberCreateForm form, BindingResult result, Model model) {
 
         if (result.hasErrors()) {
-            return "signup";
+            return "members/signup";
         }
 
-        Member member = Member.builder().email(memberForm.getEmail())
-                .password(memberForm.getPassword())
-                .name(memberForm.getName()).build();
         try {
-            memberService.saveMember(member);
+            memberService.saveMember(form.getEmail(), form.getPassword(), form.getName());
         } catch (IllegalStateException e) {
             model.addAttribute("errorMessage", e.getMessage());
-            return "signup";
+            return "members/signup";
         }
         return "redirect:/login";
     }
@@ -60,7 +57,7 @@ public class MemberController {
         if (isAuthenticated()) {
             return "redirect:/";
         }
-        return "login";
+        return "members/login";
     }
 
     @GetMapping("/logout")
@@ -74,24 +71,22 @@ public class MemberController {
 
     @GetMapping("/edit")
     public String edit(Model model, @AuthenticationPrincipal Member member) {
-        MemberEditForm memberEditForm = new MemberEditForm();
-        memberEditForm.setName(member.getName());
-        model.addAttribute("memberEditForm", memberEditForm);
-        return "edit";
+        model.addAttribute("form", new MemberUpdateForm(member.getName()));
+        return "members/edit";
     }
 
-    @PostMapping("edit")
-    public String edit(@ModelAttribute @Valid MemberEditForm form,
+    @PostMapping("/edit")
+    public String edit(@ModelAttribute("form") @Valid MemberUpdateForm form,
                        BindingResult result, @AuthenticationPrincipal Member member,
                        Model model) {
         if (result.hasErrors()) {
-            return "edit";
+            return "members/edit";
         }
         try {
             memberService.updateMember(member.getId(), form.getPassword_current(), form.getPassword_new(), form.getName());
         } catch (Exception e) {
             model.addAttribute("errorMessage", e.getMessage());
-            return "edit";
+            return "members/edit";
         }
         return "redirect:/";
     }
@@ -103,5 +98,42 @@ public class MemberController {
             return false;
         }
         return authentication.isAuthenticated();
+    }
+
+    @Getter @Setter @ToString @Builder
+    @NoArgsConstructor @AllArgsConstructor
+    private static class MemberCreateForm {
+        @NotBlank(message = "아이디는 필수 입력 값입니다!")
+//    @Pattern(regexp = "^(?:\\w+\\.?)*\\w+@(?:\\w+\\.)+\\w+$", message = "이메일 형식이 올바르지 않습니다.")
+        private String email;
+
+        @NotBlank(message = "비밀번호는 필수 입력 값입니다!")
+//    @Pattern(regexp = "(?=.*[0-9])(?=.*[a-zA-Z])(?=.*\\W)(?=\\S+$).{8,16}", message = "비밀번호는 8~16자 영문 대 소문자, 숫자, 특수문자를 사용하세요.")
+        private String password;
+
+    /*@NotBlank(message = "비밀번호 확인은 필수 입력 값입니다!")
+    private String password_confirm;*/
+
+        @NotBlank(message = "이름은 필수 입력 값입니다!")
+        private String name;
+    }
+
+    @Getter @Setter @Builder @ToString
+    @NoArgsConstructor @AllArgsConstructor
+    private static class MemberUpdateForm {
+        @NotBlank(message = "비밀번호는 필수 입력 값입니다!")
+//    @Pattern(regexp = "(?=.*[0-9])(?=.*[a-zA-Z])(?=.*\\W)(?=\\S+$).{8,16}", message = "비밀번호는 8~16자 영문 대 소문자, 숫자, 특수문자를 사용하세요.")
+        private String password_current;
+
+        @NotBlank(message = "비밀번호는 필수 입력 값입니다!")
+//    @Pattern(regexp = "(?=.*[0-9])(?=.*[a-zA-Z])(?=.*\\W)(?=\\S+$).{8,16}", message = "비밀번호는 8~16자 영문 대 소문자, 숫자, 특수문자를 사용하세요.")
+        private String password_new;
+
+        @NotBlank(message = "이름은 필수 입력 값입니다!")
+        private String name;
+
+        public MemberUpdateForm(String name) {
+            this.name = name;
+        }
     }
 }

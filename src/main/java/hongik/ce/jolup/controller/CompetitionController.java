@@ -5,8 +5,6 @@ import hongik.ce.jolup.domain.belong.BelongType;
 import hongik.ce.jolup.domain.competition.Competition;
 import hongik.ce.jolup.domain.join.Join;
 import hongik.ce.jolup.domain.match.Match;
-import hongik.ce.jolup.domain.match.MatchStatus;
-import hongik.ce.jolup.domain.score.Score;
 import hongik.ce.jolup.domain.member.Member;
 import hongik.ce.jolup.domain.competition.CompetitionType;
 import hongik.ce.jolup.service.*;
@@ -25,11 +23,10 @@ import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import java.util.*;
-import java.util.stream.Collectors;
 
 @Slf4j
-@RequiredArgsConstructor
 @Controller
+@RequiredArgsConstructor
 @RequestMapping("rooms/{roomId}/competitions")
 public class CompetitionController {
 

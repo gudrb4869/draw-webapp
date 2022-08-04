@@ -4,25 +4,19 @@ import hongik.ce.jolup.domain.belong.Belong;
 import hongik.ce.jolup.domain.belong.BelongType;
 import hongik.ce.jolup.domain.member.Member;
 import hongik.ce.jolup.domain.room.Room;
-import hongik.ce.jolup.dto.BelongDto;
-import hongik.ce.jolup.dto.MemberDto;
-import hongik.ce.jolup.dto.RoomDto;
 import hongik.ce.jolup.repository.BelongRepository;
 import hongik.ce.jolup.repository.MemberRepository;
 import hongik.ce.jolup.repository.RoomRepository;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
-@Slf4j
 public class BelongService {
 
     private final MemberRepository memberRepository;

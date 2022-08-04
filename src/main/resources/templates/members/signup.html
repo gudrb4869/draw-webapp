@@ -15,7 +15,7 @@
     <div class="py-5 text-center">
         <h2>회원 가입</h2>
     </div>
-    <form class="form-control" style="max-width: 600px;" th:action method="post" th:object="${memberForm}">
+    <form class="form-control" style="max-width: 600px;" th:action method="post" th:object="${form}">
         <div class="py-2" th:if="${errorMessage}">
             <span th:text="${errorMessage}" class="alert alert-danger">예외가 발생했습니다.</span>
         </div>

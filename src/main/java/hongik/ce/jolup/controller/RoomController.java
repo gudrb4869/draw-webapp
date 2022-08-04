@@ -28,8 +28,8 @@ import java.util.Optional;
 
 @Slf4j
 @Controller
-@RequestMapping("/rooms")
 @RequiredArgsConstructor
+@RequestMapping("/rooms")
 public class RoomController {
 
     private final MemberService memberService;

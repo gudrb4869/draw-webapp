@@ -99,8 +99,7 @@ public class MatchController {
         log.info("matchUpdateForm = {}", form);
 
         joinService.update(form.getHomeId(), form.getAwayId(), competitionId,
-                form.getMatchId(), form.getHomeScore(), form.getAwayScore(), true);
-        matchService.update(form.getMatchId(), MatchStatus.END, form.getHomeScore(), form.getAwayScore());
+                form.getMatchId(), form.getHomeScore(), form.getAwayScore(), MatchStatus.END);
         return "redirect:/rooms/{roomId}/competitions/{competitionId}";
     }
 
@@ -126,28 +125,26 @@ public class MatchController {
         Long homeId = match.getHome() != null ? match.getHome().getId() : null;
         Long awayId = match.getAway() != null ? match.getAway().getId() : null;
         joinService.update(homeId, awayId, competitionId,
-                matchId, 0, 0, false);
-        matchService.update(matchId, MatchStatus.READY, 0, 0);
+                matchId, 0, 0, MatchStatus.READY);
         return "redirect:/rooms/{roomId}/competitions/{competitionId}";
     }
 
     @ToString @Getter @Setter @Builder
     @NoArgsConstructor @AllArgsConstructor
     private static class MatchUpdateForm {
+
         @NotNull
         private Long matchId;
 
-//        @NotNull
         private Long homeId;
         private String home;
         private String away;
-//        @NotNull
         private Long awayId;
+
         @NotNull
         private Integer homeScore;
+
         @NotNull
         private Integer awayScore;
-//        @NotNull
-//        private MatchStatus status;
     }
 }

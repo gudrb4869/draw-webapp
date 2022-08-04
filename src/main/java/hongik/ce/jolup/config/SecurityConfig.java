@@ -1,6 +1,7 @@
 package hongik.ce.jolup.config;
 
 import hongik.ce.jolup.service.MemberService;
+import hongik.ce.jolup.service.UserDetailsServiceImpl;
 import lombok.RequiredArgsConstructor;
 import org.springframework.boot.autoconfigure.security.servlet.PathRequest;
 import org.springframework.context.annotation.Bean;
@@ -17,10 +18,10 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 @EnableWebSecurity
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
-    private final MemberService memberService;
+    private final UserDetailsServiceImpl userDetailsService;
 
     @Bean
-    public BCryptPasswordEncoder bCryptPasswordEncoder() {
+    public BCryptPasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
     }
 
@@ -66,7 +67,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     @Override
     // 로그인 시 필요한 정보를 가져옴
     public void configure(AuthenticationManagerBuilder auth) throws Exception {
-        auth.userDetailsService(memberService) // 유저 정보는 memberService 에서 가져온다
-                .passwordEncoder(bCryptPasswordEncoder()); // 패스워드 인코더는 passwordEncoder(BCrypt 사용)
+        auth.userDetailsService(userDetailsService) // 유저 정보는 userDetailsService 에서 가져온다
+                .passwordEncoder(passwordEncoder()); // 패스워드 인코더는 passwordEncoder(BCrypt 사용)
     }
 }
