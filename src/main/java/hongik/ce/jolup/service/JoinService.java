@@ -1,11 +1,16 @@
 package hongik.ce.jolup.service;
 
 import hongik.ce.jolup.domain.competition.Competition;
+import hongik.ce.jolup.domain.competition.CompetitionType;
 import hongik.ce.jolup.domain.join.Join;
+import hongik.ce.jolup.domain.match.Match;
+import hongik.ce.jolup.domain.match.MatchStatus;
 import hongik.ce.jolup.domain.member.Member;
 import hongik.ce.jolup.domain.result.Result;
+import hongik.ce.jolup.domain.score.Score;
 import hongik.ce.jolup.repository.CompetitionRepository;
 import hongik.ce.jolup.repository.JoinRepository;
+import hongik.ce.jolup.repository.MatchRepository;
 import hongik.ce.jolup.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -21,6 +26,7 @@ public class JoinService {
     private final JoinRepository joinRepository;
     private final MemberRepository memberRepository;
     private final CompetitionRepository competitionRepository;
+    private final MatchRepository matchRepository;
 
     @Transactional
     public void save(List<Long> memberIds, Long competitionId) {
@@ -34,15 +40,110 @@ public class JoinService {
     }
 
     @Transactional
-    public void update(Long memberId, Long competitionId, Result result) {
-        Join join = joinRepository.findByMemberIdAndCompetitionId(memberId, competitionId).orElse(null);
-        if (join == null) {
+    public void update(Long homeId, Long awayId, Long competitionId, Long matchId, Integer homeScore, Integer awayScore, Boolean status) {
+        Join homeJoin = joinRepository.findByMemberIdAndCompetitionId(homeId, competitionId).orElse(null);
+        Join awayJoin = joinRepository.findByMemberIdAndCompetitionId(awayId, competitionId).orElse(null);
+        Competition competition = competitionRepository.findById(competitionId).orElse(null);
+        Match match = matchRepository.findById(matchId).orElse(null);
+        if (homeJoin == null || awayJoin == null || competition == null || match == null) {
             return;
         }
-        join.updateResult(result);
 
+        Result homeResult = homeJoin.getResult();
+        Result awayResult = awayJoin.getResult();
+        if (homeResult == null || awayResult == null) {
+            return;
+        }
+
+        if (match.getMatchStatus().equals(MatchStatus.END)) {
+            if (match.getScore().getHomeScore() > match.getScore().getAwayScore()) {
+                homeResult.subWin(1);
+                awayResult.subLose(1);
+                if (competition.getCompetitionType().equals(CompetitionType.TOURNAMENT) && (homeScore <= awayScore)) {
+                    resetTournamentMatches(competitionId, match);
+                }
+            } else if (match.getScore().getHomeScore() < match.getScore().getAwayScore()) {
+                if (competition.getCompetitionType().equals(CompetitionType.TOURNAMENT) && (homeScore >= awayScore)) {
+                    resetTournamentMatches(competitionId, match);
+                }
+                homeResult.subLose(1);
+                awayResult.subWin(1);
+            } else {
+                homeResult.subDraw(1);
+                awayResult.subDraw(1);
+            }
+            homeResult.subGoalFor(match.getScore().getHomeScore());
+            homeResult.subGoalAgainst(match.getScore().getAwayScore());
+            awayResult.subGoalFor(match.getScore().getAwayScore());
+            awayResult.subGoalAgainst(match.getScore().getHomeScore());
+        }
+
+        if (status) {
+            if (homeScore > awayScore) {
+                homeResult.addWin(1);
+                awayResult.addLose(1);
+                if (competition.getCompetitionType().equals(CompetitionType.TOURNAMENT)) {
+                    Match nextMatch = matchRepository
+                            .findByCompetitionIdAndRoundNoAndMatchNo(competitionId, match.getRoundNo() - 1, match.getMatchNo() / 2)
+                            .orElse(null);
+                    if (nextMatch != null) {
+                        if (match.getMatchNo() % 2 == 0) {
+                            nextMatch.updateHome(match.getHome());
+                        } else {
+                            nextMatch.updateAway(match.getHome());
+                        }
+                    }
+                }
+            } else if (homeScore < awayScore) {
+                homeResult.addLose(1);
+                awayResult.addWin(1);
+                if (competition.getCompetitionType().equals(CompetitionType.TOURNAMENT)) {
+                    Match nextMatch = matchRepository
+                            .findByCompetitionIdAndRoundNoAndMatchNo(competitionId, match.getRoundNo() - 1, match.getMatchNo() / 2)
+                            .orElse(null);
+                    if (nextMatch != null) {
+                        if (match.getMatchNo() % 2 == 0) {
+                            nextMatch.updateHome(match.getAway());
+                        } else {
+                            nextMatch.updateAway(match.getAway());
+                        }
+                    }
+                }
+            } else {
+                homeResult.addDraw(1);
+                awayResult.addDraw(1);
+            }
+            homeResult.addGoalFor(homeScore);
+            homeResult.addGoalAgainst(awayScore);
+            awayResult.addGoalFor(awayScore);
+            awayResult.addGoalAgainst(homeScore);
+        }
+
+        homeJoin.updateResult(homeResult);
+        awayJoin.updateResult(awayResult);
     }
-    
+
+    private void resetTournamentMatches(Long competitionId, Match match) {
+        Match cur = match;
+        Match next = matchRepository
+                .findByCompetitionIdAndRoundNoAndMatchNo(competitionId, cur.getRoundNo() - 1, cur.getMatchNo() / 2)
+                .orElse(null);
+        while (next != null) {
+            if (cur.getMatchNo() % 2 == 0) {
+                next.updateHome(null);
+            } else {
+                next.updateAway(null);
+            }
+            Score score = Score.builder().homeScore(0).awayScore(0).build();
+            next.updateScore(score);
+            next.updateMatchStatus(MatchStatus.READY);
+            cur = next;
+            next = matchRepository
+                    .findByCompetitionIdAndRoundNoAndMatchNo(competitionId, cur.getRoundNo() - 1, cur.getMatchNo() / 2)
+                    .orElse(null);
+        }
+    }
+
     @Transactional
     public void deleteJoin(Long id) {
         joinRepository.deleteById(id);

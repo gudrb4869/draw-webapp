@@ -42,6 +42,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                     .antMatchers("/", "/login", "/signup", "/css/**", "/js/**", "/images/**", "/error").permitAll() // 누구나 접근 가능
                     .anyRequest().authenticated() // 나머지는 권한이 있기만 하면 접근 가능
                     .and()
+                .httpBasic()
+                .and()
                 .formLogin() // 로그인에 대한 설정
                     .loginPage("/login")
                     .loginProcessingUrl("/login")
