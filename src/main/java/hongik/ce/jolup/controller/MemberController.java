@@ -74,7 +74,7 @@ public class MemberController {
     @GetMapping("/edit")
     public String updateForm(Model model, @AuthenticationPrincipal Member member) {
         model.addAttribute("memberForm", new UpdateMemberForm(member.getName()));
-        return "members/edit";
+        return "members/update";
     }
 
     @PostMapping("/edit")
@@ -82,13 +82,13 @@ public class MemberController {
                          BindingResult result, @AuthenticationPrincipal Member member,
                          Model model) {
         if (result.hasErrors()) {
-            return "members/edit";
+            return "members/update";
         }
         try {
             memberService.updateMember(member.getId(), form.getPassword_current(), form.getPassword_new(), form.getName());
         } catch (Exception e) {
             model.addAttribute("errorMessage", e.getMessage());
-            return "members/edit";
+            return "members/update";
         }
         return "redirect:/";
     }

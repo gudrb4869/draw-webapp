@@ -8,6 +8,9 @@ import hongik.ce.jolup.repository.BelongRepository;
 import hongik.ce.jolup.repository.MemberRepository;
 import hongik.ce.jolup.repository.RoomRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -65,8 +68,8 @@ public class BelongService {
         belongRepository.deleteById(belongId);
     }
 
-    public List<Belong> findByMemberId(Long memberId) {
-        return belongRepository.findByMemberId(memberId);
+    public Page<Belong> findByMemberId(Long memberId, int page) {
+        return belongRepository.findByMemberId(memberId, PageRequest.of(page, 3, Sort.by(Sort.Direction.DESC, "createdDate")));
     }
 
     public Belong findByIdAndRoomId(Long id, Long roomId) {

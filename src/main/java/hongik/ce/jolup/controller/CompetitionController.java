@@ -200,7 +200,7 @@ public class CompetitionController {
         }
 
         model.addAttribute("form", new UpdateCompetitionForm(competition.getId(), competition.getTitle()));
-        return "competitions/edit";
+        return "competitions/update";
     }
 
     @PostMapping("/{competitionId}/edit")
@@ -212,7 +212,7 @@ public class CompetitionController {
         log.info("POST : UpdateCompetitionForm = {}", competitionForm);
 
         if (result.hasErrors()) {
-            return "competitions/edit";
+            return "competitions/update";
         }
 
         if (competitionService.findOne(competitionId, roomId) == null) {

@@ -62,14 +62,13 @@
         <hr class="my-4">
 
         <h1>대회 목록</h1>
-        <div style="height: 300px; overflow: auto;">
+        <div>
             <table class="table">
                 <thead>
                 <tr>
-                    <th>구분</th>
-                    <!--                <th>방id</th>-->
-                    <th>제목</th>
-                    <th>타입</th>
+                    <th>대회이름</th>
+                    <th>대회방식</th>
+                    <th>대회생성일</th>
                     <th></th>
                 </tr>
                 </thead>
@@ -78,9 +77,9 @@
                     <td class="text-center" colspan="5">참여중인 대회가 없습니다!</td>
                 </tr>
                 <tr th:each="competition : ${competitions}">
-                    <td th:text="${competitionStat.count}"></td>
                     <td th:text="${competition.title}"></td>
                     <td th:text="${competition.competitionType.description}"></td>
+                    <td th:text="${#temporals.format(competition.createdDate, 'yyyy-MM-dd HH:mm:ss')}">2022-08-05</td>
                     <td>
                         <div>
                             <form class="form-check-inline my-2 my-lg-0" th:action="@{|/rooms/${room.id}/competitions/${competition.id}|}" method="post">
@@ -95,6 +94,13 @@
                 </tr>
                 </tbody>
             </table>
+        </div>
+        <div>
+            <ul>
+                <li th:each="page : ${#numbers.sequence(1, totalPage, 1)}">
+                    <a th:href="@{|/rooms/${room.id}|(competitionPage=${pageStat.count})}" th:text="${pageStat.count}">1</a>
+                </li>
+            </ul>
         </div>
     </div>
     <div th:replace="fragments/footer" :: footer />

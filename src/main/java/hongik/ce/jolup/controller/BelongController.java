@@ -23,7 +23,6 @@ import javax.validation.constraints.NotNull;
 @RequestMapping("/rooms/{roomId}/belongs")
 public class BelongController {
 
-    private final RoomService roomService;
     private final BelongService belongService;
 
     @GetMapping("/{belongId}")
@@ -41,7 +40,7 @@ public class BelongController {
 
         model.addAttribute("belongForm",
                 new UpdateBelongForm(belong.getId(), belong.getMember().getName(), belong.getBelongType()));
-        return "belongs/edit";
+        return "belongs/update";
     }
 
     @PostMapping("/{belongId}")
@@ -51,7 +50,7 @@ public class BelongController {
 
         log.info("POST : edit Belong, belongForm = {}", belongForm);
         if (result.hasErrors()) {
-            return "belongs/edit";
+            return "belongs/update";
         }
 
         Belong myBelong = belongService.findOne(member.getId(), roomId);

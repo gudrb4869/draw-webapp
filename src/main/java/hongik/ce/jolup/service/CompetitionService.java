@@ -6,6 +6,9 @@ import hongik.ce.jolup.domain.room.Room;
 import hongik.ce.jolup.repository.CompetitionRepository;
 import hongik.ce.jolup.repository.RoomRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -49,8 +52,8 @@ public class CompetitionService {
         return competitionRepository.findById(competitionId).orElse(null);
     }
 
-    public List<Competition> findCompetitions(Long roomId) {
-        return competitionRepository.findByRoomId(roomId);
+    public Page<Competition> findCompetitions(Long roomId, int page) {
+        return competitionRepository.findByRoomId(roomId, PageRequest.of(page, 3, Sort.by("createdDate").descending()));
     }
 
     public Competition findOne(Long competitionId, Long roomId) {

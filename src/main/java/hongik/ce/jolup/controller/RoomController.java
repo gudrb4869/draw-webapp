@@ -12,6 +12,7 @@ import hongik.ce.jolup.service.MemberService;
 import hongik.ce.jolup.service.RoomService;
 import lombok.*;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -38,10 +39,17 @@ public class RoomController {
     private final CompetitionService competitionService;
 
     @GetMapping
-    public String roomList(Model model, @AuthenticationPrincipal Member member) {
+    public String roomList(Model model, @AuthenticationPrincipal Member member,
+                           @RequestParam(required = false, defaultValue = "1", value = "page") int page) {
         log.info("room_list");
-        List<Belong> belongs = belongService.findByMemberId(member.getId());
-        model.addAttribute("belongs", belongs);
+        if (page <= 0) {
+            return "error";
+        }
+        Page<Belong> belongPage = belongService.findByMemberId(member.getId(), page - 1);
+        int totalPage = belongPage.getTotalPages();
+        model.addAttribute("belongs", belongPage.getContent());
+        model.addAttribute("totalPage", totalPage);
+        log.info("totalPage = {}", totalPage);
         return "rooms/list";
     }
 
@@ -71,7 +79,8 @@ public class RoomController {
     }
 
     @GetMapping("/{roomId}")
-    public String roomDetail(@PathVariable Long roomId, Model model, @AuthenticationPrincipal Member member) {
+    public String roomDetail(@PathVariable Long roomId, Model model, @AuthenticationPrincipal Member member,
+                             @RequestParam(required = false, defaultValue = "1", value = "competitionPage") int competitionPage) {
         log.info("roomDetail");
 
         List<Belong> belongs = belongService.findByRoomId(roomId);
@@ -87,11 +96,14 @@ public class RoomController {
             return "error";
         }
 
-        List<Competition> competitions = competitionService.findCompetitions(roomId);
+        Page<Competition> competitions = competitionService.findCompetitions(roomId ,competitionPage - 1);
+        int totalPage = competitions.getTotalPages();
+
         model.addAttribute("myBelong", belong);
         model.addAttribute("room", room);
         model.addAttribute("belongs", belongs);
-        model.addAttribute("competitions", competitions);
+        model.addAttribute("competitions", competitions.getContent());
+        model.addAttribute("totalPage", totalPage);
         return "rooms/detail";
     }
 
@@ -117,7 +129,7 @@ public class RoomController {
 
         Room room = belong.getRoom();
         model.addAttribute("roomForm", new UpdateRoomForm(room.getId(), room.getTitle(), room.getRoomSetting()));
-        return "rooms/edit";
+        return "rooms/update";
     }
 
     @PostMapping("/{roomId}/edit")
@@ -131,7 +143,7 @@ public class RoomController {
         }
 
         if (result.hasErrors()) {
-            return "rooms/edit";
+            return "rooms/update";
         }
         log.info("room = {}", roomForm);
         roomService.updateRoom(roomForm.getId(), roomForm.getTitle(), roomForm.getRoomSetting());

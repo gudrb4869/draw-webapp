@@ -15,9 +15,8 @@
         <table class="table">
             <thead>
             <tr>
-                <th>구분</th>
-                <!--                <th>방id</th>-->
-                <th>제목</th>
+                <th>이름</th>
+                <th>참여일자</th>
                 <th></th>
             </tr>
             </thead>
@@ -26,8 +25,8 @@
                 <td class="text-center" colspan="5">방이 존재하지 않습니다.</td>
             </tr>
             <tr th:each="belong : ${belongs}">
-                <td th:text="${belongStat.count}"></td>
-                <td th:text="${belong.room.title}"></td>
+                <td th:text="${belong.room.title}">방</td>
+                <td th:text="${#temporals.format(belong.createdDate, 'yyyy-MM-dd HH:mm:ss')}">2022-08-05</td>
                 <td>
                     <div>
                         <form class="form-check-inline my-2 my-lg-0" th:action="@{|/rooms/${belong.room.id}|}" method="post">
@@ -41,6 +40,13 @@
             </tr>
             </tbody>
         </table>
+    </div>
+    <div>
+        <ul>
+            <li th:each="page : ${#numbers.sequence(1, totalPage, 1)}">
+                <a th:href="@{/rooms(page=${pageStat.count})}" th:text="${pageStat.count}">1</a>
+            </li>
+        </ul>
     </div>
     <div th:replace="fragments/footer" :: footer />
 </div> <!-- /container -->
