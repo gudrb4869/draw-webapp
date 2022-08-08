@@ -37,6 +37,10 @@ public class AlarmService {
         return alarmRepository.findByIdAndReceiveMemberId(id, memberId).orElse(null);
     }
 
+    public Alarm findOne2(Long memberId, Long requestId) {
+        return alarmRepository.findByReceiveMemberIdAndRequestId(memberId, requestId).orElse(null);
+    }
+
     public List<Alarm> findAlarms(Long memberId) {
         return alarmRepository.findByReceiveMemberId(memberId);
     }

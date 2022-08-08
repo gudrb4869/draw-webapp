@@ -202,15 +202,19 @@ public class RoomController {
         List<Member> members = memberService.findMembers(emails);
         for (int i = 0; i < emails.size(); i++) {
             String email = emails.get(i);
-            Optional<Member> findMember = members.stream().filter(m -> m.getEmail().equals(email)).findAny();
-            if(findMember.isEmpty()) {
+            Member findMember = members.stream().filter(m -> m.getEmail().equals(email)).findAny().orElse(null);
+            if(findMember == null) {
                 result.addError(new FieldError("inviteForm", "emails[" + i + "]", email,false, null, null, "존재하지 않는 회원입니다."));
                 continue;
             }
-            Optional<Belong> optionalBelong = belongs.stream().filter(b -> b.getMember().getEmail().equals(email)).findAny();
-            if (optionalBelong.isPresent()) {
+            Belong findBelong = belongs.stream().filter(b -> b.getMember().getEmail().equals(email)).findAny().orElse(null);
+            if (findBelong == null) {
                 result.addError(new FieldError("inviteForm", "emails[" + i + "]", email,false,null, null, "이미 참여중인 회원입니다."));
             }
+//            Alarm alarm = alarmService.findOne2(findMember.getId(), roomId);
+//            if (alarm != null && alarm.getStatus().equals(AlarmStatus.BEFORE)) {
+//                result.addError(new FieldError("inviteForm", "emails[" + i + "]", email,false,null, null, "이미 초대 요청한 회원입니다."));
+//            }
         }
 
         if (result.hasErrors()) {
@@ -218,10 +222,9 @@ public class RoomController {
         }
 
         log.info("초대");
-//        belongService.saveBelongs(roomId, BelongType.USER, members);
         for (Member m : members) {
             Alarm alarm = Alarm.builder().sendMember(member).receiveMember(m)
-                    .alarmType(AlarmType.ROOM_INVITE).status(AlarmStatus.BEFORE).roomId(roomId).build();
+                    .alarmType(AlarmType.ROOM_INVITE).status(AlarmStatus.BEFORE).requestId(roomId).build();
             alarmService.save(alarm);
         }
 

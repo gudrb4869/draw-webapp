@@ -37,9 +37,9 @@ public class AlarmController {
         Alarm alarm = alarmService.findOne(id, member.getId());
         if (alarm != null) {
             if (alarm.getAlarmType().equals(AlarmType.ROOM_INVITE)) {
-                belongService.save(member.getId(), alarm.getRoomId(), BelongType.USER);
+                belongService.save(member.getId(), alarm.getRequestId(), BelongType.USER);
             } else if (alarm.getAlarmType().equals(AlarmType.COMPETITION_INVITE)) {
-                joinService.save(member.getId(), alarm.getCompetitionId());
+                joinService.save(member.getId(), alarm.getRequestId());
             }
             alarmService.updateStatus(id, AlarmStatus.AFTER);
         }
@@ -57,8 +57,7 @@ public class AlarmController {
 
     @PostMapping("/{id}")
     public String delete(@AuthenticationPrincipal Member member, @PathVariable Long id) {
-        List<Alarm> alarms = alarmService.findAlarms(member.getId());
-        Alarm alarm = alarms.stream().filter(a -> a.getId().equals(id)).findAny().orElse(null);
+        Alarm alarm = alarmService.findOne(id, member.getId());
         if (alarm != null) {
             alarmService.delete(id);
         }

@@ -15,4 +15,7 @@ public interface AlarmRepository extends JpaRepository<Alarm, Long> {
 
     @Query("select a from Alarm a join fetch a.sendMember join fetch a.receiveMember where a.receiveMember.id = :memberId")
     List<Alarm> findByReceiveMemberId(@Param("memberId") Long memberId);
+
+    @Query("select a from Alarm a join fetch a.sendMember join fetch a.receiveMember where a.receiveMember.id = :memberId and a.requestId = :requestId")
+    Optional<Alarm> findByReceiveMemberIdAndRequestId(@Param("memberId") Long memberId, @Param("requestId") Long requestId);
 }

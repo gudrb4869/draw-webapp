@@ -32,20 +32,16 @@ public class Alarm extends BaseTimeEntity {
     @Column(name = "status")
     private AlarmStatus status;
 
-    @Column(name = "room_id")
-    private Long roomId;
-
-    @Column(name = "competition_id")
-    private Long competitionId;
+    @Column(name = "request_id")
+    private Long requestId;
 
     @Builder
-    public Alarm(Member sendMember, Member receiveMember, AlarmType alarmType, AlarmStatus status, Long roomId, Long competitionId) {
+    public Alarm(Member sendMember, Member receiveMember, AlarmType alarmType, AlarmStatus status, Long requestId) {
         this.sendMember = sendMember;
         this.receiveMember = receiveMember;
         this.alarmType = alarmType;
         this.status = status;
-        this.roomId = roomId;
-        this.competitionId = competitionId;
+        this.requestId = requestId;
     }
 
     public void updateStatus(AlarmStatus status) {
