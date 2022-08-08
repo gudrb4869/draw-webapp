@@ -25,7 +25,7 @@
             <select th:field="*{type}" class="form-select-sm">
                 <option value="">==방 공개 여부 선택==</option>
                 <option th:each="belongType : ${T(hongik.ce.jolup.domain.belong.BelongType).values()}" th:value="${belongType.name()}"
-                        th:text="${belongType.description}" th:if="${belongType.name() != 'MASTER'}"></option>
+                        th:text="${belongType.description}" th:if="${belongType.name() != 'ADMIN'}"></option>
             </select>
             <p th:errors="*{type}" class="field-error">공개 여부 오류</p>
         </div>

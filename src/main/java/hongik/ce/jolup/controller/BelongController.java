@@ -29,7 +29,7 @@ public class BelongController {
     public String updateForm(@PathVariable Long roomId, @PathVariable Long belongId,
                              @AuthenticationPrincipal Member member, Model model) {
         Belong myBelong = belongService.findOne(member.getId(), roomId);
-        if (myBelong == null || !myBelong.getBelongType().equals(BelongType.MASTER)) {
+        if (myBelong == null || !myBelong.getBelongType().equals(BelongType.ADMIN)) {
             return "error";
         }
 
@@ -54,7 +54,7 @@ public class BelongController {
         }
 
         Belong myBelong = belongService.findOne(member.getId(), roomId);
-        if (myBelong == null || !belongId.equals(belongForm.getId()) || !myBelong.getBelongType().equals(BelongType.MASTER)) {
+        if (myBelong == null || !belongId.equals(belongForm.getId()) || !myBelong.getBelongType().equals(BelongType.ADMIN)) {
             return "error";
         }
 

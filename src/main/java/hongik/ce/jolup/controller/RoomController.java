@@ -1,15 +1,15 @@
 package hongik.ce.jolup.controller;
 
+import hongik.ce.jolup.domain.alarm.Alarm;
+import hongik.ce.jolup.domain.alarm.AlarmStatus;
+import hongik.ce.jolup.domain.alarm.AlarmType;
 import hongik.ce.jolup.domain.belong.Belong;
 import hongik.ce.jolup.domain.belong.BelongType;
 import hongik.ce.jolup.domain.competition.Competition;
 import hongik.ce.jolup.domain.member.Member;
 import hongik.ce.jolup.domain.room.Room;
 import hongik.ce.jolup.domain.room.RoomSetting;
-import hongik.ce.jolup.service.BelongService;
-import hongik.ce.jolup.service.CompetitionService;
-import hongik.ce.jolup.service.MemberService;
-import hongik.ce.jolup.service.RoomService;
+import hongik.ce.jolup.service.*;
 import lombok.*;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -37,6 +37,7 @@ public class RoomController {
     private final BelongService belongService;
     private final RoomService roomService;
     private final CompetitionService competitionService;
+    private final AlarmService alarmService;
 
     @GetMapping
     public String roomList(Model model, @AuthenticationPrincipal Member member,
@@ -74,36 +75,38 @@ public class RoomController {
 
         Long roomId = roomService.saveRoom(room);
         
-        belongService.save(member.getId(), roomId, BelongType.MASTER);
+        belongService.save(member.getId(), roomId, BelongType.ADMIN);
         return "redirect:/rooms";
     }
 
     @GetMapping("/{roomId}")
     public String roomDetail(@PathVariable Long roomId, Model model, @AuthenticationPrincipal Member member,
+                             @RequestParam(required = false, defaultValue = "1", value = "belongPage") int belongPage,
                              @RequestParam(required = false, defaultValue = "1", value = "competitionPage") int competitionPage) {
         log.info("roomDetail");
 
-        List<Belong> belongs = belongService.findByRoomId(roomId);
-        if (belongs.isEmpty()) {
+        Room room = roomService.findOne(roomId);
+        if (room == null) {
             log.info("존재하지 않는 방임");
             return "error";
         }
-        Belong belong = belongs.stream()
-                .filter(b -> b.getMember().getId().equals(member.getId())).findAny().orElse(null);
-        Room room = belongs.get(0).getRoom();
+
+        Belong belong = belongService.findOne(member.getId(), roomId);
         if (belong == null && room.getRoomSetting().equals(RoomSetting.PRIVATE)) {
             log.info("비공개 방이고 회원이 아님");
             return "error";
         }
-
+        Page<Belong> belongs = belongService.findByRoomId(roomId, belongPage - 1);
+        int totalBelongPage = belongs.getTotalPages();
         Page<Competition> competitions = competitionService.findCompetitions(roomId ,competitionPage - 1);
-        int totalPage = competitions.getTotalPages();
+        int totalCompetitionPage = competitions.getTotalPages();
 
         model.addAttribute("myBelong", belong);
         model.addAttribute("room", room);
-        model.addAttribute("belongs", belongs);
+        model.addAttribute("belongs", belongs.getContent());
+        model.addAttribute("totalBelongPage", totalBelongPage);
         model.addAttribute("competitions", competitions.getContent());
-        model.addAttribute("totalPage", totalPage);
+        model.addAttribute("totalCompetitionPage", totalCompetitionPage);
         return "rooms/detail";
     }
 
@@ -111,7 +114,7 @@ public class RoomController {
     public String delete(@PathVariable Long roomId, @AuthenticationPrincipal Member member) {
         log.info("delete room");
         Belong belong = belongService.findOne(member.getId(), roomId);
-        if (belong == null || !belong.getBelongType().equals(BelongType.MASTER)) {
+        if (belong == null || !belong.getBelongType().equals(BelongType.ADMIN)) {
             return "error";
         }
 
@@ -123,7 +126,7 @@ public class RoomController {
     @GetMapping("/{roomId}/edit")
     public String updateForm(@PathVariable Long roomId, Model model, @AuthenticationPrincipal Member member) {
         Belong belong = belongService.findOne(member.getId(), roomId);
-        if (belong == null || !belong.getBelongType().equals(BelongType.MASTER)) {
+        if (belong == null || !belong.getBelongType().equals(BelongType.ADMIN)) {
             return "error";
         }
 
@@ -138,7 +141,7 @@ public class RoomController {
                          BindingResult result,
                          @AuthenticationPrincipal Member member) {
         Belong belong = belongService.findOne(member.getId(), roomId);
-        if (belong == null || !belong.getBelongType().equals(BelongType.MASTER)) {
+        if (belong == null || !belong.getBelongType().equals(BelongType.ADMIN)) {
             return "error";
         }
 
@@ -215,7 +218,12 @@ public class RoomController {
         }
 
         log.info("초대");
-        belongService.saveBelongs(roomId, BelongType.USER, members);
+//        belongService.saveBelongs(roomId, BelongType.USER, members);
+        for (Member m : members) {
+            Alarm alarm = Alarm.builder().sendMember(member).receiveMember(m)
+                    .alarmType(AlarmType.ROOM_INVITE).status(AlarmStatus.BEFORE).roomId(roomId).build();
+            alarmService.save(alarm);
+        }
 
         return "redirect:/rooms/{roomId}";
     }

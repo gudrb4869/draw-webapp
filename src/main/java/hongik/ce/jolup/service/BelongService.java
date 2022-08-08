@@ -41,19 +41,6 @@ public class BelongService {
     }
 
     @Transactional
-    public void saveBelongs(Long roomId, BelongType type, List<Member> members) {
-        Optional<Room> optionalRoom = roomRepository.findById(roomId);
-        if (optionalRoom.isEmpty()) {
-            return;
-        }
-        Room room = optionalRoom.get();
-        for (Member member : members) {
-            Belong belong = Belong.builder().member(member).room(room).belongType(type).build();
-            belongRepository.save(belong);
-        }
-    }
-
-    @Transactional
     public Long update(Long id, BelongType type) {
         Belong belong = belongRepository.findById(id).orElse(null);
         if (belong == null) {
@@ -69,7 +56,7 @@ public class BelongService {
     }
 
     public Page<Belong> findByMemberId(Long memberId, int page) {
-        return belongRepository.findByMemberId(memberId, PageRequest.of(page, 3, Sort.by(Sort.Direction.DESC, "createdDate")));
+        return belongRepository.findByMemberId(memberId, PageRequest.of(page, 5, Sort.by(Sort.Direction.DESC, "createdDate")));
     }
 
     public Belong findByIdAndRoomId(Long id, Long roomId) {
@@ -82,5 +69,9 @@ public class BelongService {
 
     public List<Belong> findByRoomId(Long roomId) {
         return belongRepository.findByRoomId(roomId);
+    }
+
+    public Page<Belong> findByRoomId(Long roomId, int page) {
+        return belongRepository.findByRoomId(roomId, PageRequest.of(page, 5, Sort.by("belongType").ascending()));
     }
 }

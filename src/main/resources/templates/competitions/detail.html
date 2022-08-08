@@ -24,12 +24,12 @@
 
     <div class="my-2 my-lg-0">
         <a th:href="@{|/rooms/${roomId}|}" class="btn btn-warning">목록</a>
-        <a class="btn btn-secondary my-2 my-sm-0" th:if="${myBelong ne null and (myBelong.belongType.name() eq 'MASTER')}"
+        <a class="btn btn-secondary my-2 my-sm-0" th:if="${myBelong ne null and (myBelong.belongType.name() eq 'ADMIN')}"
            th:href="@{|/rooms/${roomId}/competitions/${competitionId}/edit|}">수정</a>
         <form class="form-check-inline my-2 my-lg-0" th:action="@{|/rooms/${roomId}/competitions/${competitionId}|}" method="post">
-            <input type="hidden" th:if="${myBelong ne null and (myBelong.belongType.name() eq 'MASTER')}" name="_method" value="delete"/>
+            <input type="hidden" th:if="${myBelong ne null and (myBelong.belongType.name() eq 'ADMIN')}" name="_method" value="delete"/>
             <button class="btn btn-danger my-2 my-sm-0" type="submit"
-                    th:if="${myBelong ne null and (myBelong.belongType.name() eq 'MASTER')}">삭제</button>
+                    th:if="${myBelong ne null and (myBelong.belongType.name() eq 'ADMIN')}">삭제</button>
         </form>
     </div>
 
@@ -78,11 +78,11 @@
             <td>
                 <a class="btn btn-primary"
                    th:if="${match.home != null} and ${match.away != null} and ${match.matchStatus.name() eq 'READY'}
-                    and ${myBelong ne null and (myBelong.belongType.name() eq 'MASTER')}"
+                    and ${myBelong ne null and (myBelong.belongType.name() eq 'ADMIN')}"
                    th:href="@{|/rooms/${roomId}/competitions/${competitionId}/matches/${match.id}/update|}">수정</a>
                 <a class="btn btn-primary"
                    th:if="${match.home != null} and ${match.away != null} and ${match.matchStatus.name() eq 'END'}
-                    and ${myBelong ne null and (myBelong.belongType.name() eq 'MASTER')}"
+                    and ${myBelong ne null and (myBelong.belongType.name() eq 'ADMIN')}"
                    th:href="'javascript:init('+${roomId}+', '+${competitionId}+', '+${match.id}+')'">초기화</a>
             </td>
         </tr>
@@ -142,7 +142,7 @@
     function init(roomId, competitionId, matchId) {
         var form = document.createElement("form");
         form.setAttribute("method", "post");
-        form.setAttribute("action", "/rooms/" + roomId + "/competitions/" + competitionId + "/matches/" + matchId + "/init  ");
+        form.setAttribute("action", "/rooms/" + roomId + "/competitions/" + competitionId + "/matches/" + matchId + "/init");
         document.body.appendChild(form);
         form.submit();
     }

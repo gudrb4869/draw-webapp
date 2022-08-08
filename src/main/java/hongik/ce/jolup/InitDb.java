@@ -93,27 +93,31 @@ public class InitDb {
             Room room1 = createRoom("private", RoomSetting.PRIVATE);
             Long room1Id = roomService.saveRoom(room1);
 
-            belongService.save(members.get(1).getId(), room1.getId(), BelongType.MASTER);
+            belongService.save(members.get(1).getId(), room1Id, BelongType.ADMIN);
             for (int i = 2; i < 11; i++) {
-                belongService.save(members.get(i).getId(), room1.getId(), BelongType.USER);
+                belongService.save(members.get(i).getId(), room1Id, BelongType.USER);
             }
 
             Room room2 = createRoom("public", RoomSetting.PUBLIC);
             Long room2Id = roomService.saveRoom(room2);
 
-            belongService.save(members.get(1).getId(), room2.getId(), BelongType.MASTER);
+            belongService.save(members.get(1).getId(), room2Id, BelongType.ADMIN);
             for (int i = 11; i < 20; i++) {
-                belongService.save(members.get(i).getId(), room2.getId(), BelongType.USER);
+                belongService.save(members.get(i).getId(), room2Id, BelongType.USER);
             }
 
             Room room3 = createRoom("test123", RoomSetting.PUBLIC);
             Long room3Id = roomService.saveRoom(room3);
 
-            belongService.save(members.get(1).getId(), room3.getId(), BelongType.MASTER);
+            belongService.save(members.get(1).getId(), room3Id, BelongType.ADMIN);
             for (int i = 7; i < 14; i++) {
-                belongService.save(members.get(i).getId(), room3.getId(), BelongType.USER);
+                belongService.save(members.get(i).getId(), room3Id, BelongType.USER);
             }
 
+            Room room4 = createRoom("invite alarm test", RoomSetting.PRIVATE);
+            Long room4Id = roomService.saveRoom(room4);
+
+            belongService.save(members.get(1).getId(), room4Id, BelongType.ADMIN);
         }
 
         private Room createRoom(String title, RoomSetting setting) {

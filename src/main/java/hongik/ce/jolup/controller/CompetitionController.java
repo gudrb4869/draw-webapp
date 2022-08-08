@@ -45,7 +45,7 @@ public class CompetitionController {
                              Model model) {
 
         Belong myBelong = belongService.findOne(member.getId(), roomId);
-        if (myBelong == null || !myBelong.getBelongType().equals(BelongType.MASTER)) {
+        if (myBelong == null || !myBelong.getBelongType().equals(BelongType.ADMIN)) {
             return "error";
         }
 
@@ -73,7 +73,7 @@ public class CompetitionController {
         List<Belong> belongs = belongService.findByRoomId(roomId);
         Belong myBelong = belongs.stream()
                 .filter(b -> b.getMember().getId().equals(member.getId())).findFirst().orElse(null);
-        if (myBelong == null || !myBelong.getBelongType().equals(BelongType.MASTER)) {
+        if (myBelong == null || !myBelong.getBelongType().equals(BelongType.ADMIN)) {
             return "error";
         }
 
@@ -175,7 +175,7 @@ public class CompetitionController {
         }
 
         Belong myBelong = belongService.findOne(member.getId(), roomId);
-        if (myBelong == null || !myBelong.getBelongType().equals(BelongType.MASTER)) {
+        if (myBelong == null || !myBelong.getBelongType().equals(BelongType.ADMIN)) {
             return "error";
         }
 
@@ -195,7 +195,7 @@ public class CompetitionController {
         }
 
         Belong myBelong = belongService.findOne(member.getId(), roomId);
-        if (myBelong == null || !myBelong.getBelongType().equals(BelongType.MASTER)) {
+        if (myBelong == null || !myBelong.getBelongType().equals(BelongType.ADMIN)) {
             return "error";
         }
 
@@ -220,7 +220,7 @@ public class CompetitionController {
         }
 
         Belong myBelong = belongService.findOne(member.getId(), roomId);
-        if (myBelong == null || !myBelong.getBelongType().equals(BelongType.MASTER)) {
+        if (myBelong == null || !myBelong.getBelongType().equals(BelongType.ADMIN)) {
             return "error";
         }
 

@@ -41,7 +41,7 @@ public class MatchController {
 
         log.info("GET updateMatch : roomId = {}, competitionId = {}, matchId = {}", roomId, competitionId, matchId);
         Belong myBelong = belongService.findOne(member.getId(), roomId);
-        if (myBelong == null || !myBelong.getBelongType().equals(BelongType.MASTER)) {
+        if (myBelong == null || !myBelong.getBelongType().equals(BelongType.ADMIN)) {
             return "error";
         }
 
@@ -79,7 +79,7 @@ public class MatchController {
 
         log.info("POST updateMatch : roomId = {}, competitionId = {}, matchId = {}", roomId, competitionId, matchId);
         Belong myBelong = belongService.findOne(member.getId(), roomId);
-        if (myBelong == null || !myBelong.getBelongType().equals(BelongType.MASTER)) {
+        if (myBelong == null || !myBelong.getBelongType().equals(BelongType.ADMIN)) {
             return "error";
         }
         Competition competition = competitionService.findOne(competitionId, roomId);
@@ -110,7 +110,7 @@ public class MatchController {
                        @AuthenticationPrincipal Member member) {
 
         Belong myBelong = belongService.findOne(member.getId(), roomId);
-        if (myBelong == null || !myBelong.getBelongType().equals(BelongType.MASTER)) {
+        if (myBelong == null || !myBelong.getBelongType().equals(BelongType.ADMIN)) {
             return "error";
         }
         Competition competition = competitionService.findOne(competitionId, roomId);

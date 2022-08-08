@@ -6,7 +6,7 @@ import lombok.RequiredArgsConstructor;
 @Getter
 @RequiredArgsConstructor
 public enum BelongType {
-    MASTER("방장"),
+    ADMIN("방장"),
     MANAGER("매니저"),
     USER("일반사용자");
 

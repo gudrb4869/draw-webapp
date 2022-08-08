@@ -40,6 +40,18 @@ public class JoinService {
     }
 
     @Transactional
+    public Long save(Long memberId, Long competitionId) {
+        Member member = memberRepository.findById(memberId).orElse(null);
+        Competition competition = competitionRepository.findById(competitionId).orElse(null);
+        if (member != null && competition != null) {
+            Result result = Result.builder().win(0).draw(0).lose(0).goalFor(0).goalAgainst(0).build();
+            Join join = Join.builder().member(member).competition(competition).result(result).build();
+            return joinRepository.save(join).getId();
+        }
+        return null;
+    }
+
+    @Transactional
     public void update(Long homeId, Long awayId, Long competitionId, Long matchId, Integer homeScore, Integer awayScore, MatchStatus matchStatus) {
         Join homeJoin = joinRepository.findByMemberIdAndCompetitionId(homeId, competitionId).orElse(null);
         Join awayJoin = joinRepository.findByMemberIdAndCompetitionId(awayId, competitionId).orElse(null);
