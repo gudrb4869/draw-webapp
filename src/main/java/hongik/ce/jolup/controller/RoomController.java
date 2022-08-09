@@ -208,7 +208,7 @@ public class RoomController {
                 continue;
             }
             Belong findBelong = belongs.stream().filter(b -> b.getMember().getEmail().equals(email)).findAny().orElse(null);
-            if (findBelong == null) {
+            if (findBelong != null) {
                 result.addError(new FieldError("inviteForm", "emails[" + i + "]", email,false,null, null, "이미 참여중인 회원입니다."));
             }
 //            Alarm alarm = alarmService.findOne2(findMember.getId(), roomId);

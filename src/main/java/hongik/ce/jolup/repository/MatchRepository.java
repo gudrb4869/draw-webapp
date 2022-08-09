@@ -12,7 +12,8 @@ public interface MatchRepository extends JpaRepository<Match, Long> {
 
     @Query("select m from Match m join fetch m.competition" +
             " left join fetch m.home left join fetch m.away" +
-            " where m.competition.id = :competitionId")
+            " where m.competition.id = :competitionId" +
+            " order by m.roundNo asc, m.matchNo asc")
     List<Match> findByCompetitionId(@Param("competitionId") Long competitionId);
 
     Optional<Match> findByCompetitionIdAndRoundNoAndMatchNo(Long competitionId, Integer roundNo, Integer matchNo);

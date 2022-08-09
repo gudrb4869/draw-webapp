@@ -137,7 +137,6 @@ public class CompetitionController {
 
         List<Join> joins = joinService.findByCompetitionSort(competitionId);
         Join join = joins.stream().filter(j -> j.getMember().getId().equals(member.getId())).findAny().orElse(null);
-
         log.info("matches = {}", matches);
         LinkedHashMap<Integer, List<Match>> hashMap = new LinkedHashMap<>();
 
