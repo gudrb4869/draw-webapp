@@ -73,8 +73,9 @@
             <table class="table">
                 <thead>
                 <tr>
-                    <th>대회이름</th>
+                    <th>대회명</th>
                     <th>대회방식</th>
+                    <th>참여자수</th>
                     <th>대회생성일</th>
                     <th></th>
                 </tr>
@@ -84,9 +85,10 @@
                     <td class="text-center" colspan="5">참여중인 대회가 없습니다!</td>
                 </tr>
                 <tr th:each="competition : ${competitions}">
-                    <td th:text="${competition.title}"></td>
-                    <td th:text="${competition.competitionType.description}"></td>
-                    <td th:text="${#temporals.format(competition.createdDate, 'yyyy-MM-dd HH:mm:ss')}">2022-08-05</td>
+                    <td th:text="${competition.title}">test</td>
+                    <td th:text="${competition.competitionType.description}">리그</td>
+                    <td th:text="|명|">0명</td>
+                    <td th:text="${#temporals.format(competition.createdDate, 'yyyy-MM-dd HH:mm:ss')}">날짜</td>
                     <td>
                         <div>
                             <form class="form-check-inline my-2 my-lg-0" th:action="@{|/rooms/${room.id}/competitions/${competition.id}|}" method="post">

@@ -4,34 +4,57 @@
 <head th:replace="fragments/header :: header" />
 <style>
     .tournament {
-        height: 650px;
         float: left;
     }
 
-    .match {
+    .round {
         width: 150px;
-        height: 520px;
+        height: 600px;
         float: right;
     }
 
-    .match > div {
+    .match {
         width: 180px;
-        height: 55px;
-        border: 3px solid #000000;
+        height: 60px;
+        border: 3px solid black;
         margin: 10px 0;
-        background: #73789F;
+        background: gray;
         color: white;
         padding: 3px 3px 3px 6px;
     }
 
-    .match > div:nth-child(2n) {
-        margin-bottom: 40px;
+    .player {
+        font-family:arial;
+        width:150px;
+        color:white;
     }
 
-    .connector {
-        width: 40px;
-        height: 520px;
-        float: right;
+    .round0 .match {
+        margin-top: 250px;
+    }
+
+    .round1 .match {
+        margin-top: 220px;
+    }
+
+    .round1 .match:first-child {
+        margin-top: 110px;
+    }
+
+    .round2 .match {
+        margin-top: 80px;
+    }
+
+    .round2 .match:first-child {
+        margin-top: 40px;
+    }
+
+    .round3 .match {
+        margin-top: 10px;
+    }
+
+    .round3 .match:first-child {
+        margin-top: 5px;
     }
 
     .line {
@@ -40,8 +63,35 @@
         float: right;
     }
 
+    .line div {
+        border-top: 3px solid black;
+        margin: 158px 0 0 27px;
+    }
+
+    .line div:first-child {
+        margin-top: 65px;
+    }
+
+    #line0 div {
+        margin-top: 320px;
+    }
+
+    #line1 div {
+        margin-top: 315px;
+    }
+
+    #line1 div:first-child {
+        margin-top: 148px;
+    }
+
+    .connector {
+        width: 40px;
+        height: 520px;
+        float: right;
+    }
+
     .connector div {
-        border: 3px solid #000000;
+        border: 3px solid black;
         border-left: none;
         height: 70px;
         width: 100%;
@@ -52,21 +102,9 @@
         margin: 35px 0 0 27px;
     }
 
-    .line div {
-        border-top: 3px solid #000000;
-        margin: 158px 0 0 27px;
-    }
-
-    .line div:first-child {
-        margin-top: 65px;
-    }
-
-    #round2 > div {
-        margin-top: 103px;
-    }
-
-    #round2 > div:first-child {
-        margin-top: 43px;
+    #conn0 div {
+        margin-top: 150px;
+        height: 320px;
     }
 
     #conn1 div {
@@ -77,44 +115,18 @@
     #conn1 div:first-child {
         margin-top: 65px;
     }
-
-    #line1 div {
-        margin-top: 315px;
-    }
-
-    #line1 div:first-child {
-        margin-top: 148px;
-    }
-    #round1 > div {
-        margin-top: 260px;
-    }
-    #round1 > div:first-child {
-        margin-top: 125px;
-    }
-    #conn0 div {
-        margin-top: 150px;
-        height: 320px;
-    }
-
-    #line0 div {
-        margin-top: 320px;
-    }
-
-    #round0 > div {
-        margin-top: 290px;
-    }
 </style>
 <!--<style>
-    .tournament{width:720px;}
+    .tournament{float: left;}
 
     .round{
-        float:left;
+        float:right;
     }
 
     .player{
         font-family:arial;
-        width:120px;
-        height:20px;
+        width:150px;
+        height:40px;
         padding:10px;
         background:#73789F;
         color:white;
@@ -126,101 +138,44 @@
         padding:5px 50px 5px 0px;
     }
 
-    /*QUARTER-FINALS*/
-    .quarter-finals .match{
-        height:100px;
-        background:right top no-repeat url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADIAAABkAQMAAAD+JvEYAAAAA3NCSVQICAjb4U/gAAAABlBMVEUAAAD///+l2Z/dAAAACXBIWXMAAAsSAAALEgHS3X78AAAAFnRFWHRDcmVhdGlvbiBUaW1lADEwLzEwLzEyGAKeIwAAABx0RVh0U29mdHdhcmUAQWRvYmUgRmlyZXdvcmtzIENTNAay06AAAAAnSURBVCiRY/gPBgcYhjoNBPZQ/v4hQjeAHD0I3IGXRgpXqsbXEKEB2yGL0P7iVKIAAAAASUVORK5CYII=);
-    }
-    .quarter-finals .player{
+    /* CHAMP*/
+    .champion{padding-top:200px;}
 
+    /*FINALS*/
+    .finals .match{
+        padding-top:85px;
+        height:350px;
+        background:top right no-repeat /*url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADIAAAFeAQMAAAD9sN5nAAAAA3NCSVQICAjb4U/gAAAABlBMVEUAAAD///+l2Z/dAAAACXBIWXMAAAsSAAALEgHS3X78AAAAFnRFWHRDcmVhdGlvbiBUaW1lADEwLzEwLzEyGAKeIwAAABx0RVh0U29mdHdhcmUAQWRvYmUgRmlyZXdvcmtzIENTNAay06AAAAA0SURBVEiJY/gPBgcYRulRepQmngYCeyh//yg9So/Sg45uAGXSQeCOUXqUHrI0Uj33fxjQAEJS8U50LMSKAAAAAElFTkSuQmCC)*/;
     }
-    .quarter-finals .player:first-child{
-        margin-bottom:5px;
+
+    .finals .player:first-child{
+        margin-bottom:180px;
     }
 
     /*SEMI-FINALS*/
     .semi-finals .match{
         padding-top:30px;
         height:185px;
-        background:right top no-repeat url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADIAAAC5AQMAAABQhv7pAAAAA3NCSVQICAjb4U/gAAAABlBMVEUAAAD///+l2Z/dAAAACXBIWXMAAAsSAAALEgHS3X78AAAAFnRFWHRDcmVhdGlvbiBUaW1lADEwLzEwLzEyGAKeIwAAABx0RVh0U29mdHdhcmUAQWRvYmUgRmlyZXdvcmtzIENTNAay06AAAAArSURBVDiNY/gPBgcYRumBpYHAHsrfP0oPKboBFHmDwB2jNAk0Un77PwxoAJbztvAUr3KAAAAAAElFTkSuQmCC);
+        background:right top no-repeat /*url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADIAAAC5AQMAAABQhv7pAAAAA3NCSVQICAjb4U/gAAAABlBMVEUAAAD///+l2Z/dAAAACXBIWXMAAAsSAAALEgHS3X78AAAAFnRFWHRDcmVhdGlvbiBUaW1lADEwLzEwLzEyGAKeIwAAABx0RVh0U29mdHdhcmUAQWRvYmUgRmlyZXdvcmtzIENTNAay06AAAAArSURBVDiNY/gPBgcYRumBpYHAHsrfP0oPKboBFHmDwB2jNAk0Un77PwxoAJbztvAUr3KAAAAAAElFTkSuQmCC)*/;
     }
 
     .semi-finals .player:first-child{
-        margin-bottom:70px;
+        margin-bottom:60px;
     }
 
-    /*FINALS*/
-    .finals .match{
-        padding-top:85px;
-        height:350px;
-        background:top right no-repeat url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADIAAAFeAQMAAAD9sN5nAAAAA3NCSVQICAjb4U/gAAAABlBMVEUAAAD///+l2Z/dAAAACXBIWXMAAAsSAAALEgHS3X78AAAAFnRFWHRDcmVhdGlvbiBUaW1lADEwLzEwLzEyGAKeIwAAABx0RVh0U29mdHdhcmUAQWRvYmUgRmlyZXdvcmtzIENTNAay06AAAAA0SURBVEiJY/gPBgcYRulRepQmngYCeyh//yg9So/Sg45uAGXSQeCOUXqUHrI0Uj33fxjQAEJS8U50LMSKAAAAAElFTkSuQmCC);
+    /*QUARTER-FINALS*/
+    .quarter-finals .match{
+        height:100px;
+        background:right top no-repeat /*url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADIAAABkAQMAAAD+JvEYAAAAA3NCSVQICAjb4U/gAAAABlBMVEUAAAD///+l2Z/dAAAACXBIWXMAAAsSAAALEgHS3X78AAAAFnRFWHRDcmVhdGlvbiBUaW1lADEwLzEwLzEyGAKeIwAAABx0RVh0U29mdHdhcmUAQWRvYmUgRmlyZXdvcmtzIENTNAay06AAAAAnSURBVCiRY/gPBgcYhjoNBPZQ/v4hQjeAHD0I3IGXRgpXqsbXEKEB2yGL0P7iVKIAAAAASUVORK5CYII=)*/;
     }
 
-    .finals .player:first-child{
-        margin-bottom:180px;
-
+    .quarter-finals .player:first-child{
+        margin-bottom:10px;
     }
-    /* CHAMP*/
-    .champion{padding-top:200px;}
 </style>-->
 <body>
 <div>
     <div th:replace="fragments/bodyheader" :: bodyheader />
-    <!--<div class="tournament">
-
-        <div class="round quarter-finals">
-
-            <div class="match" >
-                <div class="player">Player 1</div>
-                <div class="player winner">Player 2</div>
-            </div>
-
-            <div class="match">
-                <div class="player winner">Player 3</div>
-                <div class="player">Player 4</div>
-            </div>
-
-            <div class="match">
-                <div class="player">Player 5</div>
-                <div class="player winner">Player 6</div>
-            </div>
-
-            <div class="match">
-                <div class="player">Player 7</div>
-                <div class="player">Player 8</div>
-            </div>
-
-        </div>
-
-        <div class="round semi-finals">
-
-            <div class="match">
-                <div class="player">Player 2</div>
-                <div class="player winner">Player 3</div>
-            </div>
-
-            <div class="match">
-                <div class="player">Player 6</div>
-                <div class="player">Player 7</div>
-            </div>
-
-        </div>
-
-        <div class="round finals">
-
-            <div class="match">
-                <div class="player">Player 3</div>
-                <div class="player"></div>
-            </div>
-
-        </div>
-
-        <div class="round">
-            <div class="champion">
-                <div class="player"></div>
-            </div>
-        </div>
-    </div>-->
     <table class="table table-striped">
         <thead>
         <tr>
@@ -251,11 +206,6 @@
 
     <h1>대회 참여자 목록</h1>
     <table class="table table-light">
-        <thead>
-        <tr>
-            <th>이름</th>
-        </tr>
-        </thead>
         <tbody>
         <tr th:each="join : ${joins}">
             <td th:text="|${join.member.email}(${join.member.name})|"></td>
@@ -267,20 +217,7 @@
     <h1>일정</h1>
     <div th:if="${competition.competitionType.name() == 'LEAGUE'}">
         <table class="table table-bordered">
-            <thead>
-            <tr>
-                <th>라운드</th>
-                <th>경기#</th>
-                <th> 홈 </th>
-                <th></th>
-                <th></th>
-                <th></th>
-                <th> 어웨이 </th>
-                <th></th>
-                <th></th>
-            </tr>
-            </thead>
-            <tbody th:each="matches : ${hashMap.entrySet()}">
+            <!--<tbody th:each="matches : ${hashMap.entrySet()}">
             <tr th:each="match : ${matches.getValue()}">
                 <td th:text="${match.roundNo}"></td>
                 <td th:text="${match.matchNo}"></td>
@@ -302,6 +239,52 @@
                     and ${myBelong ne null and (myBelong.belongType.name() eq 'ADMIN')}"
                        th:href="'javascript:init('+${roomId}+', '+${competitionId}+', '+${match.id}+')'">초기화</a>
                 </td>
+            </tr>
+            </tbody>-->
+            <tbody th:each="key : ${hashMap.keySet()}">
+            <tr>
+                <td th:text="|${key}라운드|"></td>
+                <td>
+                    <table class="table table-bordered">
+                        <tbody th:each="k : ${hashMap.get(key).keySet()}">
+                        <tr>
+                            <td th:text="|${hashMap.get(key).get(k).home.email}(${hashMap.get(key).get(k).home.name})|">홈팀명</td>
+                            <td th:text="|${hashMap.get(key).get(k).score.homeScore}:${hashMap.get(key).get(k).score.awayScore}|">스코어</td>
+                            <td th:text="|${hashMap.get(key).get(k).away.email}(${hashMap.get(key).get(k).away.name})|">어웨이팀명</td>
+                            <td>
+                                <a class="btn btn-primary"
+                                   th:if="${hashMap.get(key).get(k).home != null} and ${hashMap.get(key).get(k).away != null}
+                    and ${myBelong ne null and (myBelong.belongType.name() eq 'ADMIN')}"
+                                   th:href="@{|/rooms/${roomId}/competitions/${competitionId}/matches/${hashMap.get(key).get(k).id}/update|}">수정</a>
+                                <!--<a class="btn btn-primary"
+                                   th:if="${hashMap.get(key).get(k).home != null} and ${hashMap.get(key).get(k).away != null} and ${hashMap.get(key).get(k).matchStatus.name() eq 'END'}
+                    and ${myBelong ne null and (myBelong.belongType.name() eq 'ADMIN')}"
+                                   th:href="'javascript:init('+${roomId}+', '+${competitionId}+', '+${hashMap.get(key).get(k).id}+')'">초기화</a>-->
+                            </td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </td>
+
+                <!--<td th:text="${match.matchNo}"></td>
+                <td th:text="${match.home == null} ? ${match.roundNo + 1} + '-' + ${match.matchNo * 2} + '경기 승자'
+                : ${match.home.email + '('+ match.home.name + ')'}"></td>
+                <td th:text="${match.score.homeScore}"></td>
+                <td>:</td>
+                <td th:text="${match.score.awayScore}"></td>
+                <td th:text="${match.away == null} ? ${match.roundNo + 1} + '-' + ${match.matchNo * 2 + 1} + '경기 승자'
+                : ${match.away.email + '('+ match.away.name + ')'}"></td>
+                <td th:text="${match.matchStatus.description}"></td>
+                <td>
+                    <a class="btn btn-primary"
+                       th:if="${match.home != null} and ${match.away != null} and ${match.matchStatus.name() eq 'READY'}
+                    and ${myBelong ne null and (myBelong.belongType.name() eq 'ADMIN')}"
+                       th:href="@{|/rooms/${roomId}/competitions/${competitionId}/matches/${match.id}/update|}">수정</a>
+                    <a class="btn btn-primary"
+                       th:if="${match.home != null} and ${match.away != null} and ${match.matchStatus.name() eq 'END'}
+                    and ${myBelong ne null and (myBelong.belongType.name() eq 'ADMIN')}"
+                       th:href="'javascript:init('+${roomId}+', '+${competitionId}+', '+${match.id}+')'">초기화</a>
+                </td>-->
             </tr>
             </tbody>
         </table>
@@ -338,41 +321,107 @@
             </tbody>
         </table>
     </div>
-    <div th:if="${competition.competitionType.name() == 'TOURNAMENT'}">
-        <div class="tournament">
-            <a th:each="matches : ${hashMap.entrySet()}">
-                <div class="match" th:id="|round${matchesStat.index}|">
-                    <div th:each="match : ${matches.getValue()}">
-                        <h6 th:text="${match.home == null} ? ${matchesStat.count} + '-' + ${matchStat.count * 2 - 1} + '경기 승자'
-                        : ${match.home.email} + '(' + ${match.home.name} + ')'"></h6>
-                        <h6 th:text="${match.away == null} ? ${matchesStat.count} +'-' + ${matchStat.count * 2} + '경기 승자'
-                        : ${match.away.email} + '(' + ${match.away.name} + ')'"></h6>
-                    </div>
-                </div>
-
-                <div class="line" th:id="|line${matchesStat.index}|">
-                    <div th:each="match : ${matches.getValue()}"></div>
-                </div>
-
-                <div class="connector" th:id="|conn${matchesStat.index}|">
-                    <div th:each="match : ${matches.getValue()}"></div>
-                </div>
-            </a>
+    <div class="tournament" th:if="${competition.competitionType.name() == 'TOURNAMENT'}">
+        <div
+             th:each="matches : ${hashMap.entrySet()}">
+            <div th:with="cnt=${T(java.lang.Math).pow(2, matchesStat.index)}">
+                <div th:each="i : ${#numbers.sequence(1, cnt)}" th:text="${i}"></div>
+            </div>
+            <!--<div class="match"
+                 th:each="match : ${matches.getValue()}">
+                <div class="player"th:text="${match.home == null} ? ${matchesStat.count} + '-' + ${matchStat.count * 2 - 1} + '경기 승자'
+            : ${match.home.email} + '(' + ${match.home.name} + ')'">home</div>
+                <div class="player" th:text="${match.away == null} ? ${matchesStat.count} +'-' + ${matchStat.count * 2} + '경기 승자'
+            : ${match.away.email} + '(' + ${match.away.name} + ')'">away</div>
+            </div>-->
         </div>
-        <hr class="my-4">
-        <h1>우승팀</h1>
-        <h2 th:if="${hashMap.get(0).get(0).score.homeScore > hashMap.get(0).get(0).score.awayScore}"
-            th:text="${hashMap.get(0).get(0).home == null} ? 'null'
-                : ${hashMap.get(0).get(0).home.email + '('+ hashMap.get(0).get(0).home.name + ')'}">우승자</h2>
-        <h2 th:if="${hashMap.get(0).get(0).score.homeScore < hashMap.get(0).get(0).score.awayScore}"
-            th:text="${hashMap.get(0).get(0).away == null} ? 'null'
-                : ${hashMap.get(0).get(0).away.email + '('+ hashMap.get(0).get(0).away.name + ')'}">우승자</h2>
-        <h2 th:if="${hashMap.get(0).get(0).score.homeScore == hashMap.get(0).get(0).score.awayScore}"
-            th:text="'대회 진행중'">우승자</h2>
+        <!--<a th:each="matches : ${hashMap.entrySet()}">
+            <div class="round" th:id="|round${matchesStat.index}|">
+                <div class="match" th:each="match : ${matches.getValue()}">
+                    <div class="player"th:text="${match.home == null} ? ${matchesStat.count} + '-' + ${matchStat.count * 2 - 1} + '경기 승자'
+                    : ${match.home.email} + '(' + ${match.home.name} + ')'">home</div>
+                    <div class="player" th:text="${match.away == null} ? ${matchesStat.count} +'-' + ${matchStat.count * 2} + '경기 승자'
+                    : ${match.away.email} + '(' + ${match.away.name} + ')'">away</div>
+                </div>
+            </div>
+
+            <div class="line" th:id="|line${matchesStat.index}|">
+                <div th:each="match : ${matches.getValue()}"></div>
+            </div>
+
+            <div class="connector" th:id="|conn${matchesStat.index}|">
+                <div th:each="match : ${matches.getValue()}"></div>
+            </div>
+        </a>-->
+        <!--<div class="tournament">
+
+            <div class="round">
+                <div class="champion">
+                    <div class="player"
+                         th:text="${hashMap.get(0).get(0).score.homeScore > hashMap.get(0).get(0).score.awayScore} ? (${hashMap.get(0).get(0).home == null} ? 'null'
+                : ${hashMap.get(0).get(0).home.email + '('+ hashMap.get(0).get(0).home.name + ')'})
+                : (${hashMap.get(0).get(0).score.homeScore < hashMap.get(0).get(0).score.awayScore} ? (${hashMap.get(0).get(0).away == null} ? 'null'
+                : ${hashMap.get(0).get(0).away.email + '('+ hashMap.get(0).get(0).away.name + ')'}) : ' ')">champion</div>
+                </div>
+            </div>
+
+            <div class="round finals">
+
+                <div class="match">
+                    <div class="player">final player 1</div>
+                    <div class="player">final player 2</div>
+                </div>
+
+            </div>
+
+            <div class="round semi-finals">
+
+                <div class="match">
+                    <div class="player">Player 2</div>
+                    <div class="player winner">Player 3</div>
+                </div>
+
+                <div class="match">
+                    <div class="player">Player 6</div>
+                    <div class="player">Player 7</div>
+                </div>
+
+            </div>
+
+            <div class="round quarter-finals">
+
+                <div class="match">
+                    <div class="player">Player 1</div>
+                    <div class="player winner">Player 2</div>
+                </div>
+
+                <div class="match">
+                    <div class="player winner">Player 3</div>
+                    <div class="player">Player 4</div>
+                </div>
+
+                <div class="match">
+                    <div class="player">Player 5</div>
+                    <div class="player winner">Player 6</div>
+                </div>
+
+                <div class="match">
+                    <div class="player">Player 7</div>
+                    <div class="player">Player 8</div>
+                </div>
+
+            </div>
+        </div>-->
     </div>
     <div th:replace="fragments/footer" :: footer />
 </div> <!-- /container -->
 </body>
+<script src="//code.jquery.com/jquery-1.11.1.min.js"></script>
+<script>
+    $(function(){
+        $('button').css('background-color', 'red');
+    });
+</script>
 <script>
     function init(roomId, competitionId, matchId) {
         var form = document.createElement("form");

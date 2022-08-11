@@ -43,7 +43,7 @@
             <!--th:onchange="|location.href='@{/competition/create?title=' + form.title.value
             + '&competitionType='+ form.competitionType.value + '&memNum=' + this.value +  '}'|">-->
                 <option th:each="headCount : ${form.competitionType.name() == 'LEAGUE' ?
-                 #numbers.sequence(2, 20) : #numbers.sequence(2, 64)}" th:value="${headCount}" th:text="${headCount}"
+                 #numbers.sequence(2, 20) : #numbers.sequence(2, 32)}" th:value="${headCount}" th:text="${headCount}"
                         th:selected="${headCount} == ${form.headCount}"></option>
             </select>
         </div>

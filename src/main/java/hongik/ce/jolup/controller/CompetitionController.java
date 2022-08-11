@@ -137,21 +137,18 @@ public class CompetitionController {
 
         List<Join> joins = joinService.findByCompetitionSort(competitionId);
         Join join = joins.stream().filter(j -> j.getMember().getId().equals(member.getId())).findAny().orElse(null);
-        log.info("matches = {}", matches);
-        LinkedHashMap<Integer, List<Match>> hashMap = new LinkedHashMap<>();
+        LinkedHashMap<Integer, LinkedHashMap<Integer, Match>> hashMap = new LinkedHashMap<>();
+        Integer roundNo = matches.get(matches.size() - 1).getRoundNo();
 
         for (Match match : matches) {
-            hashMap.computeIfAbsent(match.getRoundNo(), k -> new ArrayList<>()).add(match);
+            hashMap.computeIfAbsent(match.getRoundNo(), k -> new LinkedHashMap<>()).put(match.getMatchNo(), match);
         }
 
-        for (Map.Entry<Integer, List<Match>> entry : hashMap.entrySet()) {
-            log.info("test = {}", entry.getValue());
+        for (int i = 0; i <= roundNo; i++) {
+            for (int j = 0; j < Math.pow(2, i); j++) {
+                System.out.println(i + "-" + j + "경기 = " + hashMap.get(i).get(j));
+            }
         }
-
-        log.info("final = {}", hashMap.get(0).get(0));
-
-        log.info("hashMap = {}", hashMap);
-
 
         model.addAttribute("competition", competition);
         model.addAttribute("hashMap", hashMap);
