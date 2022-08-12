@@ -12,9 +12,7 @@ import org.springframework.security.web.authentication.logout.SecurityContextLog
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -34,6 +32,17 @@ public class MemberController {
         }
         model.addAttribute("memberForm", new CreateMemberForm());
         return "members/signup";
+    }
+
+    @PostMapping("/emailCheck")
+    @ResponseBody
+    public int emailCheck(@RequestParam("email") String email) {
+        int result = 0;
+        if (memberService.findOne(email) != null) {
+            result = 1;
+        };
+        log.info("result = {}", result);
+        return result;
     }
 
     @PostMapping("/signup")

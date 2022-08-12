@@ -23,6 +23,10 @@
         padding: 3px 3px 3px 6px;
     }
 
+    .hidden {
+        visibility: hidden;
+    }
+
     .player {
         font-family:arial;
         width:150px;
@@ -30,30 +34,46 @@
     }
 
     .round0 .match {
-        margin-top: 250px;
+        margin-top: 1100px;
     }
 
     .round1 .match {
-        margin-top: 220px;
+        margin-top: 1050px;
     }
 
     .round1 .match:first-child {
-        margin-top: 110px;
+        margin-top: 540px;
     }
 
     .round2 .match {
-        margin-top: 80px;
+        margin-top: 500px;
     }
 
     .round2 .match:first-child {
-        margin-top: 40px;
+        margin-top: 250px;
     }
 
     .round3 .match {
-        margin-top: 10px;
+        margin-top: 220px;
     }
 
     .round3 .match:first-child {
+        margin-top: 110px;
+    }
+
+    .round4 .match {
+        margin-top: 80px;
+    }
+
+    .round4 .match:first-child {
+        margin-top: 40px;
+    }
+
+    .round5 .match {
+        margin-top: 10px;
+    }
+
+    .round5 .match:first-child {
         margin-top: 5px;
     }
 
@@ -179,9 +199,9 @@
     <table class="table table-striped">
         <thead>
         <tr>
-            <th>대회 이름</th>
-            <th>대회 방식</th>
-            <th>참여 인원수</th>
+            <th>대회명</th>
+            <th>대회방식</th>
+            <th>참여자수</th>
         </tr>
         </thead>
         <tbody>
@@ -204,7 +224,7 @@
         </form>
     </div>
 
-    <h1>대회 참여자 목록</h1>
+    <h1>대회참여자</h1>
     <table class="table table-light">
         <tbody>
         <tr th:each="join : ${joins}">
@@ -217,45 +237,21 @@
     <h1>일정</h1>
     <div th:if="${competition.competitionType.name() == 'LEAGUE'}">
         <table class="table table-bordered">
-            <!--<tbody th:each="matches : ${hashMap.entrySet()}">
-            <tr th:each="match : ${matches.getValue()}">
-                <td th:text="${match.roundNo}"></td>
-                <td th:text="${match.matchNo}"></td>
-                <td th:text="${match.home == null} ? ${match.roundNo + 1} + '-' + ${match.matchNo * 2} + '경기 승자'
-                : ${match.home.email + '('+ match.home.name + ')'}"></td>
-                <td th:text="${match.score.homeScore}"></td>
-                <td>:</td>
-                <td th:text="${match.score.awayScore}"></td>
-                <td th:text="${match.away == null} ? ${match.roundNo + 1} + '-' + ${match.matchNo * 2 + 1} + '경기 승자'
-                : ${match.away.email + '('+ match.away.name + ')'}"></td>
-                <td th:text="${match.matchStatus.description}"></td>
-                <td>
-                    <a class="btn btn-primary"
-                       th:if="${match.home != null} and ${match.away != null} and ${match.matchStatus.name() eq 'READY'}
-                    and ${myBelong ne null and (myBelong.belongType.name() eq 'ADMIN')}"
-                       th:href="@{|/rooms/${roomId}/competitions/${competitionId}/matches/${match.id}/update|}">수정</a>
-                    <a class="btn btn-primary"
-                       th:if="${match.home != null} and ${match.away != null} and ${match.matchStatus.name() eq 'END'}
-                    and ${myBelong ne null and (myBelong.belongType.name() eq 'ADMIN')}"
-                       th:href="'javascript:init('+${roomId}+', '+${competitionId}+', '+${match.id}+')'">초기화</a>
-                </td>
-            </tr>
-            </tbody>-->
             <tbody th:each="key : ${hashMap.keySet()}">
             <tr>
                 <td th:text="|${key}라운드|"></td>
                 <td>
                     <table class="table table-bordered">
-                        <tbody th:each="k : ${hashMap.get(key).keySet()}">
+                        <tbody th:each="k : ${hashMap.get(key).keySet()}" th:with="match=${hashMap.get(key).get(k)}">
                         <tr>
-                            <td th:text="|${hashMap.get(key).get(k).home.email}(${hashMap.get(key).get(k).home.name})|">홈팀명</td>
-                            <td th:text="|${hashMap.get(key).get(k).score.homeScore}:${hashMap.get(key).get(k).score.awayScore}|">스코어</td>
-                            <td th:text="|${hashMap.get(key).get(k).away.email}(${hashMap.get(key).get(k).away.name})|">어웨이팀명</td>
+                            <td th:text="|${match.home.email}(${match.home.name})|">홈팀명</td>
+                            <td th:text="|${match.score.homeScore}:${match.score.awayScore}|">스코어</td>
+                            <td th:text="|${match.away.email}(${match.away.name})|">어웨이팀명</td>
                             <td>
                                 <a class="btn btn-primary"
-                                   th:if="${hashMap.get(key).get(k).home != null} and ${hashMap.get(key).get(k).away != null}
+                                   th:if="${match.home != null} and ${match.away != null}
                     and ${myBelong ne null and (myBelong.belongType.name() eq 'ADMIN')}"
-                                   th:href="@{|/rooms/${roomId}/competitions/${competitionId}/matches/${hashMap.get(key).get(k).id}/update|}">수정</a>
+                                   th:href="@{|/rooms/${roomId}/competitions/${competitionId}/matches/${match.id}/update|}">수정</a>
                                 <!--<a class="btn btn-primary"
                                    th:if="${hashMap.get(key).get(k).home != null} and ${hashMap.get(key).get(k).away != null} and ${hashMap.get(key).get(k).matchStatus.name() eq 'END'}
                     and ${myBelong ne null and (myBelong.belongType.name() eq 'ADMIN')}"
@@ -265,26 +261,6 @@
                         </tbody>
                     </table>
                 </td>
-
-                <!--<td th:text="${match.matchNo}"></td>
-                <td th:text="${match.home == null} ? ${match.roundNo + 1} + '-' + ${match.matchNo * 2} + '경기 승자'
-                : ${match.home.email + '('+ match.home.name + ')'}"></td>
-                <td th:text="${match.score.homeScore}"></td>
-                <td>:</td>
-                <td th:text="${match.score.awayScore}"></td>
-                <td th:text="${match.away == null} ? ${match.roundNo + 1} + '-' + ${match.matchNo * 2 + 1} + '경기 승자'
-                : ${match.away.email + '('+ match.away.name + ')'}"></td>
-                <td th:text="${match.matchStatus.description}"></td>
-                <td>
-                    <a class="btn btn-primary"
-                       th:if="${match.home != null} and ${match.away != null} and ${match.matchStatus.name() eq 'READY'}
-                    and ${myBelong ne null and (myBelong.belongType.name() eq 'ADMIN')}"
-                       th:href="@{|/rooms/${roomId}/competitions/${competitionId}/matches/${match.id}/update|}">수정</a>
-                    <a class="btn btn-primary"
-                       th:if="${match.home != null} and ${match.away != null} and ${match.matchStatus.name() eq 'END'}
-                    and ${myBelong ne null and (myBelong.belongType.name() eq 'ADMIN')}"
-                       th:href="'javascript:init('+${roomId}+', '+${competitionId}+', '+${match.id}+')'">초기화</a>
-                </td>-->
             </tr>
             </tbody>
         </table>
@@ -294,7 +270,7 @@
             <thead>
             <tr>
                 <th>#</th>
-                <th>이름</th>
+                <th>회원명</th>
                 <th>경기수</th>
                 <th>승</th>
                 <th>무</th>
@@ -302,7 +278,7 @@
                 <th>승점</th>
                 <th>득점</th>
                 <th>실점</th>
-                <th>골득실</th>
+                <th>득실차</th>
             </tr>
             </thead>
             <tbody>
@@ -322,18 +298,17 @@
         </table>
     </div>
     <div class="tournament" th:if="${competition.competitionType.name() == 'TOURNAMENT'}">
-        <div
-             th:each="matches : ${hashMap.entrySet()}">
-            <div th:with="cnt=${T(java.lang.Math).pow(2, matchesStat.index)}">
-                <div th:each="i : ${#numbers.sequence(1, cnt)}" th:text="${i}"></div>
+        <div class="round" th:classappend="|round${key}|" th:each="key : ${hashMap.keySet()}"
+             th:with="cnt=${T(java.lang.Math).pow(2, key)}">
+            <div th:each="k : ${#numbers.sequence(0, cnt - 1)}" th:with="match=${hashMap.get(key).get(k)}"
+                 class="match" th:classappend="${match == null} ? 'hidden'">
+                <div th:if="${match != null}">
+                    <div class="player"th:text="${match.home == null} ? ${keyStat.count} + '-' + ${keyStat.count * 2 - 1} + '경기 승자'
+                : ${match.home.email} + '(' + ${match.home.name} + ')'">home</div>
+                    <div class="player" th:text="${match.away == null} ? ${keyStat.count} +'-' + ${keyStat.count * 2} + '경기 승자'
+                : ${match.away.email} + '(' + ${match.away.name} + ')'">away</div>
+                </div>
             </div>
-            <!--<div class="match"
-                 th:each="match : ${matches.getValue()}">
-                <div class="player"th:text="${match.home == null} ? ${matchesStat.count} + '-' + ${matchStat.count * 2 - 1} + '경기 승자'
-            : ${match.home.email} + '(' + ${match.home.name} + ')'">home</div>
-                <div class="player" th:text="${match.away == null} ? ${matchesStat.count} +'-' + ${matchStat.count * 2} + '경기 승자'
-            : ${match.away.email} + '(' + ${match.away.name} + ')'">away</div>
-            </div>-->
         </div>
         <!--<a th:each="matches : ${hashMap.entrySet()}">
             <div class="round" th:id="|round${matchesStat.index}|">

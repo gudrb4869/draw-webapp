@@ -73,6 +73,7 @@ public class CompetitionController {
         List<Belong> belongs = belongService.findByRoomId(roomId);
         Belong myBelong = belongs.stream()
                 .filter(b -> b.getMember().getId().equals(member.getId())).findFirst().orElse(null);
+
         if (myBelong == null || !myBelong.getBelongType().equals(BelongType.ADMIN)) {
             return "error";
         }
@@ -144,9 +145,15 @@ public class CompetitionController {
             hashMap.computeIfAbsent(match.getRoundNo(), k -> new LinkedHashMap<>()).put(match.getMatchNo(), match);
         }
 
-        for (int i = 0; i <= roundNo; i++) {
-            for (int j = 0; j < Math.pow(2, i); j++) {
-                System.out.println(i + "-" + j + "경기 = " + hashMap.get(i).get(j));
+        for (Map.Entry<Integer, LinkedHashMap<Integer, Match>> entry : hashMap.entrySet()) {
+            System.out.println("entry = " + entry);
+        }
+
+        if (competition.getCompetitionType().equals(CompetitionType.TOURNAMENT)) {
+            for (int i = 0; i <= roundNo; i++) {
+                for (int j = 0; j < Math.pow(2, i); j++) {
+                    System.out.println(i + "-" + j + "경기 = " + hashMap.get(i).get(j));
+                }
             }
         }
 
@@ -237,8 +244,8 @@ public class CompetitionController {
         @NotNull(message = "대회 참여 인원 수는 필수 입력 값입니다!")
         private Long headCount;
 
-        @Size(min = 2, max = 20, message = "최소 인원 오류")
-        @NotNull(message = "null 오류")
+        @Size(min = 2, max = 64, message = "참가자수 범위는 최소 2명부터 최대 64명까지입니다!")
+        @NotNull(message = "참가자 목록은 null 값일 수 없습니다!")
         private List<@NotBlank(message = "참가자 아이디는 필수 입력 값입니다!") String> emails = new ArrayList<>();
 
         public CreateCompetitionForm(String title, CompetitionType competitionType, Long headCount) {

@@ -86,7 +86,7 @@ public class InitDb {
         public void dbInit() {
 
             List<Member> members = new ArrayList<>();
-            for (int i = 0; i < 20; i++) {
+            for (int i = 0; i < 50; i++) {
                 members.add(memberService.saveMember(Integer.toString(i), "1", "user" + i));
             }
 
@@ -118,7 +118,7 @@ public class InitDb {
             Long room4Id = roomService.saveRoom(room4);
 
             belongService.save(members.get(1).getId(), room4Id, BelongType.ADMIN);
-            for (int i = 2; i < 17; i++) {
+            for (int i = 2; i <= 32; i++) {
                 belongService.save(members.get(i).getId(), room4Id, BelongType.USER);
             }
         }
