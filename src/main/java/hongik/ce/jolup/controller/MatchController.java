@@ -109,6 +109,8 @@ public class MatchController {
                        @PathVariable("matchId") Long matchId,
                        @AuthenticationPrincipal Member member) {
 
+        log.info("POST initMatch : roomId = {}, competitionId = {}, matchId = {}", roomId, competitionId, matchId);
+
         Belong myBelong = belongService.findOne(member.getId(), roomId);
         if (myBelong == null || !myBelong.getBelongType().equals(BelongType.ADMIN)) {
             return "error";

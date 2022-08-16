@@ -8,7 +8,6 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.HashMap;
 import java.util.List;
 import java.util.Optional;
 
@@ -75,8 +74,12 @@ public class MemberService {
         return memberRepository.findById(memberId).orElse(null);
     }
 
-    public Member findOne(String email) {
+    public Member findByEmail(String email) {
         return memberRepository.findByEmail(email).orElse(null);
+    }
+
+    public Member findByName(String name) {
+        return memberRepository.findByName(name).orElse(null);
     }
 
     public List<Member> findMembers(List<String> emails) {

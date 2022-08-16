@@ -34,17 +34,6 @@ public class MemberController {
         return "members/signup";
     }
 
-    @PostMapping("/emailCheck")
-    @ResponseBody
-    public int emailCheck(@RequestParam("email") String email) {
-        int result = 0;
-        if (memberService.findOne(email) != null) {
-            result = 1;
-        };
-        log.info("result = {}", result);
-        return result;
-    }
-
     @PostMapping("/signup")
     public String signup(@ModelAttribute("memberForm") @Valid CreateMemberForm form,
                          BindingResult result, Model model) {

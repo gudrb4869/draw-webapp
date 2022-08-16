@@ -261,7 +261,7 @@
             <table class="table table-bordered table-width text-center">
                 <tbody th:each="key : ${hashMap.keySet()}">
                 <tr>
-                    <td th:text="|${key}라운드|"></td>
+                    <td th:text="|${key + 1}라운드|"></td>
                     <td>
                         <table class="table table-bordered">
                             <tbody th:each="k : ${hashMap.get(key).keySet()}" th:with="match=${hashMap.get(key).get(k)}">
@@ -272,12 +272,12 @@
                                 <td>
                                     <a class="btn btn-primary"
                                        th:if="${match.home != null} and ${match.away != null}
-                    and ${myBelong ne null and (myBelong.belongType.name() eq 'ADMIN')}"
+                                       and ${myBelong ne null and (myBelong.belongType.name() eq 'ADMIN')}"
                                        th:href="@{|/rooms/${roomId}/competitions/${competitionId}/matches/${match.id}/update|}">수정</a>
-                                    <!--<a class="btn btn-primary"
-                                       th:if="${hashMap.get(key).get(k).home != null} and ${hashMap.get(key).get(k).away != null} and ${hashMap.get(key).get(k).matchStatus.name() eq 'END'}
-                        and ${myBelong ne null and (myBelong.belongType.name() eq 'ADMIN')}"
-                                       th:href="'javascript:init('+${roomId}+', '+${competitionId}+', '+${hashMap.get(key).get(k).id}+')'">초기화</a>-->
+                                    <a class="btn btn-primary"
+                                       th:if="${match.home != null} and ${match.away != null} and ${match.matchStatus.name() eq 'END'}
+                                       and ${myBelong ne null and (myBelong.belongType.name() eq 'ADMIN')}"
+                                       th:href="'javascript:init('+${roomId}+', '+${competitionId}+', '+${match.id}+')'">초기화</a>
                                 </td>
                             </tr>
                             </tbody>
@@ -328,7 +328,7 @@
              th:with="cnt=${T(java.lang.Math).pow(2, key)}">
             <div th:each="k : ${#numbers.sequence(0, cnt - 1)}" th:with="match=${hashMap.get(key).get(k)}"
                  class="match" th:classappend="${match == null} ? 'hidden'">
-                <div th:if="${match != null}">
+                <div th:if="${match != null}" th:onclick="|location.href='@{/rooms/{roomId}/competitions/{competitionId}/matches/{matchId}/update(roomId=${roomId}, competitionId=${competitionId}, matchId=${match.id})}'|">
                     <div class="player"th:text="${match.home == null} ? ${keyStat.index} + '-' + ${k * 2 + 1} + '경기 승자'
                 : ${match.home.email} + '(' + ${match.home.name} + ')'">home</div>
                     <div class="player" th:text="${match.away == null} ? ${keyStat.index} +'-' + ${k * 2 + 2} + '경기 승자'

@@ -16,6 +16,14 @@
         color: springgreen;
         display: none;
     }
+    .name-already {
+        color: orangered;
+        display: none;
+    }
+    .name-ok {
+        color: springgreen;
+        display: none;
+    }
     .form-center {
         display: flex;
         justify-content: center;
@@ -43,8 +51,6 @@
                 <span class="email-ok">사용 가능한 아이디입니다.</span>
                 <span class="email-already">사용 불가능한 아이디입니다.</span>
                 <p th:errors="*{email}" class="field-error">아이디 오류</p>
-                <!--                    <input class="btn btn-outline-primary btn-sm mx-1" type="button" id="emailOverlay" onclick="emailCheck()" value="중복 체크"/>-->
-                <!--                    <input class="btn btn-outline-success btn-sm" type="button" id="resetEmail" onclick="resetEmail()" disabled value="다시입력"/>-->
             </div>
 
             <div>
@@ -58,6 +64,8 @@
                 <label th:for="name">이름</label>
                 <input type="text" th:field="*{name}" placeholder="이름을 입력하세요"
                        th:errorclass="field-error" class="form-control">
+                <span class="name-ok">사용 가능한 이름입니다.</span>
+                <span class="name-already">사용 불가능한 이름입니다.</span>
                 <p th:errors="*{name}" class="field-error">이름 오류</p>
             </div>
 
@@ -92,13 +100,35 @@
             data: {"email": email},
             dataType: "json",
             success: function(result) {
-                console.log(result);
                 if (result == 0) {
                     $('.email-ok').css("display", "inline-block");
                     $('.email-already').css("display", "none");
                 } else {
                     $('.email-already').css("display", "inline-block");
                     $('.email-ok').css("display", "none");
+                }
+            }
+        });
+    });
+    $("#name").on("propertychange change keyup paste input", function() {
+        var name = $("#name").val()
+        if (name == "") {
+            $('.name-already').css("display", "inline-block");
+            $('.name-ok').css("display", "none");
+            return;
+        }
+        $.ajax({
+            type: "POST",
+            url: "/nameCheck",
+            data: {"name": name},
+            dataType: "json",
+            success: function(result) {
+                if (result == '0') {
+                    $('.name-ok').css("display", "inline-block");
+                    $('.name-already').css("display", "none");
+                } else {
+                    $('.name-already').css("display", "inline-block");
+                    $('.name-ok').css("display", "none");
                 }
             }
         });

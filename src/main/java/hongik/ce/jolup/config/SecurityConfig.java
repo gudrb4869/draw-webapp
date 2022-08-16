@@ -1,11 +1,11 @@
 package hongik.ce.jolup.config;
 
-import hongik.ce.jolup.service.MemberService;
 import hongik.ce.jolup.service.UserDetailsServiceImpl;
 import lombok.RequiredArgsConstructor;
 import org.springframework.boot.autoconfigure.security.servlet.PathRequest;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.builders.WebSecurity;
@@ -25,6 +25,12 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         return new BCryptPasswordEncoder();
     }
 
+    @Bean
+    @Override
+    public AuthenticationManager authenticationManagerBean() throws Exception {
+        return super.authenticationManagerBean();
+    }
+
     @Override
     // 인증을 무시할 경로 설정
     public void configure(WebSecurity web) throws Exception {
@@ -40,7 +46,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .csrf().disable().headers().frameOptions().disable()// h2-console 화면 사용하기 위함
                     .and()
                 .authorizeRequests()
-                    .antMatchers("/", "/login", "/signup", "/emailCheck", "/css/**", "/js/**", "/images/**", "/error").permitAll() // 누구나 접근 가능
+                    .antMatchers("/", "/login", "/signup", "/emailCheck", "/nameCheck", "/css/**", "/js/**", "/images/**", "/error").permitAll() // 누구나 접근 가능
                     .anyRequest().authenticated() // 나머지는 권한이 있기만 하면 접근 가능
                     .and()
                 .httpBasic()
