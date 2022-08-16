@@ -23,6 +23,7 @@ public class MemberService {
     @Transactional
     public Member saveMember(String email, String password, String name) {
         validateDuplicateUser(email);
+        validateDuplicateName(name);
         Member member = Member.builder().email(email)
                 .password(encoder.encode(password))
                 .name(name).role(Role.USER).build();
@@ -32,15 +33,15 @@ public class MemberService {
 
     @Transactional
     public Long updateMember(Long memberId, String oldPassword, String newPassword, String name) {
-        Optional<Member> optionalMember = memberRepository.findById(memberId);
-        if (optionalMember.isEmpty()) {
+        Member member = memberRepository.findById(memberId).orElse(null);
+        if (member == null) {
             return null;
         }
-        Member member = optionalMember.get();
-        if (!encoder.matches(oldPassword, member.getPassword())) {
-            throw new IllegalStateException("비밀번호가 틀렸습니다.");
-        }
+        validateOldAndNewPassword(oldPassword, member.getPassword());
         member.updatePassword(encoder.encode(newPassword));
+        if (!member.getName().equals(name)) {
+            validateDuplicateName(name);
+        }
         member.updateName(name);
         return member.getId();
     }
@@ -50,16 +51,23 @@ public class MemberService {
         memberRepository.deleteById(id);
     }
 
-    public HashMap<String, Object> emailOverlap(String email) {
-        HashMap<String, Object> map = new HashMap<String, Object>();
-        map.put("result", memberRepository.existsByEmail(email));
-        return map;
-    }
-
     private void validateDuplicateUser(String email) {
         Optional<Member> optionalMember = memberRepository.findByEmail(email);
         if (optionalMember.isPresent()) {
             throw new IllegalStateException("이미 존재하는 아이디입니다!");
+        }
+    }
+
+    private void validateDuplicateName(String name) {
+        Optional<Member> optionalMember = memberRepository.findByName(name);
+        if (optionalMember.isPresent()) {
+            throw new IllegalStateException("이미 존재하는 이름입니다!");
+        }
+    }
+
+    private void validateOldAndNewPassword(String oldPassword, String newPassword) {
+        if (!encoder.matches(oldPassword, newPassword)) {
+            throw new IllegalStateException("비밀번호가 맞지 않습니다.");
         }
     }
 

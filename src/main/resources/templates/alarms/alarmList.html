@@ -3,15 +3,32 @@
       xmlns:th="http://www.thymeleaf.org"
       xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 <head th:replace="fragments/header :: header" />
+<style>
+    .table-center {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+    .table-width {
+        max-width: 1000px;
+    }
+    ul {
+        list-style: none;
+    }
+    li {
+        float: left;
+        margin-left: 20px;
+    }
+</style>
 <body>
-<div class="container" style="max-width: 600px">
+<div>
     <div th:replace="fragments/bodyheader" :: bodyheader />
     <div class="py-5 text-center">
         <h1><span class="text-black mx-2" sec:authentication="name">사용자</span>님의 알림 목록</h1>
     </div>
     <hr class="my-4">
-    <div>
-        <table class="table">
+    <div class="table-center">
+        <table class="table table-width text-center">
             <tbody>
             <tr th:if="${alarms.isEmpty()}">
                 <td class="text-center" colspan="5">알림이 존재하지 않습니다.</td>

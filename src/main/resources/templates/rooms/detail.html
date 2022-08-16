@@ -2,12 +2,29 @@
 <html xmlns="http://www.w3.org/1999/xhtml"
       xmlns:th="http://www.thymeleaf.org">
 <head th:replace="fragments/header :: header" />
+<style>
+    .table-center {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+    .table-width {
+        max-width: 1000px;
+    }
+    ul {
+        list-style: none;
+    }
+    li {
+        float: left;
+        margin-left: 20px;
+    }
+</style>
 <body>
-<div class="container" style="max-width: 600px">
+<div>
     <div th:replace="fragments/bodyheader" :: bodyheader />
-    <div style>
-        <hr class="my-4">
-        <table class="table table-striped">
+    <hr class="my-4">
+    <div class="table-center">
+        <table class="table table-striped text-center table-width">
             <thead>
             <tr>
                 <th>방 이름</th>
@@ -24,7 +41,8 @@
             </tbody>
         </table>
     </div>
-    <div class="my-2 my-lg-0">
+
+    <div class="">
         <a th:href="@{/rooms}" class="btn btn-warning">목록</a>
         <a class="btn btn-primary my-2 my-sm-0" th:if="${myBelong ne null and (myBelong.belongType.name() ne 'USER')}"
            th:href="@{/rooms/{roomId}/invite(roomId = ${room.id})}">초대</a>
@@ -39,78 +57,84 @@
            th:href="@{|/rooms/${roomId}/competitions/create|}" role="button" style="float:right;">대회 만들기</a>
     </div>
 
-    <div class="text-center py-2">
-        <hr class="my-4">
+    <hr class="my-4">
+
+    <div class="py-2 text-center">
         <h1>참여자 목록</h1>
-        <div style="height: 300px; overflow: auto;">
-            <table class="table table-light">
-                <thead>
-                <tr>
-                    <th>이름</th>
-                    <th>권한</th>
-                </tr>
-                </thead>
-                <tbody>
-                <tr th:each="belong : ${belongs}">
-                    <td th:text="${belong.member.email + '('+ belong.member.name + ')'}"></td>
-                    <td th:text="${belong.belongType.description}"></td>
-                </tr>
-                </tbody>
-            </table>
-        </div>
-        <div>
-            <ul>
-                <li th:each="page : ${#numbers.sequence(1, totalBelongPage, 1)}">
-                    <a th:href="@{|/rooms/${room.id}|(belongPage=${pageStat.count})}" th:text="${pageStat.count}">1</a>
-                </li>
-            </ul>
-        </div>
+    </div>
 
-        <hr class="my-4">
+    <hr class="my-4">
 
+    <div class="table-center">
+        <table class="table table-light text-center table-width">
+            <thead>
+            <tr>
+                <th>이름</th>
+                <th>권한</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="belong : ${belongs}">
+                <td th:text="${belong.member.email + '('+ belong.member.name + ')'}"></td>
+                <td th:text="${belong.belongType.description}"></td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+    <div>
+        <ul class="row">
+            <li class="col" th:each="page : ${#numbers.sequence(1, totalBelongPage, 1)}">
+                <a th:href="@{|/rooms/${room.id}|(belongPage=${pageStat.count})}" th:text="${pageStat.count}">1</a>
+            </li>
+        </ul>
+    </div>
+
+    <hr class="my-4">
+
+    <div class="py-2 text-center">
         <h1>대회 목록</h1>
-        <div>
-            <table class="table">
-                <thead>
-                <tr>
-                    <th>대회명</th>
-                    <th>대회방식</th>
-                    <th>참여자수</th>
-                    <th>대회생성일</th>
-                    <th></th>
-                </tr>
-                </thead>
-                <tbody>
-                <tr th:if="${competitions.isEmpty()}">
-                    <td class="text-center" colspan="5">참여중인 대회가 없습니다!</td>
-                </tr>
-                <tr th:each="competition : ${competitions}">
-                    <td th:text="${competition.title}">test</td>
-                    <td th:text="${competition.competitionType.description}">리그</td>
-                    <td th:text="|명|">0명</td>
-                    <td th:text="${#temporals.format(competition.createdDate, 'yyyy-MM-dd HH:mm:ss')}">날짜</td>
-                    <td>
-                        <div>
-                            <form class="form-check-inline my-2 my-lg-0" th:action="@{|/rooms/${room.id}/competitions/${competition.id}|}" method="post">
-                                <a class="btn btn-primary my-2 my-sm-0" th:href="@{|/rooms/${room.id}/competitions/${competition.id}|}">조회</a>
-                                <input type="hidden" name="_method" value="delete"
-                                       th:if="${myBelong ne null and (myBelong.belongType.name() eq 'ADMIN')}"/>
-                                <button class="btn btn-danger my-2 my-sm-0" type="submit"
-                                        th:if="${myBelong ne null and (myBelong.belongType.name() eq 'ADMIN')}">삭제</button>
-                            </form>
-                        </div>
-                    </td>
-                </tr>
-                </tbody>
-            </table>
-        </div>
-        <div>
-            <ul>
-                <li th:each="page : ${#numbers.sequence(1, totalCompetitionPage, 1)}">
-                    <a th:href="@{|/rooms/${room.id}|(competitionPage=${pageStat.count})}" th:text="${pageStat.count}">1</a>
-                </li>
-            </ul>
-        </div>
+    </div>
+    <div class="table-center">
+        <table class="table table-width text-center">
+            <thead>
+            <tr>
+                <th>대회명</th>
+                <th>대회방식</th>
+                <th>참여자수</th>
+                <th>대회생성일</th>
+                <th></th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:if="${competitions.isEmpty()}">
+                <td class="text-center" colspan="5">참여중인 대회가 없습니다!</td>
+            </tr>
+            <tr th:each="competition : ${competitions}">
+                <td th:text="${competition.title}">test</td>
+                <td th:text="${competition.competitionType.description}">리그</td>
+                <td th:text="|명|">0명</td>
+                <td th:text="${#temporals.format(competition.createdDate, 'yyyy-MM-dd HH:mm:ss')}">날짜</td>
+                <td>
+                    <div>
+                        <form class="form-check-inline my-2 my-lg-0" th:action="@{|/rooms/${room.id}/competitions/${competition.id}|}" method="post">
+                            <a class="btn btn-primary my-2 my-sm-0" th:href="@{|/rooms/${room.id}/competitions/${competition.id}|}">조회</a>
+                            <input type="hidden" name="_method" value="delete"
+                                   th:if="${myBelong ne null and (myBelong.belongType.name() eq 'ADMIN')}"/>
+                            <button class="btn btn-danger my-2 my-sm-0" type="submit"
+                                    th:if="${myBelong ne null and (myBelong.belongType.name() eq 'ADMIN')}">삭제</button>
+                        </form>
+                    </div>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+    <div>
+        <ul class="row">
+            <li class="col" th:each="page : ${#numbers.sequence(1, totalCompetitionPage, 1)}">
+                <a th:href="@{|/rooms/${room.id}|(competitionPage=${pageStat.count})}" th:text="${pageStat.count}">1</a>
+            </li>
+        </ul>
     </div>
     <div th:replace="fragments/footer" :: footer />
 </div> <!-- /container -->

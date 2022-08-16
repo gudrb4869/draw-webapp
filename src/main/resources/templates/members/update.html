@@ -7,6 +7,14 @@
     .fieldError {border-color: #bd2130;}
     .ok_msg{color: #0a53be;}
     .error_msg{color: #bd2130;}
+    .form-center {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+    .form-width {
+        max-width: 600px;
+    }
 </style>
 <body>
 <div>
@@ -14,43 +22,45 @@
     <div class="py-5 text-center">
         <h2>회원 정보 수정</h2>
     </div>
-    <form class="form-control" th:action method="post" th:object="${memberForm}">
-        <div class="py-2" th:if="${errorMessage}">
-            <span th:text="${errorMessage}" class="alert alert-danger">예외가 발생했습니다.</span>
-        </div>
-        <div class="py-2">
-            <label th:for="password_current">현재 비밀번호</label>
-            <input type="password" th:field="*{password_current}" placeholder="현재 비밀번호를 입력하세요"
-                   th:class="${#fields.hasErrors('password_current')}? 'form-control fieldError' : 'form-control'">
-            <p th:if="${#fields.hasErrors('password_current')}" th:errors="*{password_current}" class="error_msg">비밀번호 형식이 올바르지 않음</p>
-        </div>
-
-        <div>
-            <label th:for="password_new">새 비밀번호</label>
-            <input type="password" th:field="*{password_new}" placeholder="새 비밀번호를 입력하세요"
-                   th:class="${#fields.hasErrors('password_new')}? 'form-control fieldError' : 'form-control'">
-            <p th:if="${#fields.hasErrors('password_new')}" th:errors="*{password_new}" class="error_msg">비밀번호 형식이 올바르지 않음</p>
-        </div>
-
-        <div>
-            <label th:for="name">이름</label>
-            <input type="text" th:field="*{name}" placeholder="이름을 입력하세요"
-                   th:class="${#fields.hasErrors('name')}? 'form-control fieldError' : 'form-control'">
-            <p th:if="${#fields.hasErrors('name')}" th:errors="*{name}" class="error_msg">이름 형식이 올바르지 않음</p>
-        </div>
-
-        <hr class="my-4">
-
-        <div class="row">
-            <div class="col">
-                <button class="btn btn-primary btn-lg" type="submit">수정</button>
-                <button class="btn btn-warning btn-lg"
-                        th:onclick="|location.href='@{/}'|"
-                        type="button">취소</button>
+    <div class="form-center">
+        <form class="form-control form-width" th:action method="post" th:object="${memberForm}">
+            <div class="py-2" th:if="${errorMessage}">
+                <span th:text="${errorMessage}" class="alert alert-danger">예외가 발생했습니다.</span>
             </div>
-        </div>
+            <div class="py-2">
+                <label th:for="password_current">현재 비밀번호</label>
+                <input type="password" th:field="*{password_current}" placeholder="현재 비밀번호를 입력하세요"
+                       th:class="${#fields.hasErrors('password_current')}? 'form-control fieldError' : 'form-control'">
+                <p th:if="${#fields.hasErrors('password_current')}" th:errors="*{password_current}" class="error_msg">비밀번호 형식이 올바르지 않음</p>
+            </div>
 
-    </form>
+            <div>
+                <label th:for="password_new">새 비밀번호</label>
+                <input type="password" th:field="*{password_new}" placeholder="새 비밀번호를 입력하세요"
+                       th:class="${#fields.hasErrors('password_new')}? 'form-control fieldError' : 'form-control'">
+                <p th:if="${#fields.hasErrors('password_new')}" th:errors="*{password_new}" class="error_msg">비밀번호 형식이 올바르지 않음</p>
+            </div>
+
+            <div>
+                <label th:for="name">이름</label>
+                <input type="text" th:field="*{name}" placeholder="이름을 입력하세요"
+                       th:class="${#fields.hasErrors('name')}? 'form-control fieldError' : 'form-control'">
+                <p th:if="${#fields.hasErrors('name')}" th:errors="*{name}" class="error_msg">이름 형식이 올바르지 않음</p>
+            </div>
+
+            <hr class="my-4">
+
+            <div class="row">
+                <div class="col">
+                    <button class="btn btn-primary btn-lg" type="submit">수정</button>
+                    <button class="btn btn-warning btn-lg"
+                            th:onclick="|location.href='@{/}'|"
+                            type="button">취소</button>
+                </div>
+            </div>
+
+        </form>
+    </div>
     <div th:replace="fragments/footer" :: footer />
 </div> <!-- /container -->
 </body>

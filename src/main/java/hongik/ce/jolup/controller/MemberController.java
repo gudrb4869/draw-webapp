@@ -95,7 +95,7 @@ public class MemberController {
         }
         try {
             memberService.updateMember(member.getId(), form.getPassword_current(), form.getPassword_new(), form.getName());
-        } catch (Exception e) {
+        } catch (IllegalStateException e) {
             model.addAttribute("errorMessage", e.getMessage());
             return "members/update";
         }

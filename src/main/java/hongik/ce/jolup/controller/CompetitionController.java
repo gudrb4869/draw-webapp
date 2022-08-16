@@ -139,7 +139,6 @@ public class CompetitionController {
         List<Join> joins = joinService.findByCompetitionSort(competitionId);
         Join join = joins.stream().filter(j -> j.getMember().getId().equals(member.getId())).findAny().orElse(null);
         LinkedHashMap<Integer, LinkedHashMap<Integer, Match>> hashMap = new LinkedHashMap<>();
-        Integer roundNo = matches.get(matches.size() - 1).getRoundNo();
 
         for (Match match : matches) {
             hashMap.computeIfAbsent(match.getRoundNo(), k -> new LinkedHashMap<>()).put(match.getMatchNo(), match);
@@ -148,7 +147,7 @@ public class CompetitionController {
         for (Map.Entry<Integer, LinkedHashMap<Integer, Match>> entry : hashMap.entrySet()) {
             System.out.println("entry = " + entry);
         }
-
+        Integer roundNo = Collections.max(hashMap.keySet());
         if (competition.getCompetitionType().equals(CompetitionType.TOURNAMENT)) {
             for (int i = 0; i <= roundNo; i++) {
                 for (int j = 0; j < Math.pow(2, i); j++) {

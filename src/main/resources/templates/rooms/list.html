@@ -3,16 +3,35 @@
       xmlns:th="http://www.thymeleaf.org"
       xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 <head th:replace="fragments/header :: header" />
+<style>
+    .table-center {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+    .table-width {
+        max-width: 1000px;
+    }
+    ul {
+        list-style: none;
+    }
+    li {
+        float: left;
+        margin-left: 20px;
+    }
+</style>
 <body>
-<div class="container" style="max-width: 600px">
+<div>
     <div th:replace="fragments/bodyheader" :: bodyheader />
     <div class="py-5 text-center">
         <h1><span class="text-black mx-2" sec:authentication="name">사용자</span>님의 방 목록</h1>
     </div>
     <hr class="my-4">
-    <a class="btn btn-info" th:href="@{/rooms/create}" role="button" style="float:right;">방 만들기</a>
     <div>
-        <table class="table">
+        <a class="btn btn-info" th:href="@{/rooms/create}" role="button" style="float:right;">방 만들기</a>
+    </div>
+    <div class="table-center">
+        <table class="table text-center table-width">
             <thead>
             <tr>
                 <th>이름</th>
@@ -41,9 +60,9 @@
             </tbody>
         </table>
     </div>
-    <div>
-        <ul>
-            <li th:each="page : ${#numbers.sequence(1, totalPage, 1)}">
+    <div class="text-center">
+        <ul class="row">
+            <li class="col" th:each="page : ${#numbers.sequence(1, totalPage, 1)}">
                 <a th:href="@{/rooms(page=${pageStat.count})}" th:text="${pageStat.count}">1</a>
             </li>
         </ul>
