@@ -85,7 +85,7 @@
     <div th:replace="fragments/footer" :: footer />
 </div> <!-- /container -->
 </body>
-<script src="//code.jquery.com/jquery-1.11.1.min.js"></script>
+<script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
 <script>
     $("#email").on("propertychange change keyup paste input", function() {
         var email = $("#email").val()
@@ -100,12 +100,12 @@
             data: {"email": email},
             dataType: "json",
             success: function(result) {
-                if (result == 0) {
-                    $('.email-ok').css("display", "inline-block");
-                    $('.email-already').css("display", "none");
-                } else {
+                if (result == true) {
                     $('.email-already').css("display", "inline-block");
                     $('.email-ok').css("display", "none");
+                } else {
+                    $('.email-ok').css("display", "inline-block");
+                    $('.email-already').css("display", "none");
                 }
             }
         });
@@ -123,12 +123,12 @@
             data: {"name": name},
             dataType: "json",
             success: function(result) {
-                if (result == '0') {
-                    $('.name-ok').css("display", "inline-block");
-                    $('.name-already').css("display", "none");
-                } else {
+                if (result == true) {
                     $('.name-already').css("display", "inline-block");
                     $('.name-ok').css("display", "none");
+                } else {
+                    $('.name-ok').css("display", "inline-block");
+                    $('.name-already').css("display", "none");
                 }
             }
         });

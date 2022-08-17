@@ -44,26 +44,26 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     protected void configure(HttpSecurity http) throws Exception {
         http
                 .csrf().disable().headers().frameOptions().disable()// h2-console 화면 사용하기 위함
-                    .and()
+                .and()
                 .authorizeRequests()
-                    .antMatchers("/", "/login", "/signup", "/emailCheck", "/nameCheck", "/css/**", "/js/**", "/images/**", "/error").permitAll() // 누구나 접근 가능
-                    .anyRequest().authenticated() // 나머지는 권한이 있기만 하면 접근 가능
-                    .and()
+                .antMatchers("/", "/login", "/signup", "/emailCheck", "/nameCheck", "/css/**", "/js/**", "/images/**", "/error").permitAll() // 누구나 접근 가능
+                .anyRequest().authenticated() // 나머지는 권한이 있기만 하면 접근 가능
+                .and()
                 .httpBasic()
                 .and()
                 .formLogin() // 로그인에 대한 설정
-                    .loginPage("/login")
-                    .loginProcessingUrl("/login")
-                    .usernameParameter("email")
-                    .passwordParameter("password")
-                    .defaultSuccessUrl("/rooms") // 로그인 성공시 연결되는 주소
-                    .and()
+                .loginPage("/login")
+                .loginProcessingUrl("/login")
+                .usernameParameter("email")
+                .passwordParameter("password")
+                .defaultSuccessUrl("/rooms") // 로그인 성공시 연결되는 주소
+                .and()
                 .logout() // 로그아웃 관련 설정
-                    .logoutSuccessUrl("/") // 로그아웃 성공시 연결되는 주소
-                    .deleteCookies("JSESSIONID")
+                .logoutSuccessUrl("/") // 로그아웃 성공시 연결되는 주소
+                .deleteCookies("JSESSIONID")
                 .clearAuthentication(true)
-                    .invalidateHttpSession(true) // 로그아웃시 저장해 둔 세션 날리기
-                    .and()
+                .invalidateHttpSession(true) // 로그아웃시 저장해 둔 세션 날리기
+                .and()
                 .sessionManagement()
                 .maximumSessions(1)
                 .expiredUrl("/")

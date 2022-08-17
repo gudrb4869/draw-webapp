@@ -12,7 +12,10 @@ import hongik.ce.jolup.domain.room.RoomSetting;
 import hongik.ce.jolup.service.*;
 import lombok.*;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -25,7 +28,6 @@ import javax.validation.Valid;
 import javax.validation.constraints.*;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 @Slf4j
 @Controller
@@ -40,17 +42,16 @@ public class RoomController {
     private final AlarmService alarmService;
 
     @GetMapping
-    public String roomList(Model model, @AuthenticationPrincipal Member member,
-                           @RequestParam(required = false, defaultValue = "1", value = "page") int page) {
+    public String roomList(@AuthenticationPrincipal Member member,
+                           @PageableDefault Pageable pageable,
+                           Model model
+                           /*@RequestParam(required = false, defaultValue = "1", value = "page") int page*/) {
         log.info("room_list");
-        if (page <= 0) {
-            return "error";
-        }
-        Page<Belong> belongPage = belongService.findByMemberId(member.getId(), page - 1);
-        int totalPage = belongPage.getTotalPages();
-        model.addAttribute("belongs", belongPage.getContent());
-        model.addAttribute("totalPage", totalPage);
-        log.info("totalPage = {}", totalPage);
+        Page<Belong> belongList = belongService.findByMemberId(member.getId(), pageable);
+        model.addAttribute("belongList", belongList);
+        log.info("총 element 수 : {}, 전체 page 수 : {}, 페이지에 표시할 element 수 : {}, 현재 페이지 index : {}, 현재 페이지의 element 수 : {}",
+                belongList.getTotalElements(), belongList.getTotalPages(), belongList.getSize(),
+                belongList.getNumber(), belongList.getNumberOfElements());
         return "rooms/list";
     }
 
@@ -66,23 +67,22 @@ public class RoomController {
                          @AuthenticationPrincipal Member member) {
 
         log.info("roomForm = {}", roomForm);
-
         if (result.hasErrors()) {
             return "rooms/create";
         }
 
         Room room = Room.builder().title(roomForm.getTitle()).roomSetting(roomForm.getRoomSetting()).build();
-
         Long roomId = roomService.saveRoom(room);
-        
         belongService.save(member.getId(), roomId, BelongType.ADMIN);
         return "redirect:/rooms";
     }
 
     @GetMapping("/{roomId}")
-    public String roomDetail(@PathVariable Long roomId, Model model, @AuthenticationPrincipal Member member,
-                             @RequestParam(required = false, defaultValue = "1", value = "belongPage") int belongPage,
-                             @RequestParam(required = false, defaultValue = "1", value = "competitionPage") int competitionPage) {
+    public String roomDetail(@PathVariable Long roomId,
+                             @AuthenticationPrincipal Member member,
+                             @Qualifier("belong") @PageableDefault Pageable belongPageable,
+                             @Qualifier("competition") @PageableDefault Pageable competitionPageable,
+                             Model model) {
         log.info("roomDetail");
 
         Room room = roomService.findOne(roomId);
@@ -91,22 +91,25 @@ public class RoomController {
             return "error";
         }
 
-        Belong belong = belongService.findOne(member.getId(), roomId);
-        if (belong == null && room.getRoomSetting().equals(RoomSetting.PRIVATE)) {
+        Belong myBelong = belongService.findOne(member.getId(), roomId);
+        if (myBelong == null && room.getRoomSetting().equals(RoomSetting.PRIVATE)) {
             log.info("비공개 방이고 회원이 아님");
             return "error";
         }
-        Page<Belong> belongs = belongService.findByRoomId(roomId, belongPage - 1);
-        int totalBelongPage = belongs.getTotalPages();
-        Page<Competition> competitions = competitionService.findCompetitions(roomId ,competitionPage - 1);
-        int totalCompetitionPage = competitions.getTotalPages();
-
-        model.addAttribute("myBelong", belong);
         model.addAttribute("room", room);
-        model.addAttribute("belongs", belongs.getContent());
-        model.addAttribute("totalBelongPage", totalBelongPage);
-        model.addAttribute("competitions", competitions.getContent());
-        model.addAttribute("totalCompetitionPage", totalCompetitionPage);
+        model.addAttribute("myBelong", myBelong);
+
+        Page<Belong> belongList = belongService.findByRoomId(roomId, belongPageable);
+        model.addAttribute("belongList", belongList);
+        log.info("총 element 수 : {}, 전체 page 수 : {}, 페이지에 표시할 element 수 : {}, 현재 페이지 index : {}, 현재 페이지의 element 수 : {}",
+                belongList.getTotalElements(), belongList.getTotalPages(), belongList.getSize(),
+                belongList.getNumber(), belongList.getNumberOfElements());
+
+        Page<Competition> competitionList = competitionService.findCompetitions(roomId, competitionPageable);
+        model.addAttribute("competitionList", competitionList);
+        log.info("총 element 수 : {}, 전체 page 수 : {}, 페이지에 표시할 element 수 : {}, 현재 페이지 index : {}, 현재 페이지의 element 수 : {}",
+                competitionList.getTotalElements(), competitionList.getTotalPages(), competitionList.getSize(),
+                competitionList.getNumber(), competitionList.getNumberOfElements());
         return "rooms/detail";
     }
 

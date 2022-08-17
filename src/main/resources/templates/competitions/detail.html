@@ -11,13 +11,6 @@
     .table-width {
         max-width: 1000px;
     }
-    ul {
-        list-style: none;
-    }
-    li {
-        float: left;
-        margin-left: 20px;
-    }
     .tournament {
         /*float: left;*/
         display: flex;
@@ -47,8 +40,21 @@
 
     .player {
         font-family:arial;
-        width:150px;
+        width:100px;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
         color:white;
+        float: left;
+        text-align: center;
+    }
+
+    .score {
+        font-family:arial;
+        width:50px;
+        color:white;
+        float: right;
+        text-align: center;
     }
 
     .round5 .match {
@@ -328,26 +334,25 @@
              th:with="cnt=${T(java.lang.Math).pow(2, key)}">
             <div th:each="k : ${#numbers.sequence(0, cnt - 1)}" th:with="match=${hashMap.get(key).get(k)}"
                  class="match" th:classappend="${match == null} ? 'hidden'">
-                <div th:if="${match != null}" th:onclick="|location.href='@{/rooms/{roomId}/competitions/{competitionId}/matches/{matchId}/update(roomId=${roomId}, competitionId=${competitionId}, matchId=${match.id})}'|">
+                <div th:if="${match != null}">
                     <div class="player"th:text="${match.home == null} ? ${keyStat.index} + '-' + ${k * 2 + 1} + '경기 승자'
                 : ${match.home.email} + '(' + ${match.home.name} + ')'">home</div>
+                    <div class="score" th:text="${match.score.homeScore}">0</div>
                     <div class="player" th:text="${match.away == null} ? ${keyStat.index} +'-' + ${k * 2 + 2} + '경기 승자'
-                : ${match.away.email} + '(' + ${match.away.name} + ')'">away</div>
+                : ${match.away.email} + '(' + ${match.away.name} + ')'">away
+                    </div>
+                    <div class="score" th:text="${match.score.awayScore}">0</div>
+                    <a class="btn btn-primary"
+                       th:if="${match.home != null} and ${match.away != null}
+                                       and ${myBelong ne null and (myBelong.belongType.name() eq 'ADMIN')}"
+                       th:href="@{|/rooms/${roomId}/competitions/${competitionId}/matches/${match.id}/update|}">수정</a>
+                    <a class="btn btn-primary"
+                       th:if="${match.home != null} and ${match.away != null} and ${match.matchStatus.name() eq 'END'}
+                                       and ${myBelong ne null and (myBelong.belongType.name() eq 'ADMIN')}"
+                       th:href="'javascript:init('+${roomId}+', '+${competitionId}+', '+${match.id}+')'">초기화</a>
                 </div>
             </div>
         </div>
-        <!--<div class="round" th:classappend="|round${key}|" th:each="key : ${hashMap.keySet()}"
-             th:with="cnt=${T(java.lang.Math).pow(2, key)}">
-            <div th:each="k : ${#numbers.sequence(0, cnt - 1)}" th:with="match=${hashMap.get(key).get(k)}"
-                 class="match" th:classappend="${match == null} ? 'hidden'">
-                <div th:if="${match != null}">
-                    <div class="player"th:text="${match.home == null} ? ${keyStat.count} + '-' + ${keyStat.count * 2 - 1} + '경기 승자'
-                : ${match.home.email} + '(' + ${match.home.name} + ')'">home</div>
-                    <div class="player" th:text="${match.away == null} ? ${keyStat.count} +'-' + ${keyStat.count * 2} + '경기 승자'
-                : ${match.away.email} + '(' + ${match.away.name} + ')'">away</div>
-                </div>
-            </div>
-        </div>-->
         <!--<a th:each="matches : ${hashMap.entrySet()}">
             <div class="round" th:id="|round${matchesStat.index}|">
                 <div class="match" th:each="match : ${matches.getValue()}">
@@ -366,70 +371,11 @@
                 <div th:each="match : ${matches.getValue()}"></div>
             </div>
         </a>-->
-        <!--<div class="tournament">
-
-            <div class="round">
-                <div class="champion">
-                    <div class="player"
-                         th:text="${hashMap.get(0).get(0).score.homeScore > hashMap.get(0).get(0).score.awayScore} ? (${hashMap.get(0).get(0).home == null} ? 'null'
-                : ${hashMap.get(0).get(0).home.email + '('+ hashMap.get(0).get(0).home.name + ')'})
-                : (${hashMap.get(0).get(0).score.homeScore < hashMap.get(0).get(0).score.awayScore} ? (${hashMap.get(0).get(0).away == null} ? 'null'
-                : ${hashMap.get(0).get(0).away.email + '('+ hashMap.get(0).get(0).away.name + ')'}) : ' ')">champion</div>
-                </div>
-            </div>
-
-            <div class="round finals">
-
-                <div class="match">
-                    <div class="player">final player 1</div>
-                    <div class="player">final player 2</div>
-                </div>
-
-            </div>
-
-            <div class="round semi-finals">
-
-                <div class="match">
-                    <div class="player">Player 2</div>
-                    <div class="player winner">Player 3</div>
-                </div>
-
-                <div class="match">
-                    <div class="player">Player 6</div>
-                    <div class="player">Player 7</div>
-                </div>
-
-            </div>
-
-            <div class="round quarter-finals">
-
-                <div class="match">
-                    <div class="player">Player 1</div>
-                    <div class="player winner">Player 2</div>
-                </div>
-
-                <div class="match">
-                    <div class="player winner">Player 3</div>
-                    <div class="player">Player 4</div>
-                </div>
-
-                <div class="match">
-                    <div class="player">Player 5</div>
-                    <div class="player winner">Player 6</div>
-                </div>
-
-                <div class="match">
-                    <div class="player">Player 7</div>
-                    <div class="player">Player 8</div>
-                </div>
-
-            </div>
-        </div>-->
     </div>
     <div th:replace="fragments/footer" :: footer />
 </div> <!-- /container -->
 </body>
-<script src="//code.jquery.com/jquery-1.11.1.min.js"></script>
+<script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
 <script>
     $(function(){
         $('button').css('background-color', 'red');

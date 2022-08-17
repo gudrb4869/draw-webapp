@@ -12,13 +12,6 @@
     .table-width {
         max-width: 1000px;
     }
-    ul {
-        list-style: none;
-    }
-    li {
-        float: left;
-        margin-left: 20px;
-    }
 </style>
 <body>
 <div>
@@ -34,18 +27,18 @@
         <table class="table text-center table-width">
             <thead>
             <tr>
-                <th>이름</th>
+                <th>방명</th>
                 <th>참여일자</th>
                 <th></th>
             </tr>
             </thead>
             <tbody>
-            <tr th:if="${belongs.isEmpty()}">
+            <tr th:if="${belongList.isEmpty()}">
                 <td class="text-center" colspan="5">방이 존재하지 않습니다.</td>
             </tr>
-            <tr th:each="belong : ${belongs}">
+            <tr th:each="belong : ${belongList}">
                 <td th:text="${belong.room.title}">방</td>
-                <td th:text="${#temporals.format(belong.createdDate, 'yyyy-MM-dd HH:mm:ss')}">2022-08-05</td>
+                <td th:text="${#temporals.format(belong.createdDate, 'yyyy-MM-dd HH:mm:ss')}">참여일자</td>
                 <td>
                     <div>
                         <form class="form-check-inline my-2 my-lg-0" th:action="@{|/rooms/${belong.room.id}|}" method="post">
@@ -60,13 +53,40 @@
             </tbody>
         </table>
     </div>
-    <div class="text-center">
-        <ul class="row">
-            <li class="col" th:each="page : ${#numbers.sequence(1, totalPage, 1)}">
-                <a th:href="@{/rooms(page=${pageStat.count})}" th:text="${pageStat.count}">1</a>
+
+    <nav style="text-align: center;">
+        <ul class="pagination"
+            th:with="start=${T(java.lang.Math).floor(belongList.number/10)*10 + 1},
+                    last=(${start + 9 < belongList.totalPages ? start + 9 : belongList.totalPages})">
+            <li>
+                <a th:href="@{/rooms(page=1)}" aria-label="First">
+                    <span aria-hidden="true"><<</span>
+                </a>
+            </li>
+
+            <li th:class="${belongList.first} ? 'disabled'">
+                <a th:href="${belongList.first} ? '#' :@{/rooms(page=${belongList.number})}" aria-label="Previous">
+                    <span aria-hidden="true">&lt;</span>
+                </a>
+            </li>
+
+            <li th:each="page: ${#numbers.sequence(start, last, 1)}" th:class="${page == belongList.number + 1} ? 'active'">
+                <a th:text="${page}" th:href="@{/rooms(page=${page})}"></a>
+            </li>
+
+            <li th:class="${belongList.last} ? 'disabled'">
+                <a th:href="${belongList.last} ? '#' : @{/rooms(page=${belongList.number + 2})}" aria-label="Next">
+                    <span aria-hidden="true">&gt;</span>
+                </a>
+            </li>
+
+            <li>
+                <a th:href="@{/rooms(page=${belongList.totalPages})}" aria-label="Last">
+                    <span aria-hidden="true">>></span>
+                </a>
             </li>
         </ul>
-    </div>
+    </nav>
     <div th:replace="fragments/footer" :: footer />
 </div> <!-- /container -->
 </body>

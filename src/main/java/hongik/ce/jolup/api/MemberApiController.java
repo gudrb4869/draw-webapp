@@ -15,20 +15,20 @@ public class MemberApiController {
 
     @PostMapping("/emailCheck")
     @ResponseBody
-    public int emailCheck(@RequestParam("email") String email) {
-        int result = 0;
+    public boolean emailCheck(@RequestParam("email") String email) {
+        boolean result = false;
         if (memberService.findByEmail(email) != null) {
-            result = 1;
+            result = true;
         }
         return result;
     }
 
     @PostMapping("/nameCheck")
     @ResponseBody
-    public int nameCheck(@RequestParam("name") String name) {
-        int result = 0;
+    public boolean nameCheck(@RequestParam("name") String name) {
+        boolean result = false;
         if (memberService.findByName(name) != null) {
-            result = 1;
+            result = true;
         }
         return result;
     }

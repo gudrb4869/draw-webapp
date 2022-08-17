@@ -144,14 +144,17 @@ public class CompetitionController {
             hashMap.computeIfAbsent(match.getRoundNo(), k -> new LinkedHashMap<>()).put(match.getMatchNo(), match);
         }
 
-        for (Map.Entry<Integer, LinkedHashMap<Integer, Match>> entry : hashMap.entrySet()) {
-            System.out.println("entry = " + entry);
+        if (competition.getCompetitionType().equals(CompetitionType.LEAGUE)) {
+            for (Map.Entry<Integer, LinkedHashMap<Integer, Match>> entry : hashMap.entrySet()) {
+                log.info("entry = {}", entry);
+            }
         }
+
         Integer roundNo = Collections.max(hashMap.keySet());
         if (competition.getCompetitionType().equals(CompetitionType.TOURNAMENT)) {
             for (int i = 0; i <= roundNo; i++) {
                 for (int j = 0; j < Math.pow(2, i); j++) {
-                    System.out.println(i + "-" + j + "경기 = " + hashMap.get(i).get(j));
+                    log.info(i + "-" + j + "경기 = {}", hashMap.get(i).get(j));
                 }
             }
         }

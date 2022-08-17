@@ -8,6 +8,7 @@ import hongik.ce.jolup.repository.RoomRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -52,7 +53,8 @@ public class CompetitionService {
         return competitionRepository.findById(competitionId).orElse(null);
     }
 
-    public Page<Competition> findCompetitions(Long roomId, int page) {
+    public Page<Competition> findCompetitions(Long roomId, Pageable pageable) {
+        int page = (pageable.getPageNumber() == 0) ? 0 : (pageable.getPageNumber() - 1);
         return competitionRepository.findByRoomId(roomId, PageRequest.of(page, 3, Sort.by("createdDate").descending()));
     }
 

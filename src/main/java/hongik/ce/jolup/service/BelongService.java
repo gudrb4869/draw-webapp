@@ -10,6 +10,7 @@ import hongik.ce.jolup.repository.RoomRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -55,8 +56,9 @@ public class BelongService {
         belongRepository.deleteById(belongId);
     }
 
-    public Page<Belong> findByMemberId(Long memberId, int page) {
-        return belongRepository.findByMemberId(memberId, PageRequest.of(page, 5, Sort.by(Sort.Direction.DESC, "createdDate")));
+    public Page<Belong> findByMemberId(Long memberId, Pageable pageable) {
+        int page = (pageable.getPageNumber() == 0) ? 0 : (pageable.getPageNumber() - 1);
+        return belongRepository.findByMemberId(memberId, PageRequest.of(page, 3, Sort.by("createdDate").descending()));
     }
 
     public Belong findByIdAndRoomId(Long id, Long roomId) {
@@ -71,7 +73,8 @@ public class BelongService {
         return belongRepository.findByRoomId(roomId);
     }
 
-    public Page<Belong> findByRoomId(Long roomId, int page) {
-        return belongRepository.findByRoomId(roomId, PageRequest.of(page, 5, Sort.by("belongType").ascending()));
+    public Page<Belong> findByRoomId(Long roomId, Pageable pageable) {
+        int page = (pageable.getPageNumber() == 0) ? 0 : (pageable.getPageNumber() - 1);
+        return belongRepository.findByRoomId(roomId, PageRequest.of(page, 3, Sort.by("belongType").ascending()));
     }
 }
