@@ -19,13 +19,13 @@
     }
 
     .round {
-        width: 150px;
+        width: 200px;
         /*height: 600px;*/
         float: left;
     }
 
     .match {
-        width: 180px;
+        width: 200px;
         height: 60px;
         border: 3px solid black;
         margin: 10px 0;
@@ -40,7 +40,7 @@
 
     .player {
         font-family:arial;
-        width:100px;
+        width:120px;
         overflow: hidden;
         text-overflow: ellipsis;
         white-space: nowrap;
@@ -58,15 +58,15 @@
     }
 
     .round5 .match {
-        margin-top: 30px;
+        margin-top: 10px;
     }
 
     .round4 .match {
-        margin-top: 1050px;
+        margin-top: 1070px;
     }
 
     .round4 .match:first-child {
-        margin-top: 25px;
+        margin-top: 0px;
     }
 
     .round3 .match {
@@ -74,7 +74,7 @@
     }
 
     .round3 .match:first-child {
-        margin-top: 20px;
+        margin-top: 10px;
     }
 
     .round2 .match {
@@ -82,7 +82,7 @@
     }
 
     .round2 .match:first-child {
-        margin-top: 15px;
+        margin-top: 10px;
     }
 
     .round1 .match {
@@ -102,62 +102,120 @@
     }
 
     .line {
-        width: 50px;
-        height: 520px;
-        float: right;
+        width: 40px;
+        height: 500px;
+        float: left;
     }
 
     .line div {
         border-top: 3px solid black;
-        margin: 158px 0 0 27px;
     }
 
     .line div:first-child {
-        margin-top: 65px;
+        margin-top: 200px;
     }
 
-    #line0 div {
-        margin-top: 320px;
+    #line5 div {
+        margin-top: 1100px;
+    }
+
+    #line5 div:first-child {
+        margin-top: 340px;
+    }
+
+    #line4 div {
+        margin-top: 1100px;
+    }
+
+    #line4 div:first-child {
+        margin-top: 340px;
+    }
+
+    #line3 div {
+        margin-top: 1125px;
+    }
+
+    #line3 div:first-child {
+        margin-top: 310px;
+    }
+
+    #line2 div {
+        margin-top: 556px;
+    }
+
+    #line2 div:first-child {
+        margin-top: 180px;
     }
 
     #line1 div {
-        margin-top: 315px;
+        margin-top: 277px;
     }
 
     #line1 div:first-child {
-        margin-top: 148px;
+        margin-top: 110px;
+    }
+
+    #line0 div {
+        margin-top: 137px;
+    }
+
+    #line0 div:first-child {
+        margin-top: 72px;
     }
 
     .connector {
-        width: 40px;
-        height: 520px;
-        float: right;
+        width: 50px;
+        height: 500px;
+        float: left;
     }
 
     .connector div {
         border: 3px solid black;
         border-left: none;
-        height: 70px;
-        width: 100%;
-        margin: 90px 0 0 27px;
+        border-bottom: none;
+        height: 50px;
+        width: 50px;
+        /*margin-left: 25px;*/
     }
 
     .connector div:first-child {
-        margin: 35px 0 0 27px;
+
     }
 
-    #conn0 div {
-        margin-top: 150px;
-        height: 320px;
+    #conn3 div {
+        margin-top: 290px;
+        height: 270px;
+    }
+
+    #conn3 div:first-child {
+        margin-top: 40px;
+    }
+
+    #conn2 div {
+        margin-top: 140px;
+        height: 140px;
+    }
+
+    #conn2 div:first-child {
+        margin-top: 40px;
     }
 
     #conn1 div {
-        margin-top: 151px;
-        height: 166px;
+        margin-top: 70px;
+        height: 70px;
     }
 
     #conn1 div:first-child {
-        margin-top: 65px;
+        margin-top: 40px;
+    }
+
+    #conn0 div {
+        margin-top: 35px;
+        height: 35px;
+    }
+
+    #conn0 div:first-child {
+        margin-top: 40px;
     }
 </style>
 <!--<style>
@@ -330,27 +388,38 @@
     </div>
 
     <div class="tournament" th:if="${competition.competitionType.name() == 'TOURNAMENT'}">
-        <div class="round" th:classappend="|round${keyStat.index}|" th:each="key : ${#numbers.sequence(T(java.util.Collections).max(hashMap.keySet()), 0, -1)}"
+        <div th:each="key : ${#numbers.sequence(T(java.util.Collections).max(hashMap.keySet()), 0, -1)}"
              th:with="cnt=${T(java.lang.Math).pow(2, key)}">
-            <div th:each="k : ${#numbers.sequence(0, cnt - 1)}" th:with="match=${hashMap.get(key).get(k)}"
-                 class="match" th:classappend="${match == null} ? 'hidden'">
-                <div th:if="${match != null}">
-                    <div class="player"th:text="${match.home == null} ? ${keyStat.index} + '-' + ${k * 2 + 1} + '경기 승자'
+            <div class="round" th:classappend="|round${keyStat.index}|">
+                <div th:each="k : ${#numbers.sequence(0, cnt - 1)}" th:with="match=${hashMap.get(key).get(k)}"
+                     class="match" th:classappend="${match == null} ? 'hidden'">
+                    <div th:if="${match != null}">
+                        <div class="player"th:text="${match.home == null} ? ${keyStat.index} + '-' + ${k * 2 + 1} + '경기 승자'
                 : ${match.home.email} + '(' + ${match.home.name} + ')'">home</div>
-                    <div class="score" th:text="${match.score.homeScore}">0</div>
-                    <div class="player" th:text="${match.away == null} ? ${keyStat.index} +'-' + ${k * 2 + 2} + '경기 승자'
-                : ${match.away.email} + '(' + ${match.away.name} + ')'">away
+                        <div class="score" th:text="${match.score.homeScore}">0</div>
+                        <div class="player" th:text="${match.away == null} ? ${keyStat.index} +'-' + ${k * 2 + 2} + '경기 승자'
+                : ${match.away.email} + '(' + ${match.away.name} + ')'">away</div>
+                        <div class="score" th:text="${match.score.awayScore}">0</div>
+                        <a class="btn btn-primary"
+                           th:if="${match.home != null} and ${match.away != null}
+                                       and ${myBelong ne null and (myBelong.belongType.name() eq 'ADMIN')}"
+                           th:href="@{|/rooms/${roomId}/competitions/${competitionId}/matches/${match.id}/update|}">수정</a>
+                        <a class="btn btn-primary"
+                           th:if="${match.home != null} and ${match.away != null} and ${match.matchStatus.name() eq 'END'}
+                                       and ${myBelong ne null and (myBelong.belongType.name() eq 'ADMIN')}"
+                           th:href="'javascript:init('+${roomId}+', '+${competitionId}+', '+${match.id}+')'">초기화</a>
                     </div>
-                    <div class="score" th:text="${match.score.awayScore}">0</div>
-                    <a class="btn btn-primary"
-                       th:if="${match.home != null} and ${match.away != null}
-                                       and ${myBelong ne null and (myBelong.belongType.name() eq 'ADMIN')}"
-                       th:href="@{|/rooms/${roomId}/competitions/${competitionId}/matches/${match.id}/update|}">수정</a>
-                    <a class="btn btn-primary"
-                       th:if="${match.home != null} and ${match.away != null} and ${match.matchStatus.name() eq 'END'}
-                                       and ${myBelong ne null and (myBelong.belongType.name() eq 'ADMIN')}"
-                       th:href="'javascript:init('+${roomId}+', '+${competitionId}+', '+${match.id}+')'">초기화</a>
                 </div>
+            </div>
+
+            <div class="connector" th:id="|conn${keyStat.index}|">
+                <div th:each="k: ${#numbers.sequence(0, cnt - 1)}"
+                     th:classappend="${hashMap.get(key).get(k) == null} ? 'hidden'"></div>
+            </div>
+
+            <div class="line" th:id="|line${keyStat.index}|">
+                <div th:each="k: ${#numbers.sequence(0, (cnt / 2) - 1)}"
+                     th:classappend="${hashMap.get(key).get(k * 2) == null and hashMap.get(key).get(k * 2 + 1) == null} ? 'hidden'"></div>
             </div>
         </div>
         <!--<a th:each="matches : ${hashMap.entrySet()}">
