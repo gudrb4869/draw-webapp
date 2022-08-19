@@ -238,10 +238,10 @@ public class RoomController {
     @NoArgsConstructor @AllArgsConstructor
     static class CreateRoomForm {
 
-        @NotBlank(message = "방 이름을 입력해주세요!")
+        @NotBlank(message = "방명을 입력해주세요!")
         private String title;
 
-        @NotNull(message = "방 공개 여부를 선택해주세요!")
+        @NotNull(message = "공개 여부를 선택해주세요!")
         private RoomSetting roomSetting;
     }
 
@@ -252,10 +252,10 @@ public class RoomController {
         @NotNull
         private Long id;
 
-        @NotBlank(message = "방 이름을 입력해주세요!")
+        @NotBlank(message = "방명을 입력해주세요!")
         private String title;
 
-        @NotNull(message = "방 공개 여부를 선택해주세요!")
+        @NotNull(message = "공개 여부를 선택해주세요!")
         private RoomSetting roomSetting;
     }
 
@@ -270,7 +270,7 @@ public class RoomController {
 
         @NotNull(message = "널 오류")
         @Size(min = 1, max = 100, message = "리스트 크기 오류")
-        private List<@NotBlank(message = "회원 아이디는 필수 입력 값입니다.") String> emails = new ArrayList<>();
+        private List<@NotBlank(message = "회원 아이디는 필수 입력 값입니다!") String> emails = new ArrayList<>();
 
         public void addEmail(String email) {
             this.emails.add(email);

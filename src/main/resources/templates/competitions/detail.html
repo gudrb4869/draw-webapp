@@ -12,15 +12,12 @@
         max-width: 1000px;
     }
     .tournament {
-        /*float: left;*/
         display: flex;
         justify-content: center;
-        align-items: center;
     }
 
     .round {
         width: 200px;
-        /*height: 600px;*/
         float: left;
     }
 
@@ -58,15 +55,15 @@
     }
 
     .round5 .match {
-        margin-top: 10px;
+        margin-top: 1090px;
     }
 
     .round4 .match {
-        margin-top: 1070px;
+        margin-top: 1060px;
     }
 
     .round4 .match:first-child {
-        margin-top: 0px;
+        margin-top: 530px;
     }
 
     .round3 .match {
@@ -74,36 +71,29 @@
     }
 
     .round3 .match:first-child {
-        margin-top: 10px;
+        margin-top: 250px;
     }
-
     .round2 .match {
         margin-top: 220px;
     }
-
     .round2 .match:first-child {
-        margin-top: 10px;
+        margin-top: 110px;
     }
-
     .round1 .match {
         margin-top: 80px;
     }
-
     .round1 .match:first-child {
-        margin-top: 10px;
+        margin-top: 40px;
     }
-
     .round0 .match {
         margin-top: 10px;
     }
-
     .round0 .match:first-child {
         margin-top: 5px;
     }
 
     .line {
         width: 40px;
-        height: 500px;
         float: left;
     }
 
@@ -115,36 +105,24 @@
         margin-top: 200px;
     }
 
-    #line5 div {
-        margin-top: 1100px;
-    }
-
-    #line5 div:first-child {
-        margin-top: 340px;
-    }
-
     #line4 div {
-        margin-top: 1100px;
-    }
-
-    #line4 div:first-child {
-        margin-top: 340px;
+        margin-top: 1120px;
     }
 
     #line3 div {
-        margin-top: 1125px;
+        margin-top: 1115px;
     }
 
     #line3 div:first-child {
-        margin-top: 310px;
+        margin-top: 560px;
     }
 
     #line2 div {
-        margin-top: 556px;
+        margin-top: 557px;
     }
 
     #line2 div:first-child {
-        margin-top: 180px;
+        margin-top: 277px;
     }
 
     #line1 div {
@@ -152,7 +130,7 @@
     }
 
     #line1 div:first-child {
-        margin-top: 110px;
+        margin-top: 138px;
     }
 
     #line0 div {
@@ -160,12 +138,11 @@
     }
 
     #line0 div:first-child {
-        margin-top: 72px;
+        margin-top: 70px;
     }
 
     .connector {
         width: 50px;
-        height: 500px;
         float: left;
     }
 
@@ -178,17 +155,22 @@
         /*margin-left: 25px;*/
     }
 
-    .connector div:first-child {
+    #conn4 div {
+        margin-top: 560px;
+        height: 560px;
+    }
 
+    #conn4 div:first-child {
+        margin-top: 558px;
     }
 
     #conn3 div {
-        margin-top: 290px;
-        height: 270px;
+        margin-top: 280px;
+        height: 280px;
     }
 
     #conn3 div:first-child {
-        margin-top: 40px;
+        margin-top: 280px;
     }
 
     #conn2 div {
@@ -197,7 +179,7 @@
     }
 
     #conn2 div:first-child {
-        margin-top: 40px;
+        margin-top: 139px;
     }
 
     #conn1 div {
@@ -206,7 +188,7 @@
     }
 
     #conn1 div:first-child {
-        margin-top: 40px;
+        margin-top: 70px;
     }
 
     #conn0 div {
@@ -215,66 +197,9 @@
     }
 
     #conn0 div:first-child {
-        margin-top: 40px;
+        margin-top: 37px;
     }
 </style>
-<!--<style>
-    .tournament{float: left;}
-
-    .round{
-        float:right;
-    }
-
-    .player{
-        font-family:arial;
-        width:150px;
-        height:40px;
-        padding:10px;
-        background:#73789F;
-        color:white;
-    }
-
-    .player.winner{background:green;}
-
-    .match{
-        padding:5px 50px 5px 0px;
-    }
-
-    /* CHAMP*/
-    .champion{padding-top:200px;}
-
-    /*FINALS*/
-    .finals .match{
-        padding-top:85px;
-        height:350px;
-        background:top right no-repeat /*url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADIAAAFeAQMAAAD9sN5nAAAAA3NCSVQICAjb4U/gAAAABlBMVEUAAAD///+l2Z/dAAAACXBIWXMAAAsSAAALEgHS3X78AAAAFnRFWHRDcmVhdGlvbiBUaW1lADEwLzEwLzEyGAKeIwAAABx0RVh0U29mdHdhcmUAQWRvYmUgRmlyZXdvcmtzIENTNAay06AAAAA0SURBVEiJY/gPBgcYRulRepQmngYCeyh//yg9So/Sg45uAGXSQeCOUXqUHrI0Uj33fxjQAEJS8U50LMSKAAAAAElFTkSuQmCC)*/;
-    }
-
-    .finals .player:first-child{
-        margin-bottom:180px;
-    }
-
-    /*SEMI-FINALS*/
-    .semi-finals .match{
-        padding-top:30px;
-        height:185px;
-        background:right top no-repeat /*url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADIAAAC5AQMAAABQhv7pAAAAA3NCSVQICAjb4U/gAAAABlBMVEUAAAD///+l2Z/dAAAACXBIWXMAAAsSAAALEgHS3X78AAAAFnRFWHRDcmVhdGlvbiBUaW1lADEwLzEwLzEyGAKeIwAAABx0RVh0U29mdHdhcmUAQWRvYmUgRmlyZXdvcmtzIENTNAay06AAAAArSURBVDiNY/gPBgcYRumBpYHAHsrfP0oPKboBFHmDwB2jNAk0Un77PwxoAJbztvAUr3KAAAAAAElFTkSuQmCC)*/;
-    }
-
-    .semi-finals .player:first-child{
-        margin-bottom:60px;
-    }
-
-    /*QUARTER-FINALS*/
-    .quarter-finals .match{
-        height:100px;
-        background:right top no-repeat /*url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADIAAABkAQMAAAD+JvEYAAAAA3NCSVQICAjb4U/gAAAABlBMVEUAAAD///+l2Z/dAAAACXBIWXMAAAsSAAALEgHS3X78AAAAFnRFWHRDcmVhdGlvbiBUaW1lADEwLzEwLzEyGAKeIwAAABx0RVh0U29mdHdhcmUAQWRvYmUgRmlyZXdvcmtzIENTNAay06AAAAAnSURBVCiRY/gPBgcYhjoNBPZQ/v4hQjeAHD0I3IGXRgpXqsbXEKEB2yGL0P7iVKIAAAAASUVORK5CYII=)*/;
-    }
-
-    .quarter-finals .player:first-child{
-        margin-bottom:10px;
-    }
-</style>-->
 <body>
 <div>
     <div th:replace="fragments/bodyheader" :: bodyheader />
@@ -372,7 +297,7 @@
                 <tbody>
                 <tr th:each="join : ${joins}">
                     <td th:text="${joinStat.count}"></td>
-                    <td th:text="${join.member.email + '('+ join.member.name + ')'}"></td>
+                    <td th:text="|${join.member.email}(${join.member.name})|"></td>
                     <td th:text="${join.result.win} + ${join.result.draw} + ${join.result.lose}"></td>
                     <td th:text="${join.result.win}"></td>
                     <td th:text="${join.result.draw}"></td>
@@ -391,55 +316,30 @@
         <div th:each="key : ${#numbers.sequence(T(java.util.Collections).max(hashMap.keySet()), 0, -1)}"
              th:with="cnt=${T(java.lang.Math).pow(2, key)}">
             <div class="round" th:classappend="|round${keyStat.index}|">
-                <div th:each="k : ${#numbers.sequence(0, cnt - 1)}" th:with="match=${hashMap.get(key).get(k)}"
+                <div th:each="k : ${#numbers.sequence(0, cnt - 1, 1)}" th:with="match=${hashMap.get(key).get(k)}"
                      class="match" th:classappend="${match == null} ? 'hidden'">
                     <div th:if="${match != null}">
-                        <div class="player"th:text="${match.home == null} ? ${keyStat.index} + '-' + ${k * 2 + 1} + '경기 승자'
-                : ${match.home.email} + '(' + ${match.home.name} + ')'">home</div>
+                        <div class="player" th:text="${match.home == null} ? |${keyStat.index}-${k * 2 + 1}경기 승자|: |${match.home.email}(${match.home.name})|">home</div>
                         <div class="score" th:text="${match.score.homeScore}">0</div>
-                        <div class="player" th:text="${match.away == null} ? ${keyStat.index} +'-' + ${k * 2 + 2} + '경기 승자'
-                : ${match.away.email} + '(' + ${match.away.name} + ')'">away</div>
+                        <div class="player" th:text="${match.away == null} ? |${keyStat.index}-${k * 2 + 2}경기 승자|: |${match.away.email}(${match.away.name})|">away</div>
                         <div class="score" th:text="${match.score.awayScore}">0</div>
                         <a class="btn btn-primary"
-                           th:if="${match.home != null} and ${match.away != null}
-                                       and ${myBelong ne null and (myBelong.belongType.name() eq 'ADMIN')}"
+                           th:if="${match.home != null} and ${match.away != null} and ${myBelong ne null and (myBelong.belongType.name() eq 'ADMIN')}"
                            th:href="@{|/rooms/${roomId}/competitions/${competitionId}/matches/${match.id}/update|}">수정</a>
-                        <a class="btn btn-primary"
-                           th:if="${match.home != null} and ${match.away != null} and ${match.matchStatus.name() eq 'END'}
-                                       and ${myBelong ne null and (myBelong.belongType.name() eq 'ADMIN')}"
-                           th:href="'javascript:init('+${roomId}+', '+${competitionId}+', '+${match.id}+')'">초기화</a>
                     </div>
                 </div>
             </div>
 
             <div class="connector" th:id="|conn${keyStat.index}|">
-                <div th:each="k: ${#numbers.sequence(0, cnt - 1)}"
+                <div th:each="k: ${#numbers.sequence(0, cnt - 1, 1)}"
                      th:classappend="${hashMap.get(key).get(k) == null} ? 'hidden'"></div>
             </div>
 
             <div class="line" th:id="|line${keyStat.index}|">
-                <div th:each="k: ${#numbers.sequence(0, (cnt / 2) - 1)}"
+                <div th:each="k: ${#numbers.sequence(0, (cnt / 2) - 1, 1)}"
                      th:classappend="${hashMap.get(key).get(k * 2) == null and hashMap.get(key).get(k * 2 + 1) == null} ? 'hidden'"></div>
             </div>
         </div>
-        <!--<a th:each="matches : ${hashMap.entrySet()}">
-            <div class="round" th:id="|round${matchesStat.index}|">
-                <div class="match" th:each="match : ${matches.getValue()}">
-                    <div class="player"th:text="${match.home == null} ? ${matchesStat.count} + '-' + ${matchStat.count * 2 - 1} + '경기 승자'
-                    : ${match.home.email} + '(' + ${match.home.name} + ')'">home</div>
-                    <div class="player" th:text="${match.away == null} ? ${matchesStat.count} +'-' + ${matchStat.count * 2} + '경기 승자'
-                    : ${match.away.email} + '(' + ${match.away.name} + ')'">away</div>
-                </div>
-            </div>
-
-            <div class="line" th:id="|line${matchesStat.index}|">
-                <div th:each="match : ${matches.getValue()}"></div>
-            </div>
-
-            <div class="connector" th:id="|conn${matchesStat.index}|">
-                <div th:each="match : ${matches.getValue()}"></div>
-            </div>
-        </a>-->
     </div>
     <div th:replace="fragments/footer" :: footer />
 </div> <!-- /container -->

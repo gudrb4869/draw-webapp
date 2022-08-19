@@ -236,14 +236,14 @@ public class CompetitionController {
     @Getter @Setter
     @NoArgsConstructor @ToString
     private static class CreateCompetitionForm {
-        @NotBlank(message = "대회 이름은 필수 입력 값입니다!")
+        @NotBlank(message = "대회명은 필수 입력 값입니다!")
 //    @Pattern(regexp = "^(?:\\w+\\.?)*\\w+@(?:\\w+\\.)+\\w+$", message = "대회 이름 형식이 올바르지 않습니다.")
         private String title;
 
         @NotNull(message = "대회 방식은 필수 입력 값입니다!")
         private CompetitionType competitionType;
 
-        @NotNull(message = "대회 참여 인원 수는 필수 입력 값입니다!")
+        @NotNull(message = "참가자수는 필수 입력 값입니다!")
         private Long headCount;
 
         @Size(min = 2, max = 64, message = "참가자수 범위는 최소 2명부터 최대 64명까지입니다!")
@@ -267,7 +267,7 @@ public class CompetitionController {
 
         private Long id;
 
-        @NotBlank(message = "대회 이름은 필수 입력 값입니다.")
+        @NotBlank(message = "대회명은 필수 입력 값입니다.")
         private String title;
     }
 }

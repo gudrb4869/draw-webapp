@@ -26,16 +26,16 @@
         <form class="form-control form-width" th:action th:object="${roomForm}" method="post">
             <input type="hidden" th:field="*{id}"/>
             <div>
-                <label th:for="title">방 이름</label>
-                <input type="text" th:field="*{title}" placeholder="방 이름을 입력하세요"
+                <label th:for="title">방명</label>
+                <input type="text" th:field="*{title}" placeholder="방명을 입력하세요"
                        class="form-control" th:errorclass="field-error">
-                <p th:errors="*{title}" class="field-error">방 이름 오류</p>
+                <p th:errors="*{title}" class="field-error">방명 오류</p>
             </div>
 
             <div class="py-2">
-                <div>방 공개 여부</div>
+                <div>공개 여부</div>
                 <select th:field="*{roomSetting}" class="form-select-sm">
-                    <option value="">==방 공개 여부 선택==</option>
+                    <option value="">==공개 여부 선택==</option>
                     <option th:each="roomSetting : ${T(hongik.ce.jolup.domain.room.RoomSetting).values()}" th:value="${roomSetting.name()}"
                             th:text="${roomSetting.description}"></option>
                 </select>

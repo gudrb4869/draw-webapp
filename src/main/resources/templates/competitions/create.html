@@ -30,10 +30,10 @@
             </div>
 
             <div>
-                <label th:for="title">대회 이름</label>
-                <input type="text" th:field="*{title}" placeholder="대회 이름을 입력하세요"
+                <label th:for="title">대회명</label>
+                <input type="text" th:field="*{title}" placeholder="대회명을 입력하세요"
                        class="form-control" th:errorclass="field-error">
-                <p th:errors="*{title}" class="field-error">대회 이름 오류</p>
+                <p th:errors="*{title}" class="field-error">대회명 오류</p>
             </div>
 
             <div class="py-2">
@@ -46,7 +46,7 @@
             </div>
 
             <div class="py-2">
-                <div>대회 참여 인원</div>
+                <div>참가자수</div>
                 <select th:field="*{headCount}" class="form-select-sm"
                         onchange="updateForm()">
                     <!--th:onchange="|location.href='@{/competition/create?title=' + form.title.value
@@ -58,15 +58,9 @@
 
             <div>
                 <table class="table">
-                    <thead>
-                    <tr>
-                        <th>#</th>
-                        <th>참가자 아이디</th>
-                    </tr>
-                    </thead>
                     <tbody>
                     <tr th:each="email : *{emails}">
-                        <td th:text="'참가자' + ${emailStat.count}"></td>
+                        <td th:text="'#' + ${emailStat.count}"></td>
                         <td>
                             <input type="text" th:field="*{emails[__${emailStat.index}__]}"
                                    th:errorclass="field-error" class="form-control"/>
