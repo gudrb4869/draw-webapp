@@ -24,7 +24,7 @@
     .match {
         width: 200px;
         height: 60px;
-        border: 3px solid black;
+        border: 2px solid black;
         margin: 10px 0;
         background: gray;
         color: white;
@@ -54,150 +54,123 @@
         text-align: center;
     }
 
-    .round5 .match {
-        margin-top: 1090px;
-    }
-
-    .round4 .match {
-        margin-top: 1060px;
-    }
-
-    .round4 .match:first-child {
-        margin-top: 530px;
-    }
-
-    .round3 .match {
-        margin-top: 500px;
-    }
-
-    .round3 .match:first-child {
-        margin-top: 250px;
-    }
-    .round2 .match {
-        margin-top: 220px;
-    }
-    .round2 .match:first-child {
-        margin-top: 110px;
-    }
-    .round1 .match {
-        margin-top: 80px;
-    }
-    .round1 .match:first-child {
-        margin-top: 40px;
+    .round0 .match:first-child {
+        margin-top: 5px;
     }
     .round0 .match {
         margin-top: 10px;
     }
-    .round0 .match:first-child {
-        margin-top: 5px;
+    .round1 .match:first-child {
+        margin-top: 40px;
     }
-
-    .line {
-        width: 40px;
-        float: left;
+    .round1 .match {
+        margin-top: 80px;
     }
-
-    .line div {
-        border-top: 3px solid black;
+    .round2 .match:first-child {
+        margin-top: 110px;
     }
-
-    .line div:first-child {
-        margin-top: 200px;
+    .round2 .match {
+        margin-top: 220px;
     }
-
-    #line4 div {
-        margin-top: 1120px;
+    .round3 .match:first-child {
+        margin-top: 250px;
     }
-
-    #line3 div {
-        margin-top: 1115px;
+    .round3 .match {
+        margin-top: 500px;
     }
-
-    #line3 div:first-child {
-        margin-top: 560px;
+    .round4 .match:first-child {
+        margin-top: 530px;
     }
-
-    #line2 div {
-        margin-top: 557px;
+    .round4 .match {
+        margin-top: 1060px;
     }
-
-    #line2 div:first-child {
-        margin-top: 277px;
-    }
-
-    #line1 div {
-        margin-top: 277px;
-    }
-
-    #line1 div:first-child {
-        margin-top: 138px;
-    }
-
-    #line0 div {
-        margin-top: 137px;
-    }
-
-    #line0 div:first-child {
-        margin-top: 70px;
+    .round5 .match:first-child {
+        margin-top: 1090px;
     }
 
     .connector {
         width: 50px;
         float: left;
     }
-
     .connector div {
-        border: 3px solid black;
+        border: 2px solid black;
         border-left: none;
         border-bottom: none;
+        /*border-radius: 0 10px;*/
         height: 50px;
         width: 50px;
         /*margin-left: 25px;*/
     }
-
-    #conn4 div {
-        margin-top: 560px;
-        height: 560px;
+    #conn0 div:first-child {
+        margin-top: 36px;
     }
-
-    #conn4 div:first-child {
-        margin-top: 558px;
-    }
-
-    #conn3 div {
-        margin-top: 280px;
-        height: 280px;
-    }
-
-    #conn3 div:first-child {
-        margin-top: 280px;
-    }
-
-    #conn2 div {
-        margin-top: 140px;
-        height: 140px;
-    }
-
-    #conn2 div:first-child {
-        margin-top: 139px;
-    }
-
-    #conn1 div {
-        margin-top: 70px;
-        height: 70px;
-    }
-
-    #conn1 div:first-child {
-        margin-top: 70px;
-    }
-
     #conn0 div {
         margin-top: 35px;
         height: 35px;
     }
+    #conn1 div:first-child {
+        margin-top: 69px;
+    }
+    #conn1 div {
+        margin-top: 68px;
+        height: 72px;
+    }
+    #conn2 div:first-child {
+        margin-top: 139px;
+    }
+    #conn2 div {
+        margin-top: 138px;
+        height: 142px;
+    }
+    #conn3 div:first-child {
+        margin-top: 279px;
+    }
+    #conn3 div {
+        margin-top: 278px;
+        height: 282px;
+    }
+    #conn4 div:first-child {
+        margin-top: 559px;
+    }
+    #conn4 div {
+        margin-top: 560px;
+        height: 562px;
+    }
 
-    #conn0 div:first-child {
-        margin-top: 37px;
+    .line {
+        width: 50px;
+        float: left;
+    }
+
+    .line div {
+        border-top: 2px solid black;
+    }
+    #line0 div:first-child {
+        margin-top: 69px;
+    }
+    #line0 div {
+        margin-top: 138px;
+    }
+    #line1 div:first-child {
+        margin-top: 139px;
+    }
+    #line1 div {
+        margin-top: 278px;
+    }
+    #line2 div:first-child {
+        margin-top: 279px;
+    }
+    #line2 div {
+        margin-top: 558px;
+    }
+    #line3 div:first-child {
+        margin-top: 559px;
+    }
+    #line3 div {
+        margin-top: 1118px;
+    }
+    #line4 div:first-child {
+        margin-top: 1119px;
     }
 </style>
 <body>
@@ -315,6 +288,7 @@
     <div class="tournament" th:if="${competition.competitionType.name() == 'TOURNAMENT'}">
         <div th:each="key : ${#numbers.sequence(T(java.util.Collections).max(hashMap.keySet()), 0, -1)}"
              th:with="cnt=${T(java.lang.Math).pow(2, key)}">
+            <div th:text="|${keyStat.count}라운드|"></div>
             <div class="round" th:classappend="|round${keyStat.index}|">
                 <div th:each="k : ${#numbers.sequence(0, cnt - 1, 1)}" th:with="match=${hashMap.get(key).get(k)}"
                      class="match" th:classappend="${match == null} ? 'hidden'">
@@ -330,12 +304,12 @@
                 </div>
             </div>
 
-            <div class="connector" th:id="|conn${keyStat.index}|">
+            <div class="connector" th:id="|conn${keyStat.index}|" th:if="${!keyStat.last}">
                 <div th:each="k: ${#numbers.sequence(0, cnt - 1, 1)}"
                      th:classappend="${hashMap.get(key).get(k) == null} ? 'hidden'"></div>
             </div>
 
-            <div class="line" th:id="|line${keyStat.index}|">
+            <div class="line" th:id="|line${keyStat.index}|" th:if="${!keyStat.last}">
                 <div th:each="k: ${#numbers.sequence(0, (cnt / 2) - 1, 1)}"
                      th:classappend="${hashMap.get(key).get(k * 2) == null and hashMap.get(key).get(k * 2 + 1) == null} ? 'hidden'"></div>
             </div>

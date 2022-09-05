@@ -19,9 +19,7 @@ import org.springframework.validation.ObjectError;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
-import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Size;
+import javax.validation.constraints.*;
 import java.util.*;
 
 @Slf4j
@@ -243,10 +241,12 @@ public class CompetitionController {
         @NotNull(message = "대회 방식은 필수 입력 값입니다!")
         private CompetitionType competitionType;
 
+        @Min(value = 2, message = "참가자수는 최소 2명입니다!")
+        @Max(value = 64, message = "참가자수는 최대 64명입니다.")
         @NotNull(message = "참가자수는 필수 입력 값입니다!")
         private Long headCount;
 
-        @Size(min = 2, max = 64, message = "참가자수 범위는 최소 2명부터 최대 64명까지입니다!")
+        @Size(min = 2, max = 64, message = "참가자수는 최소 2명이거나 최대 64명이어야 합니다!")
         @NotNull(message = "참가자 목록은 null 값일 수 없습니다!")
         private List<@NotBlank(message = "참가자 아이디는 필수 입력 값입니다!") String> emails = new ArrayList<>();
 
