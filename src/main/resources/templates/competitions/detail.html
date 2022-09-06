@@ -9,11 +9,12 @@
         align-items: center;
     }
     .table-width {
-        max-width: 1000px;
+        width: 100%;
     }
     .tournament {
         display: flex;
         justify-content: center;
+        width: 100%;
     }
 
     .round {
@@ -88,89 +89,123 @@
         margin-top: 1090px;
     }
 
-    .connector {
+    .connector-area {
         width: 50px;
         float: left;
     }
-    .connector div {
+    .connector {
+    }
+    .home {
         border: 2px solid black;
         border-left: none;
         border-bottom: none;
-        /*border-radius: 0 10px;*/
         height: 50px;
         width: 50px;
-        /*margin-left: 25px;*/
     }
-    #conn0 div:first-child {
+    .away {
+        border: 2px solid black;
+        border-left: none;
+        border-top: none;
+        height: 50px;
+        width: 50px;
+    }
+    .round1 .connector:first-child {
         margin-top: 36px;
     }
-    #conn0 div {
-        margin-top: 35px;
+    .round1 .connector {
+        margin-top: 70px;
+    }
+    .round1 .home {
         height: 35px;
     }
-    #conn1 div:first-child {
+    .round1 .away {
+        height: 35px;
+    }
+    .round2 .connector:first-child {
         margin-top: 69px;
     }
-    #conn1 div {
-        margin-top: 68px;
+    .round2 .connector {
+        margin-top: 136px;
+    }
+    .round2 .home {
         height: 72px;
     }
-    #conn2 div:first-child {
+    .round2 .away {
+        height: 72px;
+    }
+    .round3 .connector:first-child {
         margin-top: 139px;
     }
-    #conn2 div {
-        margin-top: 138px;
+    .round3 .connector {
+        margin-top: 276px;
+    }
+    .round3 .home {
         height: 142px;
     }
-    #conn3 div:first-child {
+    .round3 .away {
+        height: 142px;
+    }
+    .round4 .connector:first-child {
         margin-top: 279px;
     }
-    #conn3 div {
-        margin-top: 278px;
+    .round4 .connector {
+        margin-top: 556px;
+    }
+    .round4 .home {
         height: 282px;
     }
-    #conn4 div:first-child {
+    .round4 .away{
+        height: 282px;
+    }
+    .round5 .connector:first-child {
         margin-top: 559px;
     }
-    #conn4 div {
-        margin-top: 560px;
+    .round5 .connector {
+        margin-top: 1120px;
+    }
+    .round5 .home {
         height: 562px;
     }
-
-    .line {
+    .round5 .away {
+        height: 562px;
+    }
+    .line-area {
         width: 50px;
         float: left;
     }
 
-    .line div {
+    .line {
         border-top: 2px solid black;
     }
-    #line0 div:first-child {
+    .round1 .line:first-child {
         margin-top: 69px;
     }
-    #line0 div {
+    .round1 .line {
         margin-top: 138px;
     }
-    #line1 div:first-child {
+    .round2 .line:first-child {
         margin-top: 139px;
     }
-    #line1 div {
+    .round2 .line {
         margin-top: 278px;
     }
-    #line2 div:first-child {
+    .round3 .line:first-child {
         margin-top: 279px;
     }
-    #line2 div {
+    .round3 .line {
         margin-top: 558px;
     }
-    #line3 div:first-child {
+    .round4 .line:first-child {
         margin-top: 559px;
     }
-    #line3 div {
+    .round4 .line {
         margin-top: 1118px;
     }
-    #line4 div:first-child {
+    .round5 .line:first-child {
         margin-top: 1119px;
+    }
+    @media screen and (max-width: 768px){
+
     }
 </style>
 <body>
@@ -289,6 +324,17 @@
         <div th:each="key : ${#numbers.sequence(T(java.util.Collections).max(hashMap.keySet()), 0, -1)}"
              th:with="cnt=${T(java.lang.Math).pow(2, key)}">
             <div th:text="|${keyStat.count}라운드|"></div>
+            <div class="connector-area" th:classappend="|round${keyStat.index}|" th:if="${!keyStat.first}">
+                <div class="connector" th:each="k: ${#numbers.sequence(0, cnt - 1, 1)}">
+                    <div class="home" th:classappend="${hashMap.get(key + 1).get(k * 2) == null} ? 'hidden'"></div>
+                    <div class="away" th:classappend="${hashMap.get(key + 1).get(k * 2 + 1) == null} ? 'hidden'"></div>
+                </div>
+            </div>
+
+            <div class="line-area" th:classappend="|round${keyStat.index}|" th:if="${!keyStat.first}">
+                <div class="line" th:each="k: ${#numbers.sequence(0, cnt - 1, 1)}"
+                     th:classappend="${hashMap.get(key + 1).get(k * 2) == null and hashMap.get(key + 1).get(k * 2 + 1) == null} ? 'hidden'"></div>
+            </div>
             <div class="round" th:classappend="|round${keyStat.index}|">
                 <div th:each="k : ${#numbers.sequence(0, cnt - 1, 1)}" th:with="match=${hashMap.get(key).get(k)}"
                      class="match" th:classappend="${match == null} ? 'hidden'">
@@ -302,16 +348,6 @@
                            th:href="@{|/rooms/${roomId}/competitions/${competitionId}/matches/${match.id}/update|}">수정</a>
                     </div>
                 </div>
-            </div>
-
-            <div class="connector" th:id="|conn${keyStat.index}|" th:if="${!keyStat.last}">
-                <div th:each="k: ${#numbers.sequence(0, cnt - 1, 1)}"
-                     th:classappend="${hashMap.get(key).get(k) == null} ? 'hidden'"></div>
-            </div>
-
-            <div class="line" th:id="|line${keyStat.index}|" th:if="${!keyStat.last}">
-                <div th:each="k: ${#numbers.sequence(0, (cnt / 2) - 1, 1)}"
-                     th:classappend="${hashMap.get(key).get(k * 2) == null and hashMap.get(key).get(k * 2 + 1) == null} ? 'hidden'"></div>
             </div>
         </div>
     </div>
