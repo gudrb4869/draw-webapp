@@ -10,9 +10,9 @@
     </ul>
     <form class="form-check-inline my-2 my-lg-0" style="float: right; padding: 10px 0 0 0;" action="/logout" method="post" sec:authorize="isAuthenticated()">
         <span class="text-black mr-2 mx-2" sec:authentication="name">사용자</span>님, 안녕하세요.
-        <a class="btn btn-secondary my-2 my-sm-0" href="/rooms">내정보</a>
-        <a class="btn btn-secondary my-2 my-sm-0" href="/alarms">알림</a>
+        <!--<a class="btn btn-secondary my-2 my-sm-0" href="/rooms">내정보</a>-->
         <button class="btn btn-secondary my-2 my-sm-0" type="submit">로그아웃</button>
+        <a class="btn btn-secondary my-2 my-sm-0" href="/alarms">알림</a>
     </form>
 </div>
 </html>

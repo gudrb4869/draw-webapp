@@ -56,7 +56,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .loginProcessingUrl("/login")
                 .usernameParameter("email")
                 .passwordParameter("password")
-                .defaultSuccessUrl("/rooms") // 로그인 성공시 연결되는 주소
+                .defaultSuccessUrl("/") // 로그인 성공시 연결되는 주소
                 .and()
                 .logout() // 로그아웃 관련 설정
                 .logoutSuccessUrl("/") // 로그아웃 성공시 연결되는 주소

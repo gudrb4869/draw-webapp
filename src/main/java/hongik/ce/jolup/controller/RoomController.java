@@ -44,8 +44,7 @@ public class RoomController {
     @GetMapping
     public String roomList(@AuthenticationPrincipal Member member,
                            @PageableDefault Pageable pageable,
-                           Model model
-                           /*@RequestParam(required = false, defaultValue = "1", value = "page") int page*/) {
+                           Model model) {
         log.info("room_list");
         Page<Belong> belongList = belongService.findByMemberId(member.getId(), pageable);
         model.addAttribute("belongList", belongList);

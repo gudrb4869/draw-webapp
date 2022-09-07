@@ -14,7 +14,6 @@
     .tournament {
         display: flex;
         justify-content: center;
-        width: 100%;
     }
 
     .round {
@@ -32,7 +31,7 @@
         padding: 3px 3px 3px 6px;
     }
 
-    .hidden {
+    .hidden-custom {
         visibility: hidden;
     }
 
@@ -323,21 +322,20 @@
     <div class="tournament" th:if="${competition.competitionType.name() == 'TOURNAMENT'}">
         <div th:each="key : ${#numbers.sequence(T(java.util.Collections).max(hashMap.keySet()), 0, -1)}"
              th:with="cnt=${T(java.lang.Math).pow(2, key)}">
-            <div th:text="|${keyStat.count}라운드|"></div>
             <div class="connector-area" th:classappend="|round${keyStat.index}|" th:if="${!keyStat.first}">
                 <div class="connector" th:each="k: ${#numbers.sequence(0, cnt - 1, 1)}">
-                    <div class="home" th:classappend="${hashMap.get(key + 1).get(k * 2) == null} ? 'hidden'"></div>
-                    <div class="away" th:classappend="${hashMap.get(key + 1).get(k * 2 + 1) == null} ? 'hidden'"></div>
+                    <div class="home" th:classappend="${hashMap.get(key + 1).get(k * 2) == null} ? 'hidden-custom'"></div>
+                    <div class="away" th:classappend="${hashMap.get(key + 1).get(k * 2 + 1) == null} ? 'hidden-custom'"></div>
                 </div>
             </div>
 
             <div class="line-area" th:classappend="|round${keyStat.index}|" th:if="${!keyStat.first}">
                 <div class="line" th:each="k: ${#numbers.sequence(0, cnt - 1, 1)}"
-                     th:classappend="${hashMap.get(key + 1).get(k * 2) == null and hashMap.get(key + 1).get(k * 2 + 1) == null} ? 'hidden'"></div>
+                     th:classappend="${hashMap.get(key + 1).get(k * 2) == null and hashMap.get(key + 1).get(k * 2 + 1) == null} ? 'hidden-custom'"></div>
             </div>
             <div class="round" th:classappend="|round${keyStat.index}|">
                 <div th:each="k : ${#numbers.sequence(0, cnt - 1, 1)}" th:with="match=${hashMap.get(key).get(k)}"
-                     class="match" th:classappend="${match == null} ? 'hidden'">
+                     class="match" th:classappend="${match == null} ? 'hidden-custom'">
                     <div th:if="${match != null}">
                         <div class="player" th:text="${match.home == null} ? |${keyStat.index}-${k * 2 + 1}경기 승자|: |${match.home.email}(${match.home.name})|">home</div>
                         <div class="score" th:text="${match.score.homeScore}">0</div>
@@ -355,11 +353,11 @@
 </div> <!-- /container -->
 </body>
 <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
-<script>
+<!--<script>
     $(function(){
         $('button').css('background-color', 'red');
     });
-</script>
+</script>-->
 <script>
     function init(roomId, competitionId, matchId) {
         var form = document.createElement("form");

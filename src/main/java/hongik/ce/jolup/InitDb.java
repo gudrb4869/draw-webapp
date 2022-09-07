@@ -171,7 +171,7 @@ public class InitDb {
             joinService.save(memberId12, tournament12);
             matchService.saveMatches(memberId12, tournament12);
 
-            Long league20 = competitionService.save("test20-league", CompetitionType.LEAGUE, room4Id);
+            Long league20 = competitionService.save("test20", CompetitionType.LEAGUE, room4Id);
             List<Long> memberId20 = new ArrayList<>();
             for (int i = 1; i <= 20; i++) {
                 memberId20.add(members.get(i).getId());

@@ -11,13 +11,6 @@
     .table-width {
         max-width: 1000px;
     }
-    ul {
-        list-style: none;
-    }
-    li {
-        float: left;
-        margin-left: 20px;
-    }
 </style>
 <body>
 <div>
@@ -126,7 +119,7 @@
             <tr>
                 <th>대회명</th>
                 <th>대회방식</th>
-                <th>참가자수</th>
+<!--                <th>참가자수</th>-->
                 <th>대회생성일자</th>
                 <th></th>
             </tr>
@@ -138,7 +131,7 @@
             <tr th:each="competition : ${competitionList}">
                 <td th:text="${competition.title}">test</td>
                 <td th:text="${competition.competitionType.description}">리그</td>
-                <td th:text="|명|">0명</td>
+<!--                <td th:text="|명|">0명</td>-->
                 <td th:text="${#temporals.format(competition.createdDate, 'yyyy-MM-dd HH:mm:ss')}">날짜</td>
                 <td>
                     <div>
@@ -155,39 +148,41 @@
             </tbody>
         </table>
     </div>
-    <nav style="text-align: center;">
-        <ul class="pagination"
-            th:with="start=${T(java.lang.Math).floor(competitionList.number/10)*10 + 1},
+    <div class="text-center">
+        <nav>
+            <ul class="pagination"
+                th:with="start=${T(java.lang.Math).floor(competitionList.number/10)*10 + 1},
                     last=(${start + 9 < competitionList.totalPages ? start + 9 : competitionList.totalPages})">
-            <li>
-                <a th:href="@{|/rooms/${roomId}|(belong_page=${belongList.number + 1}, competition_page=1)}" aria-label="First">
-                    <span aria-hidden="true"><<</span>
-                </a>
-            </li>
+                <li>
+                    <a th:href="@{|/rooms/${roomId}|(belong_page=${belongList.number + 1}, competition_page=1)}" aria-label="First">
+                        <span aria-hidden="true"><<</span>
+                    </a>
+                </li>
 
-            <li th:class="${competitionList.first} ? 'disabled'">
-                <a th:href="${competitionList.first} ? '#' :@{|/rooms/${roomId}|(belong_page=${belongList.number + 1}, competition_page=${competitionList.number})}" aria-label="Previous">
-                    <span aria-hidden="true">&lt;</span>
-                </a>
-            </li>
+                <li th:class="${competitionList.first} ? 'disabled'">
+                    <a th:href="${competitionList.first} ? '#' :@{|/rooms/${roomId}|(belong_page=${belongList.number + 1}, competition_page=${competitionList.number})}" aria-label="Previous">
+                        <span aria-hidden="true">&lt;</span>
+                    </a>
+                </li>
 
-            <li th:each="page: ${#numbers.sequence(start, last, 1)}" th:class="${page == competitionList.number + 1} ? 'active'">
-                <a th:text="${page}" th:href="@{|/rooms/${roomId}|(belong_page=${belongList.number + 1}, competition_page=${page})}"></a>
-            </li>
+                <li th:each="page: ${#numbers.sequence(start, last, 1)}" th:class="${page == competitionList.number + 1} ? 'active'">
+                    <a th:text="${page}" th:href="@{|/rooms/${roomId}|(belong_page=${belongList.number + 1}, competition_page=${page})}"></a>
+                </li>
 
-            <li th:class="${competitionList.last} ? 'disabled'">
-                <a th:href="${competitionList.last} ? '#' : @{|/rooms/${roomId}|(belong_page=${belongList.number + 1}, competition_page=${competitionList.number + 2})}" aria-label="Next">
-                    <span aria-hidden="true">&gt;</span>
-                </a>
-            </li>
+                <li th:class="${competitionList.last} ? 'disabled'">
+                    <a th:href="${competitionList.last} ? '#' : @{|/rooms/${roomId}|(belong_page=${belongList.number + 1}, competition_page=${competitionList.number + 2})}" aria-label="Next">
+                        <span aria-hidden="true">&gt;</span>
+                    </a>
+                </li>
 
-            <li>
-                <a th:href="@{|/rooms/${roomId}|(belong_page=${belongList.number + 1}, competition_page=${competitionList.totalPages})}" aria-label="Last">
-                    <span aria-hidden="true">>></span>
-                </a>
-            </li>
-        </ul>
-    </nav>
+                <li>
+                    <a th:href="@{|/rooms/${roomId}|(belong_page=${belongList.number + 1}, competition_page=${competitionList.totalPages})}" aria-label="Last">
+                        <span aria-hidden="true">>></span>
+                    </a>
+                </li>
+            </ul>
+        </nav>
+    </div>
     <div th:replace="fragments/footer" :: footer />
 </div> <!-- /container -->
 </body>

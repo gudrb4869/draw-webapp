@@ -5,6 +5,8 @@ import hongik.ce.jolup.service.MemberService;
 import lombok.*;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.AnonymousAuthenticationToken;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -23,7 +25,9 @@ import javax.validation.constraints.NotBlank;
 @Controller
 @RequiredArgsConstructor
 public class MemberController {
+
     private final MemberService memberService;
+    private final AuthenticationManager authenticationManager;
 
     @GetMapping("/signup")
     public String signupForm(Model model) {
@@ -84,6 +88,9 @@ public class MemberController {
         }
         try {
             memberService.updateMember(member.getId(), form.getPassword_current(), form.getPassword_new(), form.getName());
+            Authentication authentication = authenticationManager.authenticate(
+                    new UsernamePasswordAuthenticationToken(member.getEmail(), form.getPassword_new()));
+            SecurityContextHolder.getContext().setAuthentication(authentication);
         } catch (IllegalStateException e) {
             model.addAttribute("errorMessage", e.getMessage());
             return "members/update";
