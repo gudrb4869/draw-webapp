@@ -2,17 +2,61 @@
 <html xmlns="http://www.w3.org/1999/xhtml"
       xmlns:th="http://www.thymeleaf.org"
       xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
-<div class="header" th:fragment="bodyHeader">
+<!--<div class="header" th:fragment="bodyHeader">
     <a class="text-black" href="/"><h3 style="display: inline;">My Project</h3></a>
     <ul class="my-2 my-lg-0" style="float: right; padding: 10px 0 0 0;" sec:authorize="!isAuthenticated()">
         <a class="btn btn-secondary my-2 my-sm-0" href="/signup">회원가입</a>
-        <a class="btn btn-secondary my-2 my-sm-0" href="/login">로그인</a> <!-- 로그인이 안된 경우  -->
+        <a class="btn btn-secondary my-2 my-sm-0" href="/login">로그인</a> &lt;!&ndash; 로그인이 안된 경우  &ndash;&gt;
     </ul>
     <form class="form-check-inline my-2 my-lg-0" style="float: right; padding: 10px 0 0 0;" action="/logout" method="post" sec:authorize="isAuthenticated()">
-        <span class="text-black mr-2 mx-2" sec:authentication="name">사용자</span>님, 안녕하세요.
-        <!--<a class="btn btn-secondary my-2 my-sm-0" href="/rooms">내정보</a>-->
+        안녕하세요,<span class="text-black mr-2 mx-2" sec:authentication="name">사용자</span>님!
+        &lt;!&ndash;<a class="btn btn-secondary my-2 my-sm-0" href="/rooms">내정보</a>&ndash;&gt;
         <button class="btn btn-secondary my-2 my-sm-0" type="submit">로그아웃</button>
         <a class="btn btn-secondary my-2 my-sm-0" href="/alarms">알림</a>
     </form>
-</div>
+</div>-->
+<header class="p-3 mb-3 border-bottom" th:fragment="bodyHeader">
+    <div class="container">
+        <div class="d-flex flex-wrap align-items-center justify-content-center justify-content-lg-start">
+            <a href="/" class="d-flex align-items-center mb-2 mb-lg-0 text-white text-decoration-none">
+                <!--                    <svg class="bi me-2" width="40" height="32" role="img" aria-label="Bootstrap"><use xlink:href="#bootstrap"></use></svg>-->
+                <img src="" alt="" width="32" height="32" class="bi me-2">
+            </a>
+
+            <ul class="nav col-12 col-lg-auto me-lg-auto mb-2 justify-content-center mb-md-0">
+                <li><a href="/" class="nav-link px-2 link-secondary">Home</a></li>
+                <li><a href="#" class="nav-link px-2 link-dark">Features</a></li>
+                <li><a href="#" class="nav-link px-2 link-dark">Pricing</a></li>
+                <li><a href="#" class="nav-link px-2 link-dark">FAQs</a></li>
+                <li><a href="#" class="nav-link px-2 link-dark">About</a></li>
+            </ul>
+
+            <!--<form class="col-12 col-lg-auto mb-3 mb-lg-0 me-lg-3">
+                <input type="search" class="form-control form-control-dark" placeholder="Search..." aria-label="Search">
+            </form>-->
+
+            <div class="text-end" sec:authorize="!isAuthenticated()">
+                <button type="button" class="btn btn-outline-secondary me-2 link-dark" onclick="location.href='/login'">로그인</button>
+                <button type="button" class="btn btn-warning" onclick="location.href='/signup'">회원가입</button>
+            </div>
+
+            <div class="text-end col-12 col-lg-auto mb-3 mb-lg-0 me-lg-3" sec:authorize="isAuthenticated()">
+                안녕하세요,<span class="text-black mr-2 mx-2" sec:authentication="name">사용자</span>님!
+            </div>
+            <div class="dropdown text-end" sec:authorize="isAuthenticated()">
+                <a href="#" class="d-block link-dark text-decoration-none dropdown-toggle" id="dropdownUser1" data-bs-toggle="dropdown" aria-expanded="false">
+                    <img src="" alt="" width="32" height="32" class="rounded-circle">
+                    <!--                        <img src="https://github.com/mdo.png" alt="mdo" width="32" height="32" class="rounded-circle">-->
+                </a>
+                <ul class="dropdown-menu text-small" aria-labelledby="dropdownUser1" style="">
+                    <li><a class="dropdown-item" href="#">New project...</a></li>
+                    <li><a class="dropdown-item" href="#">설정</a></li>
+                    <li><a class="dropdown-item" href="#">프로필</a></li>
+                    <li><hr class="dropdown-divider"></li>
+                    <li><a class="dropdown-item" href="/logout">로그아웃</a></li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</header>
 </html>
