@@ -28,11 +28,11 @@ public class HomeController {
                         @PageableDefault Pageable pageable, Model model) {
         log.info("home controller");
         if (isAuthenticated()) {
-            Page<Belong> belongList = belongService.findByMemberId(member.getId(), pageable);
-            model.addAttribute("belongList", belongList);
+            Page<Belong> belongs = belongService.findByMemberId(member.getId(), pageable);
+            model.addAttribute("belongs", belongs);
             log.info("총 element 수 : {}, 전체 page 수 : {}, 페이지에 표시할 element 수 : {}, 현재 페이지 index : {}, 현재 페이지의 element 수 : {}",
-            belongList.getTotalElements(), belongList.getTotalPages(), belongList.getSize(),
-            belongList.getNumber(), belongList.getNumberOfElements());
+            belongs.getTotalElements(), belongs.getTotalPages(), belongs.getSize(),
+            belongs.getNumber(), belongs.getNumberOfElements());
             return "rooms/list";
         }
         return "index";

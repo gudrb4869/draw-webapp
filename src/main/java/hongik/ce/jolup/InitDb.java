@@ -96,7 +96,7 @@ public class InitDb {
             /**
              * 방 테스트 DB 생성
              */
-            Room room1 = createRoom("private", RoomSetting.PRIVATE);
+            /*Room room1 = createRoom("private", RoomSetting.PRIVATE);
             Long room1Id = roomService.saveRoom(room1);
 
             belongService.save(members.get(1).getId(), room1Id, BelongType.ADMIN);
@@ -118,7 +118,7 @@ public class InitDb {
             belongService.save(members.get(1).getId(), room3Id, BelongType.ADMIN);
             for (int i = 7; i < 14; i++) {
                 belongService.save(members.get(i).getId(), room3Id, BelongType.USER);
-            }
+            }*/
 
             Room room4 = createRoom("Test", RoomSetting.PRIVATE);
             Long room4Id = roomService.saveRoom(room4);

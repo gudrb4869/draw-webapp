@@ -12,9 +12,9 @@
         max-width: 1000px;
     }
 </style>
-<body>
-<div>
-    <div th:replace="fragments/bodyheader" :: bodyheader />
+<body class="d-flex flex-column min-vh-100">
+<div th:replace="fragments/bodyheader" :: bodyheader />
+<div class="container">
     <hr class="my-4">
     <div class="table-center">
         <table class="table table-striped text-center table-width">
@@ -183,7 +183,7 @@
             </ul>
         </nav>
     </div>
-    <div th:replace="fragments/footer" :: footer />
 </div> <!-- /container -->
+<div th:replace="fragments/footer" :: footer />
 </body>
 </html>

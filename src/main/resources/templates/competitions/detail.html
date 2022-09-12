@@ -207,9 +207,9 @@
 
     }
 </style>
-<body>
-<div>
-    <div th:replace="fragments/bodyheader" :: bodyheader />
+<body class="d-flex flex-column min-vh-100">
+<div th:replace="fragments/bodyheader" :: bodyheader />
+<div class="container">
     <hr class="my-4">
     <div class="table-center">
         <table class="table table-striped table-width text-center">
@@ -349,8 +349,8 @@
             </div>
         </div>
     </div>
-    <div th:replace="fragments/footer" :: footer />
 </div> <!-- /container -->
+<div th:replace="fragments/footer" :: footer />
 </body>
 <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
 <!--<script>

@@ -1,13 +1,12 @@
 <!DOCTYPE HTML>
 <html xmlns="http://www.w3.org/1999/xhtml"
       xmlns:th="http://www.thymeleaf.org">
-<head th:replace="fragments/header :: header">
-    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-</head>
-<body>
-<div>
-    <div th:replace="fragments/bodyheader" :: bodyheader />
-    <div th:replace="fragments/footer" :: footer />
+<head th:replace="fragments/header :: header"></head>
+<body class="d-flex flex-column min-vh-100">
+<div th:replace="fragments/bodyheader" :: bodyheader />
+<div class="container">
+
 </div> <!-- /container -->
+<div th:replace="fragments/footer" :: footer />
 </body>
 </html>

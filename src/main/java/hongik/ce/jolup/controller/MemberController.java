@@ -20,6 +20,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.Pattern;
 
 @Slf4j
 @Controller
@@ -110,16 +111,18 @@ public class MemberController {
     @Getter @Setter @ToString @Builder
     @NoArgsConstructor @AllArgsConstructor
     private static class CreateMemberForm {
-        @NotBlank(message = "아이디는 필수 입력 값입니다!")
-//    @Pattern(regexp = "^(?:\\w+\\.?)*\\w+@(?:\\w+\\.)+\\w+$", message = "이메일 형식이 올바르지 않습니다.")
+//        @NotBlank(message = "아이디는 필수 입력 값입니다!")
+//        @Pattern(regexp = "^(?:\\w+\\.?)*\\w+@(?:\\w+\\.)+\\w+$", message = "이메일 형식이 올바르지 않습니다.")
+        @Pattern(regexp = "^[a-zA-Z]{1}[a-zA-Z0-9_]{3,20}", message = "아이디 형식이 올바르지 않습니다.")
         private String email;
 
-        @NotBlank(message = "비밀번호는 필수 입력 값입니다!")
-//    @Pattern(regexp = "(?=.*[0-9])(?=.*[a-zA-Z])(?=.*\\W)(?=\\S+$).{8,16}", message = "비밀번호는 8~16자 영문 대 소문자, 숫자, 특수문자를 사용하세요.")
+//        @NotBlank(message = "비밀번호는 필수 입력 값입니다!")
+        @Pattern(regexp = "(?=.*[0-9])(?=.*[a-zA-Z])(?=.*\\W)(?=\\S+$).{8,16}", message = "비밀번호는 8~16자 영문 대소문자, 숫자, 특수문자를 사용하세요.")
         private String password;
 
-    /*@NotBlank(message = "비밀번호 확인은 필수 입력 값입니다!")
-    private String password_confirm;*/
+        /*@NotBlank(message = "비밀번호 확인은 필수 입력 값입니다!")
+        @Pattern(regexp = "(?=.*[0-9])(?=.*[a-zA-Z])(?=.*\\W)(?=\\S+$).{8,16}", message = "비밀번호는 8~16자 영문 대소문자, 숫자, 특수문자를 사용하세요.")
+        private String password_confirm;*/
 
         @NotBlank(message = "이름은 필수 입력 값입니다!")
         private String name;
@@ -128,12 +131,12 @@ public class MemberController {
     @Getter @Setter @Builder @ToString
     @NoArgsConstructor @AllArgsConstructor
     private static class UpdateMemberForm {
-        @NotBlank(message = "비밀번호는 필수 입력 값입니다!")
-//    @Pattern(regexp = "(?=.*[0-9])(?=.*[a-zA-Z])(?=.*\\W)(?=\\S+$).{8,16}", message = "비밀번호는 8~16자 영문 대 소문자, 숫자, 특수문자를 사용하세요.")
+//        @NotBlank(message = "비밀번호는 필수 입력 값입니다!")
+        @Pattern(regexp = "(?=.*[0-9])(?=.*[a-zA-Z])(?=.*\\W)(?=\\S+$).{8,16}", message = "비밀번호는 8~16자 영문 대 소문자, 숫자, 특수문자를 사용하세요.")
         private String password_current;
 
-        @NotBlank(message = "비밀번호는 필수 입력 값입니다!")
-//    @Pattern(regexp = "(?=.*[0-9])(?=.*[a-zA-Z])(?=.*\\W)(?=\\S+$).{8,16}", message = "비밀번호는 8~16자 영문 대 소문자, 숫자, 특수문자를 사용하세요.")
+//        @NotBlank(message = "비밀번호는 필수 입력 값입니다!")
+        @Pattern(regexp = "(?=.*[0-9])(?=.*[a-zA-Z])(?=.*\\W)(?=\\S+$).{8,16}", message = "비밀번호는 8~16자 영문 대 소문자, 숫자, 특수문자를 사용하세요.")
         private String password_new;
 
         @NotBlank(message = "이름은 필수 입력 값입니다!")

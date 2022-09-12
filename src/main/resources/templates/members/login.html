@@ -1,7 +1,6 @@
 <!DOCTYPE HTML>
 <html xmlns="http://www.w3.org/1999/xhtml"
-      xmlns:th="http://www.thymeleaf.org"
-      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+      xmlns:th="http://www.thymeleaf.org">
 <head th:replace="fragments/header :: header" />
 <style>
     .form-center {
@@ -13,36 +12,35 @@
         max-width: 600px;
     }
 </style>
-<body>
-<div>
-    <div th:replace="fragments/bodyheader" :: bodyheader />
+<body class="d-flex flex-column min-vh-100">
+<div th:replace="fragments/bodyheader" :: bodyheader />
+<div class="container">
     <div class="py-5 text-center">
-        <h5>아이디와 비밀번호를 입력해주세요</h5>
+        <h2>로그인</h2>
     </div>
-    <div class="form-center">
-        <form class="form-control form-width" th:action method="post">
-            <div class="py-2" th:if="${param.error}">
-                <span th:text="'아이디 또는 비밀번호가 맞지 않습니다.'" class="alert alert-danger">예외가 발생했습니다.</span>
+    <div class="row justify-content-center">
+        <form class="col-sm-6 mx-auto" th:action method="post">
+            <div class="mb-3">
+                <span th:if="${param.error}" th:text="'아이디 또는 비밀번호가 맞지 않습니다.'" class="alert alert-danger">예외가 발생했습니다.</span>
             </div>
-            <div class="py-2">
+            <div class="mb-4"></div>
+            <div class="mb-3">
                 <label for="email">아이디</label>
                 <input type="text" id="email" name="email" placeholder="아이디를 입력하세요" class="form-control" autofocus="autofocus">
             </div>
 
-            <div>
+            <div class="mb-3">
                 <label for="password">비밀번호</label>
                 <input type="password" id="password" name="password" placeholder="비밀번호를 입력하세요" class="form-control">
             </div>
             <!--<div>
                 <input type="checkbox" name="remember-me" />아이디 저장<br>
             </div>-->
-            <hr class="my-4">
-            <div>
-                <button type="submit" class="btn btn-lg btn-primary">로그인</button> <br>
-            </div>
+            <div class="mb-4"></div>
+            <button type="submit" class="btn btn-lg btn-primary">로그인</button>
         </form>
     </div>
-    <div th:replace="fragments/footer" :: footer />
 </div> <!-- /container -->
+<div th:replace="fragments/footer" :: footer />
 </body>
 </html>

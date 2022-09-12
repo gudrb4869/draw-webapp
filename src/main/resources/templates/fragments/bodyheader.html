@@ -2,25 +2,14 @@
 <html xmlns="http://www.w3.org/1999/xhtml"
       xmlns:th="http://www.thymeleaf.org"
       xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
-<!--<div class="header" th:fragment="bodyHeader">
-    <a class="text-black" href="/"><h3 style="display: inline;">My Project</h3></a>
-    <ul class="my-2 my-lg-0" style="float: right; padding: 10px 0 0 0;" sec:authorize="!isAuthenticated()">
-        <a class="btn btn-secondary my-2 my-sm-0" href="/signup">회원가입</a>
-        <a class="btn btn-secondary my-2 my-sm-0" href="/login">로그인</a> &lt;!&ndash; 로그인이 안된 경우  &ndash;&gt;
-    </ul>
-    <form class="form-check-inline my-2 my-lg-0" style="float: right; padding: 10px 0 0 0;" action="/logout" method="post" sec:authorize="isAuthenticated()">
-        안녕하세요,<span class="text-black mr-2 mx-2" sec:authentication="name">사용자</span>님!
-        &lt;!&ndash;<a class="btn btn-secondary my-2 my-sm-0" href="/rooms">내정보</a>&ndash;&gt;
-        <button class="btn btn-secondary my-2 my-sm-0" type="submit">로그아웃</button>
-        <a class="btn btn-secondary my-2 my-sm-0" href="/alarms">알림</a>
-    </form>
-</div>-->
 <header class="p-3 mb-3 border-bottom" th:fragment="bodyHeader">
     <div class="container">
         <div class="d-flex flex-wrap align-items-center justify-content-center justify-content-lg-start">
-            <a href="/" class="d-flex align-items-center mb-2 mb-lg-0 text-white text-decoration-none">
+            <a href="/" class="text-muted">
                 <!--                    <svg class="bi me-2" width="40" height="32" role="img" aria-label="Bootstrap"><use xlink:href="#bootstrap"></use></svg>-->
-                <img src="" alt="" width="32" height="32" class="bi me-2">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-house-door-fill" viewBox="0 0 16 16">
+                    <path d="M6.5 14.5v-3.505c0-.245.25-.495.5-.495h2c.25 0 .5.25.5.5v3.5a.5.5 0 0 0 .5.5h4a.5.5 0 0 0 .5-.5v-7a.5.5 0 0 0-.146-.354L13 5.793V2.5a.5.5 0 0 0-.5-.5h-1a.5.5 0 0 0-.5.5v1.293L8.354 1.146a.5.5 0 0 0-.708 0l-6 6A.5.5 0 0 0 1.5 7.5v7a.5.5 0 0 0 .5.5h4a.5.5 0 0 0 .5-.5z"/>
+                </svg>
             </a>
 
             <ul class="nav col-12 col-lg-auto me-lg-auto mb-2 justify-content-center mb-md-0">
@@ -45,7 +34,11 @@
             </div>
             <div class="dropdown text-end" sec:authorize="isAuthenticated()">
                 <a href="#" class="d-block link-dark text-decoration-none dropdown-toggle" id="dropdownUser1" data-bs-toggle="dropdown" aria-expanded="false">
-                    <img src="" alt="" width="32" height="32" class="rounded-circle">
+<!--                    <img src="" alt="" width="32" height="32" class="rounded-circle">-->
+                    <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" fill="currentColor" class="bi bi-person-circle" viewBox="0 0 16 16">
+                        <path d="M11 6a3 3 0 1 1-6 0 3 3 0 0 1 6 0z"/>
+                        <path fill-rule="evenodd" d="M0 8a8 8 0 1 1 16 0A8 8 0 0 1 0 8zm8-7a7 7 0 0 0-5.468 11.37C3.242 11.226 4.805 10 8 10s4.757 1.225 5.468 2.37A7 7 0 0 0 8 1z"/>
+                    </svg>
                     <!--                        <img src="https://github.com/mdo.png" alt="mdo" width="32" height="32" class="rounded-circle">-->
                 </a>
                 <ul class="dropdown-menu text-small" aria-labelledby="dropdownUser1" style="">
