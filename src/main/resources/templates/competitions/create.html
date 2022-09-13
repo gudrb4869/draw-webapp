@@ -2,88 +2,72 @@
 <html xmlns="http://www.w3.org/1999/xhtml"
       xmlns:th="http://www.thymeleaf.org">
 <head th:replace="fragments/header :: header" />
-<style>
-    .field-error {
-        border-color: #dc3545;
-        color: #dc3545;
-    }
-    .form-center {
-        display: flex;
-        justify-content: center;
-        align-items: center;
-    }
-    .form-width {
-        max-width: 600px;
-    }
-</style>
-<body>
-<div>
-    <div th:replace="fragments/bodyheader" :: bodyheader />
+<body class="d-flex flex-column min-vh-100">
+<div th:replace="fragments/bodyheader" :: bodyheader />
+<div class="container">
     <div class="py-5 text-center">
         <h2>대회 만들기</h2>
     </div>
-    <div class="form-center">
-        <form class="form-control form-width" th:action th:object="${form}" method="post">
-
+    <div class="row justify-content-center">
+        <form class="col-sm-6 mx-auto" th:action th:object="${form}" method="post">
             <div th:if="${#fields.hasGlobalErrors()}">
-                <p class="field-error" th:each="err : ${#fields.globalErrors()}" th:text="${err}">전체 오류 메시지</p>
+                <p class="text-danger" th:each="err : ${#fields.globalErrors()}" th:text="${err}">전체 오류 메시지</p>
             </div>
-
-            <div>
+            <div class="mb-3">
                 <label th:for="title">대회명</label>
                 <input type="text" th:field="*{title}" placeholder="대회명을 입력하세요"
-                       class="form-control" th:errorclass="field-error">
-                <p th:errors="*{title}" class="field-error">대회명 오류</p>
+                       class="form-control" th:errorclass="is-invalid">
+                <p th:errors="*{title}" class="text-danger">대회명 오류</p>
             </div>
 
-            <div class="py-2">
-                <div>대회 방식</div>
-                <select th:field="*{competitionType}" class="form-select-sm"
+            <div class="mb-3">
+                <label th:for="competitionType">대회 방식</label>
+                <select th:field="*{competitionType}" class="form-select" th:errorclass="border-danger"
                         onchange="updateForm()">
                     <option th:each="competitionType : ${T(hongik.ce.jolup.domain.competition.CompetitionType).values()}" th:value="${competitionType.name()}"
                             th:text="${competitionType.description}" th:selected="${competitionType == form.competitionType}"></option>
+                    <p th:errors="*{competitionType}" class="text-danger">대회방식 오류</p>
                 </select>
             </div>
 
-            <div class="py-2">
-                <div>참가자수</div>
-                <select th:field="*{headCount}" class="form-select-sm"
+            <div class="mb-3">
+                <label th:for="headCount">참가자수</label>
+                <select th:field="*{headCount}" class="form-select" th:errorclass="border-danger"
                         onchange="updateForm()">
-                    <!--th:onchange="|location.href='@{/competition/create?title=' + form.title.value
-                    + '&competitionType='+ form.competitionType.value + '&memNum=' + this.value +  '}'|">-->
                     <option th:each="headCount : ${#numbers.sequence(2, 64)}" th:value="${headCount}" th:text="|${headCount}명|"
                             th:selected="${headCount} == ${form.headCount}"></option>
+                    <p th:errors="*{headCount}" class="text-danger">참가자수 오류</p>
                 </select>
             </div>
-
-            <div>
-                <table class="table">
-                    <tbody>
-                    <tr th:each="email : *{emails}">
-                        <td th:text="'#' + ${emailStat.count}"></td>
-                        <td>
-                            <input type="text" th:field="*{emails[__${emailStat.index}__]}"
-                                   th:errorclass="field-error" class="form-control"/>
-                            <p th:errors="*{emails[__${emailStat.index}__]}" class="field-error">이메일 형식이 올바르지 않음</p>
-                        </td>
-                    </tr>
-                    </tbody>
-                </table>
-            </div>
-
-            <hr class="my-4">
-
+            <table class="table table-hover">
+                <thead>
+                <tr>
+                    <th>번호</th>
+                    <th>아이디</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="email : *{emails}">
+                    <td th:text="${emailStat.count}"></td>
+                    <td>
+                        <input type="text" th:field="*{emails[__${emailStat.index}__]}"
+                               th:errorclass="is-invalid" class="form-control"/>
+                        <p th:errors="*{emails[__${emailStat.index}__]}" class="text-danger">이메일 형식이 올바르지 않음</p>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
             <div class="row">
                 <div class="col">
                     <button type="submit" class="btn btn-primary btn-lg">생성</button>
-                    <a th:href="@{|/rooms/${roomId}|}" class="btn btn-warning btn-lg">취소</a>
+                    <button type="button" class="btn btn-warning btn-lg" th:onclick="|location.href='@{|/rooms/${roomId}|}'|">취소</button>
                 </div>
             </div>
-
         </form>
+        <div class="mb-4"></div>
     </div>
-    <div th:replace="fragments/footer" :: footer />
 </div> <!-- /container -->
+<div th:replace="fragments/footer" :: footer />
 </body>
 
 <script th:inline="javascript">

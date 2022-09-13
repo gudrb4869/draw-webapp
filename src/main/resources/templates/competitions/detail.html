@@ -3,14 +3,6 @@
       xmlns:th="http://www.thymeleaf.org">
 <head th:replace="fragments/header :: header" />
 <style>
-    .table-center {
-        display: flex;
-        justify-content: center;
-        align-items: center;
-    }
-    .table-width {
-        width: 100%;
-    }
     .tournament {
         display: flex;
         justify-content: center;
@@ -210,37 +202,36 @@
 <body class="d-flex flex-column min-vh-100">
 <div th:replace="fragments/bodyheader" :: bodyheader />
 <div class="container">
-    <hr class="my-4">
-    <div class="table-center">
-        <table class="table table-striped table-width text-center">
-            <thead>
-            <tr>
-                <th>대회명</th>
-                <th>대회방식</th>
-                <th>참여자수</th>
-            </tr>
-            </thead>
-            <tbody>
-            <tr>
-                <td th:text="${competition.title}"></td>
-                <td th:text="${competition.competitionType}"></td>
-                <td th:text="${joins.size()}"></td>
-            </tr>
-            </tbody>
-        </table>
-    </div>
+    <table class="table table-hover">
+        <thead>
+        <tr>
+            <th>대회명</th>
+            <th>대회방식</th>
+            <th>참여자수</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr>
+            <td th:text="${competition.title}"></td>
+            <td th:text="${competition.competitionType}"></td>
+            <td th:text="${joins.size()}"></td>
+        </tr>
+        </tbody>
+    </table>
 
-    <div class="">
-        <a th:href="@{|/rooms/${roomId}|}" class="btn btn-warning">목록</a>
-        <a class="btn btn-secondary my-2 my-sm-0" th:if="${myBelong ne null and (myBelong.belongType.name() eq 'ADMIN')}"
-           th:href="@{|/rooms/${roomId}/competitions/${competitionId}/edit|}">수정</a>
-        <form class="form-check-inline my-2 my-lg-0" th:action="@{|/rooms/${roomId}/competitions/${competitionId}|}" method="post">
-            <input type="hidden" th:if="${myBelong ne null and (myBelong.belongType.name() eq 'ADMIN')}" name="_method" value="delete"/>
-            <button class="btn btn-danger my-2 my-sm-0" type="submit"
-                    th:if="${myBelong ne null and (myBelong.belongType.name() eq 'ADMIN')}">삭제</button>
-        </form>
+    <div class="row">
+        <div class="col">
+            <button type="button" class="btn btn-default pull-right" th:onclick="|location.href='@{|/rooms/${roomId}|}'|">목록</button>
+            <button type="button" class="btn btn-default pull-right" th:onclick="|location.href='@{|/rooms/${roomId}/competitions/${competitionId}/edit|}'|"
+                    th:if="${myBelong ne null and (myBelong.belongType.name() eq 'ADMIN')}">수정</button>
+            <form class="pull-right" th:action="@{|/rooms/${roomId}/competitions/${competitionId}|}" method="post">
+                <input type="hidden" th:if="${myBelong ne null and (myBelong.belongType.name() eq 'ADMIN')}" name="_method" value="delete"/>
+                <button class="btn btn-danger" type="submit"
+                        th:if="${myBelong ne null and (myBelong.belongType.name() eq 'ADMIN')}">삭제</button>
+            </form>
+        </div>
     </div>
-
+    <div class="mb-4"></div>
     <!--<h1>대회참여자</h1>
     <table class="table table-light">
         <tbody>
@@ -250,73 +241,70 @@
         </tbody>
     </table>-->
 
-    <hr class="my-4">
-    <h1>일정</h1>
-    <div th:if="${competition.competitionType.name() == 'LEAGUE'}">
-        <div class="table-center">
-            <table class="table table-bordered table-width text-center">
-                <tbody th:each="key : ${hashMap.keySet()}">
-                <tr>
-                    <td th:text="|${key + 1}라운드|"></td>
-                    <td>
-                        <table class="table table-bordered">
-                            <tbody th:each="k : ${hashMap.get(key).keySet()}" th:with="match=${hashMap.get(key).get(k)}">
+    <div class="row justify-content-center" th:if="${competition.competitionType.name() == 'LEAGUE'}">
+        <table class="table table-hover">
+            <h3>일정</h3>
+            <tbody th:each="key : ${hashMap.keySet()}">
+            <tr>
+                <td th:text="|${key + 1}라운드|"></td>
+                <td>
+                    <div class="row justify-content-center">
+                        <table class="table table-hover">
+                            <thead>
                             <tr>
+                                <th>홈</th>
+                                <th>스코어</th>
+                                <th>어웨이</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <tr th:each="k : ${hashMap.get(key).keySet()}" th:with="match=${hashMap.get(key).get(k)}"
+                                th:onclick="${match.home != null} and ${match.away != null} and ${myBelong ne null and (myBelong.belongType.name() eq 'ADMIN')}? |location.href='@{|/rooms/${roomId}/competitions/${competitionId}/matches/${match.id}/update|}'| :_">
                                 <td th:text="|${match.home.email}(${match.home.name})|">홈팀명</td>
                                 <td th:text="|${match.score.homeScore}:${match.score.awayScore}|">스코어</td>
                                 <td th:text="|${match.away.email}(${match.away.name})|">어웨이팀명</td>
-                                <td>
-                                    <a class="btn btn-primary"
-                                       th:if="${match.home != null} and ${match.away != null}
-                                       and ${myBelong ne null and (myBelong.belongType.name() eq 'ADMIN')}"
-                                       th:href="@{|/rooms/${roomId}/competitions/${competitionId}/matches/${match.id}/update|}">수정</a>
-                                    <a class="btn btn-primary"
-                                       th:if="${match.home != null} and ${match.away != null} and ${match.matchStatus.name() eq 'END'}
-                                       and ${myBelong ne null and (myBelong.belongType.name() eq 'ADMIN')}"
-                                       th:href="'javascript:init('+${roomId}+', '+${competitionId}+', '+${match.id}+')'">초기화</a>
-                                </td>
                             </tr>
                             </tbody>
                         </table>
-                    </td>
-                </tr>
-                </tbody>
-            </table>
-        </div>
-        <hr class="my-4">
-        <h1>순위</h1>
-        <div class="table-center">
-            <table class="table table-light table-width text-center">
-                <thead>
-                <tr>
-                    <th>#</th>
-                    <th>회원명</th>
-                    <th>경기수</th>
-                    <th>승</th>
-                    <th>무</th>
-                    <th>패</th>
-                    <th>승점</th>
-                    <th>득점</th>
-                    <th>실점</th>
-                    <th>득실차</th>
-                </tr>
-                </thead>
-                <tbody>
-                <tr th:each="join : ${joins}">
-                    <td th:text="${joinStat.count}"></td>
-                    <td th:text="|${join.member.email}(${join.member.name})|"></td>
-                    <td th:text="${join.result.win} + ${join.result.draw} + ${join.result.lose}"></td>
-                    <td th:text="${join.result.win}"></td>
-                    <td th:text="${join.result.draw}"></td>
-                    <td th:text="${join.result.lose}"></td>
-                    <td th:text="${join.result.win * 3} + ${join.result.draw}"></td>
-                    <td th:text="${join.result.goalFor}"></td>
-                    <td th:text="${join.result.goalAgainst}"></td>
-                    <td th:text="${join.result.goalFor} - ${join.result.goalAgainst}"></td>
-                </tr>
-                </tbody>
-            </table>
-        </div>
+                    </div>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <div class="row justify-content-center" th:if="${competition.competitionType.name() == 'LEAGUE'}">
+        <table class="table table-hover">
+            <h3>순위</h3>
+            <thead>
+            <tr>
+                <th>#</th>
+                <th>회원명</th>
+                <th>경기수</th>
+                <th>승</th>
+                <th>무</th>
+                <th>패</th>
+                <th>승점</th>
+                <th>득점</th>
+                <th>실점</th>
+                <th>득실차</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="join : ${joins}">
+                <td th:text="${joinStat.count}"></td>
+                <td th:text="|${join.member.email}(${join.member.name})|"></td>
+                <td th:text="${join.result.win} + ${join.result.draw} + ${join.result.lose}"></td>
+                <td th:text="${join.result.win}"></td>
+                <td th:text="${join.result.draw}"></td>
+                <td th:text="${join.result.lose}"></td>
+                <td><strong th:text="${join.result.win * 3} + ${join.result.draw}"></strong></td>
+                <td th:text="${join.result.goalFor}"></td>
+                <td th:text="${join.result.goalAgainst}"></td>
+                <td th:text="${join.result.goalFor} - ${join.result.goalAgainst}"></td>
+            </tr>
+            </tbody>
+        </table>
     </div>
 
     <div class="tournament" th:if="${competition.competitionType.name() == 'TOURNAMENT'}">
@@ -336,14 +324,11 @@
             <div class="round" th:classappend="|round${keyStat.index}|">
                 <div th:each="k : ${#numbers.sequence(0, cnt - 1, 1)}" th:with="match=${hashMap.get(key).get(k)}"
                      class="match" th:classappend="${match == null} ? 'hidden-custom'">
-                    <div th:if="${match != null}">
+                    <div th:if="${match != null}" th:onclick="${match.home != null} and ${match.away != null} and ${myBelong ne null and (myBelong.belongType.name() eq 'ADMIN')}?|location.href='@{|/rooms/${roomId}/competitions/${competitionId}/matches/${match.id}/update|}'|:_">
                         <div class="player" th:text="${match.home == null} ? |${keyStat.index}-${k * 2 + 1}경기 승자|: |${match.home.email}(${match.home.name})|">home</div>
                         <div class="score" th:text="${match.score.homeScore}">0</div>
                         <div class="player" th:text="${match.away == null} ? |${keyStat.index}-${k * 2 + 2}경기 승자|: |${match.away.email}(${match.away.name})|">away</div>
                         <div class="score" th:text="${match.score.awayScore}">0</div>
-                        <a class="btn btn-primary"
-                           th:if="${match.home != null} and ${match.away != null} and ${myBelong ne null and (myBelong.belongType.name() eq 'ADMIN')}"
-                           th:href="@{|/rooms/${roomId}/competitions/${competitionId}/matches/${match.id}/update|}">수정</a>
                     </div>
                 </div>
             </div>

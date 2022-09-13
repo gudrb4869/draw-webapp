@@ -2,47 +2,30 @@
 <html xmlns="http://www.w3.org/1999/xhtml"
       xmlns:th="http://www.thymeleaf.org">
 <head th:replace="fragments/header :: header" />
-<style>
-    .field-error {
-        border-color: #dc3545;
-        color: #dc3545;
-    }
-    .form-center {
-        display: flex;
-        justify-content: center;
-        align-items: center;
-    }
-    .form-width {
-        max-width: 600px;
-    }
-</style>
-<body>
-<div>
-    <div th:replace="fragments/bodyheader" :: bodyheader />
+<body class="d-flex flex-column min-vh-100">
+<div th:replace="fragments/bodyheader" :: bodyheader />
+<div class="container">
     <div class="py-5 text-center">
-        <h2>대회 수정</h2>
+        <h2>대회 정보 수정</h2>
     </div>
-    <div class="form-center">
-        <form class="form-control form-width" th:action th:object="${form}" method="post">
+    <div class="row justify-content-center">
+        <form class="col-sm-6 mx-auto" th:action th:object="${form}" method="post">
             <input type="hidden" th:field="*{id}"/>
-            <div>
+            <div class="mb-3">
                 <label th:for="title">대회 이름</label>
                 <input type="text" th:field="*{title}" placeholder="대회 이름을 입력하세요"
-                       class="form-control" th:errorclass="field-error">
-                <p th:errors="*{title}" class="field-error">대회 이름 오류</p>
+                       class="form-control" th:errorclass="is-invalid">
+                <p th:errors="*{title}" class="text-danger">대회 이름 오류</p>
             </div>
-
-            <hr class="my-4">
-
             <div class="row">
                 <div class="col">
                     <button type="submit" class="btn btn-primary btn-lg">수정</button>
-                    <a th:href="@{|/rooms/${roomId}/competitions/${competitionId}|}" class="btn btn-warning btn-lg">취소</a>
+                    <button type="button" class="btn btn-warning btn-lg" th:onclick="|location.href='@{|/rooms/${roomId}/competitions/${competitionId}|}'|">취소</button>
                 </div>
             </div>
         </form>
     </div>
-    <div th:replace="fragments/footer" :: footer />
 </div> <!-- /container -->
+<div th:replace="fragments/footer" :: footer />
 </body>
 </html>

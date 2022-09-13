@@ -24,26 +24,24 @@
                 <p th:errors="*{count}" class="text-danger">인원수 오류</p>
             </div>
 
-            <div>
-                <table class="table">
-                    <thead>
-                    <tr>
-                        <th>번호</th>
-                        <th>아이디</th>
-                    </tr>
-                    </thead>
-                    <tbody>
-                    <tr th:each="email : *{emails}">
-                        <td th:text="${emailStat.count}"></td>
-                        <td>
-                            <input type="text" th:field="*{emails[__${emailStat.index}__]}"
-                                   th:errorclass="is-invalid" class="form-control"/>
-                            <p th:errors="*{emails[__${emailStat.index}__]}" class="text-danger">이메일 형식이 올바르지 않음</p>
-                        </td>
-                    </tr>
-                    </tbody>
-                </table>
-            </div>
+            <table class="table table-hover">
+                <thead>
+                <tr>
+                    <th>번호</th>
+                    <th>아이디</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="email : *{emails}">
+                    <td th:text="${emailStat.count}"></td>
+                    <td>
+                        <input type="text" th:field="*{emails[__${emailStat.index}__]}"
+                               th:errorclass="is-invalid" class="form-control"/>
+                        <p th:errors="*{emails[__${emailStat.index}__]}" class="text-danger">이메일 형식이 올바르지 않음</p>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
 
             <div class="row">
                 <div class="col">
@@ -51,8 +49,8 @@
                     <button type="button" class="btn btn-warning btn-lg" th:onclick="|location.href='@{|/rooms/${roomId}|}'|">취소</button>
                 </div>
             </div>
-
         </form>
+        <div class="mb-4"></div>
     </div>
 </div> <!-- /container -->
 <div th:replace="fragments/footer" :: footer />
