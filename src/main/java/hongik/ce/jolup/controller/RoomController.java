@@ -98,17 +98,17 @@ public class RoomController {
         model.addAttribute("room", room);
         model.addAttribute("myBelong", myBelong);
 
-        Page<Belong> belongList = belongService.findByRoomId(roomId, belongPageable);
-        model.addAttribute("belongList", belongList);
+        Page<Belong> belongs = belongService.findByRoomId(roomId, belongPageable);
+        model.addAttribute("belongs", belongs);
         log.info("총 element 수 : {}, 전체 page 수 : {}, 페이지에 표시할 element 수 : {}, 현재 페이지 index : {}, 현재 페이지의 element 수 : {}",
-                belongList.getTotalElements(), belongList.getTotalPages(), belongList.getSize(),
-                belongList.getNumber(), belongList.getNumberOfElements());
+                belongs.getTotalElements(), belongs.getTotalPages(), belongs.getSize(),
+                belongs.getNumber(), belongs.getNumberOfElements());
 
-        Page<Competition> competitionList = competitionService.findCompetitions(roomId, competitionPageable);
-        model.addAttribute("competitionList", competitionList);
+        Page<Competition> competitions = competitionService.findCompetitions(roomId, competitionPageable);
+        model.addAttribute("competitions", competitions);
         log.info("총 element 수 : {}, 전체 page 수 : {}, 페이지에 표시할 element 수 : {}, 현재 페이지 index : {}, 현재 페이지의 element 수 : {}",
-                competitionList.getTotalElements(), competitionList.getTotalPages(), competitionList.getSize(),
-                competitionList.getNumber(), competitionList.getNumberOfElements());
+                competitions.getTotalElements(), competitions.getTotalPages(), competitions.getSize(),
+                competitions.getNumber(), competitions.getNumberOfElements());
         return "rooms/detail";
     }
 

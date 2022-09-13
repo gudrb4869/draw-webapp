@@ -2,56 +2,40 @@
 <html xmlns="http://www.w3.org/1999/xhtml"
       xmlns:th="http://www.thymeleaf.org">
 <head th:replace="fragments/header :: header" />
-<style>
-    .field-error {
-        border-color: #dc3545;
-        color: #dc3545;
-    }
-    .form-center {
-        display: flex;
-        justify-content: center;
-        align-items: center;
-    }
-    .form-width {
-        max-width: 600px;
-    }
-</style>
-<body>
-<div>
-    <div th:replace="fragments/bodyheader" :: bodyheader />
+<body class="d-flex flex-column min-vh-100">
+<div th:replace="fragments/bodyheader" :: bodyheader />
+<div class="container">
     <div class="py-5 text-center">
         <h2>방 만들기</h2>
     </div>
-    <div class="form-center">
-        <form class="form-control form-width" th:action th:object="${roomForm}" method="post">
-            <div>
+    <div class="row justify-content-center">
+        <form class="col-sm-6 mx-auto" th:action th:object="${roomForm}" method="post">
+            <div class="mb-3">
                 <label th:for="title">방명</label>
                 <input type="text" th:field="*{title}" placeholder="방 이름을 입력하세요"
-                       class="form-control" th:errorclass="field-error">
-                <p th:errors="*{title}" class="field-error">방명 오류</p>
+                       class="form-control" th:errorclass="is-invalid">
+                <p th:errors="*{title}" class="text-danger">방명 오류</p>
             </div>
 
-            <div class="py-2">
-                <div>공개 여부</div>
-                <select th:field="*{roomSetting}" class="form-select-sm">
+            <div class="mb-3">
+                <label th:for="roomSetting">공개 여부</label>
+                <select th:field="*{roomSetting}" class="form-select" th:errorclass="border-danger">
                     <option value="">==공개 여부 선택==</option>
                     <option th:each="roomSetting : ${T(hongik.ce.jolup.domain.room.RoomSetting).values()}" th:value="${roomSetting.name()}"
                             th:text="${roomSetting.description}"></option>
                 </select>
-                <p th:errors="*{roomSetting}" class="field-error">공개 여부 오류</p>
+                <p th:errors="*{roomSetting}" class="text-danger">공개 여부 오류</p>
             </div>
-
-            <hr class="my-4">
-
+            <div class="mb-4"></div>
             <div class="row">
                 <div class="col">
                     <button type="submit" class="btn btn-primary btn-lg">생성</button>
-                    <a th:href="@{/rooms}" class="btn btn-warning btn-lg">취소</a>
+                    <button type="button" class="btn btn-warning btn-lg" th:onclick="|location.href='@{/}'|">취소</button>
                 </div>
             </div>
         </form>
     </div>
-    <div th:replace="fragments/footer" :: footer />
 </div> <!-- /container -->
+<div th:replace="fragments/footer" :: footer />
 </body>
 </html>

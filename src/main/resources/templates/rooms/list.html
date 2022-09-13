@@ -21,9 +21,9 @@
         </tr>
         </thead>
         <tbody>
-        <!--<tr th:if="${belongs.isEmpty()}">
+        <tr th:if="${belongs.isEmpty()}">
             <td class="text-center" colspan="5">방이 존재하지 않습니다.</td>
-        </tr>-->
+        </tr>
         <tr th:each="belong : ${belongs}">
             <td><a th:href="@{|/rooms/${belong.room.id}|}"><span th:text="${belong.room.title}"></span></a></td>
             <td th:text="${#temporals.format(belong.createdDate, 'yyyy-MM-dd HH:mm:ss')}">참여날짜</td>

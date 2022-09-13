@@ -2,46 +2,33 @@
 <html xmlns="http://www.w3.org/1999/xhtml"
       xmlns:th="http://www.thymeleaf.org">
 <head th:replace="fragments/header :: header" />
-<style>
-    .field-error {
-        border-color: #dc3545;
-        color: #dc3545;
-    }
-    .form-center {
-        display: flex;
-        justify-content: center;
-        align-items: center;
-    }
-    .form-width {
-        max-width: 600px;
-    }
-</style>
-<body>
-<div>
-    <div th:replace="fragments/bodyheader" :: bodyheader />
+<body class="d-flex flex-column min-vh-100">
+<div th:replace="fragments/bodyheader" :: bodyheader />
+<div class="container">
     <div class="py-5 text-center">
         <h2>멤버 초대</h2>
     </div>
-    <div class="form-center">
-        <form class="form-control form-width" th:action th:object="${inviteForm}" method="post">
+    <div class="row justify-content-center">
+        <form class="col-sm-6 mx-auto" th:action th:object="${inviteForm}" method="post">
 
             <div th:if="${#fields.hasGlobalErrors()}">
-                <p class="field-error" th:each="err : ${#fields.globalErrors()}" th:text="${err}">전체 오류 메시지</p>
+                <p class="text-danger" th:each="err : ${#fields.globalErrors()}" th:text="${err}">전체 오류 메시지</p>
             </div>
 
-            <div class="py-2">
-                <div>초대 인원 수</div>
-                <select th:field="*{count}" class="form-select-sm" onchange="updateForm()">
+            <div class="mb-3">
+                <label th:for="count">초대 인원수</label>
+                <select th:field="*{count}" class="form-select" th:errorclass="border-danger" onchange="updateForm()">
                     <option th:each="count : ${#numbers.sequence(1, 100)}" th:value="${count}" th:text="${count}"
                             th:selected="${count} == ${inviteForm.count}"></option>
                 </select>
+                <p th:errors="*{count}" class="text-danger">인원수 오류</p>
             </div>
 
             <div>
                 <table class="table">
                     <thead>
                     <tr>
-                        <th>#</th>
+                        <th>번호</th>
                         <th>아이디</th>
                     </tr>
                     </thead>
@@ -50,8 +37,8 @@
                         <td th:text="${emailStat.count}"></td>
                         <td>
                             <input type="text" th:field="*{emails[__${emailStat.index}__]}"
-                                   th:errorclass="field-error" class="form-control"/>
-                            <p th:errors="*{emails[__${emailStat.index}__]}" class="field-error">이메일 형식이 올바르지 않음</p>
+                                   th:errorclass="is-invalid" class="form-control"/>
+                            <p th:errors="*{emails[__${emailStat.index}__]}" class="text-danger">이메일 형식이 올바르지 않음</p>
                         </td>
                     </tr>
                     </tbody>
@@ -61,14 +48,14 @@
             <div class="row">
                 <div class="col">
                     <button type="submit" class="btn btn-primary btn-lg">초대</button>
-                    <a th:href="@{|/rooms/${roomId}|}" class="btn btn-warning btn-lg">취소</a>
+                    <button type="button" class="btn btn-warning btn-lg" th:onclick="|location.href='@{|/rooms/${roomId}|}'|">취소</button>
                 </div>
             </div>
 
         </form>
     </div>
-    <div th:replace="fragments/footer" :: footer />
 </div> <!-- /container -->
+<div th:replace="fragments/footer" :: footer />
 </body>
 
 <script th:inline="javascript">
