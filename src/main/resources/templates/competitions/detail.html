@@ -3,16 +3,6 @@
       xmlns:th="http://www.thymeleaf.org">
 <head th:replace="fragments/header :: header" />
 <style>
-    .tournament {
-        display: flex;
-        justify-content: center;
-    }
-
-    .round {
-        width: 200px;
-        float: left;
-    }
-
     .match {
         width: 200px;
         height: 60px;
@@ -20,11 +10,6 @@
         margin: 10px 0;
         background: gray;
         color: white;
-        padding: 3px 3px 3px 6px;
-    }
-
-    .hidden-custom {
-        visibility: hidden;
     }
 
     .player {
@@ -195,9 +180,6 @@
     .round5 .line:first-child {
         margin-top: 1119px;
     }
-    @media screen and (max-width: 768px){
-
-    }
 </style>
 <body class="d-flex flex-column min-vh-100">
 <div th:replace="fragments/bodyheader" :: bodyheader />
@@ -205,16 +187,16 @@
     <table class="table table-hover">
         <thead>
         <tr>
-            <th>대회명</th>
-            <th>대회방식</th>
-            <th>참여자수</th>
+            <th class="col-4">대회명</th>
+            <th class="col-4">대회방식</th>
+            <th class="col-4">참여자수</th>
         </tr>
         </thead>
         <tbody>
         <tr>
-            <td th:text="${competition.title}"></td>
-            <td th:text="${competition.competitionType}"></td>
-            <td th:text="${joins.size()}"></td>
+            <td class="col-4" th:text="${competition.title}"></td>
+            <td class="col-4" th:text="${competition.competitionType}"></td>
+            <td class="col-4" th:text="${joins.size()}"></td>
         </tr>
         </tbody>
     </table>
@@ -246,23 +228,23 @@
             <h3>일정</h3>
             <tbody th:each="key : ${hashMap.keySet()}">
             <tr>
-                <td th:text="|${key + 1}라운드|"></td>
-                <td>
+                <td class="col-3" th:text="|${key + 1}라운드|"></td>
+                <td class="col-9">
                     <div class="row justify-content-center">
                         <table class="table table-hover">
                             <thead>
                             <tr>
-                                <th>홈</th>
-                                <th>스코어</th>
-                                <th>어웨이</th>
+                                <th class="col-4">홈</th>
+                                <th class="col-4">스코어</th>
+                                <th class="col-4">어웨이</th>
                             </tr>
                             </thead>
                             <tbody>
                             <tr th:each="k : ${hashMap.get(key).keySet()}" th:with="match=${hashMap.get(key).get(k)}"
                                 th:onclick="${match.home != null} and ${match.away != null} and ${myBelong ne null and (myBelong.belongType.name() eq 'ADMIN')}? |location.href='@{|/rooms/${roomId}/competitions/${competitionId}/matches/${match.id}/update|}'| :_">
-                                <td th:text="|${match.home.email}(${match.home.name})|">홈팀명</td>
-                                <td th:text="|${match.score.homeScore}:${match.score.awayScore}|">스코어</td>
-                                <td th:text="|${match.away.email}(${match.away.name})|">어웨이팀명</td>
+                                <td class="col-4" th:text="|${match.home.email}(${match.home.name})|">홈팀명</td>
+                                <td class="col-4" th:text="|${match.score.homeScore}:${match.score.awayScore}|">스코어</td>
+                                <td class="col-4" th:text="|${match.away.email}(${match.away.name})|">어웨이팀명</td>
                             </tr>
                             </tbody>
                         </table>
@@ -278,53 +260,143 @@
             <h3>순위</h3>
             <thead>
             <tr>
-                <th>#</th>
-                <th>회원명</th>
-                <th>경기수</th>
-                <th>승</th>
-                <th>무</th>
-                <th>패</th>
-                <th>승점</th>
-                <th>득점</th>
-                <th>실점</th>
-                <th>득실차</th>
+                <th class="col-1">#</th>
+                <th class="col-3">회원명</th>
+                <th class="col-1">경기수</th>
+                <th class="col-1">승</th>
+                <th class="col-1">무</th>
+                <th class="col-1">패</th>
+                <th class="col-1">승점</th>
+                <th class="col-1">득점</th>
+                <th class="col-1">실점</th>
+                <th class="col-1">득실차</th>
             </tr>
             </thead>
             <tbody>
             <tr th:each="join : ${joins}">
-                <td th:text="${joinStat.count}"></td>
-                <td th:text="|${join.member.email}(${join.member.name})|"></td>
-                <td th:text="${join.result.win} + ${join.result.draw} + ${join.result.lose}"></td>
-                <td th:text="${join.result.win}"></td>
-                <td th:text="${join.result.draw}"></td>
-                <td th:text="${join.result.lose}"></td>
-                <td><strong th:text="${join.result.win * 3} + ${join.result.draw}"></strong></td>
-                <td th:text="${join.result.goalFor}"></td>
-                <td th:text="${join.result.goalAgainst}"></td>
-                <td th:text="${join.result.goalFor} - ${join.result.goalAgainst}"></td>
+                <td class="col-1" th:text="${joinStat.count}"></td>
+                <td class="col-3" th:text="|${join.member.email}(${join.member.name})|"></td>
+                <td class="col-1" th:text="${join.result.win} + ${join.result.draw} + ${join.result.lose}"></td>
+                <td class="col-1" th:text="${join.result.win}"></td>
+                <td class="col-1" th:text="${join.result.draw}"></td>
+                <td class="col-1" th:text="${join.result.lose}"></td>
+                <td class="col-1"><strong th:text="${join.result.win * 3} + ${join.result.draw}"></strong></td>
+                <td class="col-1" th:text="${join.result.goalFor}"></td>
+                <td class="col-1" th:text="${join.result.goalAgainst}"></td>
+                <td class="col-1" th:text="${join.result.goalFor} - ${join.result.goalAgainst}"></td>
             </tr>
             </tbody>
         </table>
     </div>
 
-    <div class="tournament" th:if="${competition.competitionType.name() == 'TOURNAMENT'}">
+    <div class="d-sm-flex align-items-center justify-content-between mb-4">
+        <h1 class="h3 mb-0 text-gray-800">Dashboard</h1>
+        <a href="#" class="d-none d-sm-inline-block btn btn-sm btn-primary shadow-sm">Generate Report</a>
+    </div>
+
+    <div class="row">
+        <!-- Earnings (Monthly) Card Example -->
+        <div class="col-xl-3 col-md-6 mb-4">
+            <div class="card border-left-primary shadow h-100 py-2">
+                <div class="card-body">
+                    <div class="row align-items-center">
+                        <div class="col mr-2">
+                            <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
+                                Earnings (Monthly)</div>
+                            <div class="h5 mb-0 font-weight-bold text-gray-800">$40,000</div>
+                        </div>
+                        <div class="col-auto">
+                            <i class="fas fa-calendar fa-2x text-gray-300"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Earnings (Monthly) Card Example -->
+        <div class="col-xl-3 col-md-6 mb-4">
+            <div class="card border-left-success shadow h-100 py-2">
+                <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                        <div class="col mr-2">
+                            <div class="text-xs font-weight-bold text-success text-uppercase mb-1">
+                                Earnings (Annual)</div>
+                            <div class="h5 mb-0 font-weight-bold text-gray-800">$215,000</div>
+                        </div>
+                        <div class="col-auto">
+                            <i class="fas fa-dollar-sign fa-2x text-gray-300"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Earnings (Monthly) Card Example -->
+        <div class="col-xl-3 col-md-6 mb-4">
+            <div class="card border-left-info shadow h-100 py-2">
+                <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                        <div class="col mr-2">
+                            <div class="text-xs font-weight-bold text-info text-uppercase mb-1">Tasks
+                            </div>
+                            <div class="row no-gutters align-items-center">
+                                <div class="col-auto">
+                                    <div class="h5 mb-0 mr-3 font-weight-bold text-gray-800">50%</div>
+                                </div>
+                                <div class="col">
+                                    <div class="progress progress-sm mr-2">
+                                        <div class="progress-bar bg-info" role="progressbar"
+                                             style="width: 50%" aria-valuenow="50" aria-valuemin="0"
+                                             aria-valuemax="100"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-auto">
+                            <i class="fas fa-clipboard-list fa-2x text-gray-300"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Pending Requests Card Example -->
+        <div class="col-xl-3 col-md-6 mb-4">
+            <div class="card border-left-warning shadow h-100 py-2">
+                <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                        <div class="col mr-2">
+                            <div class="text-xs font-weight-bold text-warning text-uppercase mb-1">
+                                Pending Requests</div>
+                            <div class="h5 mb-0 font-weight-bold text-gray-800">18</div>
+                        </div>
+                        <div class="col-auto">
+                            <i class="fas fa-comments fa-2x text-gray-300"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="d-flex flex-row justify-content-center" th:if="${competition.competitionType.name() == 'TOURNAMENT'}">
         <div th:each="key : ${#numbers.sequence(T(java.util.Collections).max(hashMap.keySet()), 0, -1)}"
              th:with="cnt=${T(java.lang.Math).pow(2, key)}">
-            <div class="connector-area" th:classappend="|round${keyStat.index}|" th:if="${!keyStat.first}">
+            <div class="connector-area col-1 flex-shrink-1" th:classappend="|round${keyStat.index}|" th:if="${!keyStat.first}">
                 <div class="connector" th:each="k: ${#numbers.sequence(0, cnt - 1, 1)}">
-                    <div class="home" th:classappend="${hashMap.get(key + 1).get(k * 2) == null} ? 'hidden-custom'"></div>
-                    <div class="away" th:classappend="${hashMap.get(key + 1).get(k * 2 + 1) == null} ? 'hidden-custom'"></div>
+                    <div class="home" th:classappend="${hashMap.get(key + 1).get(k * 2) == null} ? 'invisible'"></div>
+                    <div class="away" th:classappend="${hashMap.get(key + 1).get(k * 2 + 1) == null} ? 'invisible'"></div>
                 </div>
             </div>
 
-            <div class="line-area" th:classappend="|round${keyStat.index}|" th:if="${!keyStat.first}">
+            <div class="line-area col-1 flex-shrink-1" th:classappend="|round${keyStat.index}|" th:if="${!keyStat.first}">
                 <div class="line" th:each="k: ${#numbers.sequence(0, cnt - 1, 1)}"
-                     th:classappend="${hashMap.get(key + 1).get(k * 2) == null and hashMap.get(key + 1).get(k * 2 + 1) == null} ? 'hidden-custom'"></div>
+                     th:classappend="${hashMap.get(key + 1).get(k * 2) == null and hashMap.get(key + 1).get(k * 2 + 1) == null} ? 'invisible'"></div>
             </div>
-            <div class="round" th:classappend="|round${keyStat.index}|">
+            <div class="col-1 flex-shrink-1" th:classappend="|round${keyStat.index}|">
                 <div th:each="k : ${#numbers.sequence(0, cnt - 1, 1)}" th:with="match=${hashMap.get(key).get(k)}"
-                     class="match" th:classappend="${match == null} ? 'hidden-custom'">
-                    <div th:if="${match != null}" th:onclick="${match.home != null} and ${match.away != null} and ${myBelong ne null and (myBelong.belongType.name() eq 'ADMIN')}?|location.href='@{|/rooms/${roomId}/competitions/${competitionId}/matches/${match.id}/update|}'|:_">
+                     class="match" th:classappend="${match == null} ? 'invisible'">
+                    <div class="row-cols-2" th:if="${match != null}" th:onclick="${match.home != null} and ${match.away != null} and ${myBelong ne null and (myBelong.belongType.name() eq 'ADMIN')}?|location.href='@{|/rooms/${roomId}/competitions/${competitionId}/matches/${match.id}/update|}'|:_">
                         <div class="player" th:text="${match.home == null} ? |${keyStat.index}-${k * 2 + 1}경기 승자|: |${match.home.email}(${match.home.name})|">home</div>
                         <div class="score" th:text="${match.score.homeScore}">0</div>
                         <div class="player" th:text="${match.away == null} ? |${keyStat.index}-${k * 2 + 2}경기 승자|: |${match.away.email}(${match.away.name})|">away</div>
@@ -337,19 +409,4 @@
 </div> <!-- /container -->
 <div th:replace="fragments/footer" :: footer />
 </body>
-<script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
-<!--<script>
-    $(function(){
-        $('button').css('background-color', 'red');
-    });
-</script>-->
-<script>
-    function init(roomId, competitionId, matchId) {
-        var form = document.createElement("form");
-        form.setAttribute("method", "post");
-        form.setAttribute("action", "/rooms/" + roomId + "/competitions/" + competitionId + "/matches/" + matchId + "/init");
-        document.body.appendChild(form);
-        form.submit();
-    }
-</script>
 </html>

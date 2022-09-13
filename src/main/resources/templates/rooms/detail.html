@@ -8,16 +8,16 @@
     <table class="table table-hover">
         <thead>
         <tr>
-            <th>방명</th>
-            <th>공개 여부</th>
-            <th>인원수</th>
+            <th class="col-4">방명</th>
+            <th class="col-4">공개 여부</th>
+            <th class="col-4">인원수</th>
         </tr>
         </thead>
         <tbody>
         <tr>
-            <td th:text="${room.title}"></td>
-            <td th:text="${room.roomSetting.description}"></td>
-            <td th:text="${belongs.getTotalElements()}"></td>
+            <td class="col-4" th:text="${room.title}"></td>
+            <td class="col-4" th:text="${room.roomSetting.description}"></td>
+            <td class="col-4" th:text="${belongs.getTotalElements()}"></td>
         </tr>
         </tbody>
     </table>
@@ -40,14 +40,14 @@
         <h3>참여자</h3>
         <thead>
         <tr>
-            <th>이름</th>
-            <th>등급</th>
+            <th class="col-6">이름</th>
+            <th class="col-6">등급</th>
         </tr>
         </thead>
         <tbody>
         <tr th:each="belong : ${belongs}" th:onclick="${belong.belongType.name() ne 'ADMIN'}?|location.href='@{|/rooms/${room.id}/belongs/${belong.id}|}'|:_">
-            <td th:text="${belong.member.email + '('+ belong.member.name + ')'}"></td>
-            <td th:text="${belong.belongType.description}"></td>
+            <td class="col-6" th:text="${belong.member.email + '('+ belong.member.name + ')'}"></td>
+            <td class="col-6" th:text="${belong.belongType.description}"></td>
         </tr>
         </tbody>
     </table>
@@ -92,21 +92,21 @@
         <h3>대회</h3>
         <thead>
         <tr>
-            <th>대회명</th>
-            <th>대회방식</th>
+            <th class="col-4">대회명</th>
+            <th class="col-4">대회방식</th>
             <!--                <th>참가자수</th>-->
-            <th>대회생성일자</th>
+            <th class="col-4">대회생성일자</th>
         </tr>
         </thead>
         <tbody>
         <tr th:if="${competitions.isEmpty()}">
-            <td class="text-center" colspan="5">참여중인 대회가 없습니다!</td>
+            <td class="text-center" colspan="12">참여중인 대회가 없습니다!</td>
         </tr>
         <tr th:each="competition : ${competitions}" th:onclick="|location.href='@{|/rooms/${room.id}/competitions/${competition.id}|}'|">
-            <td th:text="${competition.title}">대회명</td>
-            <td th:text="${competition.competitionType.description}">리그</td>
+            <td class="col-4" th:text="${competition.title}">대회명</td>
+            <td class="col-4" th:text="${competition.competitionType.description}">리그</td>
             <!--                <td th:text="|명|">0명</td>-->
-            <td th:text="${#temporals.format(competition.createdDate, 'yyyy-MM-dd HH:mm:ss')}">날짜</td>
+            <td class="col-4" th:text="${#temporals.format(competition.createdDate, 'yyyy-MM-dd HH:mm:ss')}">날짜</td>
         </tr>
         </tbody>
     </table>

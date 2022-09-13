@@ -16,17 +16,17 @@
         </form>-->
         <thead>
         <tr>
-            <th>방명</th>
-            <th>참여날짜</th>
+            <th class="col-6">방명</th>
+            <th class="col-6">참여날짜</th>
         </tr>
         </thead>
         <tbody>
         <tr th:if="${belongs.isEmpty()}">
-            <td class="text-center" colspan="5">방이 존재하지 않습니다.</td>
+            <td class="text-center" colspan="12">방이 존재하지 않습니다.</td>
         </tr>
         <tr th:each="belong : ${belongs}" th:onclick="|location.href='@{|/rooms/${belong.room.id}|}'|">
-            <td th:text="${belong.room.title}"></td>
-            <td th:text="${#temporals.format(belong.createdDate, 'yyyy-MM-dd HH:mm:ss')}">참여날짜</td>
+            <td class="col-6" th:text="${belong.room.title}"></td>
+            <td class="col-6" th:text="${#temporals.format(belong.createdDate, 'yyyy-MM-dd HH:mm:ss')}">참여날짜</td>
         </tr>
         </tbody>
     </table>
