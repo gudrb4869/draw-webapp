@@ -124,7 +124,8 @@ public class MemberController {
         @Pattern(regexp = "(?=.*[0-9])(?=.*[a-zA-Z])(?=.*\\W)(?=\\S+$).{8,16}", message = "비밀번호는 8~16자 영문 대소문자, 숫자, 특수문자를 사용하세요.")
         private String password_confirm;*/
 
-        @NotBlank(message = "이름은 필수 입력 값입니다!")
+//        @NotBlank(message = "이름은 필수 입력 값입니다!")
+        @Pattern(regexp = "^[가-힣a-zA-Z0-9]{2,10}", message = "이름은 2~10자 한글, 영문 대소문자, 숫자를 사용하세요.")
         private String name;
     }
 
