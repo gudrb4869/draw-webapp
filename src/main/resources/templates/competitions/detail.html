@@ -4,7 +4,7 @@
 <head th:replace="fragments/header :: header" />
 <style>
     .match {
-        width: 200px;
+        width: 100%;
         height: 60px;
         border: 2px solid black;
         margin: 10px 0;
@@ -14,9 +14,8 @@
 
     .player {
         font-family:arial;
-        width:120px;
         overflow: hidden;
-        text-overflow: ellipsis;
+        /*text-overflow: ellipsis;*/
         white-space: nowrap;
         color:white;
         float: left;
@@ -25,7 +24,6 @@
 
     .score {
         font-family:arial;
-        width:50px;
         color:white;
         float: right;
         text-align: center;
@@ -66,8 +64,7 @@
     }
 
     .connector-area {
-        width: 50px;
-        float: left;
+        width: 5%;
     }
     .connector {
     }
@@ -76,14 +73,14 @@
         border-left: none;
         border-bottom: none;
         height: 50px;
-        width: 50px;
+        width: 100%;
     }
     .away {
         border: 2px solid black;
         border-left: none;
         border-top: none;
         height: 50px;
-        width: 50px;
+        width: 100%;
     }
     .round1 .connector:first-child {
         margin-top: 36px;
@@ -146,8 +143,7 @@
         height: 562px;
     }
     .line-area {
-        width: 50px;
-        float: left;
+        width: 5%;
     }
 
     .line {
@@ -379,28 +375,28 @@
         </div>
     </div>
 
-    <div class="d-flex flex-row justify-content-center" th:if="${competition.competitionType.name() == 'TOURNAMENT'}">
-        <div th:each="key : ${#numbers.sequence(T(java.util.Collections).max(hashMap.keySet()), 0, -1)}"
+    <div class="d-flex" th:if="${competition.competitionType.name() == 'TOURNAMENT'}">
+        <div class="m-0 p-0 row" th:each="key : ${#numbers.sequence(T(java.util.Collections).max(hashMap.keySet()), 0, -1)}"
              th:with="cnt=${T(java.lang.Math).pow(2, key)}">
-            <div class="connector-area col-1 flex-shrink-1" th:classappend="|round${keyStat.index}|" th:if="${!keyStat.first}">
+            <div class="connector-area p-0 col-1" th:classappend="|round${keyStat.index}|" th:if="${!keyStat.first}">
                 <div class="connector" th:each="k: ${#numbers.sequence(0, cnt - 1, 1)}">
                     <div class="home" th:classappend="${hashMap.get(key + 1).get(k * 2) == null} ? 'invisible'"></div>
                     <div class="away" th:classappend="${hashMap.get(key + 1).get(k * 2 + 1) == null} ? 'invisible'"></div>
                 </div>
             </div>
 
-            <div class="line-area col-1 flex-shrink-1" th:classappend="|round${keyStat.index}|" th:if="${!keyStat.first}">
+            <div class="line-area p-0 col-1" th:classappend="|round${keyStat.index}|" th:if="${!keyStat.first}">
                 <div class="line" th:each="k: ${#numbers.sequence(0, cnt - 1, 1)}"
                      th:classappend="${hashMap.get(key + 1).get(k * 2) == null and hashMap.get(key + 1).get(k * 2 + 1) == null} ? 'invisible'"></div>
             </div>
-            <div class="col-1 flex-shrink-1" th:classappend="|round${keyStat.index}|">
+            <div class="p-0 col-10 flex-grow-1" th:classappend="|round${keyStat.index}|">
                 <div th:each="k : ${#numbers.sequence(0, cnt - 1, 1)}" th:with="match=${hashMap.get(key).get(k)}"
                      class="match" th:classappend="${match == null} ? 'invisible'">
                     <div class="row-cols-2" th:if="${match != null}" th:onclick="${match.home != null} and ${match.away != null} and ${myBelong ne null and (myBelong.belongType.name() eq 'ADMIN')}?|location.href='@{|/rooms/${roomId}/competitions/${competitionId}/matches/${match.id}/update|}'|:_">
-                        <div class="player" th:text="${match.home == null} ? |${keyStat.index}-${k * 2 + 1}경기 승자|: |${match.home.email}(${match.home.name})|">home</div>
-                        <div class="score" th:text="${match.score.homeScore}">0</div>
-                        <div class="player" th:text="${match.away == null} ? |${keyStat.index}-${k * 2 + 2}경기 승자|: |${match.away.email}(${match.away.name})|">away</div>
-                        <div class="score" th:text="${match.score.awayScore}">0</div>
+                        <div class="player p-0 col-9 float-start" th:text="${match.home == null} ? |${keyStat.index}-${k * 2 + 1}경기 승자|: |${match.home.email}(${match.home.name})|">home</div>
+                        <div class="score p-0 col-2 offset-1 float-end" th:text="${match.score.homeScore}">0</div>
+                        <div class="player p-0 col-9 float-start" th:text="${match.away == null} ? |${keyStat.index}-${k * 2 + 2}경기 승자|: |${match.away.email}(${match.away.name})|">away</div>
+                        <div class="score p-0 col-2 offset-1 float-end" th:text="${match.score.awayScore}">0</div>
                     </div>
                 </div>
             </div>
