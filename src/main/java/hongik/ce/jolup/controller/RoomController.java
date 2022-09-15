@@ -41,7 +41,7 @@ public class RoomController {
     private final CompetitionService competitionService;
     private final AlarmService alarmService;
 
-    @GetMapping
+   /* @GetMapping
     public String roomList(@AuthenticationPrincipal Member member,
                            @PageableDefault Pageable pageable,
                            Model model) {
@@ -52,7 +52,7 @@ public class RoomController {
                 belongs.getTotalElements(), belongs.getTotalPages(), belongs.getSize(),
                 belongs.getNumber(), belongs.getNumberOfElements());
         return "rooms/list";
-    }
+    }*/
 
     @GetMapping("/create")
     public String createForm(Model model) {
@@ -73,7 +73,7 @@ public class RoomController {
         Room room = Room.builder().title(roomForm.getTitle()).roomSetting(roomForm.getRoomSetting()).build();
         Long roomId = roomService.saveRoom(room);
         belongService.save(member.getId(), roomId, BelongType.ADMIN);
-        return "redirect:/rooms";
+        return "redirect:/";
     }
 
     @GetMapping("/{roomId}")
@@ -122,7 +122,7 @@ public class RoomController {
 
         log.info("delete room");
         roomService.deleteRoom(roomId);
-        return "redirect:/rooms";
+        return "redirect:/";
     }
 
     @GetMapping("/{roomId}/edit")

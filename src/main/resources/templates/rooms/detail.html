@@ -24,8 +24,6 @@
     <div class="row">
         <div class="col">
             <button type="button" class="btn btn-default pull-right" th:onclick="|location.href='@{/}'|">목록</button>
-            <button type="button" class="btn btn-default pull-right" th:onclick="|location.href='@{|/rooms/${roomId}/invite|}'|"
-                    th:if="${myBelong ne null and (myBelong.belongType.name() ne 'USER')}">초대</button>
             <button type="button" class="btn btn-default pull-right" th:onclick="|location.href='@{|/rooms/${roomId}/edit|}'|"
                     th:if="${myBelong ne null and (myBelong.belongType.name() eq 'ADMIN')}">수정</button>
             <form class="pull-right" th:action="@{|/rooms/${room.id}|}" method="post">
@@ -45,15 +43,15 @@
         </tr>
         </thead>
         <tbody>
-        <tr th:each="belong : ${belongs}" th:onclick="${belong.belongType.name() ne 'ADMIN'}?|location.href='@{|/rooms/${room.id}/belongs/${belong.id}|}'|">
+        <tr th:each="belong : ${belongs}" th:onclick="${myBelong ne null and (myBelong.belongType.name() eq 'ADMIN') and belong.belongType.name() ne 'ADMIN'}?|location.href='@{|/rooms/${room.id}/belongs/${belong.id}|}'|">
             <td class="col-6" th:text="${belong.member.email + '('+ belong.member.name + ')'}"></td>
             <td class="col-6" th:text="${belong.belongType.description}"></td>
         </tr>
         </tbody>
     </table>
     <hr/>
-    <button type="button" class="btn btn-default pull-right" th:if="${myBelong ne null and (myBelong.belongType.name() eq 'ADMIN')}"
-            th:onclick="|location.href='@{|/rooms/${roomId}/competitions/create|}'|">대회 만들기</button>
+    <button type="button" class="btn btn-default pull-right" th:onclick="|location.href='@{|/rooms/${roomId}/invite|}'|"
+            th:if="${myBelong ne null and (myBelong.belongType.name() ne 'USER')}">초대</button>
     <div class="center text-center">
         <nav aria-label="Page navigation">
             <ul class="pagination justify-content-center"
