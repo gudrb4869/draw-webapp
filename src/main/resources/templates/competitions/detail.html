@@ -239,7 +239,7 @@
                             <tr th:each="k : ${hashMap.get(key).keySet()}" th:with="match=${hashMap.get(key).get(k)}"
                                 th:onclick="${match.home != null} and ${match.away != null} and ${myBelong ne null and (myBelong.belongType.name() eq 'ADMIN')}? |location.href='@{|/rooms/${roomId}/competitions/${competitionId}/matches/${match.id}/update|}'| :_">
                                 <td class="col-4" th:text="|${match.home.email}(${match.home.name})|">홈팀명</td>
-                                <td class="col-4" th:text="|${match.score.homeScore}:${match.score.awayScore}|">스코어</td>
+                                <td class="col-4" th:text="|${match.score.homeScore}:${match.score.awayScore}|" th:class="${match.matchStatus.name() eq 'END'}?'fw-bold'">스코어</td>
                                 <td class="col-4" th:text="|${match.away.email}(${match.away.name})|">어웨이팀명</td>
                             </tr>
                             </tbody>
@@ -276,7 +276,7 @@
                 <td class="col-1" th:text="${join.result.win}"></td>
                 <td class="col-1" th:text="${join.result.draw}"></td>
                 <td class="col-1" th:text="${join.result.lose}"></td>
-                <td class="col-1"><strong th:text="${join.result.win * 3} + ${join.result.draw}"></strong></td>
+                <td class="col-1 fw-bolder" th:text="${join.result.win * 3} + ${join.result.draw}"></td>
                 <td class="col-1" th:text="${join.result.goalFor}"></td>
                 <td class="col-1" th:text="${join.result.goalAgainst}"></td>
                 <td class="col-1" th:text="${join.result.goalFor} - ${join.result.goalAgainst}"></td>

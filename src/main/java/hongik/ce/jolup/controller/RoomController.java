@@ -41,19 +41,6 @@ public class RoomController {
     private final CompetitionService competitionService;
     private final AlarmService alarmService;
 
-   /* @GetMapping
-    public String roomList(@AuthenticationPrincipal Member member,
-                           @PageableDefault Pageable pageable,
-                           Model model) {
-        log.info("room_list");
-        Page<Belong> belongs = belongService.findByMemberId(member.getId(), pageable);
-        model.addAttribute("belongs", belongs);
-        log.info("총 element 수 : {}, 전체 page 수 : {}, 페이지에 표시할 element 수 : {}, 현재 페이지 index : {}, 현재 페이지의 element 수 : {}",
-                belongs.getTotalElements(), belongs.getTotalPages(), belongs.getSize(),
-                belongs.getNumber(), belongs.getNumberOfElements());
-        return "rooms/list";
-    }*/
-
     @GetMapping("/create")
     public String createForm(Model model) {
         model.addAttribute("roomForm", new CreateRoomForm());
@@ -157,8 +144,6 @@ public class RoomController {
 
     @GetMapping("/{roomId}/invite")
     public String inviteForm(@PathVariable Long roomId,
-                             @RequestParam(name = "count", defaultValue = "1") Long count,
-                             @RequestParam(name = "emails", defaultValue = "") List<String> emails,
                              @AuthenticationPrincipal Member member,
                              Model model) {
 
@@ -168,13 +153,6 @@ public class RoomController {
         }
 
         InviteForm inviteForm = new InviteForm();
-        inviteForm.setCount(count);
-        for (int i = 0; i < count; i++) {
-            if (i < emails.size())
-                inviteForm.addEmail(emails.get(i));
-            else
-                inviteForm.addEmail("");
-        }
         log.info("inviteForm = {}", inviteForm);
         model.addAttribute("roomId", roomId);
         model.addAttribute("inviteForm", inviteForm);
@@ -185,9 +163,9 @@ public class RoomController {
     public String invite(@PathVariable Long roomId,
                          @Valid InviteForm inviteForm,
                          BindingResult result,
-                         @AuthenticationPrincipal Member member,
-                         Model model) {
+                         @AuthenticationPrincipal Member member) {
 
+        log.info("inviteForm={}", inviteForm);
         List<Belong> belongs = belongService.findByRoomId(roomId);
         Belong belong = belongs.stream().filter(b -> b.getMember().getId().equals(member.getId()))
                 .findFirst().orElse(null);
@@ -197,9 +175,6 @@ public class RoomController {
         }
 
         List<String> emails = inviteForm.getEmails();
-        if (emails.size() != inviteForm.getCount()) {
-            result.addError(new ObjectError("inviteForm", null, null, "오류가 발생했습니다."));
-        }
 
         List<Member> members = memberService.findMembers(emails);
         for (int i = 0; i < emails.size(); i++) {
@@ -220,6 +195,12 @@ public class RoomController {
         }
 
         if (result.hasErrors()) {
+            log.info("유효성 검사 오류!");
+            return "/rooms/invite";
+        }
+
+        if (emails.size() != inviteForm.getCount()) {
+            result.addError(new ObjectError("inviteForm", null, null, "오류가 발생했습니다."));
             return "/rooms/invite";
         }
 
@@ -258,21 +239,19 @@ public class RoomController {
         private RoomSetting roomSetting;
     }
 
-    @Getter @Setter @NoArgsConstructor
+    @Getter @Setter
     @ToString @AllArgsConstructor @Builder
     private static class InviteForm {
 
-        @NotNull(message = "초대 인원 수는 필수 입력 값입니다.")
-        @Min(value = 1, message = "최소 1명에서 최대 100명까지 초대 가능합니다.")
-        @Max(value = 100, message = "최소 1명에서 최대 100명까지 초대 가능합니다.")
+        @Min(value = 1, message = "최소 1명부터 초대 가능합니다!")
+        @Max(value = 100, message = "최대 100명까지 초대 가능합니다.")
         private Long count;
 
-        @NotNull(message = "널 오류")
-        @Size(min = 1, max = 100, message = "리스트 크기 오류")
         private List<@NotBlank(message = "회원 아이디는 필수 입력 값입니다!") String> emails = new ArrayList<>();
 
-        public void addEmail(String email) {
-            this.emails.add(email);
+        public InviteForm() {
+            this.count = 1L;
+            this.emails.add("");
         }
     }
 }

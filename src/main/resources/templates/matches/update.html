@@ -39,7 +39,7 @@
             </div>
             <div class="row">
                 <div class="col">
-                    <button class="btn btn-primary btn-lg" th:onclick="|location.href='javascript:init('+${roomId}+', '+${competitionId}+', '+${matchId}+')'|">초기화</button>
+                    <button class="btn btn-primary btn-lg" th:onclick="|javascript:init(${roomId}, ${competitionId}, ${matchId})|" type="button">초기화</button>
                     <button class="btn btn-success btn-lg" type="submit">저장</button>
                     <button class="btn btn-warning btn-lg" th:onclick="|location.href='@{|/rooms/${roomId}/competitions/${competitionId}|}'|" type="button">취소</button>
                 </div>
@@ -49,9 +49,10 @@
 </div> <!-- /container -->
 <div th:replace="fragments/footer" :: footer />
 </body>
-<script>
+<script th:inline="javascript">
     function init(roomId, competitionId, matchId) {
-        var form = document.createElement("form");
+        console.log("ㅎ");
+        let form = document.createElement("form");
         form.setAttribute("method", "post");
         form.setAttribute("action", "/rooms/" + roomId + "/competitions/" + competitionId + "/matches/" + matchId + "/init");
         document.body.appendChild(form);

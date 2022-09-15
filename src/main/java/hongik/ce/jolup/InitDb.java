@@ -93,19 +93,24 @@ public class InitDb {
                 members.add(memberService.saveMember(Integer.toString(i), "1", "user" + i));
             }
 
-            Room room = createRoom("Test", RoomSetting.PRIVATE);
-            Long roomId = roomService.saveRoom(room);
+            Room room1 = createRoom("Test", RoomSetting.PRIVATE);
+            Long room1Id = roomService.saveRoom(room1);
 
-            belongService.save(members.get(1).getId(), roomId, BelongType.ADMIN);
+            belongService.save(members.get(1).getId(), room1Id, BelongType.ADMIN);
             for (int i = 2; i <= 64; i++) {
-                belongService.save(members.get(i).getId(), roomId, BelongType.USER);
+                belongService.save(members.get(i).getId(), room1Id, BelongType.USER);
             }
+
+            Room room2 = createRoom("z", RoomSetting.PUBLIC);
+            Long room2Id = roomService.saveRoom(room2);
+
+            belongService.save(members.get(1).getId(), room2Id, BelongType.ADMIN);
 
             /**
              * 대회, 경기 테스트 DB 생성
              */
 
-            Long tournament48 = competitionService.save("test48", CompetitionType.TOURNAMENT, roomId);
+            Long tournament48 = competitionService.save("test48", CompetitionType.TOURNAMENT, room1Id);
             List<Long> memberId48 = new ArrayList<>();
             for (int i = 1; i <= 48; i++) {
                 memberId48.add(members.get(i).getId());
@@ -113,7 +118,7 @@ public class InitDb {
             joinService.save(memberId48, tournament48);
             matchService.saveMatches(memberId48, tournament48);
 
-            Long tournament24 = competitionService.save("test24", CompetitionType.TOURNAMENT, roomId);
+            Long tournament24 = competitionService.save("test24", CompetitionType.TOURNAMENT, room1Id);
             List<Long> memberId24 = new ArrayList<>();
             for (int i = 1; i <= 24; i++) {
                 memberId24.add(members.get(i).getId());
@@ -121,7 +126,7 @@ public class InitDb {
             joinService.save(memberId24, tournament24);
             matchService.saveMatches(memberId24, tournament24);
 
-            Long tournament12 = competitionService.save("test12", CompetitionType.TOURNAMENT, roomId);
+            Long tournament12 = competitionService.save("test12", CompetitionType.TOURNAMENT, room1Id);
             List<Long> memberId12 = new ArrayList<>();
             for (int i = 1; i <= 12; i++) {
                 memberId12.add(members.get(i).getId());
@@ -129,7 +134,7 @@ public class InitDb {
             joinService.save(memberId12, tournament12);
             matchService.saveMatches(memberId12, tournament12);
 
-            Long tournament6 = competitionService.save("test6", CompetitionType.TOURNAMENT, roomId);
+            Long tournament6 = competitionService.save("test6", CompetitionType.TOURNAMENT, room1Id);
             List<Long> memberId6 = new ArrayList<>();
             for (int i = 1; i <= 6; i++) {
                 memberId6.add(members.get(i).getId());
@@ -137,7 +142,7 @@ public class InitDb {
             joinService.save(memberId6, tournament6);
             matchService.saveMatches(memberId6, tournament6);
 
-            Long league20 = competitionService.save("test20", CompetitionType.LEAGUE, roomId);
+            Long league20 = competitionService.save("test20", CompetitionType.LEAGUE, room1Id);
             List<Long> memberId20 = new ArrayList<>();
             for (int i = 1; i <= 20; i++) {
                 memberId20.add(members.get(i).getId());
