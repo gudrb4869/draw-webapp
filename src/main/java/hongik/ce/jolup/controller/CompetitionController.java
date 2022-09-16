@@ -3,6 +3,7 @@ package hongik.ce.jolup.controller;
 import hongik.ce.jolup.domain.belong.Belong;
 import hongik.ce.jolup.domain.belong.BelongType;
 import hongik.ce.jolup.domain.competition.Competition;
+import hongik.ce.jolup.domain.competition.CompetitionOption;
 import hongik.ce.jolup.domain.join.Join;
 import hongik.ce.jolup.domain.match.Match;
 import hongik.ce.jolup.domain.member.Member;
@@ -35,10 +36,6 @@ public class CompetitionController {
 
     @GetMapping("/create")
     public String createForm(@PathVariable("roomId") Long roomId,
-                             @RequestParam(name = "title", defaultValue = "") String title,
-                             @RequestParam(name = "competitionType", defaultValue = "LEAGUE") CompetitionType competitionType,
-                             @RequestParam(name = "headCount", defaultValue = "2") Long headCount,
-                             @RequestParam(name = "emails", defaultValue = ",") List<String> emails,
                              @AuthenticationPrincipal Member member,
                              Model model) {
 
@@ -47,14 +44,7 @@ public class CompetitionController {
             return "error";
         }
 
-        CreateCompetitionForm competitionForm = new CreateCompetitionForm(title, competitionType, headCount);
-        for(int i = 0; i < headCount; i++) {
-            if (i < emails.size()) {
-                competitionForm.addEmail(emails.get(i));
-                continue;
-            }
-            competitionForm.addEmail("");
-        }
+        CreateCompetitionForm competitionForm = new CreateCompetitionForm();
         log.info("GET: create, competitionForm = {}", competitionForm);
         model.addAttribute("form", competitionForm);
         return "competitions/create";
@@ -81,7 +71,7 @@ public class CompetitionController {
         }
 
         List<String> emails = competitionForm.getEmails();
-        if (competitionForm.getHeadCount() != emails.size()) {
+        if (competitionForm.getCount() != emails.size()) {
             bindingResult.addError(new ObjectError("form", null, null, "대회 참가 인원과 참가자 아이디의 갯수가 일치하지 않습니다."));
             return "competitions/create";
         }
@@ -103,7 +93,7 @@ public class CompetitionController {
             memberIds.add(belong.getMember().getId());
         }
 
-        Long competitionId = competitionService.save(competitionForm.getTitle(), competitionForm.getCompetitionType(), roomId);
+        Long competitionId = competitionService.save(competitionForm.getTitle(), competitionForm.getType(), roomId);
         log.info("saveJoin Start");
         joinService.save(memberIds, competitionId);
         log.info("saveJoin End");
@@ -231,33 +221,32 @@ public class CompetitionController {
         return "redirect:/rooms/{roomId}/competitions/{competitionId}";
     }
 
-    @Getter @Setter
-    @NoArgsConstructor @ToString
+    @Getter @Setter @ToString
     private static class CreateCompetitionForm {
         @NotBlank(message = "대회명은 필수 입력 값입니다!")
 //    @Pattern(regexp = "^(?:\\w+\\.?)*\\w+@(?:\\w+\\.)+\\w+$", message = "대회 이름 형식이 올바르지 않습니다.")
         private String title;
 
         @NotNull(message = "대회 방식은 필수 입력 값입니다!")
-        private CompetitionType competitionType;
+        private CompetitionType type;
+
+        @NotNull(message = "대회 옵션은 필수 입력 값입니다!")
+        private CompetitionOption option;
 
         @Min(value = 2, message = "참가자수는 최소 2명입니다!")
         @Max(value = 64, message = "참가자수는 최대 64명입니다.")
         @NotNull(message = "참가자수는 필수 입력 값입니다!")
-        private Long headCount;
+        private Long count;
 
-        @Size(min = 2, max = 64, message = "참가자수는 최소 2명이거나 최대 64명이어야 합니다!")
-        @NotNull(message = "참가자 목록은 null 값일 수 없습니다!")
+        @NotNull(message = "null 값일 수 없습니다!")
         private List<@NotBlank(message = "참가자 아이디는 필수 입력 값입니다!") String> emails = new ArrayList<>();
 
-        public CreateCompetitionForm(String title, CompetitionType competitionType, Long headCount) {
-            this.title = title;
-            this.competitionType = competitionType;
-            this.headCount = headCount;
-        }
-
-        public void addEmail(String email) {
-            this.emails.add(email);
+        public CreateCompetitionForm() {
+            this.type = CompetitionType.LEAGUE;
+            this.option = CompetitionOption.O1;
+            this.count = 2L;
+            this.emails.add("");
+            this.emails.add("");
         }
     }
 

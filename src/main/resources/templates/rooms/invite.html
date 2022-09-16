@@ -21,7 +21,6 @@
                     <option th:each="count : ${#numbers.sequence(0, 101)}" th:value="${count}" th:text="${count}"></option>
                 </select>
                 <p th:errors="*{count}" class="text-danger">인원수 오류</p>
-                <p th:errors="*{emails}" class="text-danger">오류</p>
             </div>
 
             <table class="table table-hover">
@@ -35,7 +34,8 @@
                 <tr th:each="email : *{emails}">
                     <td th:text="${emailStat.count}"></td>
                     <td>
-                        <input type="text" th:field="*{emails[__${emailStat.index}__]}" class="form-control" th:errorclass="is-invalid"/>
+                        <input type="text" th:field="*{emails[__${emailStat.index}__]}"
+                               class="form-control" th:errorclass="is-invalid"/>
                         <p th:errors="*{emails[__${emailStat.index}__]}" class="text-danger">이메일 형식이 올바르지 않음</p>
                     </td>
                 </tr>
@@ -64,12 +64,9 @@
     const remove = (obj) => {
         document.getElementById('box').removeChild(obj.parentNode);
     }
-
 </script>
 <script th:inline="javascript">
-    history.replaceState({}, null, location.pathname);
     let updateForm = () => {
-        let roomId = [[${roomId}]];
         let count = document.getElementById("count").value;
         let emails = document.getElementById("emails");
         let n = emails.childElementCount;

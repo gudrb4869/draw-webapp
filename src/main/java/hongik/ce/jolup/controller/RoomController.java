@@ -239,14 +239,14 @@ public class RoomController {
         private RoomSetting roomSetting;
     }
 
-    @Getter @Setter
-    @ToString @AllArgsConstructor @Builder
+    @Getter @Setter @ToString
     private static class InviteForm {
 
         @Min(value = 1, message = "최소 1명부터 초대 가능합니다!")
         @Max(value = 100, message = "최대 100명까지 초대 가능합니다.")
         private Long count;
 
+        @NotNull(message = "null 값일 수 없습니다!")
         private List<@NotBlank(message = "회원 아이디는 필수 입력 값입니다!") String> emails = new ArrayList<>();
 
         public InviteForm() {

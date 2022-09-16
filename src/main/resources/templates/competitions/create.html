@@ -21,23 +21,30 @@
             </div>
 
             <div class="mb-3">
-                <label th:for="competitionType">대회 방식</label>
-                <select th:field="*{competitionType}" class="form-select" th:errorclass="border-danger"
-                        onchange="updateForm()">
-                    <option th:each="competitionType : ${T(hongik.ce.jolup.domain.competition.CompetitionType).values()}" th:value="${competitionType.name()}"
-                            th:text="${competitionType.description}" th:selected="${competitionType == form.competitionType}"></option>
-                    <p th:errors="*{competitionType}" class="text-danger">대회방식 오류</p>
-                </select>
+                <label th:for="type">대회 방식</label>
+                <div th:each="type : ${T(hongik.ce.jolup.domain.competition.CompetitionType).values()}" class="form-check">
+                    <input type="radio" th:field="*{type}" th:value="${type.name()}" class="form-check-input" onclick="updateCount(this.value)">
+                    <label th:for="${#ids.prev('type')}" th:text="${type.description}" class="form-check-label"></label>
+                </div>
+                <p th:errors="*{type}" class="text-danger">대회방식 오류</p>
             </div>
 
             <div class="mb-3">
-                <label th:for="headCount">참가자수</label>
-                <select th:field="*{headCount}" class="form-select" th:errorclass="border-danger"
-                        onchange="updateForm()">
-                    <option th:each="headCount : ${#numbers.sequence(2, 64)}" th:value="${headCount}" th:text="|${headCount}명|"
-                            th:selected="${headCount} == ${form.headCount}"></option>
-                    <p th:errors="*{headCount}" class="text-danger">참가자수 오류</p>
+                <div class="fw-bold mb-1">옵션</div>
+                <div th:each="option : ${T(hongik.ce.jolup.domain.competition.CompetitionOption).values()}" class="form-check form-check-inline">
+                    <input type="radio" th:field="*{option}" th:value="${option.name()}" class="form-check-input">
+                    <label th:for="${#ids.prev('option')}" th:text="${option.description}" class="form-check-label"></label>
+                </div>
+                <p th:errors="*{option}" class="text-danger">대회방식 오류</p>
+            </div>
+
+            <div class="mb-3">
+                <label th:for="count">참가자수</label>
+                <select th:field="*{count}" class="form-select" th:errorclass="border-danger" onchange="updateForm()">
+                    <option value="">==참가자수 선택==</option>
+                    <option th:each="count : ${#numbers.sequence(2, 24)}" th:value="${count}" th:text="${count}"></option>
                 </select>
+                <p th:errors="*{count}" class="text-danger">참가자수 오류</p>
             </div>
             <table class="table table-hover">
                 <thead>
@@ -46,7 +53,7 @@
                     <th>아이디</th>
                 </tr>
                 </thead>
-                <tbody>
+                <tbody id="emails" name="emails">
                 <tr th:each="email : *{emails}">
                     <td th:text="${emailStat.count}"></td>
                     <td>
@@ -69,24 +76,42 @@
 </div> <!-- /container -->
 <div th:replace="fragments/footer" :: footer />
 </body>
-
-<script th:inline="javascript">
-    history.replaceState({}, null, location.pathname);
-    function updateForm() {
-        let roomId = [[${roomId}]]
-        let title = document.getElementById("title").value;
-        let competitionType = document.getElementById("competitionType").value;
-        let headCount = document.getElementById("headCount").value;
-        let emails = []
-        for (let i = 0; i < headCount; i++) {
-            if (document.getElementById("emails" + String(i))) {
-                emails.push(document.getElementById("emails" + String(i)).value)
+<script>
+    let updateCount = (t) => {
+        let count = document.getElementById("count");
+        if (t == "LEAGUE") {
+            for (let i = 64; i >= 25; i--) {
+                count.lastElementChild.remove();
             }
-            else {
-                emails.push("")
+        } else if (t == "TOURNAMENT") {
+            for (let i = 25; i <= 64; i++) {
+                const option = document.createElement('option')
+                option.value = i
+                option.innerHTML = i
+                count.appendChild(option);
             }
         }
-        location.href="/rooms/" + roomId + "/competitions/create?title=" + title + "&competitionType=" + competitionType + "&headCount=" + headCount + "&emails=" + emails;
+    }
+</script>
+<script th:inline="javascript">
+    let updateForm = () => {
+        let count = document.getElementById("count").value;
+        let emails = document.getElementById("emails");
+        let n = emails.childElementCount;
+        if (count > n) {
+            for (let i = n + 1; i <= count; i++) {
+                const email = document.createElement('tr')
+                email.innerHTML = "<tr><td>" + i + "</td>" +
+                    "<td><input type='text' name='emails[" + (i - 1) + "]' class='form-control'/></td>" +
+                    "</tr>";
+                emails.appendChild(email);
+            }
+        }
+        else {
+            for (let i = n; i > count; i--) {
+                emails.lastElementChild.remove();
+            }
+        }
     }
 </script>
 </html>
