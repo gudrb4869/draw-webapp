@@ -71,11 +71,11 @@ public class JoinService {
             if (match.getScore().getHomeScore() > match.getScore().getAwayScore()) {
                 homeResult.subWin(1);
                 awayResult.subLose(1);
-                if (competition.getCompetitionType().equals(CompetitionType.TOURNAMENT) && (homeScore <= awayScore)) {
+                if (competition.getType().equals(CompetitionType.TOURNAMENT) && (homeScore <= awayScore)) {
                     resetTournamentMatches(competitionId, match);
                 }
             } else if (match.getScore().getHomeScore() < match.getScore().getAwayScore()) {
-                if (competition.getCompetitionType().equals(CompetitionType.TOURNAMENT) && (homeScore >= awayScore)) {
+                if (competition.getType().equals(CompetitionType.TOURNAMENT) && (homeScore >= awayScore)) {
                     resetTournamentMatches(competitionId, match);
                 }
                 homeResult.subLose(1);
@@ -94,13 +94,13 @@ public class JoinService {
             if (homeScore > awayScore) {
                 homeResult.addWin(1);
                 awayResult.addLose(1);
-                if (competition.getCompetitionType().equals(CompetitionType.TOURNAMENT)) {
+                if (competition.getType().equals(CompetitionType.TOURNAMENT)) {
                     setTournamentMatch(competitionId, match, match.getHome());
                 }
             } else if (homeScore < awayScore) {
                 homeResult.addLose(1);
                 awayResult.addWin(1);
-                if (competition.getCompetitionType().equals(CompetitionType.TOURNAMENT)) {
+                if (competition.getType().equals(CompetitionType.TOURNAMENT)) {
                     setTournamentMatch(competitionId, match, match.getAway());
                 }
             } else {

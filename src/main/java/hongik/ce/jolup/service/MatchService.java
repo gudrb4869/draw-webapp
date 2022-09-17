@@ -1,6 +1,7 @@
 package hongik.ce.jolup.service;
 
 import hongik.ce.jolup.domain.competition.Competition;
+import hongik.ce.jolup.domain.competition.CompetitionOption;
 import hongik.ce.jolup.domain.competition.CompetitionType;
 import hongik.ce.jolup.domain.match.Match;
 import hongik.ce.jolup.domain.match.MatchStatus;
@@ -10,6 +11,7 @@ import hongik.ce.jolup.repository.CompetitionRepository;
 import hongik.ce.jolup.repository.MatchRepository;
 import hongik.ce.jolup.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -25,20 +27,20 @@ public class MatchService {
     private final MatchRepository matchRepository;
 
     @Transactional
-    public void saveMatches(List<Long> memberIds, Long competitionId) {
+    public void saveMatches(List<Long> memberIds, Long competitionId, CompetitionOption option) {
         List<Member> members = memberRepository.findAllById(memberIds);
         Competition competition = competitionRepository.findById(competitionId).orElse(null);
 
         assert competition != null;
-        if (competition.getCompetitionType().equals(CompetitionType.LEAGUE)) {
-            Collections.shuffle(members);
+        if (competition.getType().equals(CompetitionType.LEAGUE)) {
+//            Collections.shuffle(members);
             int count = members.size();
             if (count % 2 == 1) {
                 for (int i = 0; i < count; i++) {
                     for (int j = 0; j < count/2; j++) {
                         Match match = Match.builder().competition(competition)
-                                .home(members.get((i + j) % count))
-                                .away(members.get((i + count - j - 2) % count))
+                                .home(i % 2 == 0 ? members.get((i + j) % count) : members.get((i + count - j - 2) % count))
+                                .away(i % 2 == 0 ? members.get((i + count - j - 2) % count) : members.get((i + j) % count))
                                 .matchStatus(MatchStatus.READY)
                                 .roundNo(i)
                                 .matchNo(j)
@@ -47,15 +49,31 @@ public class MatchService {
                         matchRepository.save(match);
                     }
                 }
+                if (option.equals(CompetitionOption.DOUBLE)) {
+                    for (int i = 0; i < count; i++) {
+                        for (int j = 0; j < count/2; j++) {
+                            Match match = Match.builder().competition(competition)
+                                    .home(i % 2 == 0 ? members.get((i + count - j - 2) % count) : members.get((i + j) % count))
+                                    .away(i % 2 == 0 ? members.get((i + j) % count) : members.get((i + count - j - 2) % count))
+                                    .matchStatus(MatchStatus.READY)
+                                    .roundNo(count + i)
+                                    .matchNo(j)
+                                    .score(Score.builder().homeScore(0).awayScore(0).build())
+                                    .build();
+                            matchRepository.save(match);
+                        }
+                    }
+                }
             }
             else {
                 int j;
-                Member fixed = members.remove(0);
+                Random random = new Random();
+                Member fixed = members.remove(random.nextInt(count));
                 for (int i = 0; i < count - 1; i++) {
                     for (j = 0; j < count/2 - 1; j++) {
                         Match match = Match.builder().competition(competition)
-                                .home(members.get((i + j) % (count - 1)))
-                                .away(members.get((i + count - j - 2) % (count - 1)))
+                                .home(members.get(i % 2 == 0 ? (i + j) % (count - 1) : (i + count - j - 2) % (count - 1)))
+                                .away(members.get(i % 2 == 0 ? (i + count - j - 2) % (count - 1) : (i + j) % (count - 1)))
                                 .matchStatus(MatchStatus.READY)
                                 .roundNo(i)
                                 .matchNo(j)
@@ -73,8 +91,32 @@ public class MatchService {
                             .build();
                     matchRepository.save(match);
                 }
+                if (option.equals(CompetitionOption.DOUBLE)) {
+                    for (int i = 0; i < count - 1; i++) {
+                        for (j = 0; j < count/2 - 1; j++) {
+                            Match match = Match.builder().competition(competition)
+                                    .home(members.get(i % 2 == 0 ? (i + count - j - 2) % (count - 1) : (i + j) % (count - 1)))
+                                    .away(members.get(i % 2 == 0 ? (i + j) % (count - 1) : (i + count - j - 2) % (count - 1)))
+                                    .matchStatus(MatchStatus.READY)
+                                    .roundNo(count - 1 + i)
+                                    .matchNo(j)
+                                    .score(Score.builder().homeScore(0).awayScore(0).build())
+                                    .build();
+                            matchRepository.save(match);
+                        }
+                        Match match = Match.builder().competition(competition)
+                                .home(i % 2 == 0 ? fixed : members.get((i + j) % (count - 1)))
+                                .away(i % 2 == 0 ? members.get((i + j) % (count - 1)) : fixed)
+                                .matchStatus(MatchStatus.READY)
+                                .roundNo(count - 1 + i)
+                                .matchNo(j)
+                                .score(Score.builder().homeScore(0).awayScore(0).build())
+                                .build();
+                        matchRepository.save(match);
+                    }
+                }
             }
-        } else if (competition.getCompetitionType().equals(CompetitionType.TOURNAMENT)) {
+        } else if (competition.getType().equals(CompetitionType.TOURNAMENT)) {
             Collections.shuffle(members);
             int count = members.size();
             int round_num = (int)Math.ceil(Math.log(count) / Math.log(2)); // 총 라운드

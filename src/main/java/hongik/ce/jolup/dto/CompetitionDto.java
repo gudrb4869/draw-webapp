@@ -13,14 +13,14 @@ import lombok.*;
 public class CompetitionDto {
     private Long id;
     private String title;
-    private CompetitionType competitionType;
+    private CompetitionType type;
     private RoomDto roomDto;
 
     public Competition toEntity() {
         return Competition.builder()
                 .id(id)
                 .title(title)
-                .competitionType(competitionType)
+                .type(type)
                 .room(roomDto.toEntity())
                 .build();
     }

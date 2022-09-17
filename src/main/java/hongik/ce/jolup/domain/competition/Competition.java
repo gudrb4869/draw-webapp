@@ -14,7 +14,7 @@ import java.util.List;
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@ToString(of = {"id", "title", "competitionType", "room"})
+@ToString(of = {"id", "title", "type", "option", "room"})
 @EqualsAndHashCode(of = "id")
 public class Competition extends BaseTimeEntity {
 
@@ -27,7 +27,11 @@ public class Competition extends BaseTimeEntity {
 
     @Column(nullable = false)
     @Enumerated(EnumType.STRING)
-    private CompetitionType competitionType;
+    private CompetitionType type;
+
+    @Column(nullable = false)
+    @Enumerated(EnumType.STRING)
+    private CompetitionOption option;
 
     @OneToMany(mappedBy = "competition", cascade = CascadeType.ALL)
     private List<Join> joins = new ArrayList<>();
@@ -40,10 +44,11 @@ public class Competition extends BaseTimeEntity {
     private List<Match> matches = new ArrayList<>();
 
     @Builder
-    public Competition(Long id, String title, CompetitionType competitionType, Room room) {
+    public Competition(Long id, String title, CompetitionType type, CompetitionOption option, Room room) {
         this.id = id;
         this.title = title;
-        this.competitionType = competitionType;
+        this.type = type;
+        this.option = option;
         this.room = room;
     }
 
@@ -56,15 +61,10 @@ public class Competition extends BaseTimeEntity {
                 .build();
     }*/
 
-    public Competition update(String title, CompetitionType competitionType) {
+    public Competition update(String title, CompetitionType type) {
         this.title = title;
-        this.competitionType = competitionType;
+        this.type = type;
         return this;
-    }
-
-    public void changeRoom(Room room) {
-        this.room = room;
-        room.getCompetitions().add(this);
     }
 
     public void updateTitle(String title) {

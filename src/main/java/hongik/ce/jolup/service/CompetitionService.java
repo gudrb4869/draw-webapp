@@ -1,6 +1,7 @@
 package hongik.ce.jolup.service;
 
 import hongik.ce.jolup.domain.competition.Competition;
+import hongik.ce.jolup.domain.competition.CompetitionOption;
 import hongik.ce.jolup.domain.competition.CompetitionType;
 import hongik.ce.jolup.domain.room.Room;
 import hongik.ce.jolup.repository.CompetitionRepository;
@@ -24,9 +25,9 @@ public class CompetitionService {
     private final RoomRepository roomRepository;
 
     @Transactional
-    public Long save(String title, CompetitionType competitionType, Long roomId) {
+    public Long save(String title, CompetitionType type, CompetitionOption option, Long roomId) {
         Room room = roomRepository.findById(roomId).orElse(null);
-        Competition competition = Competition.builder().title(title).competitionType(competitionType).room(room).build();
+        Competition competition = Competition.builder().title(title).type(type).option(option).room(room).build();
         return competitionRepository.save(competition).getId();
     }
 

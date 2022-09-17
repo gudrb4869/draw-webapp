@@ -11,6 +11,8 @@ import hongik.ce.jolup.domain.competition.CompetitionType;
 import hongik.ce.jolup.service.*;
 import lombok.*;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -93,13 +95,13 @@ public class CompetitionController {
             memberIds.add(belong.getMember().getId());
         }
 
-        Long competitionId = competitionService.save(competitionForm.getTitle(), competitionForm.getType(), roomId);
+        Long competitionId = competitionService.save(competitionForm.getTitle(), competitionForm.getType(), competitionForm.getOption(), roomId);
         log.info("saveJoin Start");
         joinService.save(memberIds, competitionId);
         log.info("saveJoin End");
 
         log.info("match Create Start");
-        matchService.saveMatches(memberIds, competitionId);
+        matchService.saveMatches(memberIds, competitionId, competitionForm.getOption());
         log.info("match Create Finish");
         return "redirect:/rooms/{roomId}";
     }
@@ -108,6 +110,7 @@ public class CompetitionController {
     public String competitionDetail(@PathVariable("roomId") Long roomId,
                                     @PathVariable("competitionId") Long competitionId,
                                     @AuthenticationPrincipal Member member,
+                                    @PageableDefault Pageable pageable,
                                     Model model) {
 
         log.info("GET : CompetitionDetail. competitionId = {}", competitionId);
@@ -132,14 +135,14 @@ public class CompetitionController {
             hashMap.computeIfAbsent(match.getRoundNo(), k -> new LinkedHashMap<>()).put(match.getMatchNo(), match);
         }
 
-        if (competition.getCompetitionType().equals(CompetitionType.LEAGUE)) {
+        if (competition.getType().equals(CompetitionType.LEAGUE)) {
             for (Map.Entry<Integer, LinkedHashMap<Integer, Match>> entry : hashMap.entrySet()) {
-                log.info("entry = {}", entry);
+                log.info("round {}", entry);
             }
         }
 
         Integer roundNo = Collections.max(hashMap.keySet());
-        if (competition.getCompetitionType().equals(CompetitionType.TOURNAMENT)) {
+        if (competition.getType().equals(CompetitionType.TOURNAMENT)) {
             for (int i = 0; i <= roundNo; i++) {
                 for (int j = 0; j < Math.pow(2, i); j++) {
                     log.info(i + "-" + j + "경기 = {}", hashMap.get(i).get(j));
@@ -243,7 +246,7 @@ public class CompetitionController {
 
         public CreateCompetitionForm() {
             this.type = CompetitionType.LEAGUE;
-            this.option = CompetitionOption.O1;
+            this.option = CompetitionOption.SINGLE;
             this.count = 2L;
             this.emails.add("");
             this.emails.add("");

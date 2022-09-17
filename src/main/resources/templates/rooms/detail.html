@@ -104,7 +104,7 @@
         </tr>
         <tr th:each="competition : ${competitions}" th:onclick="|location.href='@{|/rooms/${room.id}/competitions/${competition.id}|}'|">
             <td class="col-4" th:text="${competition.title}">대회명</td>
-            <td class="col-4" th:text="${competition.competitionType.description}">리그</td>
+            <td class="col-4" th:text="|${competition.type.description}(${competition.option.description})|">리그</td>
             <!--                <td th:text="|명|">0명</td>-->
             <td class="col-4" th:text="${#temporals.format(competition.createdDate, 'yyyy-MM-dd HH:mm:ss')}">날짜</td>
         </tr>
