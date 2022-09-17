@@ -31,6 +31,17 @@ public class MemberService {
     }
 
     @Transactional
+    public Long updatePassword(Long memberId, String oldPassword, String newPassword) {
+        Member member = memberRepository.findById(memberId).orElse(null);
+        if (member == null) {
+            return null;
+        }
+        validateOldAndNewPassword(oldPassword, member.getPassword());
+        member.updatePassword(encoder.encode(newPassword));
+        return member.getId();
+    }
+
+    @Transactional
     public Long updateMember(Long memberId, String oldPassword, String newPassword, String name) {
         Member member = memberRepository.findById(memberId).orElse(null);
         if (member == null) {

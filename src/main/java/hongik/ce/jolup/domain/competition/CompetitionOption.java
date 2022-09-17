@@ -8,6 +8,6 @@ import lombok.RequiredArgsConstructor;
 public enum CompetitionOption {
     SINGLE("단판"),
     DOUBLE("2판");
-//    THREE_OUT_OF_TWO_WINS("3판 2선");
+//    BEST_2_OUT_OF_3("3판 2선");
     private final String description;
 }

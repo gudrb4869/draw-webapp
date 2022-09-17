@@ -74,29 +74,35 @@ public class MemberController {
         return "redirect:/";
     }
 
-    @GetMapping("/edit")
-    public String updateForm(Model model, @AuthenticationPrincipal Member member) {
-        model.addAttribute("memberForm", new UpdateMemberForm(member.getName()));
-        return "members/update";
+    @GetMapping("/profile")
+    public String profile(@AuthenticationPrincipal Member member, Model model) {
+        model.addAttribute("member", member);
+        return "members/profile";
     }
 
-    @PostMapping("/edit")
-    public String update(@ModelAttribute("memberForm") @Valid UpdateMemberForm form,
+    @GetMapping("/updatePassword")
+    public String updatePasswordForm(@AuthenticationPrincipal Member member, Model model) {
+        model.addAttribute("memberForm", new UpdatePasswordForm(member.getEmail()));
+        return "members/updatePasswordForm";
+    }
+
+    @PostMapping("/updatePassword")
+    public String updatePassword(@ModelAttribute("memberForm") @Valid UpdatePasswordForm form,
                          BindingResult result, @AuthenticationPrincipal Member member,
                          Model model) {
         if (result.hasErrors()) {
-            return "members/update";
+            return "members/updatePasswordForm";
         }
         try {
-            memberService.updateMember(member.getId(), form.getPassword_current(), form.getPassword_new(), form.getName());
+            memberService.updatePassword(member.getId(), form.getPassword_current(), form.getPassword_new());
             Authentication authentication = authenticationManager.authenticate(
                     new UsernamePasswordAuthenticationToken(member.getEmail(), form.getPassword_new()));
             SecurityContextHolder.getContext().setAuthentication(authentication);
         } catch (IllegalStateException e) {
             model.addAttribute("errorMessage", e.getMessage());
-            return "members/update";
+            return "members/updatePasswordForm";
         }
-        return "redirect:/";
+        return "redirect:/profile";
     }
 
     private boolean isAuthenticated() {
@@ -131,20 +137,21 @@ public class MemberController {
 
     @Getter @Setter @Builder @ToString
     @NoArgsConstructor @AllArgsConstructor
-    private static class UpdateMemberForm {
-//        @NotBlank(message = "비밀번호는 필수 입력 값입니다!")
-        @Pattern(regexp = "(?=.*[0-9])(?=.*[a-zA-Z])(?=.*\\W)(?=\\S+$).{8,16}", message = "비밀번호는 8~16자 영문 대 소문자, 숫자, 특수문자를 사용하세요.")
+    private static class UpdatePasswordForm {
+        @NotBlank(message = "아이디는 필수 입력 값입니다!")
+        private String email;
+
+        @NotBlank(message = "비밀번호는 필수 입력 값입니다!")
         private String password_current;
 
-//        @NotBlank(message = "비밀번호는 필수 입력 값입니다!")
         @Pattern(regexp = "(?=.*[0-9])(?=.*[a-zA-Z])(?=.*\\W)(?=\\S+$).{8,16}", message = "비밀번호는 8~16자 영문 대 소문자, 숫자, 특수문자를 사용하세요.")
         private String password_new;
 
-        @NotBlank(message = "이름은 필수 입력 값입니다!")
-        private String name;
+        @Pattern(regexp = "(?=.*[0-9])(?=.*[a-zA-Z])(?=.*\\W)(?=\\S+$).{8,16}", message = "비밀번호는 8~16자 영문 대 소문자, 숫자, 특수문자를 사용하세요.")
+        private String password_confirm;
 
-        public UpdateMemberForm(String name) {
-            this.name = name;
+        public UpdatePasswordForm(String email) {
+            this.email = email;
         }
     }
 }

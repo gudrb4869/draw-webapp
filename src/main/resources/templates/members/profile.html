@@ -1,0 +1,33 @@
+<!DOCTYPE HTML>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org">
+<head th:replace="fragments/header :: header" />
+<body class="d-flex flex-column min-vh-100">
+<div th:replace="fragments/bodyheader" :: bodyheader />
+<div class="container">
+    <div class="py-5 text-center">
+        <h2>프로필</h2>
+    </div>
+    <div class="row col-6 mx-auto justify-content-center" th:object="${member}">
+        <div class="mb-3">
+            <label th:for="password_current">아이디</label>
+            <input type="text" th:field="*{email}" class="form-control" readonly>
+        </div>
+
+        <div class="mb-3">
+            <label th:for="name">이름</label>
+            <input type="text" th:field="*{name}" placeholder="이름을 입력하세요" class="form-control" readonly>
+        </div>
+        <div class="mb-4"></div>
+        <div class="row">
+            <div class="col">
+                <button class="btn btn-default" type="button" th:onclick="|location.href='@{/updatePassword}'|">비밀번호 변경</button>
+                <button class="btn btn-default" type="button" th:onclick="|location.href='@{/updateMemberInfo}'|">회원정보 수정</button>
+                <button class="btn btn-default" type="button" th:onclick="|location.href='@{/leave}'|">탈퇴</button>
+            </div>
+        </div>
+    </div>
+</div> <!-- /container -->
+<div th:replace="fragments/footer" :: footer />
+</body>
+</html>

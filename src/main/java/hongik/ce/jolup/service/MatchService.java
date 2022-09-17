@@ -11,6 +11,8 @@ import hongik.ce.jolup.repository.CompetitionRepository;
 import hongik.ce.jolup.repository.MatchRepository;
 import hongik.ce.jolup.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -33,7 +35,7 @@ public class MatchService {
 
         assert competition != null;
         if (competition.getType().equals(CompetitionType.LEAGUE)) {
-//            Collections.shuffle(members);
+            Collections.shuffle(members);
             int count = members.size();
             if (count % 2 == 1) {
                 for (int i = 0; i < count; i++) {
@@ -165,6 +167,11 @@ public class MatchService {
     @Transactional
     public void deleteMatch(Long id) {
         matchRepository.deleteById(id);
+    }
+
+    public Page<Match> findByCompetition(Long competitionId, int count, Pageable pageable) {
+        int page = (pageable.getPageNumber() == 0) ? 0 : (pageable.getPageNumber() - 1);
+        return matchRepository.findByCompetitionId(competitionId, PageRequest.of(page, count / 2));
     }
 
     public List<Match> findByCompetition(Long competitionId) {

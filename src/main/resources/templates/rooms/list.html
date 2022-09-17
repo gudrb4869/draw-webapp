@@ -39,29 +39,29 @@
                 th:with="start=${T(java.lang.Math).floor(belongs.number/10)*10 + 1},
                     last=(${start + 9 < belongs.totalPages ? start + 9 : belongs.totalPages})">
                 <li>
-                    <a th:href="@{/rooms(page=1)}" aria-label="First">
+                    <a th:href="@{/(page=1)}" aria-label="First">
                         <span aria-hidden="true"><<</span>
                     </a>
                 </li>
 
                 <li th:class="${belongs.first} ? 'disabled'">
-                    <a th:href="${belongs.first} ? '#' :@{/rooms(page=${belongs.number})}" aria-label="Previous">
+                    <a th:href="${belongs.first} ? '#' :@{/(page=${belongs.number})}" aria-label="Previous">
                         <span aria-hidden="true">&lt;</span>
                     </a>
                 </li>
 
                 <li th:each="page: ${#numbers.sequence(start, last, 1)}" th:class="${page == belongs.number + 1} ? 'active'">
-                    <a th:text="${page}" th:href="@{/rooms(page=${page})}"></a>
+                    <a th:text="${page}" th:href="@{/(page=${page})}"></a>
                 </li>
 
                 <li th:class="${belongs.last} ? 'disabled'">
-                    <a th:href="${belongs.last} ? '#' : @{/rooms(page=${belongs.number + 2})}" aria-label="Next">
+                    <a th:href="${belongs.last} ? '#' : @{/(page=${belongs.number + 2})}" aria-label="Next">
                         <span aria-hidden="true">&gt;</span>
                     </a>
                 </li>
 
                 <li>
-                    <a th:href="@{/rooms(page=${belongs.totalPages})}" aria-label="Last">
+                    <a th:href="@{/(page=${belongs.totalPages})}" aria-label="Last">
                         <span aria-hidden="true">>></span>
                     </a>
                 </li>

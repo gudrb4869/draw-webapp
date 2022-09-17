@@ -22,7 +22,7 @@ public class Competition extends BaseTimeEntity {
     @Column(name = "competition_id")
     private Long id;
 
-    @Column(length = 30, nullable = false)
+    @Column(nullable = false)
     private String title;
 
     @Column(nullable = false)

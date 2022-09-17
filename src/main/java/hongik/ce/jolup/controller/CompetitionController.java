@@ -11,6 +11,7 @@ import hongik.ce.jolup.domain.competition.CompetitionType;
 import hongik.ce.jolup.service.*;
 import lombok.*;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -125,37 +126,32 @@ public class CompetitionController {
             return "error";
         }
 
-        List<Match> matches = matchService.findByCompetition(competitionId);
-
         List<Join> joins = joinService.findByCompetitionSort(competitionId);
-        Join join = joins.stream().filter(j -> j.getMember().getId().equals(member.getId())).findAny().orElse(null);
-        LinkedHashMap<Integer, LinkedHashMap<Integer, Match>> hashMap = new LinkedHashMap<>();
-
-        for (Match match : matches) {
-            hashMap.computeIfAbsent(match.getRoundNo(), k -> new LinkedHashMap<>()).put(match.getMatchNo(), match);
-        }
-
-        if (competition.getType().equals(CompetitionType.LEAGUE)) {
-            for (Map.Entry<Integer, LinkedHashMap<Integer, Match>> entry : hashMap.entrySet()) {
-                log.info("round {}", entry);
-            }
-        }
-
-        Integer roundNo = Collections.max(hashMap.keySet());
-        if (competition.getType().equals(CompetitionType.TOURNAMENT)) {
-            for (int i = 0; i <= roundNo; i++) {
-                for (int j = 0; j < Math.pow(2, i); j++) {
-                    log.info(i + "-" + j + "경기 = {}", hashMap.get(i).get(j));
-                }
-            }
-        }
-
         model.addAttribute("competition", competition);
-        model.addAttribute("hashMap", hashMap);
-        model.addAttribute("myJoin", join);
         model.addAttribute("myBelong", myBelong);
         model.addAttribute("joins", joins);
-        return "competitions/detail";
+        LinkedHashMap<Integer, LinkedHashMap<Integer, Match>> hashMap = new LinkedHashMap<>();
+        if (competition.getType().equals(CompetitionType.LEAGUE)) {
+            Page<Match> matches = matchService.findByCompetition(competitionId, joins.size(), pageable);
+            log.info("총 element 수 : {}, 전체 page 수 : {}, 페이지에 표시할 element 수 : {}, 현재 페이지 index : {}, 현재 페이지의 element 수 : {}",
+                    matches.getTotalElements(), matches.getTotalPages(), matches.getSize(),
+                    matches.getNumber(), matches.getNumberOfElements());
+            for (Match match : matches) {
+                hashMap.computeIfAbsent(match.getRoundNo(), k -> new LinkedHashMap<>()).put(match.getMatchNo(), match);
+            }
+            model.addAttribute("hashMap", hashMap);
+            model.addAttribute("matches", matches);
+            return "/competitions/league";
+
+        } else if (competition.getType().equals(CompetitionType.TOURNAMENT)) {
+            List<Match> matches = matchService.findByCompetition(competitionId);
+            for (Match match : matches) {
+                hashMap.computeIfAbsent(match.getRoundNo(), k -> new LinkedHashMap<>()).put(match.getMatchNo(), match);
+            }
+            model.addAttribute("hashMap", hashMap);
+            return "/competitions/tournament";
+        }
+        return "redirect:/";
     }
 
     @DeleteMapping("/{competitionId}")
