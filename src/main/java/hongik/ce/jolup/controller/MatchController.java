@@ -19,6 +19,8 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import javax.validation.constraints.Max;
+import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 
 @Slf4j
@@ -143,10 +145,12 @@ public class MatchController {
         private String away;
         private Long awayId;
 
-        @NotNull
+        @Min(value = 0, message = "최소 0점이어야 합니다.")
+        @Max(value = 100, message = "최대 100점이어야 합니다.")
         private Integer homeScore;
 
-        @NotNull
+        @Min(value = 0, message = "최소 0점이어야 합니다.")
+        @Max(value = 100, message = "최대 100점이어야 합니다.")
         private Integer awayScore;
     }
 }

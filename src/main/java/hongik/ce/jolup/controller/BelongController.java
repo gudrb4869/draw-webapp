@@ -71,7 +71,7 @@ public class BelongController {
         private Long id;
         @NotBlank
         private String email;
-        @NotNull(message = "회원 권한을 선택해주세요!")
+        @NotNull(message = "회원 권한을 선택하세요.")
         private BelongType type;
     }
 

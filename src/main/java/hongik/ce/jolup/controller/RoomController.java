@@ -218,10 +218,10 @@ public class RoomController {
     @NoArgsConstructor @AllArgsConstructor
     static class CreateRoomForm {
 
-        @NotBlank(message = "방명을 입력해주세요!")
+        @NotBlank(message = "방명을 입력하세요.")
         private String title;
 
-        @NotNull(message = "공개 여부를 선택해주세요!")
+        @NotNull(message = "공개 여부를 선택하세요.")
         private RoomSetting roomSetting;
     }
 
@@ -232,22 +232,22 @@ public class RoomController {
         @NotNull
         private Long id;
 
-        @NotBlank(message = "방명을 입력해주세요!")
+        @NotBlank(message = "방명을 입력하세요.")
         private String title;
 
-        @NotNull(message = "공개 여부를 선택해주세요!")
+        @NotNull(message = "공개 여부를 선택하세요.")
         private RoomSetting roomSetting;
     }
 
     @Getter @Setter @ToString
     private static class InviteForm {
 
-        @Min(value = 1, message = "최소 1명부터 초대 가능합니다!")
+        @Min(value = 1, message = "최소 1명부터 초대 가능합니다.")
         @Max(value = 100, message = "최대 100명까지 초대 가능합니다.")
         private Long count;
 
-        @NotNull(message = "null 값일 수 없습니다!")
-        private List<@NotBlank(message = "회원 아이디는 필수 입력 값입니다!") String> emails = new ArrayList<>();
+        @NotNull(message = "null 값일 수 없습니다.")
+        private List<@NotBlank(message = "회원 아이디를 입력하세요.") String> emails = new ArrayList<>();
 
         public InviteForm() {
             this.count = 1L;

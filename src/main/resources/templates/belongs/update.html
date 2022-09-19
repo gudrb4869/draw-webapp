@@ -13,8 +13,7 @@
             <input type="hidden" th:field="*{id}"/>
             <div class="mb-3">
                 <label th:for="email">회원명</label>
-                <input type="text" th:field="*{email}" readonly
-                       class="form-control" th:errorclass="is-invalid">
+                <input type="text" th:field="*{email}" class="form-control" th:errorclass="is-invalid" readonly >
                 <p th:errors="*{email}" class="text-danger">회원명 오류</p>
             </div>
             <div class="mb-3">

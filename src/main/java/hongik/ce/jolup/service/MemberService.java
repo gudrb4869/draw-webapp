@@ -31,29 +31,41 @@ public class MemberService {
     }
 
     @Transactional
-    public Long updatePassword(Long memberId, String oldPassword, String newPassword) {
+    public Long updatePassword(Long memberId, String passwordCurrent, String passwordNew) {
         Member member = memberRepository.findById(memberId).orElse(null);
         if (member == null) {
             return null;
         }
-        validateOldAndNewPassword(oldPassword, member.getPassword());
-        member.updatePassword(encoder.encode(newPassword));
+        validatePassword(passwordCurrent, member.getPassword());
+        member.updatePassword(encoder.encode(passwordNew));
         return member.getId();
     }
 
     @Transactional
-    public Long updateMember(Long memberId, String oldPassword, String newPassword, String name) {
+    public void updateMember(Long memberId, String oldPassword, String newPassword, String name) {
         Member member = memberRepository.findById(memberId).orElse(null);
         if (member == null) {
-            return null;
+            return;
         }
-        validateOldAndNewPassword(oldPassword, member.getPassword());
+        validatePassword(oldPassword, member.getPassword());
         member.updatePassword(encoder.encode(newPassword));
         if (!member.getName().equals(name)) {
             validateDuplicateName(name);
         }
         member.updateName(name);
-        return member.getId();
+    }
+
+    @Transactional
+    public void updateMemberInfo(Long memberId, String name, String password_current) {
+        Member member = memberRepository.findById(memberId).orElse(null);
+        if (member == null) {
+            return;
+        }
+        validatePassword(password_current, member.getPassword());
+        if (!member.getName().equals(name)) {
+            validateDuplicateName(name);
+        }
+        member.updateName(name);
     }
 
     @Transactional
@@ -75,8 +87,8 @@ public class MemberService {
         }
     }
 
-    private void validateOldAndNewPassword(String oldPassword, String newPassword) {
-        if (!encoder.matches(oldPassword, newPassword)) {
+    private void validatePassword(String inputPassword, String memberPassword) {
+        if (!encoder.matches(inputPassword, memberPassword)) {
             throw new IllegalStateException("비밀번호가 맞지 않습니다.");
         }
     }

@@ -16,7 +16,7 @@
             <div class="mb-3">
                 <label th:for="title">대회명</label>
                 <input type="text" th:field="*{title}" placeholder="대회명을 입력하세요"
-                       class="form-control" th:errorclass="is-invalid">
+                       class="form-control" th:errorclass="is-invalid" autofocus="autofocus">
                 <p th:errors="*{title}" class="text-danger">대회명 오류</p>
             </div>
 

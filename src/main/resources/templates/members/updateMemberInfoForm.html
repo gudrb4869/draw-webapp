@@ -6,10 +6,10 @@
 <div th:replace="fragments/bodyheader" :: bodyheader />
 <div class="container">
     <div class="py-5 text-center">
-        <h2>비밀번호 변경</h2>
+        <h2>회원정보 수정</h2>
     </div>
     <div class="row justify-content-center">
-        <form class="col-sm-6 mx-auto" th:action method="post" th:object="${passwordForm}">
+        <form class="col-sm-6 mx-auto" th:action method="post" th:object="${memberInfoForm}">
             <div class="mb-3" th:if="${errorMessage}">
                 <span th:text="${errorMessage}" class="alert alert-danger">예외가 발생했습니다.</span>
             </div>
@@ -19,22 +19,17 @@
                 <input type="text" th:field="*{email}" th:errorclass="is-invalid" class="form-control" readonly>
                 <p th:errors="*{email}" class="text-danger">아이디 오류</p>
             </div>
+
+            <div class="mb-3">
+                <label th:for="name">이름</label>
+                <input type="text" th:field="*{name}" th:errorclass="is-invalid" class="form-control" autofocus="autofocus">
+                <p th:errors="*{name}" class="text-danger">이름 오류</p>
+            </div>
+
             <div class="mb-3">
                 <label th:for="password_current">현재 비밀번호</label>
-                <input type="password" th:field="*{password_current}" th:errorclass="is-invalid" class="form-control" autofocus="autofocus">
+                <input type="password" th:field="*{password_current}" th:errorclass="is-invalid" class="form-control">
                 <p th:errors="*{password_current}" class="text-danger">현재 비밀번호 오류</p>
-            </div>
-
-            <div class="mb-3">
-                <label th:for="password_new">신규 비밀번호</label>
-                <input type="password" th:field="*{password_new}" th:errorclass="is-invalid" class="form-control">
-                <p th:errors="*{password_new}" class="text-danger">신규 비밀번호 오류</p>
-            </div>
-
-            <div class="mb-3">
-                <label th:for="password_confirm">비밀번호 확인</label>
-                <input type="password" th:field="*{password_confirm}" th:errorclass="is-invalid" class="form-control">
-                <p th:errors="*{password_confirm}" class="text-danger">비밀번호 확인 오류</p>
             </div>
 
             <div class="mb-4"></div>

@@ -222,23 +222,23 @@ public class CompetitionController {
 
     @Getter @Setter @ToString
     private static class CreateCompetitionForm {
-        @NotBlank(message = "대회명은 필수 입력 값입니다!")
+        @NotBlank(message = "대회명을 입력하세요.")
 //    @Pattern(regexp = "^(?:\\w+\\.?)*\\w+@(?:\\w+\\.)+\\w+$", message = "대회 이름 형식이 올바르지 않습니다.")
         private String title;
 
-        @NotNull(message = "대회 방식은 필수 입력 값입니다!")
+        @NotNull(message = "대회 방식을 선택하세요.")
         private CompetitionType type;
 
-        @NotNull(message = "대회 옵션은 필수 입력 값입니다!")
+        @NotNull(message = "대회 옵션을 선택하세요.")
         private CompetitionOption option;
 
-        @Min(value = 2, message = "참가자수는 최소 2명입니다!")
-        @Max(value = 64, message = "참가자수는 최대 64명입니다.")
-        @NotNull(message = "참가자수는 필수 입력 값입니다!")
+        @Min(value = 2, message = "참가자수는 최소 2명이어야 합니다.")
+        @Max(value = 64, message = "참가자수는 최대 64명이어야 합니다.")
+        @NotNull(message = "참가자수를 선택하세요.")
         private Long count;
 
-        @NotNull(message = "null 값일 수 없습니다!")
-        private List<@NotBlank(message = "참가자 아이디는 필수 입력 값입니다!") String> emails = new ArrayList<>();
+        @NotNull(message = "null 값일 수 없습니다.")
+        private List<@NotBlank(message = "참가자 아이디를 입력하세요.") String> emails = new ArrayList<>();
 
         public CreateCompetitionForm() {
             this.type = CompetitionType.LEAGUE;
