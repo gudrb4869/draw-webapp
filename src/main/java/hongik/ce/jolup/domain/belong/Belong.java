@@ -3,7 +3,6 @@ package hongik.ce.jolup.domain.belong;
 import hongik.ce.jolup.domain.BaseTimeEntity;
 import hongik.ce.jolup.domain.member.Member;
 import hongik.ce.jolup.domain.room.Room;
-import hongik.ce.jolup.dto.BelongDto;
 import lombok.*;
 
 import javax.persistence.*;
@@ -43,9 +42,8 @@ public class Belong extends BaseTimeEntity {
         return BelongDto.builder().id(id).memberDto(member.toDto()).roomDto(room.toDto()).belongType(belongType).build();
     }*/
 
-    public void changeMember(Member member) {
+    public void updateMember(Member member) {
         this.member = member;
-        member.getBelongs().add(this);
     }
 
     public void changeRoom(Room room) {

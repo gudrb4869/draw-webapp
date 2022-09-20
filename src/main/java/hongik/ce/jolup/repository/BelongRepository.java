@@ -12,6 +12,9 @@ import java.util.Optional;
 
 public interface BelongRepository extends JpaRepository<Belong, Long> {
 
+    @Query("select b from Belong b join fetch b.member join fetch b.room where b.member.id = :memberId")
+    List<Belong> findByMemberId(@Param("memberId") Long memberId);
+
     @Query(value = "select b from Belong b join fetch b.member join fetch b.room where b.member.id = :memberId",
             countQuery = "select count(b) from Belong b where b.member.id = :memberId")
     Page<Belong> findByMemberId(@Param("memberId") Long memberId, Pageable pageable);
@@ -25,7 +28,7 @@ public interface BelongRepository extends JpaRepository<Belong, Long> {
     @Query("select b from Belong b join fetch b.member join fetch b.room where b.room.id = :roomId")
     List<Belong> findByRoomId(@Param("roomId") Long roomId);
 
-    @Query(value = "select b from Belong b join fetch b.member join fetch b.room where b.room.id = :roomId",
+    @Query(value = "select b from Belong b left join fetch b.member join fetch b.room where b.room.id = :roomId",
             countQuery = "select count(b) from Belong b where b.room.id = :roomId")
     Page<Belong> findByRoomId(@Param("roomId") Long roomId, Pageable pageable);
 }

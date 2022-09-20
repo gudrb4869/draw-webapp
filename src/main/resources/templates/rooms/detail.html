@@ -44,7 +44,7 @@
         </thead>
         <tbody>
         <tr th:each="belong : ${belongs}" th:onclick="${myBelong ne null and (myBelong.belongType.name() eq 'ADMIN') and belong.belongType.name() ne 'ADMIN'}?|location.href='@{|/rooms/${room.id}/belongs/${belong.id}|}'|">
-            <td class="col-6" th:text="${belong.member.email + '('+ belong.member.name + ')'}"></td>
+            <td class="col-6" th:text="${belong.member} ? |${belong.member.email}(${belong.member.name})| : '탈퇴한 사용자'"></td>
             <td class="col-6" th:text="${belong.belongType.description}"></td>
         </tr>
         </tbody>

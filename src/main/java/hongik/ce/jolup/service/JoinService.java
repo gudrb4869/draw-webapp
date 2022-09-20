@@ -158,6 +158,14 @@ public class JoinService {
         joinRepository.deleteById(id);
     }
 
+    @Transactional
+    public void setNull(Long memberId) {
+        List<Join> joins = joinRepository.findByMemberId(memberId);
+        for (Join join : joins) {
+            join.updateMember(null);
+        }
+    }
+
     public List<Join> findByMemberId(Long memberId) {
         return joinRepository.findByMemberId(memberId);
     }

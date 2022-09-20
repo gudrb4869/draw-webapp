@@ -48,14 +48,12 @@ public class Join extends BaseTimeEntity {
                 .build();
     }*/
 
-    public Join updateResult(Result result) {
+    public void updateResult(Result result) {
         this.result = result;
-        return this;
     }
 
-    public void changeMember(Member member) {
+    public void updateMember(Member member) {
         this.member = member;
-        member.getJoins().add(this);
     }
 
     public void changeCompetition(Competition competition) {

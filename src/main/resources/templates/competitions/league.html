@@ -63,9 +63,9 @@
                             <tbody>
                             <tr th:each="k : ${hashMap.get(key).keySet()}" th:with="match=${hashMap.get(key).get(k)}"
                                 th:onclick="${match.home != null} and ${match.away != null} and ${myBelong ne null and (myBelong.belongType.name() eq 'ADMIN')}? |location.href='@{|/rooms/${roomId}/competitions/${competitionId}/matches/${match.id}/update|}'| :_">
-                                <td class="col-4" th:text="|${match.home.email}(${match.home.name})|">홈팀명</td>
+                                <td class="col-4" th:text="${match.home} ? |${match.home.email}(${match.home.name})| : '탈퇴한 사용자'">홈팀명</td>
                                 <td class="col-4" th:text="|${match.score.homeScore}:${match.score.awayScore}|" th:class="${match.matchStatus.name() eq 'END'}?'fw-bold'">스코어</td>
-                                <td class="col-4" th:text="|${match.away.email}(${match.away.name})|">어웨이팀명</td>
+                                <td class="col-4" th:text="${match.away} ? |${match.away.email}(${match.away.name})| : '탈퇴한 사용자'">어웨이팀명</td>
                             </tr>
                             </tbody>
                         </table>
@@ -132,7 +132,7 @@
             <tbody>
             <tr th:each="join : ${joins}">
                 <td class="col-1" th:text="${joinStat.count}"></td>
-                <td class="col-3" th:text="|${join.member.email}(${join.member.name})|"></td>
+                <td class="col-3" th:text="${join.member} ? |${join.member.email}(${join.member.name})| : '탈퇴한 사용자'"></td>
                 <td class="col-1" th:text="${join.result.win} + ${join.result.draw} + ${join.result.lose}"></td>
                 <td class="col-1" th:text="${join.result.win}"></td>
                 <td class="col-1" th:text="${join.result.draw}"></td>

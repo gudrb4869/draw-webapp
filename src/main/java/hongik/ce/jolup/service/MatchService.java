@@ -169,6 +169,18 @@ public class MatchService {
         matchRepository.deleteById(id);
     }
 
+    @Transactional
+    public void setNull(Long userId) {
+        List<Match> homeMatches = matchRepository.findByHomeId(userId);
+        for (Match match : homeMatches) {
+            match.updateHome(null);
+        }
+        List<Match> awayMatches = matchRepository.findByAwayId(userId);
+        for (Match match : awayMatches) {
+            match.updateAway(null);
+        }
+    }
+
     public Page<Match> findByCompetition(Long competitionId, int count, Pageable pageable) {
         int page = (pageable.getPageNumber() == 0) ? 0 : (pageable.getPageNumber() - 1);
         return matchRepository.findByCompetitionId(competitionId, PageRequest.of(page, count / 2));

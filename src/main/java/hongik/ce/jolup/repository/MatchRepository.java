@@ -31,4 +31,14 @@ public interface MatchRepository extends JpaRepository<Match, Long> {
             " order by m.roundNo asc, m.matchNo asc",
             countQuery = "select count(m) from Match m where m.competition.id = :competitionId")
     Page<Match> findByCompetitionId(@Param("competitionId") Long competitionId, Pageable pageable);
+
+    @Query("select m from Match m join fetch m.competition" +
+            " left join fetch m.home left join fetch m.away" +
+            " where m.home.id = :homeId")
+    List<Match> findByHomeId(@Param("homeId") Long homeId);
+
+    @Query("select m from Match m join fetch m.competition" +
+            " left join fetch m.home left join fetch m.away" +
+            " where m.away.id = :awayId")
+    List<Match> findByAwayId(@Param("awayId") Long awayId);
 }

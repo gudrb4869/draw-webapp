@@ -1,6 +1,9 @@
 package hongik.ce.jolup.controller;
 
 import hongik.ce.jolup.domain.member.Member;
+import hongik.ce.jolup.service.BelongService;
+import hongik.ce.jolup.service.JoinService;
+import hongik.ce.jolup.service.MatchService;
 import hongik.ce.jolup.service.MemberService;
 import lombok.*;
 import lombok.extern.slf4j.Slf4j;
@@ -29,6 +32,9 @@ import javax.validation.constraints.Pattern;
 public class MemberController {
 
     private final MemberService memberService;
+    private final MatchService matchService;
+    private final JoinService joinService;
+    private final BelongService belongService;
     private final AuthenticationManager authenticationManager;
 
     @GetMapping("/signup")
@@ -146,9 +152,12 @@ public class MemberController {
             return "members/deleteMemberForm";
         }
         try {
+            matchService.setNull(member.getId());
+            joinService.setNull(member.getId());
+            belongService.setNull(member.getId());
             memberService.deleteMember(member.getId());
             httpSession.invalidate();
-        } catch (IllegalStateException e) {
+        } catch (Exception e) {
             model.addAttribute("errorMessage", e.getMessage());
             return "members/deleteMemberForm";
         }

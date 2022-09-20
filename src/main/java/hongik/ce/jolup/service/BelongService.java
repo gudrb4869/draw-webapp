@@ -56,6 +56,16 @@ public class BelongService {
         belongRepository.deleteById(belongId);
     }
 
+    @Transactional
+    public void setNull(Long memberId) {
+        List<Belong> belongs = belongRepository.findByMemberId(memberId);
+        for (Belong belong : belongs) {
+            belong.updateMember(null);
+        }
+    }
+
+
+
     public Page<Belong> findByMemberId(Long memberId, Pageable pageable) {
         int page = (pageable.getPageNumber() == 0) ? 0 : (pageable.getPageNumber() - 1);
         return belongRepository.findByMemberId(memberId, PageRequest.of(page, 3, Sort.by("createdDate").descending()));
