@@ -111,45 +111,45 @@ public class InitDb {
              * 대회, 경기 테스트 DB 생성
              */
 
-            Long tournament48 = competitionService.save("test48", CompetitionType.TOURNAMENT, CompetitionOption.SINGLE, room1Id);
-            List<Long> memberId48 = new ArrayList<>();
-            for (int i = 1; i <= 48; i++) {
-                memberId48.add(members.get(i).getId());
+            Long tournament55 = competitionService.save("test55", CompetitionType.TOURNAMENT, CompetitionOption.SINGLE, room1Id);
+            List<Long> memberId55 = new ArrayList<>();
+            for (int i = 1; i <= 55; i++) {
+                memberId55.add(members.get(i).getId());
             }
-            joinService.save(memberId48, tournament48);
-            matchService.saveMatches(memberId48, tournament48, CompetitionOption.SINGLE);
+            joinService.save(memberId55, tournament55);
+            matchService.saveMatches(memberId55, tournament55, CompetitionOption.SINGLE);
 
-            Long tournament24 = competitionService.save("test24", CompetitionType.TOURNAMENT, CompetitionOption.SINGLE, room1Id);
+            /*Long tournament24 = competitionService.save("test24", CompetitionType.TOURNAMENT, CompetitionOption.SINGLE, room1Id);
             List<Long> memberId24 = new ArrayList<>();
             for (int i = 1; i <= 24; i++) {
                 memberId24.add(members.get(i).getId());
             }
             joinService.save(memberId24, tournament24);
-            matchService.saveMatches(memberId24, tournament24, CompetitionOption.SINGLE);
+            matchService.saveMatches(memberId24, tournament24, CompetitionOption.SINGLE);*/
 
-            Long tournament12 = competitionService.save("test12", CompetitionType.TOURNAMENT, CompetitionOption.SINGLE, room1Id);
+            /*Long tournament12 = competitionService.save("test12", CompetitionType.TOURNAMENT, CompetitionOption.SINGLE, room1Id);
             List<Long> memberId12 = new ArrayList<>();
             for (int i = 1; i <= 12; i++) {
                 memberId12.add(members.get(i).getId());
             }
             joinService.save(memberId12, tournament12);
-            matchService.saveMatches(memberId12, tournament12, CompetitionOption.SINGLE);
+            matchService.saveMatches(memberId12, tournament12, CompetitionOption.SINGLE);*/
 
-            Long tournament6 = competitionService.save("test6", CompetitionType.TOURNAMENT, CompetitionOption.SINGLE, room1Id);
-            List<Long> memberId6 = new ArrayList<>();
-            for (int i = 1; i <= 6; i++) {
-                memberId6.add(members.get(i).getId());
+            Long tournament5 = competitionService.save("test5", CompetitionType.TOURNAMENT, CompetitionOption.SINGLE, room1Id);
+            List<Long> memberId5 = new ArrayList<>();
+            for (int i = 1; i <= 5; i++) {
+                memberId5.add(members.get(i).getId());
             }
-            joinService.save(memberId6, tournament6);
-            matchService.saveMatches(memberId6, tournament6, CompetitionOption.SINGLE);
+            joinService.save(memberId5, tournament5);
+            matchService.saveMatches(memberId5, tournament5, CompetitionOption.SINGLE);
 
-            Long league20 = competitionService.save("test20", CompetitionType.LEAGUE, CompetitionOption.DOUBLE, room1Id);
-            List<Long> memberId20 = new ArrayList<>();
-            for (int i = 1; i <= 20; i++) {
-                memberId20.add(members.get(i).getId());
+            Long league12 = competitionService.save("test12", CompetitionType.LEAGUE, CompetitionOption.DOUBLE, room1Id);
+            List<Long> memberId12 = new ArrayList<>();
+            for (int i = 1; i <= 12; i++) {
+                memberId12.add(members.get(i).getId());
             }
-            joinService.save(memberId20, league20);
-            matchService.saveMatches(memberId20, league20, CompetitionOption.DOUBLE);
+            joinService.save(memberId12, league12);
+            matchService.saveMatches(memberId12, league12, CompetitionOption.DOUBLE);
         }
 
         private Room createRoom(String title, RoomSetting setting) {

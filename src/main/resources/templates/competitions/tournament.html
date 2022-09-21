@@ -325,9 +325,9 @@
                      class="match" th:classappend="${match == null} ? 'invisible'">
                     <div class="row-cols-2" th:if="${match != null}" th:onclick="${match.home != null} and ${match.away != null} and ${myBelong ne null and (myBelong.belongType.name() eq 'ADMIN')}?|location.href='@{|/rooms/${roomId}/competitions/${competitionId}/matches/${match.id}/update|}'|">
                         <div class="player p-0 col-9 float-start" th:text="${match.home == null} ? |${keyStat.index}-${k * 2 + 1}경기 승자|: |${match.home.email}(${match.home.name})|">home</div>
-                        <div class="score p-0 col-2 offset-1 float-end" th:text="${match.score.homeScore}">0</div>
+                        <div class="score p-0 col-2 offset-1 float-end" th:text="${match.homeScore} + ${match.homeScore2}">0</div>
                         <div class="player p-0 col-9 float-start" th:text="${match.away == null} ? |${keyStat.index}-${k * 2 + 2}경기 승자|: |${match.away.email}(${match.away.name})|">away</div>
-                        <div class="score p-0 col-2 offset-1 float-end" th:text="${match.score.awayScore}">0</div>
+                        <div class="score p-0 col-2 offset-1 float-end" th:text="${match.awayScore} + ${match.awayScore2}">0</div>
                     </div>
                 </div>
             </div>

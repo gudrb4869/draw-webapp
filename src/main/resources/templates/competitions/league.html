@@ -64,7 +64,7 @@
                             <tr th:each="k : ${hashMap.get(key).keySet()}" th:with="match=${hashMap.get(key).get(k)}"
                                 th:onclick="${match.home != null} and ${match.away != null} and ${myBelong ne null and (myBelong.belongType.name() eq 'ADMIN')}? |location.href='@{|/rooms/${roomId}/competitions/${competitionId}/matches/${match.id}/update|}'| :_">
                                 <td class="col-4" th:text="${match.home} ? |${match.home.email}(${match.home.name})| : '탈퇴한 사용자'">홈팀명</td>
-                                <td class="col-4" th:text="|${match.score.homeScore}:${match.score.awayScore}|" th:class="${match.matchStatus.name() eq 'END'}?'fw-bold'">스코어</td>
+                                <td class="col-4" th:text="|${match.homeScore}:${match.awayScore}|" th:class="${match.matchStatus.name() eq 'END'}?'fw-bold'">스코어</td>
                                 <td class="col-4" th:text="${match.away} ? |${match.away.email}(${match.away.name})| : '탈퇴한 사용자'">어웨이팀명</td>
                             </tr>
                             </tbody>
