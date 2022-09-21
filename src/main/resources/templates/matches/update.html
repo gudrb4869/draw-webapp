@@ -8,8 +8,8 @@
     <div class="py-5 text-center">
         <h1>경기 결과 수정</h1>
     </div>
-    <div class="row justify-content-center">
-        <form class="col-sm-6 mx-auto" th:object="${form}" th:action method="post">
+    <div class="row mx-auto justify-content-center">
+        <form class="col-md-6 mx-auto" th:object="${form}" th:action method="post">
             <input type="hidden" th:field="*{matchId}"/>
             <input type="hidden" th:field="*{homeId}"/>
             <input type="hidden" th:field="*{awayId}"/>
@@ -39,9 +39,9 @@
             </div>
             <div class="row">
                 <div class="col">
-                    <button class="btn btn-primary btn-lg" th:onclick="|javascript:init(${roomId}, ${competitionId}, ${matchId})|" type="button">초기화</button>
-                    <button class="btn btn-success btn-lg" type="submit">저장</button>
-                    <button class="btn btn-warning btn-lg" th:onclick="|location.href='@{|/rooms/${roomId}/competitions/${competitionId}|}'|" type="button">취소</button>
+                    <button class="btn btn-default" th:onclick="|javascript:init(${roomId}, ${competitionId}, ${matchId})|" type="button">초기화</button>
+                    <button class="btn btn-default" type="submit">저장</button>
+                    <button class="btn btn-default" th:onclick="|location.href='@{|/rooms/${roomId}/competitions/${competitionId}|}'|" type="button">취소</button>
                 </div>
             </div>
         </form>
