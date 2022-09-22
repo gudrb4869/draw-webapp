@@ -6,7 +6,6 @@ import hongik.ce.jolup.domain.competition.CompetitionType;
 import hongik.ce.jolup.domain.match.Match;
 import hongik.ce.jolup.domain.match.MatchStatus;
 import hongik.ce.jolup.domain.member.Member;
-import hongik.ce.jolup.domain.score.Score;
 import hongik.ce.jolup.repository.CompetitionRepository;
 import hongik.ce.jolup.repository.MatchRepository;
 import hongik.ce.jolup.repository.MemberRepository;
@@ -46,7 +45,7 @@ public class MatchService {
                                 .matchStatus(MatchStatus.READY)
                                 .roundNo(i)
                                 .matchNo(j)
-                                .score(Score.builder().homeScore(0).awayScore(0).build())
+//                                .score(Score.builder().homeScore(0).awayScore(0).build())
                                 .build();
                         matchRepository.save(match);
                     }
@@ -60,7 +59,8 @@ public class MatchService {
                                     .matchStatus(MatchStatus.READY)
                                     .roundNo(count + i)
                                     .matchNo(j)
-                                    .score(Score.builder().homeScore(0).awayScore(0).build())
+                                    .homeScore(0).awayScore(0)
+//                                    .score(Score.builder().homeScore(0).awayScore(0).build())
                                     .build();
                             matchRepository.save(match);
                         }
@@ -79,7 +79,8 @@ public class MatchService {
                                 .matchStatus(MatchStatus.READY)
                                 .roundNo(i)
                                 .matchNo(j)
-                                .score(Score.builder().homeScore(0).awayScore(0).build())
+                                .homeScore(0).awayScore(0)
+//                                .score(Score.builder().homeScore(0).awayScore(0).build())
                                 .build();
                         matchRepository.save(match);
                     }
@@ -89,7 +90,8 @@ public class MatchService {
                             .matchStatus(MatchStatus.READY)
                             .roundNo(i)
                             .matchNo(j)
-                            .score(Score.builder().homeScore(0).awayScore(0).build())
+                            .homeScore(0).awayScore(0)
+//                            .score(Score.builder().homeScore(0).awayScore(0).build())
                             .build();
                     matchRepository.save(match);
                 }
@@ -102,7 +104,8 @@ public class MatchService {
                                     .matchStatus(MatchStatus.READY)
                                     .roundNo(count - 1 + i)
                                     .matchNo(j)
-                                    .score(Score.builder().homeScore(0).awayScore(0).build())
+                                    .homeScore(0).awayScore(0)
+//                                    .score(Score.builder().homeScore(0).awayScore(0).build())
                                     .build();
                             matchRepository.save(match);
                         }
@@ -112,7 +115,8 @@ public class MatchService {
                                 .matchStatus(MatchStatus.READY)
                                 .roundNo(count - 1 + i)
                                 .matchNo(j)
-                                .score(Score.builder().homeScore(0).awayScore(0).build())
+                                .homeScore(0).awayScore(0)
+//                                .score(Score.builder().homeScore(0).awayScore(0).build())
                                 .build();
                         matchRepository.save(match);
                     }
@@ -146,7 +150,9 @@ public class MatchService {
                             .matchStatus(MatchStatus.READY)
                             .roundNo(i)
                             .matchNo(j)
-                            .score(Score.builder().homeScore(0).awayScore(0).build()).build();
+                            .homeScore(0).awayScore(0)
+//                            .score(Score.builder().homeScore(0).awayScore(0).build())
+                            .build();
                     matchRepository.save(match);
                 }
                 match_num *= 2;
@@ -160,8 +166,10 @@ public class MatchService {
         if (match == null) {
             return;
         }
-        Score score = Score.builder().homeScore(homeScore).awayScore(awayScore).build();
-        match.update(score, matchStatus);
+//        Score score = Score.builder().homeScore(homeScore).awayScore(awayScore).build();
+//        match.update(score, matchStatus);
+        match.updateMatchStatus(matchStatus);
+        match.updateScore(homeScore, awayScore);
     }
     
     @Transactional

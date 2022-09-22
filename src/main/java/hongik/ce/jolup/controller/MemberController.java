@@ -17,6 +17,7 @@ import org.springframework.security.web.authentication.logout.SecurityContextLog
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
+import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
@@ -56,7 +57,7 @@ public class MemberController {
 
         try {
             memberService.saveMember(form.getEmail(), form.getPassword(), form.getName());
-        } catch (IllegalStateException e) {
+        } catch (Exception e) {
             model.addAttribute("errorMessage", e.getMessage());
             return "members/signup";
         }
@@ -100,12 +101,16 @@ public class MemberController {
         if (result.hasErrors()) {
             return "members/updatePasswordForm";
         }
+        if (!form.getPassword_new().equals(form.getPassword_confirm())) {
+            result.addError(new FieldError("passwordForm", "password_confirm", form.getPassword_confirm(), false, null, null, "신규 비밀번호와 일치하지 않습니다."));
+            return "members/updatePasswordForm";
+        }
         try {
             memberService.updatePassword(member.getId(), form.getPassword_current(), form.getPassword_new());
             Authentication authentication = authenticationManager.authenticate(
                     new UsernamePasswordAuthenticationToken(member.getEmail(), form.getPassword_new()));
             SecurityContextHolder.getContext().setAuthentication(authentication);
-        } catch (IllegalStateException e) {
+        } catch (Exception e) {
             model.addAttribute("errorMessage", e.getMessage());
             return "members/updatePasswordForm";
         }
@@ -130,7 +135,7 @@ public class MemberController {
             Authentication authentication = authenticationManager.authenticate(
                     new UsernamePasswordAuthenticationToken(member.getEmail(), form.getPassword_current()));
             SecurityContextHolder.getContext().setAuthentication(authentication);
-        } catch (IllegalStateException e) {
+        } catch (Exception e) {
             model.addAttribute("errorMessage", e.getMessage());
             return "members/updateMemberInfoForm";
         }

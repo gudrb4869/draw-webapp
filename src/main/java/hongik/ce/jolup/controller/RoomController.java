@@ -57,7 +57,7 @@ public class RoomController {
             return "rooms/create";
         }
 
-        Room room = Room.builder().title(roomForm.getTitle()).roomSetting(roomForm.getRoomSetting()).build();
+        Room room = Room.builder().name(roomForm.getName()).roomSetting(roomForm.getRoomSetting()).build();
         Long roomId = roomService.saveRoom(room);
         belongService.save(member.getId(), roomId, BelongType.ADMIN);
         return "redirect:/";
@@ -120,7 +120,7 @@ public class RoomController {
         }
 
         Room room = belong.getRoom();
-        model.addAttribute("roomForm", new UpdateRoomForm(room.getId(), room.getTitle(), room.getRoomSetting()));
+        model.addAttribute("roomForm", new UpdateRoomForm(room.getId(), room.getName(), room.getRoomSetting()));
         return "rooms/update";
     }
 
@@ -138,7 +138,7 @@ public class RoomController {
             return "rooms/update";
         }
         log.info("room = {}", roomForm);
-        roomService.updateRoom(roomForm.getId(), roomForm.getTitle(), roomForm.getRoomSetting());
+        roomService.updateRoom(roomForm.getId(), roomForm.getName(), roomForm.getRoomSetting());
         return "redirect:/rooms/{roomId}";
     }
 
@@ -219,7 +219,7 @@ public class RoomController {
     static class CreateRoomForm {
 
         @NotBlank(message = "방명을 입력하세요.")
-        private String title;
+        private String name;
 
         @NotNull(message = "공개 여부를 선택하세요.")
         private RoomSetting roomSetting;
@@ -233,7 +233,7 @@ public class RoomController {
         private Long id;
 
         @NotBlank(message = "방명을 입력하세요.")
-        private String title;
+        private String name;
 
         @NotNull(message = "공개 여부를 선택하세요.")
         private RoomSetting roomSetting;

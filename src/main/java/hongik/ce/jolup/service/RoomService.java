@@ -21,12 +21,12 @@ public class RoomService {
     }
 
     @Transactional
-    public Long updateRoom(Long roomId, String title, RoomSetting roomSetting) {
+    public Long updateRoom(Long roomId, String name, RoomSetting roomSetting) {
         Optional<Room> optionalRoom = roomRepository.findById(roomId);
         if (optionalRoom.isEmpty())
             return null;
         Room room = optionalRoom.get();
-        room.updateTitle(title);
+        room.updateName(name);
         room.updateRoomSetting(roomSetting);
         return room.getId();
     }

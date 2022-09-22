@@ -9,10 +9,10 @@ import lombok.*;
 public class RoomDto {
 
     private Long id;
-    private String title;
+    private String name;
     private RoomSetting roomSetting;
 
     public Room toEntity() {
-        return Room.builder().id(id).title(title).roomSetting(roomSetting).build();
+        return Room.builder().id(id).name(name).roomSetting(roomSetting).build();
     }
 }

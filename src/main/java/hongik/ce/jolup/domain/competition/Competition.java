@@ -4,7 +4,6 @@ import hongik.ce.jolup.domain.BaseTimeEntity;
 import hongik.ce.jolup.domain.join.Join;
 import hongik.ce.jolup.domain.match.Match;
 import hongik.ce.jolup.domain.room.Room;
-import hongik.ce.jolup.dto.CompetitionDto;
 import lombok.*;
 
 import javax.persistence.*;
@@ -14,7 +13,7 @@ import java.util.List;
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@ToString(of = {"id", "title", "type", "option", "room"})
+@ToString(of = {"id", "name", "type", "option", "room"})
 @EqualsAndHashCode(of = "id")
 public class Competition extends BaseTimeEntity {
 
@@ -23,7 +22,7 @@ public class Competition extends BaseTimeEntity {
     private Long id;
 
     @Column(nullable = false)
-    private String title;
+    private String name;
 
     @Column(nullable = false)
     @Enumerated(EnumType.STRING)
@@ -43,10 +42,19 @@ public class Competition extends BaseTimeEntity {
     @OneToMany(mappedBy = "competition", cascade = CascadeType.ALL)
     private List<Match> matches = new ArrayList<>();
 
+    @OneToMany(mappedBy = "competition", cascade = CascadeType.ALL)
+    private List<League> leagues = new ArrayList<>();
+
+    @OneToMany(mappedBy = "competition", cascade = CascadeType.ALL)
+    private List<Tournament> tournaments = new ArrayList<>();
+
+    @OneToMany(mappedBy = "competition", cascade = CascadeType.ALL)
+    private List<HeadToHead> headToHeads = new ArrayList<>();
+
     @Builder
-    public Competition(Long id, String title, CompetitionType type, CompetitionOption option, Room room) {
+    public Competition(Long id, String name, CompetitionType type, CompetitionOption option, Room room) {
         this.id = id;
-        this.title = title;
+        this.name = name;
         this.type = type;
         this.option = option;
         this.room = room;
@@ -61,13 +69,13 @@ public class Competition extends BaseTimeEntity {
                 .build();
     }*/
 
-    public Competition update(String title, CompetitionType type) {
-        this.title = title;
+    public Competition update(String name, CompetitionType type) {
+        this.name = name;
         this.type = type;
         return this;
     }
 
-    public void updateTitle(String title) {
-        this.title = title;
+    public void updateName(String name) {
+        this.name = name;
     }
 }

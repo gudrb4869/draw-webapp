@@ -3,7 +3,6 @@ package hongik.ce.jolup.domain.room;
 import hongik.ce.jolup.domain.BaseTimeEntity;
 import hongik.ce.jolup.domain.belong.Belong;
 import hongik.ce.jolup.domain.competition.Competition;
-import hongik.ce.jolup.dto.RoomDto;
 import lombok.*;
 
 import javax.persistence.*;
@@ -22,7 +21,7 @@ public class Room extends BaseTimeEntity {
     private Long id;
 
     @Column(nullable = false)
-    private String title;
+    private String name;
 
     @Column(nullable = false)
     @Enumerated(EnumType.STRING)
@@ -35,9 +34,9 @@ public class Room extends BaseTimeEntity {
     private List<Competition> competitions = new ArrayList<>();
 
     @Builder
-    public Room(Long id, String title, RoomSetting roomSetting) {
+    public Room(Long id, String name, RoomSetting roomSetting) {
         this.id = id;
-        this.title = title;
+        this.name = name;
         this.roomSetting = roomSetting;
     }
 
@@ -45,8 +44,8 @@ public class Room extends BaseTimeEntity {
         return RoomDto.builder().id(id).title(title).roomSetting(roomSetting).build();
     }*/
 
-    public void updateTitle(String title) {
-        this.title = title;
+    public void updateName(String name) {
+        this.name = name;
     }
 
     public void updateRoomSetting(RoomSetting roomSetting) {

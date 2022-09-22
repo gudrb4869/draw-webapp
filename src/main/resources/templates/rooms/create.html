@@ -12,9 +12,9 @@
         <form class="col-md-6 mx-auto" th:action th:object="${roomForm}" method="post">
             <div class="mb-3">
                 <label th:for="title">방명</label>
-                <input type="text" th:field="*{title}" placeholder="방 이름을 입력하세요"
+                <input type="text" th:field="*{name}" placeholder="방 이름을 입력하세요"
                        class="form-control" th:errorclass="is-invalid" autofocus="autofocus">
-                <p th:errors="*{title}" class="text-danger">방명 오류</p>
+                <p th:errors="*{name}" class="text-danger">방명 오류</p>
             </div>
 
             <div class="mb-3">

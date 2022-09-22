@@ -2,7 +2,6 @@ package hongik.ce.jolup.dto;
 
 import hongik.ce.jolup.domain.match.Match;
 import hongik.ce.jolup.domain.match.MatchStatus;
-import hongik.ce.jolup.domain.score.Score;
 import lombok.*;
 
 @Getter
@@ -16,7 +15,7 @@ public class MatchDto {
     private CompetitionDto competitionDto;
     private MemberDto homeDto;
     private MemberDto awayDto;
-    private Score score;
+//    private Score score;
     private MatchStatus matchStatus;
     private Integer roundNo;
     private Integer matchNo;
@@ -27,7 +26,7 @@ public class MatchDto {
                 .competition(competitionDto.toEntity())
                 .home(homeDto == null ? null : homeDto.toEntity())
                 .away(awayDto == null ? null : awayDto.toEntity())
-                .score(score)
+//                .score(score)
                 .matchStatus(matchStatus)
                 .roundNo(roundNo)
                 .matchNo(matchNo)

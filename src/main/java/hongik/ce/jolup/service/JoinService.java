@@ -7,7 +7,6 @@ import hongik.ce.jolup.domain.match.Match;
 import hongik.ce.jolup.domain.match.MatchStatus;
 import hongik.ce.jolup.domain.member.Member;
 import hongik.ce.jolup.domain.result.Result;
-import hongik.ce.jolup.domain.score.Score;
 import hongik.ce.jolup.repository.CompetitionRepository;
 import hongik.ce.jolup.repository.JoinRepository;
 import hongik.ce.jolup.repository.MatchRepository;
@@ -68,13 +67,13 @@ public class JoinService {
         }
 
         if (match.getMatchStatus().equals(MatchStatus.END)) {
-            if (match.getScore().getHomeScore() > match.getScore().getAwayScore()) {
+            if (match.getHomeScore() > match.getAwayScore()) {
                 homeResult.subWin(1);
                 awayResult.subLose(1);
                 if (competition.getType().equals(CompetitionType.TOURNAMENT) && (homeScore <= awayScore)) {
                     resetTournamentMatches(competitionId, match);
                 }
-            } else if (match.getScore().getHomeScore() < match.getScore().getAwayScore()) {
+            } else if (match.getHomeScore() < match.getAwayScore()) {
                 if (competition.getType().equals(CompetitionType.TOURNAMENT) && (homeScore >= awayScore)) {
                     resetTournamentMatches(competitionId, match);
                 }
@@ -84,10 +83,10 @@ public class JoinService {
                 homeResult.subDraw(1);
                 awayResult.subDraw(1);
             }
-            homeResult.subGoalFor(match.getScore().getHomeScore());
-            homeResult.subGoalAgainst(match.getScore().getAwayScore());
-            awayResult.subGoalFor(match.getScore().getAwayScore());
-            awayResult.subGoalAgainst(match.getScore().getHomeScore());
+            homeResult.subGoalFor(match.getHomeScore());
+            homeResult.subGoalAgainst(match.getAwayScore());
+            awayResult.subGoalFor(match.getAwayScore());
+            awayResult.subGoalAgainst(match.getHomeScore());
         }
 
         if (matchStatus.equals(MatchStatus.END)) {
@@ -115,8 +114,8 @@ public class JoinService {
 
         homeJoin.updateResult(homeResult);
         awayJoin.updateResult(awayResult);
-        Score score = Score.builder().homeScore(homeScore).awayScore(awayScore).build();
-        match.update(score, matchStatus);
+        match.updateMatchStatus(matchStatus);
+        match.updateScore(homeScore, awayScore);
     }
 
     private void setTournamentMatch(Long competitionId, Match match, Member member) {
@@ -143,8 +142,7 @@ public class JoinService {
             } else {
                 next.updateAway(null);
             }
-            Score score = Score.builder().homeScore(0).awayScore(0).build();
-            next.updateScore(score);
+            next.updateScore(0, 0);
             next.updateMatchStatus(MatchStatus.READY);
             cur = next;
             next = matchRepository

@@ -25,9 +25,9 @@ public class CompetitionService {
     private final RoomRepository roomRepository;
 
     @Transactional
-    public Long save(String title, CompetitionType type, CompetitionOption option, Long roomId) {
+    public Long save(String name, CompetitionType type, CompetitionOption option, Long roomId) {
         Room room = roomRepository.findById(roomId).orElse(null);
-        Competition competition = Competition.builder().title(title).type(type).option(option).room(room).build();
+        Competition competition = Competition.builder().name(name).type(type).option(option).room(room).build();
         return competitionRepository.save(competition).getId();
     }
 
@@ -37,12 +37,12 @@ public class CompetitionService {
     }
 
     @Transactional
-    public Long updateCompetition(Long id, String title) {
+    public Long updateCompetition(Long id, String name) {
         Competition competition = competitionRepository.findById(id).orElse(null);
         if (competition == null) {
             return null;
         }
-        competition.updateTitle(title);
+        competition.updateName(name);
         return competition.getId();
     }
 

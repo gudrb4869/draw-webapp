@@ -15,7 +15,7 @@
         </thead>
         <tbody>
         <tr>
-            <td class="col-4" th:text="${room.title}"></td>
+            <td class="col-4" th:text="${room.name}"></td>
             <td class="col-4" th:text="${room.roomSetting.description}"></td>
             <td class="col-4" th:text="${belongs.getTotalElements()}"></td>
         </tr>
@@ -103,7 +103,7 @@
             <td class="text-center" colspan="12">참여중인 대회가 없습니다!</td>
         </tr>
         <tr th:each="competition : ${competitions}" th:onclick="|location.href='@{|/rooms/${room.id}/competitions/${competition.id}|}'|">
-            <td class="col-4" th:text="${competition.title}">대회명</td>
+            <td class="col-4" th:text="${competition.name}">대회명</td>
             <td class="col-4" th:text="|${competition.type.description}(${competition.option.description})|">리그</td>
             <!--                <td th:text="|명|">0명</td>-->
             <td class="col-4" th:text="${#temporals.format(competition.createdDate, 'yyyy-MM-dd HH:mm:ss')}">날짜</td>

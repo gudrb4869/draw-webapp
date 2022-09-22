@@ -96,7 +96,7 @@ public class CompetitionController {
             memberIds.add(belong.getMember().getId());
         }
 
-        Long competitionId = competitionService.save(competitionForm.getTitle(), competitionForm.getType(), competitionForm.getOption(), roomId);
+        Long competitionId = competitionService.save(competitionForm.getName(), competitionForm.getType(), competitionForm.getOption(), roomId);
         log.info("saveJoin Start");
         joinService.save(memberIds, competitionId);
         log.info("saveJoin End");
@@ -191,7 +191,7 @@ public class CompetitionController {
             return "error";
         }
 
-        model.addAttribute("form", new UpdateCompetitionForm(competition.getId(), competition.getTitle()));
+        model.addAttribute("form", new UpdateCompetitionForm(competition.getId(), competition.getName()));
         return "competitions/update";
     }
 
@@ -216,7 +216,7 @@ public class CompetitionController {
             return "error";
         }
 
-        competitionService.updateCompetition(competitionForm.getId(), competitionForm.getTitle());
+        competitionService.updateCompetition(competitionForm.getId(), competitionForm.getName());
         return "redirect:/rooms/{roomId}/competitions/{competitionId}";
     }
 
@@ -224,7 +224,7 @@ public class CompetitionController {
     private static class CreateCompetitionForm {
         @NotBlank(message = "대회명을 입력하세요.")
 //    @Pattern(regexp = "^(?:\\w+\\.?)*\\w+@(?:\\w+\\.)+\\w+$", message = "대회 이름 형식이 올바르지 않습니다.")
-        private String title;
+        private String name;
 
         @NotNull(message = "대회 방식을 선택하세요.")
         private CompetitionType type;
@@ -252,10 +252,10 @@ public class CompetitionController {
     @Getter @Setter @AllArgsConstructor
     @NoArgsConstructor @ToString
     private static class UpdateCompetitionForm {
-
+        @NotBlank(message = "대회고유번호는 필수 입력 값입니다.")
         private Long id;
 
         @NotBlank(message = "대회명은 필수 입력 값입니다.")
-        private String title;
+        private String name;
     }
 }

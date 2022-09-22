@@ -1,10 +1,8 @@
 package hongik.ce.jolup.domain.match;
 
 import hongik.ce.jolup.domain.BaseTimeEntity;
-import hongik.ce.jolup.domain.score.Score;
 import hongik.ce.jolup.domain.competition.Competition;
 import hongik.ce.jolup.domain.member.Member;
-import hongik.ce.jolup.dto.MatchDto;
 import lombok.*;
 
 import javax.persistence.*;
@@ -13,7 +11,7 @@ import javax.persistence.*;
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Table(name = "matches")
-@ToString(of = {"id", "score", "matchStatus", "roundNo", "matchNo"})
+@ToString(of = {"id", "matchStatus", "roundNo", "matchNo"})
 @EqualsAndHashCode(of = "id")
 public class Match extends BaseTimeEntity {
 
@@ -33,8 +31,10 @@ public class Match extends BaseTimeEntity {
     @JoinColumn(name = "away_id")
     private Member away;
 
-    @Embedded
-    private Score score;
+    @Column(nullable = false)
+    private Integer homeScore;
+    @Column(nullable = false)
+    private Integer awayScore;
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false, name = "match_status")
@@ -47,12 +47,14 @@ public class Match extends BaseTimeEntity {
     private Integer matchNo;
 
     @Builder
-    public Match(Long id, Competition competition, Member home, Member away, Score score, MatchStatus matchStatus, Integer roundNo, Integer matchNo) {
+    public Match(Long id, Competition competition, Member home, Member away, MatchStatus matchStatus, Integer roundNo, Integer matchNo,
+                 Integer homeScore, Integer awayScore) {
         this.id = id;
         this.competition = competition;
         this.home = home;
         this.away = away;
-        this.score = score;
+        this.homeScore = homeScore;
+        this.awayScore = awayScore;
         this.matchStatus = matchStatus;
         this.roundNo = roundNo;
         this.matchNo = matchNo;
@@ -79,19 +81,9 @@ public class Match extends BaseTimeEntity {
         this.away = away;
     }
 
-    public void updateScore(Score score) {
-        this.score = score;
-    }
-
-    public void changeCompetition(Competition competition) {
-        this.competition = competition;
-        competition.getMatches().add(this);
-    }
-
-    public Match update(Score score, MatchStatus matchStatus) {
-        this.score = score;
-        this.matchStatus = matchStatus;
-        return this;
+    public void updateScore(Integer homeScore, Integer awayScore) {
+        this.homeScore = homeScore;
+        this.awayScore = awayScore;
     }
 
     public void updateMatchStatus(MatchStatus matchStatus) {

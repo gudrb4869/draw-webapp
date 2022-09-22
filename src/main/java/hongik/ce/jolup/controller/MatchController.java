@@ -21,6 +21,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.validation.Valid;
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
+import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 
 @Slf4j
@@ -33,6 +34,43 @@ public class MatchController {
     private final JoinService joinService;
     private final BelongService belongService;
     private final CompetitionService competitionService;
+
+    @GetMapping("/{matchId}")
+    public String matchDetail(@PathVariable("roomId") Long roomId,
+                              @PathVariable("competitionId") Long competitionId,
+                              @PathVariable("matchId") Long matchId,
+                              @AuthenticationPrincipal Member member,
+                              Model model) {
+
+        log.info("GET MatchDetail : roomId = {}, competitionId = {}, matchId = {}", roomId, competitionId, matchId);
+        Belong myBelong = belongService.findOne(member.getId(), roomId);
+        if (myBelong == null || !myBelong.getBelongType().equals(BelongType.ADMIN)) {
+            return "error";
+        }
+
+        Competition competition = competitionService.findOne(competitionId, roomId);
+        if (competition == null) {
+            return "error";
+        }
+
+        Match match = matchService.findByIdAndCompetitionId(matchId, competitionId);
+        if (match == null) {
+            return "error";
+        }
+        MatchDto matchDto = MatchDto.builder().id(match.getId()).homeScore(match.getHomeScore()).awayScore(match.getAwayScore()).build();
+        if (match.getHome() != null) {
+            matchDto.setHomeId(match.getHome().getId());
+            matchDto.setHome(match.getHome().getEmail() + "(" + match.getHome().getName() + ")");
+        }
+        if (match.getAway() != null) {
+            matchDto.setAwayId(match.getAway().getId());
+            matchDto.setAway(match.getAway().getEmail() + "(" + match.getAway().getName() + ")");
+        }
+        model.addAttribute("competition", competition);
+        model.addAttribute("match", matchDto);
+        log.info("matchDto={}", matchDto);
+        return "matches/matchDetail";
+    }
 
     @GetMapping("/{matchId}/update")
     public String updateForm(@PathVariable("roomId") Long roomId,
@@ -57,8 +95,10 @@ public class MatchController {
             return "error";
         }
 
+        /*UpdateMatchForm form = UpdateMatchForm.builder().matchId(match.getId())
+                .homeScore(match.getScore().getHomeScore()).awayScore(match.getScore().getAwayScore()).build();*/
         UpdateMatchForm form = UpdateMatchForm.builder().matchId(match.getId())
-                .homeScore(match.getScore().getHomeScore()).awayScore(match.getScore().getAwayScore()).build();
+                .homeScore(match.getHomeScore()).awayScore(match.getAwayScore()).build();
         if (match.getHome() != null) {
             form.setHomeId(match.getHome().getId());
             form.setHome(match.getHome().getEmail() + "(" + match.getHome().getName() + ")");
@@ -131,6 +171,24 @@ public class MatchController {
         joinService.update(homeId, awayId, competitionId,
                 matchId, 0, 0, MatchStatus.READY);
         return "redirect:/rooms/{roomId}/competitions/{competitionId}";
+    }
+
+    @ToString
+    @Getter
+    @Setter
+    @Builder
+    @NoArgsConstructor
+    @AllArgsConstructor
+    private static class MatchDto {
+        private Long id;
+
+        private Long homeId;
+        private String home;
+        private String away;
+        private Long awayId;
+
+        private Integer homeScore;
+        private Integer awayScore;
     }
 
     @ToString @Getter @Setter @Builder

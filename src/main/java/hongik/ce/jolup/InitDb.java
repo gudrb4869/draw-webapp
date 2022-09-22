@@ -152,8 +152,8 @@ public class InitDb {
             matchService.saveMatches(memberId12, league12, CompetitionOption.DOUBLE);
         }
 
-        private Room createRoom(String title, RoomSetting setting) {
-            return Room.builder().title(title).roomSetting(setting).build();
+        private Room createRoom(String name, RoomSetting setting) {
+            return Room.builder().name(name).roomSetting(setting).build();
         }
 
         private Member createMember(int i) {
