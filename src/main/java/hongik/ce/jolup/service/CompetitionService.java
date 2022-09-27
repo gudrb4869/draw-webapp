@@ -1,12 +1,15 @@
 package hongik.ce.jolup.service;
 
 import hongik.ce.jolup.domain.competition.Competition;
+import hongik.ce.jolup.domain.competition.CompetitionCreatedEvent;
 import hongik.ce.jolup.domain.competition.CompetitionOption;
 import hongik.ce.jolup.domain.competition.CompetitionType;
+import hongik.ce.jolup.domain.member.Member;
 import hongik.ce.jolup.domain.room.Room;
 import hongik.ce.jolup.repository.CompetitionRepository;
 import hongik.ce.jolup.repository.RoomRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -15,6 +18,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Set;
 
 @Service
 @RequiredArgsConstructor
@@ -23,12 +27,17 @@ public class CompetitionService {
 
     private final CompetitionRepository competitionRepository;
     private final RoomRepository roomRepository;
+    private final ApplicationEventPublisher eventPublisher;
 
     @Transactional
-    public Long save(String name, CompetitionType type, CompetitionOption option, Long roomId) {
+    public Competition save(String name, CompetitionType type, Long roomId) {
         Room room = roomRepository.findById(roomId).orElse(null);
-        Competition competition = Competition.builder().name(name).type(type).option(option).room(room).build();
-        return competitionRepository.save(competition).getId();
+        Competition competition = Competition.builder().name(name).type(type).room(room).build();
+        return competitionRepository.save(competition);
+    }
+
+    public void SendAlarm(Competition competition, Set<Member> members) {
+        eventPublisher.publishEvent(new CompetitionCreatedEvent(competition, "대회가 새로 생성됨", members));
     }
 
     @Transactional

@@ -1,10 +1,10 @@
 package hongik.ce.jolup.domain.member;
 
 import hongik.ce.jolup.domain.BaseTimeEntity;
-import hongik.ce.jolup.domain.belong.Belong;
 import hongik.ce.jolup.domain.join.Join;
-import hongik.ce.jolup.domain.match.Match;
-import hongik.ce.jolup.dto.MemberDto;
+import hongik.ce.jolup.domain.competition.LeagueGame;
+import hongik.ce.jolup.domain.competition.LeagueTable;
+import hongik.ce.jolup.domain.notification.Notification;
 import lombok.*;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -16,8 +16,9 @@ import java.util.*;
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
+@AllArgsConstructor(access = AccessLevel.PROTECTED)
 @ToString(of = {"id", "email", "name", "role"})
-@EqualsAndHashCode(of = "id")
+@EqualsAndHashCode(of = {"id"}, callSuper = false)
 public class Member extends BaseTimeEntity implements UserDetails {
 
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -33,40 +34,44 @@ public class Member extends BaseTimeEntity implements UserDetails {
     @Column(nullable = false, unique = true)
     private String name;
 
+    @Lob
+    @Basic(fetch = FetchType.EAGER)
+    private String image;
+
     @Column(nullable = false)
     @Enumerated(EnumType.STRING)
     private Role role;
 
     @OneToMany(mappedBy = "member", cascade = CascadeType.ALL)
-    private List<Belong> belongs = new ArrayList<>();
+    private List<Notification> notifications = new ArrayList<>();
 
     @OneToMany(mappedBy = "member", cascade = CascadeType.ALL)
     private List<Join> joins = new ArrayList<>();
 
     @OneToMany(mappedBy = "home", cascade = CascadeType.ALL)
-    private List<Match> homeMatches = new ArrayList<>();
+    private List<LeagueGame> homeLeagueGames = new ArrayList<>();
 
     @OneToMany(mappedBy = "away", cascade = CascadeType.ALL)
-    private List<Match> awayMatches = new ArrayList<>();
+    private List<LeagueGame> awayLeagueGames = new ArrayList<>();
+
+    @OneToMany(mappedBy = "member", cascade = CascadeType.ALL)
+    private List<LeagueTable> leagueTables = new ArrayList<>();
+
+    @OneToMany(mappedBy = "home", cascade = CascadeType.ALL)
+    private List<LeagueGame> homeSingleLegGames = new ArrayList<>();
+
+    @OneToMany(mappedBy = "away", cascade = CascadeType.ALL)
+    private List<LeagueGame> awaySingleLegGames = new ArrayList<>();
 
     @Builder
-    public Member(Long id, String email, String password, String name, Role role) {
+    public Member(Long id, String email, String password, String name, String image, Role role) {
         this.id = id;
         this.email = email;
         this.password = password;
         this.name = name;
+        this.image = image;
         this.role = role;
     }
-
-    /*public MemberDto toDto() {
-        return MemberDto.builder()
-                .id(id)
-                .email(email)
-                .password(password)
-                .name(name)
-                .role(role)
-                .build();
-    }*/
 
     public void updatePassword(String password) {
         this.password = password;
@@ -74,6 +79,10 @@ public class Member extends BaseTimeEntity implements UserDetails {
 
     public void updateName(String name) {
         this.name = name;
+    }
+
+    public void updateImage(String image) {
+        this.image = image;
     }
 
     public void updateRole(Role role) {

@@ -6,8 +6,13 @@
 <div th:replace="fragments/bodyheader" :: bodyheader />
 <div class="container">
     <div class="py-5 text-center">
-        <h1>404</h1>
-        <h2>This is not the web page you are looking for.</h2>
+        <h1>Project</h1>
+        <p class="lead text-muted">
+            잘못된 요청입니다.<br/>
+        </p>
+        <p>
+            <a th:href="@{/}" class="btn btn-primary my-2">첫 페이지로 이동</a>
+        </p>
     </div>
 </div> <!-- /container -->
 <div th:replace="fragments/footer" :: footer />

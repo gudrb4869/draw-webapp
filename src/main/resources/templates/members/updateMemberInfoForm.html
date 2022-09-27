@@ -1,4 +1,4 @@
-<!DOCTYPE HTML>
+z<!DOCTYPE HTML>
 <html xmlns="http://www.w3.org/1999/xhtml"
       xmlns:th="http://www.thymeleaf.org">
 <head th:replace="fragments/header :: header" />
@@ -9,39 +9,147 @@
         <h2>회원정보 수정</h2>
     </div>
     <div class="row mx-auto justify-content-center">
-        <form class="col-md-6 mx-auto" th:action method="post" th:object="${memberInfoForm}">
-            <div class="mb-3" th:if="${errorMessage}">
-                <span th:text="${errorMessage}" class="alert alert-danger">예외가 발생했습니다.</span>
-            </div>
-
-            <div class="mb-3">
+        <form class="col-md-6 mx-auto" th:action method="post" th:object="${profile}">
+            <div class="form-group mb-3">
                 <label th:for="email">아이디</label>
                 <input type="text" th:field="*{email}" th:errorclass="is-invalid" class="form-control" readonly>
                 <p th:errors="*{email}" class="text-danger">아이디 오류</p>
             </div>
 
-            <div class="mb-3">
+            <div class="form-group mb-3">
                 <label th:for="name">이름</label>
                 <input type="text" th:field="*{name}" th:errorclass="is-invalid" class="form-control" autofocus="autofocus">
                 <p th:errors="*{name}" class="text-danger">이름 오류</p>
             </div>
 
-            <div class="mb-3">
+            <div class="form-group mb-3">
                 <label th:for="password_current">현재 비밀번호</label>
                 <input type="password" th:field="*{password_current}" th:errorclass="is-invalid" class="form-control">
                 <p th:errors="*{password_current}" class="text-danger">현재 비밀번호 오류</p>
             </div>
 
+            <div class="form-group mb-3">
+                <input id="image" type="hidden" th:field="*{image}" class="form-control">
+            </div>
             <div class="mb-4"></div>
             <div class="row">
                 <div class="col">
-                    <button class="btn btn-default" type="submit">수정</button>
-                    <button type="button" class="btn btn-default" th:onclick="|location.href='@{/profile}'|">취소</button>
+                    <button class="btn btn-light link-secondary" type="submit">수정</button>
+                    <button type="button" class="btn btn-light link-secondary" th:onclick="|location.href='@{/profile}'|">취소</button>
                 </div>
             </div>
         </form>
+
+        <div class="mb-4"></div>
+
+        <div class="col-md-6 mx-auto">
+            <div class="card text-center">
+                <div class="card-header">
+                    프로필 이미지
+                </div>
+                <div id="current-profile-image" class="mt-3">
+                    <svg th:if="${#strings.isEmpty(profile.image)}" xmlns="http://www.w3.org/2000/svg" width="125" height="125" fill="currentColor" class="bi bi-person-circle rounded" viewBox="0 0 16 16">
+                        <path d="M11 6a3 3 0 1 1-6 0 3 3 0 0 1 6 0z"/>
+                        <path fill-rule="evenodd" d="M0 8a8 8 0 1 1 16 0A8 8 0 0 1 0 8zm8-7a7 7 0 0 0-5.468 11.37C3.242 11.226 4.805 10 8 10s4.757 1.225 5.468 2.37A7 7 0 0 0 8 1z"/>
+                    </svg>
+                    <!--<svg th:if="${#strings.isEmpty(profile.image)}" class="rounded"
+                         src="/images/person.jpg" width="125" height="125"></svg>-->
+                    <img th:if="${!#strings.isEmpty(profile.image)}" class="rounded"
+                         th:src="${profile.image}"
+                         width="125" height="125" alt="name" th:alt="${member.name}"/>
+                </div>
+                <div id="new-profile-image" class="mt-3"></div>
+                <div class="card-body">
+                    <div class="input-group">
+                        <input type="file" class="form-control" id="profile-image-file">
+                    </div>
+                    <div id="new-profile-image-control" class="mt-3 d-grid gap-2">
+                        <button class="btn btn-outline-primary" id="cut-button">자르기</button>
+                        <button class="btn btn-outline-success" id="confirm-button">확인</button>
+                        <button class="btn btn-outline-warning" id="reset-button">취소</button>
+                    </div>
+                    <div id="cropped-new-profile-image" class="mt-3"></div>
+                </div>
+            </div>
+        </div>
     </div>
 </div> <!-- /container -->
 <div th:replace="fragments/footer" :: footer />
+<link href="/node_modules/cropper/dist/cropper.min.css" rel="stylesheet"/>
+<script src="/node_modules/cropper/dist/cropper.min.js"></script>
+<script src="/node_modules/jquery-cropper/dist/jquery-cropper.min.js"></script>
+<script type="application/javascript">
+    $(function () {
+        cropper = '';
+        let $confirmBtn = $("#confirm-button");
+        let $resetBtn = $("#reset-button");
+        let $cutBtn = $("#cut-button");
+        let $newProfileImage = $("#new-profile-image");
+        let $currentProfileImage = $("#current-profile-image");
+        let $resultImage = $("#cropped-new-profile-image");
+        let $profileImage = $("#image");
+
+        $newProfileImage.hide();
+        $cutBtn.hide();
+        $resetBtn.hide();
+        $confirmBtn.hide();
+
+        $("#profile-image-file").change(function (e) {
+            if (e.target.files.length === 1) {
+                const reader = new FileReader();
+                reader.onload = e => {
+                    if (e.target.result) {
+                        let img = document.createElement("img");
+                        img.id = 'new-profile';
+                        img.src = e.target.result;
+                        img.width = 250;
+
+                        $newProfileImage.html(img);
+                        $newProfileImage.show();
+                        $currentProfileImage.hide();
+
+                        let $newImage = $(img);
+                        $newImage.cropper({aspectRatio: 1});
+                        cropper = $newImage.data('cropper');
+
+                        $cutBtn.show();
+                        $confirmBtn.hide();
+                        $resetBtn.show();
+                    }
+                };
+
+                reader.readAsDataURL(e.target.files[0]);
+            }
+        });
+
+        $resetBtn.click(function () {
+            $currentProfileImage.show();
+            $newProfileImage.hide();
+            $resultImage.hide();
+            $resetBtn.hide();
+            $cutBtn.hide();
+            $confirmBtn.hide();
+            $profileImage.val('');
+        });
+
+        $cutBtn.click(function () {
+            let dataUrl = cropper.getCroppedCanvas().toDataURL();
+            let newImage = document.createElement("img");
+            newImage.id = "cropped-new-profile-image";
+            newImage.src = dataUrl;
+            newImage.width = 125;
+            $resultImage.html(newImage);
+            $resultImage.show();
+            $confirmBtn.show();
+
+            $confirmBtn.click(function () {
+                $newProfileImage.html(newImage);
+                $cutBtn.hide();
+                $confirmBtn.hide();
+                $profileImage.val(dataUrl);
+            });
+        });
+    });
+</script>
 </body>
 </html>

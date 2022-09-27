@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org">
+<ul th:fragment="notification-list (notifications)" class="list-group list-group-flush">
+    <a href="#" th:href="@{${notification.link}}" th:each="notification: ${notifications}"
+       class="list-group-item list-group-item-action">
+        <div class="d-flex w-100 justify-content-between">
+            <small class="text-muted" th:text="${notification.title}">Noti title</small>
+            <small class="fromNow text-muted" th:text="${notification.createdDate}">3 days ago</small>
+        </div>
+        <p th:text="${notification.message}" class="text-left mb-0 mt-1">message</p>
+    </a>
+</ul>
+
+<ul th:fragment="room-invited (notifications)" class="list-group list-group-flush">
+    <div th:each="notification: ${notifications}" class="list-group-item list-group-item-action">
+        <div class="d-flex w-100 justify-content-between">
+            <small class="text-muted" th:text="${notification.title}">Noti title</small>
+            <small class="fromNow text-muted" th:text="${notification.createdDate}">3 days ago</small>
+        </div>
+        <p th:text="${notification.message}" class="text-left mb-0 mt-1">message</p>
+        <div class="text-end">
+            <form th:action="@{|/notifications/${notification.id}/accept|}" th:method="post">
+                <button type="submit" class="btn btn-outline-success">수락</button>
+            </form>
+            <form th:action="@{|/notifications/${notification.id}/reject|}" th:method="post">
+                <button type="submit" class="btn btn-outline-danger">거절</button>
+            </form>
+            <!--<a class="btn btn-primary me-1" href="#" th:href="'javascript:accept('+${notification.id}+')'">수락</a>
+            <a class="btn btn-danger" href="#" th:href="'javascript:reject('+${notification.id}+')'">거절</a>-->
+        </div>
+    </div>
+</ul>
+</html>

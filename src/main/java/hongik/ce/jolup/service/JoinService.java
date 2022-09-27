@@ -1,159 +1,59 @@
 package hongik.ce.jolup.service;
 
-import hongik.ce.jolup.domain.competition.Competition;
-import hongik.ce.jolup.domain.competition.CompetitionType;
 import hongik.ce.jolup.domain.join.Join;
-import hongik.ce.jolup.domain.match.Match;
-import hongik.ce.jolup.domain.match.MatchStatus;
+import hongik.ce.jolup.domain.join.Grade;
 import hongik.ce.jolup.domain.member.Member;
-import hongik.ce.jolup.domain.result.Result;
-import hongik.ce.jolup.repository.CompetitionRepository;
+import hongik.ce.jolup.domain.room.Room;
 import hongik.ce.jolup.repository.JoinRepository;
-import hongik.ce.jolup.repository.MatchRepository;
 import hongik.ce.jolup.repository.MemberRepository;
+import hongik.ce.jolup.repository.RoomRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
 public class JoinService {
 
-    private final JoinRepository joinRepository;
     private final MemberRepository memberRepository;
-    private final CompetitionRepository competitionRepository;
-    private final MatchRepository matchRepository;
+    private final JoinRepository joinRepository;
+    private final RoomRepository roomRepository;
 
     @Transactional
-    public void save(List<Long> memberIds, Long competitionId) {
-        List<Member> members = memberRepository.findAllById(memberIds);
-        Competition competition = competitionRepository.findById(competitionId).orElse(null);
-        for (Member member : members) {
-            Result result = Result.builder().win(0).draw(0).lose(0).goalFor(0).goalAgainst(0).build();
-            Join join = Join.builder().member(member).competition(competition).result(result).build();
-            joinRepository.save(join);
+    public Long save(Long memberId, Long roomId, Grade grade) {
+        Optional<Member> optionalMember = memberRepository.findById(memberId);
+        Optional<Room> optionalRoom = roomRepository.findById(roomId);
+        if (optionalMember.isEmpty() || optionalRoom.isEmpty()) {
+            return null;
         }
-    }
 
-    @Transactional
-    public Long save(Long memberId, Long competitionId) {
-        Member member = memberRepository.findById(memberId).orElse(null);
-        Competition competition = competitionRepository.findById(competitionId).orElse(null);
-        if (member != null && competition != null) {
-            Result result = Result.builder().win(0).draw(0).lose(0).goalFor(0).goalAgainst(0).build();
-            Join join = Join.builder().member(member).competition(competition).result(result).build();
-            return joinRepository.save(join).getId();
-        }
-        return null;
+        Member member = optionalMember.get();
+        Room room = optionalRoom.get();
+        Join join = Join.builder().member(member).room(room).grade(grade).build();
+        return joinRepository.save(join).getId();
     }
 
     @Transactional
-    public void update(Long homeId, Long awayId, Long competitionId, Long matchId, Integer homeScore, Integer awayScore, MatchStatus matchStatus) {
-        Join homeJoin = joinRepository.findByMemberIdAndCompetitionId(homeId, competitionId).orElse(null);
-        Join awayJoin = joinRepository.findByMemberIdAndCompetitionId(awayId, competitionId).orElse(null);
-        Competition competition = competitionRepository.findById(competitionId).orElse(null);
-        Match match = matchRepository.findById(matchId).orElse(null);
-        if (homeJoin == null || awayJoin == null || competition == null || match == null) {
-            return;
+    public Long update(Long id, Grade grade) {
+        Join join = joinRepository.findById(id).orElse(null);
+        if (join == null) {
+            return null;
         }
-
-        Result homeResult = homeJoin.getResult();
-        Result awayResult = awayJoin.getResult();
-        if (homeResult == null || awayResult == null) {
-            return;
-        }
-
-        if (match.getMatchStatus().equals(MatchStatus.END)) {
-            if (match.getHomeScore() > match.getAwayScore()) {
-                homeResult.subWin(1);
-                awayResult.subLose(1);
-                if (competition.getType().equals(CompetitionType.TOURNAMENT) && (homeScore <= awayScore)) {
-                    resetTournamentMatches(competitionId, match);
-                }
-            } else if (match.getHomeScore() < match.getAwayScore()) {
-                if (competition.getType().equals(CompetitionType.TOURNAMENT) && (homeScore >= awayScore)) {
-                    resetTournamentMatches(competitionId, match);
-                }
-                homeResult.subLose(1);
-                awayResult.subWin(1);
-            } else {
-                homeResult.subDraw(1);
-                awayResult.subDraw(1);
-            }
-            homeResult.subGoalFor(match.getHomeScore());
-            homeResult.subGoalAgainst(match.getAwayScore());
-            awayResult.subGoalFor(match.getAwayScore());
-            awayResult.subGoalAgainst(match.getHomeScore());
-        }
-
-        if (matchStatus.equals(MatchStatus.END)) {
-            if (homeScore > awayScore) {
-                homeResult.addWin(1);
-                awayResult.addLose(1);
-                if (competition.getType().equals(CompetitionType.TOURNAMENT)) {
-                    setTournamentMatch(competitionId, match, match.getHome());
-                }
-            } else if (homeScore < awayScore) {
-                homeResult.addLose(1);
-                awayResult.addWin(1);
-                if (competition.getType().equals(CompetitionType.TOURNAMENT)) {
-                    setTournamentMatch(competitionId, match, match.getAway());
-                }
-            } else {
-                homeResult.addDraw(1);
-                awayResult.addDraw(1);
-            }
-            homeResult.addGoalFor(homeScore);
-            homeResult.addGoalAgainst(awayScore);
-            awayResult.addGoalFor(awayScore);
-            awayResult.addGoalAgainst(homeScore);
-        }
-
-        homeJoin.updateResult(homeResult);
-        awayJoin.updateResult(awayResult);
-        match.updateMatchStatus(matchStatus);
-        match.updateScore(homeScore, awayScore);
-    }
-
-    private void setTournamentMatch(Long competitionId, Match match, Member member) {
-        Match nextMatch = matchRepository
-                .findByCompetitionIdAndRoundNoAndMatchNo(competitionId, match.getRoundNo() - 1, match.getMatchNo() / 2)
-                .orElse(null);
-        if (nextMatch != null) {
-            if (match.getMatchNo() % 2 == 0) {
-                nextMatch.updateHome(member);
-            } else {
-                nextMatch.updateAway(member);
-            }
-        }
-    }
-
-    private void resetTournamentMatches(Long competitionId, Match match) {
-        Match cur = match;
-        Match next = matchRepository
-                .findByCompetitionIdAndRoundNoAndMatchNo(competitionId, cur.getRoundNo() - 1, cur.getMatchNo() / 2)
-                .orElse(null);
-        while (next != null) {
-            if (cur.getMatchNo() % 2 == 0) {
-                next.updateHome(null);
-            } else {
-                next.updateAway(null);
-            }
-            next.updateScore(0, 0);
-            next.updateMatchStatus(MatchStatus.READY);
-            cur = next;
-            next = matchRepository
-                    .findByCompetitionIdAndRoundNoAndMatchNo(competitionId, cur.getRoundNo() - 1, cur.getMatchNo() / 2)
-                    .orElse(null);
-        }
+        join.updateGrade(grade);
+        return join.getId();
     }
 
     @Transactional
-    public void deleteJoin(Long id) {
-        joinRepository.deleteById(id);
+    public void delete(Long joinId) {
+        joinRepository.deleteById(joinId);
     }
 
     @Transactional
@@ -164,19 +64,27 @@ public class JoinService {
         }
     }
 
-    public List<Join> findByMemberId(Long memberId) {
-        return joinRepository.findByMemberId(memberId);
+
+
+    public Page<Join> findByMemberId(Long memberId, Pageable pageable) {
+        int page = (pageable.getPageNumber() == 0) ? 0 : (pageable.getPageNumber() - 1);
+        return joinRepository.findByMemberId(memberId, PageRequest.of(page, 3, Sort.by("createdDate").descending()));
     }
 
-    public List<Join> findByCompetitionId(Long competitionId) {
-        return joinRepository.findByCompetitionId(competitionId);
+    public Join findByIdAndRoomId(Long id, Long roomId) {
+        return joinRepository.findByIdAndRoomId(id, roomId).orElse(null);
     }
 
-    public Join findOne(Long memberId, Long competitionId) {
-        return joinRepository.findByMemberIdAndCompetitionId(memberId, competitionId).orElse(null);
+    public Join findOne(Long memberId, Long roomId) {
+        return joinRepository.findByMemberIdAndRoomId(memberId, roomId).orElse(null);
     }
 
-    public List<Join> findByCompetitionSort(Long competitionId) {
-        return joinRepository.findByCompetitionIdSort(competitionId);
+    public List<Join> findByRoomId(Long roomId) {
+        return joinRepository.findByRoomId(roomId);
+    }
+
+    public Page<Join> findByRoomId(Long roomId, Pageable pageable) {
+        int page = (pageable.getPageNumber() == 0) ? 0 : (pageable.getPageNumber() - 1);
+        return joinRepository.findByRoomId(roomId, PageRequest.of(page, 3, Sort.by("grade").ascending()));
     }
 }

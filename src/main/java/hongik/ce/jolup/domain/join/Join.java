@@ -2,22 +2,20 @@ package hongik.ce.jolup.domain.join;
 
 import hongik.ce.jolup.domain.BaseTimeEntity;
 import hongik.ce.jolup.domain.member.Member;
-import hongik.ce.jolup.domain.result.Result;
-import hongik.ce.jolup.domain.competition.Competition;
+import hongik.ce.jolup.domain.room.Room;
 import lombok.*;
 
 import javax.persistence.*;
 
-@Getter
 @Entity
+@Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
+@ToString(of = {"id", "member", "room", "grade"})
 @Table(name = "joins")
-@ToString
-@EqualsAndHashCode(of = "id")
 public class Join extends BaseTimeEntity {
 
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "join_id")
+    @Column(name = "belong_id")
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
@@ -25,39 +23,26 @@ public class Join extends BaseTimeEntity {
     private Member member;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "competition_id")
-    private Competition competition;
+    @JoinColumn(name = "room_id")
+    private Room room;
 
-    @Embedded
-    private Result result;
+    @Column(nullable = false)
+    @Enumerated(EnumType.STRING)
+    private Grade grade;
 
     @Builder
-    public Join(Long id, Member member, Competition competition, Result result) {
+    public Join(Long id, Member member, Room room, Grade grade) {
         this.id = id;
         this.member = member;
-        this.competition = competition;
-        this.result = result;
-    }
-
-    /*public JoinDto toDto () {
-        return JoinDto.builder()
-                .id(id)
-                .memberDto(member.toDto())
-                .competitionDto(competition.toDto())
-                .result(result)
-                .build();
-    }*/
-
-    public void updateResult(Result result) {
-        this.result = result;
+        this.room = room;
+        this.grade = grade;
     }
 
     public void updateMember(Member member) {
         this.member = member;
     }
 
-    public void changeCompetition(Competition competition) {
-        this.competition = competition;
-        competition.getJoins().add(this);
+    public void updateGrade(Grade grade) {
+        this.grade = grade;
     }
 }

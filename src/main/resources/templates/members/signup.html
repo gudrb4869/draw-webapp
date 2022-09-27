@@ -2,24 +2,6 @@
 <html xmlns="http://www.w3.org/1999/xhtml"
       xmlns:th="http://www.thymeleaf.org">
 <head th:replace="fragments/header :: header" />
-<style>
-    .email-already {
-        color: orangered;
-        display: none;
-    }
-    .email-ok {
-        color: springgreen;
-        display: none;
-    }
-    .name-already {
-        color: orangered;
-        display: none;
-    }
-    .name-ok {
-        color: springgreen;
-        display: none;
-    }
-</style>
 <body class="d-flex flex-column min-vh-100">
 <div th:replace="fragments/bodyheader" :: bodyheader />
 <div class="container">
@@ -27,129 +9,61 @@
         <h2>회원가입</h2>
     </div>
     <div class="row mx-auto justify-content-center">
-        <form class="col-md-6 mx-auto" th:action method="post" th:object="${memberForm}">
-            <div class="mb-3">
-                <span th:if="${errorMessage}" th:text="${errorMessage}" class="alert alert-danger">예외가 발생했습니다.</span>
-            </div>
-            <div class="mb-4"></div>
-            <div class="mb-3">
+        <form class="col-md-6 mx-auto needs-validation" th:action method="post" th:object="${signupForm}" novalidate>
+            <div class="form-group mb-3">
                 <label th:for="email">아이디</label>
                 <input type="text" th:field="*{email}" placeholder="아이디를 입력하세요" autofocus="autofocus"
                        th:errorclass="is-invalid" class="form-control">
-                <span class="email-ok">사용 가능한 아이디입니다.</span>
-                <span class="email-already">사용 불가능한 아이디입니다.</span>
-                <p th:errors="*{email}" class="text-danger">아이디 오류</p>
+                <small class="invalid-feedback">아이디를 입력하세요.</small>
+                <small th:errors="*{email}" class="form-text text-danger">아이디 오류</small>
             </div>
 
-            <div class="mb-3">
+            <div class="form-group mb-3">
                 <label th:for="password">비밀번호</label>
                 <input type="password" th:field="*{password}" placeholder="비밀번호를 입력하세요"
                        th:errorclass="is-invalid" class="form-control">
-                <p th:errors="*{password}" class="text-danger">비밀번호 오류</p>
+                <small class="invalid-feedback">비밀번호를 입력하세요.</small>
+                <small th:errors="*{password}" class="form-text text-danger">비밀번호 오류</small>
             </div>
 
-            <div class="mb-3">
+            <div class="form-group mb-3">
                 <label th:for="name">이름</label>
                 <input type="text" th:field="*{name}" placeholder="이름을 입력하세요"
                        th:errorclass="is-invalid" class="form-control">
-                <span class="name-ok">사용 가능한 이름입니다.</span>
-                <span class="name-already">사용 불가능한 이름입니다.</span>
-                <p th:errors="*{name}" class="text-danger">이름 오류</p>
+                <small class="invalid-feedback">이름을 입력하세요.</small>
+                <small th:errors="*{name}" class="form-text text-danger">이름 오류</small>
             </div>
             <div class="mb-4"></div>
-            <button class="btn btn-default" type="submit">가입하기</button>
-            <button class="btn btn-default" type="button" th:onclick="|location.href='@{/}'|">취소</button>
+            <div class="form-group">
+                <button class="btn btn-light link-secondary" type="submit">가입하기</button>
+                <button class="btn btn-light link-secondary" type="button" th:onclick="|location.href='@{/}'|">취소</button>
+            </div>
         </form>
     </div>
 </div> <!-- /container -->
 <div th:replace="fragments/footer" :: footer />
-</body>
-<script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
-<script>
-    $("#email").on("propertychange change keyup paste input", function() {
-        var email = $("#email").val()
-        if (email == "") {
-            $('.email-already').css("display", "inline-block");
-            $('.email-ok').css("display", "none");
-            return;
-        }
-        $.ajax({
-            type: "POST",
-            url: "/emailCheck",
-            data: {"email": email},
-            dataType: "json",
-            success: function(result) {
-                if (result == true) {
-                    $('.email-already').css("display", "inline-block");
-                    $('.email-ok').css("display", "none");
-                } else {
-                    $('.email-ok').css("display", "inline-block");
-                    $('.email-already').css("display", "none");
-                }
-            }
-        });
-    });
-    $("#name").on("propertychange change keyup paste input", function() {
-        var name = $("#name").val()
-        if (name == "") {
-            $('.name-already').css("display", "inline-block");
-            $('.name-ok').css("display", "none");
-            return;
-        }
-        $.ajax({
-            type: "POST",
-            url: "/nameCheck",
-            data: {"name": name},
-            dataType: "json",
-            success: function(result) {
-                if (result == true) {
-                    $('.name-already').css("display", "inline-block");
-                    $('.name-ok').css("display", "none");
-                } else {
-                    $('.name-ok').css("display", "inline-block");
-                    $('.name-already').css("display", "none");
-                }
-            }
-        });
-    });
-</script>
-<!--<script type="text/javascript">
-    function emailCheck() {
-        const email = $("#email").val();
-        if (email == "") {
-            alert("아이디를 입력해주세요!");
-            $("#email").focus();
-            return false;
-        }
-        $.ajax({
-            type: "get",
-            url: "/signup",
-            data: {"email": email},
-            dataType: "JSON",
+<script src="/node_modules/jquery/dist/jquery.min.js"></script>
+<script src="/node_modules/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+<script type="application/javascript">
+    (function () {
+        'use strict';
 
-            success: function (result) {
-                if (result.result == "0") {
-                    if (confirm("이 아이디는 사용 가능합니다. \n사용하시겠습니까?")) {
-                        emailOverlapCheck = 1;
-                        $("#email").attr("readonly", true);
-                        $("#emailOverlay").attr("disabled", true);
-                        $("#emailOverlay").css("display", "none");
-                        $("#resetemail").attr("disabled", false);
-                        $("#resetemail").css("display", "inline-block");
+        window.addEventListener('load', function () {
+            // Fetch all the forms we want to apply custom Bootstrap validation styles to
+            const forms = document.getElementsByClassName('needs-validation');
+
+            // Loop over them and prevent submission
+            Array.prototype.filter.call(forms, function (form) {
+                form.addEventListener('submit', function (event) {
+                    if (form.checkValidity() === false) {
+                        event.preventDefault();
+                        event.stopPropagation();
                     }
-                    return false;
-                } else if (result.result == "1") {
-                    alert("이미 사용중인 아이디입니다.");
-                    $("#email").focus();
-                } else {
-                    alert("success이지만 result 값이 undefined 잘못됨");
-                }
-            },
-            error: function (request, status,error) {
-                alert("ajax 실행 실패");
-                alert("code:" + request.status + "\n" + "error :" + error);
-            }
-        });
-    }
-</script>-->
+                    form.classList.add('was-validated')
+                }, false)
+            })
+        }, false)
+    }())
+</script>
+</body>
 </html>

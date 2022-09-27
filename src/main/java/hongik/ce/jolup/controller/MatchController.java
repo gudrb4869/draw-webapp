@@ -1,15 +1,10 @@
 package hongik.ce.jolup.controller;
 
-import hongik.ce.jolup.domain.belong.Belong;
-import hongik.ce.jolup.domain.belong.BelongType;
-import hongik.ce.jolup.domain.competition.Competition;
-import hongik.ce.jolup.domain.match.Match;
-import hongik.ce.jolup.domain.match.MatchStatus;
+import hongik.ce.jolup.domain.join.Join;
+import hongik.ce.jolup.domain.join.Grade;
+import hongik.ce.jolup.domain.competition.*;
 import hongik.ce.jolup.domain.member.Member;
-import hongik.ce.jolup.service.BelongService;
-import hongik.ce.jolup.service.CompetitionService;
-import hongik.ce.jolup.service.JoinService;
-import hongik.ce.jolup.service.MatchService;
+import hongik.ce.jolup.service.*;
 import lombok.*;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -21,7 +16,6 @@ import org.springframework.web.bind.annotation.*;
 import javax.validation.Valid;
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
-import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 
 @Slf4j
@@ -30,9 +24,10 @@ import javax.validation.constraints.NotNull;
 @RequestMapping("/rooms/{roomId}/competitions/{competitionId}/matches")
 public class MatchController {
 
-    private final MatchService matchService;
+    private final LeagueGameService leagueGameService;
+    private final SingleLegGameService singleLegGameService;
+    private final LeagueTableService leagueTableService;
     private final JoinService joinService;
-    private final BelongService belongService;
     private final CompetitionService competitionService;
 
     @GetMapping("/{matchId}")
@@ -43,8 +38,8 @@ public class MatchController {
                               Model model) {
 
         log.info("GET MatchDetail : roomId = {}, competitionId = {}, matchId = {}", roomId, competitionId, matchId);
-        Belong myBelong = belongService.findOne(member.getId(), roomId);
-        if (myBelong == null || !myBelong.getBelongType().equals(BelongType.ADMIN)) {
+        Join myJoin = joinService.findOne(member.getId(), roomId);
+        if (myJoin == null || !myJoin.getGrade().equals(Grade.ADMIN)) {
             return "error";
         }
 
@@ -53,23 +48,40 @@ public class MatchController {
             return "error";
         }
 
-        Match match = matchService.findByIdAndCompetitionId(matchId, competitionId);
-        if (match == null) {
-            return "error";
+        if (competition.getType().equals(CompetitionType.LEAGUE)) {
+            LeagueGame match = leagueGameService.findByIdAndCompetitionId(matchId, competitionId);
+
+            if (match == null) {
+                return "error";
+            }
+            makeMatchDetail(model, competition, match.getId(), match.getHomeScore(), match.getAwayScore(), match.getHome(), match.getAway());
+            return "matches/leagueGameDetail";
+
+        } else if (competition.getType().equals(CompetitionType.TOURNAMENT)) {
+            SingleLegGame match = singleLegGameService.findByIdAndCompetitionId(matchId, competitionId);
+
+            if (match == null) {
+                return "error";
+            }
+            makeMatchDetail(model, competition, match.getId(), match.getHomeScore(), match.getAwayScore(), match.getHome(), match.getAway());
+            return "matches/singleLegGameDetail";
         }
-        MatchDto matchDto = MatchDto.builder().id(match.getId()).homeScore(match.getHomeScore()).awayScore(match.getAwayScore()).build();
-        if (match.getHome() != null) {
-            matchDto.setHomeId(match.getHome().getId());
-            matchDto.setHome(match.getHome().getEmail() + "(" + match.getHome().getName() + ")");
+        return "redirect:/rooms/{roomId}/competitions/{competitionId}";
+    }
+
+    private void makeMatchDetail(Model model, Competition competition, Long id, Integer homeScore, Integer awayScore, Member home, Member away) {
+        MatchDto matchDto = MatchDto.builder().id(id).homeScore(homeScore).awayScore(awayScore).build();
+        if (home != null) {
+            matchDto.setHomeId(home.getId());
+            matchDto.setHome(home.getEmail() + "(" + home.getName() + ")");
         }
-        if (match.getAway() != null) {
-            matchDto.setAwayId(match.getAway().getId());
-            matchDto.setAway(match.getAway().getEmail() + "(" + match.getAway().getName() + ")");
+        if (away != null) {
+            matchDto.setAwayId(away.getId());
+            matchDto.setAway(away.getEmail() + "(" + away.getName() + ")");
         }
         model.addAttribute("competition", competition);
         model.addAttribute("match", matchDto);
         log.info("matchDto={}", matchDto);
-        return "matches/matchDetail";
     }
 
     @GetMapping("/{matchId}/update")
@@ -80,8 +92,8 @@ public class MatchController {
                              Model model) {
 
         log.info("GET updateMatch : roomId = {}, competitionId = {}, matchId = {}", roomId, competitionId, matchId);
-        Belong myBelong = belongService.findOne(member.getId(), roomId);
-        if (myBelong == null || !myBelong.getBelongType().equals(BelongType.ADMIN)) {
+        Join myJoin = joinService.findOne(member.getId(), roomId);
+        if (myJoin == null || !myJoin.getGrade().equals(Grade.ADMIN)) {
             return "error";
         }
 
@@ -90,26 +102,37 @@ public class MatchController {
             return "error";
         }
 
-        Match match = matchService.findByIdAndCompetitionId(matchId, competitionId);
-        if (match == null) {
-            return "error";
+        if (competition.getType().equals(CompetitionType.LEAGUE)) {
+            LeagueGame match = leagueGameService.findByIdAndCompetitionId(matchId, competitionId);
+            if (match == null) {
+                return "error";
+            }
+            makeUpdateForm(model, match.getId(), match.getHomeScore(), match.getAwayScore(), match.getHome(), match.getAway());
+            return "matches/updateLeagueGameForm";
+        } else if (competition.getType().equals(CompetitionType.TOURNAMENT)) {
+            SingleLegGame match = singleLegGameService.findByIdAndCompetitionId(matchId, competitionId);
+            if (match == null) {
+                return "error";
+            }
+            makeUpdateForm(model, match.getId(), match.getHomeScore(), match.getAwayScore(), match.getHome(), match.getAway());
+            return "matches/updateSingleLegGameForm";
         }
+        return "redirect:/rooms/{roomId}/competitions/{competitionId}/matches/{matchId}";
+    }
 
-        /*UpdateMatchForm form = UpdateMatchForm.builder().matchId(match.getId())
-                .homeScore(match.getScore().getHomeScore()).awayScore(match.getScore().getAwayScore()).build();*/
-        UpdateMatchForm form = UpdateMatchForm.builder().matchId(match.getId())
-                .homeScore(match.getHomeScore()).awayScore(match.getAwayScore()).build();
-        if (match.getHome() != null) {
-            form.setHomeId(match.getHome().getId());
-            form.setHome(match.getHome().getEmail() + "(" + match.getHome().getName() + ")");
+    private void makeUpdateForm(Model model, Long id, Integer homeScore, Integer awayScore, Member home, Member away) {
+        UpdateMatchForm form = UpdateMatchForm.builder().id(id)
+                .homeScore(homeScore).awayScore(awayScore).build();
+        if (home != null) {
+            form.setHomeId(home.getId());
+            form.setHome(home.getEmail() + "(" + home.getName() + ")");
         }
-        if (match.getAway() != null) {
-            form.setAwayId(match.getAway().getId());
-            form.setAway(match.getAway().getEmail() + "(" + match.getAway().getName() + ")");
+        if (away != null) {
+            form.setAwayId(away.getId());
+            form.setAway(away.getEmail() + "(" + away.getName() + ")");
         }
         log.info("matchUpdateForm = {}", form);
         model.addAttribute("form", form);
-        return "matches/update";
     }
 
     @PostMapping("/{matchId}/update")
@@ -119,9 +142,15 @@ public class MatchController {
                          @ModelAttribute("form") @Valid UpdateMatchForm form,
                          BindingResult bindingResult) {
 
+
+        log.info("matchUpdateForm = {}", form);
+        if (bindingResult.hasErrors()) {
+            return "matches/update";
+        }
+
         log.info("POST updateMatch : roomId = {}, competitionId = {}, matchId = {}", roomId, competitionId, matchId);
-        Belong myBelong = belongService.findOne(member.getId(), roomId);
-        if (myBelong == null || !myBelong.getBelongType().equals(BelongType.ADMIN)) {
+        Join myJoin = joinService.findOne(member.getId(), roomId);
+        if (myJoin == null || !myJoin.getGrade().equals(Grade.ADMIN)) {
             return "error";
         }
         Competition competition = competitionService.findOne(competitionId, roomId);
@@ -129,20 +158,21 @@ public class MatchController {
             return "error";
         }
 
-        Match match = matchService.findByIdAndCompetitionId(matchId, competitionId);
-        if (match == null) {
-            return "error";
+        if (competition.getType().equals(CompetitionType.LEAGUE)) {
+            LeagueGame match = leagueGameService.findByIdAndCompetitionId(matchId, competitionId);
+            if (match == null) {
+                return "error";
+            }
+            leagueTableService.update(form.getHomeId(), form.getAwayId(), competitionId,
+                    form.getId(), form.getHomeScore(), form.getAwayScore(), Status.AFTER);
+        } else if (competition.getType().equals(CompetitionType.TOURNAMENT)) {
+            SingleLegGame match = singleLegGameService.findByIdAndCompetitionId(matchId, competitionId);
+            if (match == null) {
+                return "error";
+            }
+            singleLegGameService.update(matchId, competitionId, Status.AFTER, form.getHomeScore(), form.getAwayScore());
         }
-
-        if (bindingResult.hasErrors()) {
-            return "matches/update";
-        }
-
-        log.info("matchUpdateForm = {}", form);
-
-        joinService.update(form.getHomeId(), form.getAwayId(), competitionId,
-                form.getMatchId(), form.getHomeScore(), form.getAwayScore(), MatchStatus.END);
-        return "redirect:/rooms/{roomId}/competitions/{competitionId}";
+        return "redirect:/rooms/{roomId}/competitions/{competitionId}/matches/{matchId}";
     }
 
     @PostMapping("/{matchId}/init")
@@ -153,8 +183,8 @@ public class MatchController {
 
         log.info("POST initMatch : roomId = {}, competitionId = {}, matchId = {}", roomId, competitionId, matchId);
 
-        Belong myBelong = belongService.findOne(member.getId(), roomId);
-        if (myBelong == null || !myBelong.getBelongType().equals(BelongType.ADMIN)) {
+        Join myJoin = joinService.findOne(member.getId(), roomId);
+        if (myJoin == null || !myJoin.getGrade().equals(Grade.ADMIN)) {
             return "error";
         }
         Competition competition = competitionService.findOne(competitionId, roomId);
@@ -162,15 +192,24 @@ public class MatchController {
             return "error";
         }
 
-        Match match = matchService.findByIdAndCompetitionId(matchId, competitionId);
-        if (match == null) {
-            return "error";
+        if (competition.getType().equals(CompetitionType.LEAGUE)) {
+            LeagueGame match = leagueGameService.findByIdAndCompetitionId(matchId, competitionId);
+            if (match == null) {
+                return "error";
+            }
+            Long homeId = match.getHome() != null ? match.getHome().getId() : null;
+            Long awayId = match.getAway() != null ? match.getAway().getId() : null;
+            leagueTableService.update(homeId, awayId, competitionId, matchId, 0, 0, Status.BEFORE);
+        } else if (competition.getType().equals(CompetitionType.TOURNAMENT)) {
+            SingleLegGame match = singleLegGameService.findByIdAndCompetitionId(matchId, competitionId);
+            if (match == null) {
+                return "error";
+            }
+            Long homeId = match.getHome() != null ? match.getHome().getId() : null;
+            Long awayId = match.getAway() != null ? match.getAway().getId() : null;
+            singleLegGameService.update(matchId, competitionId, Status.BEFORE, 0, 0);
         }
-        Long homeId = match.getHome() != null ? match.getHome().getId() : null;
-        Long awayId = match.getAway() != null ? match.getAway().getId() : null;
-        joinService.update(homeId, awayId, competitionId,
-                matchId, 0, 0, MatchStatus.READY);
-        return "redirect:/rooms/{roomId}/competitions/{competitionId}";
+        return "redirect:/rooms/{roomId}/competitions/{competitionId}/matches/{matchId}";
     }
 
     @ToString
@@ -196,7 +235,7 @@ public class MatchController {
     private static class UpdateMatchForm {
 
         @NotNull
-        private Long matchId;
+        private Long id;
 
         private Long homeId;
         private String home;

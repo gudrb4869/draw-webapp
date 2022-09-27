@@ -1,7 +1,7 @@
 package hongik.ce.jolup.domain.room;
 
 import hongik.ce.jolup.domain.BaseTimeEntity;
-import hongik.ce.jolup.domain.belong.Belong;
+import hongik.ce.jolup.domain.join.Join;
 import hongik.ce.jolup.domain.competition.Competition;
 import lombok.*;
 
@@ -12,8 +12,7 @@ import java.util.List;
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@ToString(of = {"id", "title", "roomSetting"})
-@EqualsAndHashCode(of = "id")
+@ToString(of = {"id", "name", "access"})
 public class Room extends BaseTimeEntity {
 
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -25,30 +24,26 @@ public class Room extends BaseTimeEntity {
 
     @Column(nullable = false)
     @Enumerated(EnumType.STRING)
-    private RoomSetting roomSetting;
+    private Access access;
 
     @OneToMany(mappedBy = "room", cascade = CascadeType.ALL)
-    private List<Belong> belongs = new ArrayList<>();
+    private List<Join> joins = new ArrayList<>();
 
     @OneToMany(mappedBy = "room", cascade = CascadeType.ALL)
     private List<Competition> competitions = new ArrayList<>();
 
     @Builder
-    public Room(Long id, String name, RoomSetting roomSetting) {
+    public Room(Long id, String name, Access access) {
         this.id = id;
         this.name = name;
-        this.roomSetting = roomSetting;
+        this.access = access;
     }
-
-    /*public RoomDto toDto() {
-        return RoomDto.builder().id(id).title(title).roomSetting(roomSetting).build();
-    }*/
 
     public void updateName(String name) {
         this.name = name;
     }
 
-    public void updateRoomSetting(RoomSetting roomSetting) {
-        this.roomSetting = roomSetting;
+    public void updateAccess(Access access) {
+        this.access = access;
     }
 }

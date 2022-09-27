@@ -1,0 +1,29 @@
+<!DOCTYPE HTML>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org">
+<head th:replace="fragments/header :: header" />
+<body class="d-flex flex-column min-vh-100">
+<div th:replace="fragments/bodyheader" :: bodyheader />
+<div class="container">
+    <div class="py-5 text-center">
+        <h1>리그 경기 정보</h1>
+    </div>
+    <div class="row mx-auto justify-content-center" th:object="${match}">
+        <div class="col-md-6 mx-auto">
+            <div class="mb-3">
+                <div class="fw-bold mb-2">경기-1</div>
+                <p th:text="|*{home} *{homeScore} *{awayScore} *{away}|"></p>
+            </div>
+            <div class="mb-4"></div>
+            <div class="row">
+                <div class="col">
+                    <button class="btn btn-light link-secondary" type="button" th:onclick="|location.href='@{|/rooms/${roomId}/competitions/${competitionId}/matches/${matchId}/update|}'|">경기결과 수정</button>
+                    <button class="btn btn-light link-secondary" type="button" th:onclick="|location.href='@{|/rooms/${roomId}/competitions/${competitionId}|}'|" >돌아가기</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div> <!-- /container -->
+<div th:replace="fragments/footer" :: footer />
+</body>
+</html>

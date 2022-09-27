@@ -5,24 +5,29 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.boot.autoconfigure.security.servlet.PathRequest;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.factory.PasswordEncoderFactories;
+import org.springframework.security.crypto.password.PasswordEncoder;
+
+import javax.sql.DataSource;
 
 @Configuration
-@RequiredArgsConstructor
 @EnableWebSecurity
+@RequiredArgsConstructor
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     private final UserDetailsServiceImpl userDetailsService;
+    private final DataSource dataSource;
 
     @Bean
-    public BCryptPasswordEncoder passwordEncoder() {
-        return new BCryptPasswordEncoder();
+    public PasswordEncoder passwordEncoder() {
+        return PasswordEncoderFactories.createDelegatingPasswordEncoder();
     }
 
     @Bean
@@ -34,31 +39,27 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     @Override
     // 인증을 무시할 경로 설정
     public void configure(WebSecurity web) throws Exception {
-        web.ignoring().antMatchers("/resources/**", "/error");
-//        web.ignoring().antMatchers("/css/**", "/js/**", "/img/**", "h2-console/**");
-        web.ignoring().requestMatchers(PathRequest.toStaticResources().atCommonLocations());
+        web.ignoring()
+                .requestMatchers(PathRequest.toStaticResources().atCommonLocations())
+                .mvcMatchers("/node_modules/**", "/images/**")
+                .antMatchers("/h2-console/**");
     }
 
     @Override
     // http 관련 인증 설정 기능
     protected void configure(HttpSecurity http) throws Exception {
-        http
-                .csrf().disable().headers().frameOptions().disable()// h2-console 화면 사용하기 위함
-                .and()
-                .authorizeRequests()
-                .antMatchers("/", "/login", "/signup", "/emailCheck", "/nameCheck", "/css/**", "/js/**", "/images/**", "/error").permitAll() // 누구나 접근 가능
-                .anyRequest().authenticated() // 나머지는 권한이 있기만 하면 접근 가능
-                .and()
-                .httpBasic()
-                .and()
-                .formLogin() // 로그인에 대한 설정
+        http.authorizeRequests()
+                .mvcMatchers("/", "/login", "/signup", "/emailCheck", "/nameCheck", "/css/**", "/js/**", "/images/**", "/error").permitAll() // 누구나 접근 가능
+                .mvcMatchers(HttpMethod.GET, "/profile/*").permitAll()
+                .anyRequest().authenticated(); // 나머지는 권한이 있기만 하면 접근 가능
+        http.formLogin() // 로그인에 대한 설정
                 .loginPage("/login")
                 .loginProcessingUrl("/login")
                 .usernameParameter("email")
                 .passwordParameter("password")
                 .defaultSuccessUrl("/") // 로그인 성공시 연결되는 주소
-                .and()
-                .logout() // 로그아웃 관련 설정
+                .permitAll();
+        http.logout() // 로그아웃 관련 설정
                 .logoutSuccessUrl("/") // 로그아웃 성공시 연결되는 주소
                 .deleteCookies("JSESSIONID")
                 .clearAuthentication(true)

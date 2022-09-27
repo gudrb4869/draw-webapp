@@ -1,0 +1,87 @@
+<!DOCTYPE HTML>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org">
+<head th:replace="fragments/header :: header"></head>
+<body class="d-flex flex-column min-vh-100">
+<div th:replace="fragments/bodyheader" :: bodyheader />
+<div class="container">
+    <div class="row py-5 mx-auto text-center">
+        <div th:if="${message}" class="alert alert-info alert-dismissible show mt-3" role="alert">
+            <span th:text="${message}">수정 완료</span>
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+        <div class="col-3">
+            <ul class="list-group">
+                <a href="#" th:href="@{/notifications}" th:classappend="${isNew}? active"
+                   class="list-group-item list-group-item-action d-flex justify-content-between align-items-center">
+                    읽지 않은 알림
+                    <span th:text="${numberOfNotChecked}">3</span>
+                </a>
+                <a href="#" th:href="@{/notifications/old}" th:classappend="${!isNew}? active"
+                   class="list-group-item list-group-item-action d-flex justify-content-between align-items-center">
+                    읽은 알림
+                    <span th:text="${numberOfChecked}">0</span>
+                </a>
+            </ul>
+
+            <ul class="list-group mt-4">
+                <a href="#" th:if="${invitedRoomNotifications.size() > 0}"
+                   class="list-group-item list-group-item-action d-flex justify-content-between align-items-center">
+                    초대받은 방 알림
+                    <span th:text="${invitedRoomNotifications.size()}">3</span>
+                </a>
+                <a href="#" th:if="${competitionCreatedNotifications.size() > 0}"
+                   class="list-group-item list-group-item-action d-flex justify-content-between align-items-center">
+                    신설된 대회 알림
+                    <span th:text="${competitionCreatedNotifications.size()}">0</span>
+                </a>
+                <a href="#" th:if="${matchUpdatedNotifications.size() > 0}"
+                   class="list-group-item list-group-item-action d-flex justify-content-between align-items-center">
+                    경기 결과 변경 알림
+                    <span th:text="${matchUpdatedNotifications.size()}">0</span>
+                </a>
+            </ul>
+
+            <ul class="list-group mt-4" th:if="${numberOfChecked > 0}">
+                <form class="row" th:action="@{/notifications}" th:method="delete">
+                    <button type="submit" class="btn btn-outline-warning" aria-describedby="deleteHelp">
+                        읽은 알림 삭제
+                    </button>
+                    <small id="deleteHelp">삭제하지 않아도 한달이 지난 알림은 사라집니다.</small>
+                </form>
+            </ul>
+        </div>
+        <div class="col-9">
+            <div class="card" th:if="${notifications.size() == 0}">
+                <div class="card-header">
+                    알림 메시지가 없습니다.
+                </div>
+            </div>
+
+            <div class="card" th:if="${invitedRoomNotifications.size() > 0}">
+                <div class="card-header">
+                    초대받은 방이 있습니다.
+                </div>
+                <div th:replace="fragments/notification-list::room-invited (notifications=${invitedRoomNotifications})"></div>
+            </div>
+
+            <div class="card mt-4" th:if="${competitionCreatedNotifications.size() > 0}">
+                <div class="card-header">
+                    참여중인 방에서 신설된 대회가 있습니다.
+                </div>
+                <div th:replace="fragments/notification-list::notification-list (notifications=${competitionCreatedNotifications})"></div>
+            </div>
+
+            <div class="card mt-4" th:if="${matchUpdatedNotifications.size() > 0}">
+                <div class="card-header">
+                    경기 결과가 수정되었습니다.
+                </div>
+                <div th:replace="fragments/notification-list::notification-list (notifications=${matchUpdatedNotifications})"></div>
+            </div>
+        </div>
+    </div>
+</div> <!-- /container -->
+<div th:replace="fragments/footer" :: footer />
+<script th:replace="fragments/date-time::date-time"></script>
+</body>
+</html>

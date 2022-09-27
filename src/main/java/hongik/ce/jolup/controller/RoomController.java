@@ -1,14 +1,11 @@
 package hongik.ce.jolup.controller;
 
-import hongik.ce.jolup.domain.alarm.Alarm;
-import hongik.ce.jolup.domain.alarm.AlarmStatus;
-import hongik.ce.jolup.domain.alarm.AlarmType;
-import hongik.ce.jolup.domain.belong.Belong;
-import hongik.ce.jolup.domain.belong.BelongType;
+import hongik.ce.jolup.domain.join.Join;
+import hongik.ce.jolup.domain.join.Grade;
 import hongik.ce.jolup.domain.competition.Competition;
 import hongik.ce.jolup.domain.member.Member;
 import hongik.ce.jolup.domain.room.Room;
-import hongik.ce.jolup.domain.room.RoomSetting;
+import hongik.ce.jolup.domain.room.Access;
 import hongik.ce.jolup.service.*;
 import lombok.*;
 import lombok.extern.slf4j.Slf4j;
@@ -28,6 +25,7 @@ import javax.validation.Valid;
 import javax.validation.constraints.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 @Slf4j
 @Controller
@@ -36,15 +34,15 @@ import java.util.List;
 public class RoomController {
 
     private final MemberService memberService;
-    private final BelongService belongService;
+    private final JoinService joinService;
     private final RoomService roomService;
+//    private final AlarmService alarmService;
     private final CompetitionService competitionService;
-    private final AlarmService alarmService;
 
     @GetMapping("/create")
     public String createForm(Model model) {
         model.addAttribute("roomForm", new CreateRoomForm());
-        return "rooms/create";
+        return "room/createRoomForm";
     }
 
     @PostMapping("/create")
@@ -54,19 +52,19 @@ public class RoomController {
 
         log.info("roomForm = {}", roomForm);
         if (result.hasErrors()) {
-            return "rooms/create";
+            return "room/createRoomForm";
         }
 
-        Room room = Room.builder().name(roomForm.getName()).roomSetting(roomForm.getRoomSetting()).build();
+        Room room = Room.builder().name(roomForm.getName()).access(roomForm.getAccess()).build();
         Long roomId = roomService.saveRoom(room);
-        belongService.save(member.getId(), roomId, BelongType.ADMIN);
+        joinService.save(member.getId(), roomId, Grade.ADMIN);
         return "redirect:/";
     }
 
     @GetMapping("/{roomId}")
     public String roomDetail(@PathVariable Long roomId,
                              @AuthenticationPrincipal Member member,
-                             @Qualifier("belong") @PageableDefault Pageable belongPageable,
+                             @Qualifier("join") @PageableDefault Pageable joinPageable,
                              @Qualifier("competition") @PageableDefault Pageable competitionPageable,
                              Model model) {
         log.info("roomDetail");
@@ -77,33 +75,39 @@ public class RoomController {
             return "error";
         }
 
-        Belong myBelong = belongService.findOne(member.getId(), roomId);
-        if (myBelong == null && room.getRoomSetting().equals(RoomSetting.PRIVATE)) {
+        Join myJoin = joinService.findOne(member.getId(), roomId);
+        if (myJoin == null && room.getAccess().equals(Access.PRIVATE)) {
             log.info("비공개 방이고 회원이 아님");
             return "error";
         }
         model.addAttribute("room", room);
-        model.addAttribute("myBelong", myBelong);
+        model.addAttribute("myJoin", myJoin);
 
-        Page<Belong> belongs = belongService.findByRoomId(roomId, belongPageable);
-        model.addAttribute("belongs", belongs);
+        Page<Join> joins = joinService.findByRoomId(roomId, joinPageable);
+        model.addAttribute("joins", joins);
         log.info("총 element 수 : {}, 전체 page 수 : {}, 페이지에 표시할 element 수 : {}, 현재 페이지 index : {}, 현재 페이지의 element 수 : {}",
-                belongs.getTotalElements(), belongs.getTotalPages(), belongs.getSize(),
-                belongs.getNumber(), belongs.getNumberOfElements());
+                joins.getTotalElements(), joins.getTotalPages(), joins.getSize(),
+                joins.getNumber(), joins.getNumberOfElements());
 
         Page<Competition> competitions = competitionService.findCompetitions(roomId, competitionPageable);
+//        Page<Competition> competitions = competitionService.findCompetitions(roomId, competitionPageable);
         model.addAttribute("competitions", competitions);
+
+
         log.info("총 element 수 : {}, 전체 page 수 : {}, 페이지에 표시할 element 수 : {}, 현재 페이지 index : {}, 현재 페이지의 element 수 : {}",
                 competitions.getTotalElements(), competitions.getTotalPages(), competitions.getSize(),
                 competitions.getNumber(), competitions.getNumberOfElements());
-        return "rooms/detail";
+        /*log.info("총 element 수 : {}, 전체 page 수 : {}, 페이지에 표시할 element 수 : {}, 현재 페이지 index : {}, 현재 페이지의 element 수 : {}",
+                competitions.getTotalElements(), competitions.getTotalPages(), competitions.getSize(),
+                competitions.getNumber(), competitions.getNumberOfElements());*/
+        return "room/detail";
     }
 
     @DeleteMapping("/{roomId}")
     public String delete(@PathVariable Long roomId, @AuthenticationPrincipal Member member) {
         log.info("delete room");
-        Belong belong = belongService.findOne(member.getId(), roomId);
-        if (belong == null || !belong.getBelongType().equals(BelongType.ADMIN)) {
+        Join join = joinService.findOne(member.getId(), roomId);
+        if (join == null || !join.getGrade().equals(Grade.ADMIN)) {
             return "error";
         }
 
@@ -112,33 +116,33 @@ public class RoomController {
         return "redirect:/";
     }
 
-    @GetMapping("/{roomId}/edit")
+    @GetMapping("/{roomId}/update")
     public String updateForm(@PathVariable Long roomId, Model model, @AuthenticationPrincipal Member member) {
-        Belong belong = belongService.findOne(member.getId(), roomId);
-        if (belong == null || !belong.getBelongType().equals(BelongType.ADMIN)) {
+        Join join = joinService.findOne(member.getId(), roomId);
+        if (join == null || !join.getGrade().equals(Grade.ADMIN)) {
             return "error";
         }
 
-        Room room = belong.getRoom();
-        model.addAttribute("roomForm", new UpdateRoomForm(room.getId(), room.getName(), room.getRoomSetting()));
-        return "rooms/update";
+        Room room = join.getRoom();
+        model.addAttribute("roomForm", new UpdateRoomForm(room.getId(), room.getName(), room.getAccess()));
+        return "room/updateRoomForm";
     }
 
-    @PostMapping("/{roomId}/edit")
+    @PostMapping("/{roomId}/update")
     public String update(@PathVariable Long roomId,
                          @ModelAttribute("roomForm") @Valid UpdateRoomForm roomForm,
                          BindingResult result,
                          @AuthenticationPrincipal Member member) {
-        Belong belong = belongService.findOne(member.getId(), roomId);
-        if (belong == null || !belong.getBelongType().equals(BelongType.ADMIN)) {
+        Join join = joinService.findOne(member.getId(), roomId);
+        if (join == null || !join.getGrade().equals(Grade.ADMIN)) {
             return "error";
         }
 
         if (result.hasErrors()) {
-            return "rooms/update";
+            return "room/updateRoomForm";
         }
         log.info("room = {}", roomForm);
-        roomService.updateRoom(roomForm.getId(), roomForm.getName(), roomForm.getRoomSetting());
+        roomService.updateRoom(roomForm.getId(), roomForm.getName(), roomForm.getAccess());
         return "redirect:/rooms/{roomId}";
     }
 
@@ -147,8 +151,8 @@ public class RoomController {
                              @AuthenticationPrincipal Member member,
                              Model model) {
 
-        Belong belong = belongService.findOne(member.getId(), roomId);
-        if (belong == null || belong.getBelongType().equals(BelongType.USER)) {
+        Join join = joinService.findOne(member.getId(), roomId);
+        if (join == null || join.getGrade().equals(Grade.USER)) {
             return "error";
         }
 
@@ -156,7 +160,7 @@ public class RoomController {
         log.info("inviteForm = {}", inviteForm);
         model.addAttribute("roomId", roomId);
         model.addAttribute("inviteForm", inviteForm);
-        return "rooms/invite";
+        return "room/inviteMemberForm";
     }
 
     @PostMapping("/{roomId}/invite")
@@ -166,17 +170,18 @@ public class RoomController {
                          @AuthenticationPrincipal Member member) {
 
         log.info("inviteForm={}", inviteForm);
-        List<Belong> belongs = belongService.findByRoomId(roomId);
-        Belong belong = belongs.stream().filter(b -> b.getMember().getId().equals(member.getId()))
+        Room room = roomService.findOne(roomId);
+        List<Join> joins = joinService.findByRoomId(roomId);
+        Join join = joins.stream().filter(b -> b.getMember().getId().equals(member.getId()))
                 .findFirst().orElse(null);
-        if (belong == null || belong.getBelongType().equals(BelongType.USER)) {
+        if (join == null || join.getGrade().equals(Grade.USER)) {
             log.info("방의 회원이 아니거나, 방장 또는 매니저가 아니라 초대 불가능!");
             return "error";
         }
 
         List<String> emails = inviteForm.getEmails();
 
-        List<Member> members = memberService.findMembers(emails);
+        Set<Member> members = memberService.findMembers(emails);
         for (int i = 0; i < emails.size(); i++) {
             String email = emails.get(i);
             Member findMember = members.stream().filter(m -> m.getEmail().equals(email)).findAny().orElse(null);
@@ -184,8 +189,8 @@ public class RoomController {
                 result.addError(new FieldError("inviteForm", "emails[" + i + "]", email,false, null, null, "존재하지 않는 회원입니다."));
                 continue;
             }
-            Belong findBelong = belongs.stream().filter(b -> b.getMember().getEmail().equals(email)).findAny().orElse(null);
-            if (findBelong != null) {
+            Join findJoin = joins.stream().filter(b -> b.getMember().getEmail().equals(email)).findAny().orElse(null);
+            if (findJoin != null) {
                 result.addError(new FieldError("inviteForm", "emails[" + i + "]", email,false,null, null, "이미 참여중인 회원입니다."));
             }
 //            Alarm alarm = alarmService.findOne2(findMember.getId(), roomId);
@@ -196,20 +201,21 @@ public class RoomController {
 
         if (result.hasErrors()) {
             log.info("유효성 검사 오류!");
-            return "/rooms/invite";
+            return "room/inviteMemberForm";
         }
 
         if (emails.size() != inviteForm.getCount()) {
             result.addError(new ObjectError("inviteForm", null, null, "오류가 발생했습니다."));
-            return "/rooms/invite";
+            return "room/inviteMemberForm";
         }
 
         log.info("초대");
         for (Member m : members) {
-            Alarm alarm = Alarm.builder().sendMember(member).receiveMember(m)
-                    .alarmType(AlarmType.ROOM_INVITE).status(AlarmStatus.BEFORE).requestId(roomId).build();
-            alarmService.save(alarm);
+            /*Notification notification = Notification.builder().sendMember(member).receiveMember(m)
+                    .notificationType(NotificationType.ROOM_INVITE).checked(false).requestId(roomId).build();
+            alarmService.save(notification);*/
         }
+        roomService.inviteRoom(room, members, member.getName());
 
         return "redirect:/rooms/{roomId}";
     }
@@ -222,7 +228,7 @@ public class RoomController {
         private String name;
 
         @NotNull(message = "공개 여부를 선택하세요.")
-        private RoomSetting roomSetting;
+        private Access access;
     }
 
     @Getter @Setter @ToString
@@ -236,7 +242,7 @@ public class RoomController {
         private String name;
 
         @NotNull(message = "공개 여부를 선택하세요.")
-        private RoomSetting roomSetting;
+        private Access access;
     }
 
     @Getter @Setter @ToString

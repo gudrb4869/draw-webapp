@@ -1,0 +1,154 @@
+<!DOCTYPE HTML>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org">
+<head th:replace="fragments/header :: header" />
+<body class="d-flex flex-column min-vh-100">
+<div th:replace="fragments/bodyheader" :: bodyheader />
+<div class="container">
+    <table class="table table-hover">
+        <thead>
+        <tr>
+            <th class="col-4">방명</th>
+            <th class="col-4">공개 여부</th>
+            <th class="col-4">인원수</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr>
+            <td class="col-4" th:text="${room.name}"></td>
+            <td class="col-4" th:text="${room.access.description}"></td>
+            <td class="col-4" th:text="${joins.getTotalElements()}"></td>
+        </tr>
+        </tbody>
+    </table>
+    <div class="row">
+        <div class="col">
+            <button type="button" class="btn btn-default pull-right" th:onclick="|location.href='@{/}'|">목록</button>
+            <button type="button" class="btn btn-default pull-right" th:onclick="|location.href='@{|/rooms/${roomId}/update|}'|"
+                    th:if="${myJoin ne null and (myJoin.grade.name() eq 'ADMIN')}">수정</button>
+            <form class="pull-right" th:action="@{|/rooms/${room.id}|}" method="post">
+                <input type="hidden" th:if="${myJoin ne null and (myJoin.grade.name() eq 'ADMIN')}" name="_method" value="delete"/>
+                <button class="btn btn-danger" type="submit"
+                        th:if="${myJoin ne null and (myJoin.grade.name() eq 'ADMIN')}">삭제</button>
+            </form>
+        </div>
+    </div>
+    <hr/>
+    <table class="table table-hover">
+        <h3>참여자</h3>
+        <thead>
+        <tr>
+            <th class="col-6">이름</th>
+            <th class="col-6">등급</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="join : ${joins}" th:onclick="${myJoin ne null and (myJoin.grade.name() eq 'ADMIN') and join.grade.name() ne 'ADMIN'}?|location.href='@{|/rooms/${room.id}/joins/${join.id}|}'|">
+            <td class="col-6" th:text="${join.member} ? |${join.member.email}(${join.member.name})| : '탈퇴한 사용자'"></td>
+            <td class="col-6" th:text="${join.grade.description}"></td>
+        </tr>
+        </tbody>
+    </table>
+    <hr/>
+    <button type="button" class="btn btn-default pull-right" th:onclick="|location.href='@{|/rooms/${roomId}/invite|}'|"
+            th:if="${myJoin ne null and (myJoin.grade.name() ne 'USER')}">초대</button>
+    <div class="center text-center">
+        <nav aria-label="Page navigation">
+            <ul class="pagination justify-content-center"
+                th:with="start=${T(java.lang.Math).floor(joins.number/5)*5 + 1},
+                    last=(${start + 4 < joins.totalPages ? start + 4 : joins.totalPages})">
+                <li>
+                    <a th:href="@{|/rooms/${roomId}|(join_page=1, competition_page=${competitions.number + 1})}" aria-label="First">
+                        <span aria-hidden="true"><<</span>
+                    </a>
+                </li>
+
+                <li th:class="${joins.first} ? 'disabled'">
+                    <a th:href="${joins.first} ? '#' :@{|/rooms/${roomId}|(join_page=${joins.number}, competition_page=${competitions.number + 1})}" aria-label="Previous">
+                        <span aria-hidden="true">&lt;</span>
+                    </a>
+                </li>
+
+                <li th:each="page: ${#numbers.sequence(start, last, 1)}" th:class="${page == joins.number + 1} ? 'active'">
+                    <a th:text="${page}" th:href="@{|/rooms/${roomId}|(join_page=${page}, competition_page=${competitions.number + 1})}"></a>
+                </li>
+
+                <li th:class="${joins.last} ? 'disabled'">
+                    <a th:href="${joins.last} ? '#' : @{|/rooms/${roomId}|(join_page=${joins.number + 2}, competition_page=${competitions.number + 1})}" aria-label="Next">
+                        <span aria-hidden="true">&gt;</span>
+                    </a>
+                </li>
+
+                <li>
+                    <a th:href="@{|/rooms/${roomId}|(join_page=${joins.totalPages}, competition_page=${competitions.number + 1})}" aria-label="Last">
+                        <span aria-hidden="true">>></span>
+                    </a>
+                </li>
+            </ul>
+        </nav>
+    </div>
+    <hr/>
+    <table class="table table-hover">
+        <h3>대회</h3>
+        <thead>
+        <tr>
+            <th class="col-4">대회명</th>
+<!--            <th class="col-4">대회방식</th>-->
+            <!--                <th>참가자수</th>-->
+            <th class="col-4">대회생성일자</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:if="${competitions.isEmpty()}">
+            <td class="text-center" colspan="12">참여중인 대회가 없습니다!</td>
+        </tr>
+        <tr th:each="competition : ${competitions}" th:onclick="|location.href='@{|/rooms/${room.id}/competitions/${competition.id}|}'|">
+            <td class="col-4" th:text="${competition.name}">대회명</td>
+<!--            <td class="col-4" th:text="|${competition.type.description}(${competition.option.description})|">리그</td>-->
+            <!--                <td th:text="|명|">0명</td>-->
+            <td class="col-4" th:text="${#temporals.format(competition.createdDate, 'yyyy-MM-dd HH:mm:ss')}">날짜</td>
+        </tr>
+        </tbody>
+    </table>
+    <hr/>
+    <button type="button" class="btn btn-default pull-right" th:if="${myJoin ne null and (myJoin.grade.name() eq 'ADMIN')}"
+            th:onclick="|location.href='@{|/rooms/${roomId}/competitions/create|}'|">대회 만들기</button>
+    <div class="center text-center">
+        <nav aria-label="Page-navigation">
+            <ul class="pagination justify-content-center"
+                th:with="start=${T(java.lang.Math).floor(competitions.number/5)*5 + 1},
+                    last=(${start + 4 < competitions.totalPages ? start + 4 : competitions.totalPages})">
+                <li>
+                    <a th:href="@{|/rooms/${roomId}|(join_page=${joins.number + 1}, competition_page=1)}" aria-label="First">
+                        <span aria-hidden="true"><<</span>
+                    </a>
+                </li>
+
+                <li th:class="${competitions.first} ? 'disabled'">
+                    <a th:href="${competitions.first} ? '#' :@{|/rooms/${roomId}|(join_page=${joins.number + 1}, competition_page=${competitions.number})}" aria-label="Previous">
+                        <span aria-hidden="true">&lt;</span>
+                    </a>
+                </li>
+
+                <li th:each="page: ${#numbers.sequence(start, last, 1)}" th:class="${page == competitions.number + 1} ? 'active'">
+                    <a th:text="${page}" th:href="@{|/rooms/${roomId}|(join_page=${joins.number + 1}, competition_page=${page})}"></a>
+                </li>
+
+                <li th:class="${competitions.last} ? 'disabled'">
+                    <a th:href="${competitions.last} ? '#' : @{|/rooms/${roomId}|(join_page=${joins.number + 1}, competition_page=${competitions.number + 2})}" aria-label="Next">
+                        <span aria-hidden="true">&gt;</span>
+                    </a>
+                </li>
+
+                <li>
+                    <a th:href="@{|/rooms/${roomId}|(join_page=${joins.number + 1}, competition_page=${competitions.totalPages})}" aria-label="Last">
+                        <span aria-hidden="true">>></span>
+                    </a>
+                </li>
+            </ul>
+        </nav>
+    </div>
+</div> <!-- /container -->
+<div th:replace="fragments/footer" :: footer />
+</body>
+</html>
