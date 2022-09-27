@@ -5,6 +5,7 @@ import hongik.ce.jolup.domain.join.Join;
 import hongik.ce.jolup.domain.competition.LeagueGame;
 import hongik.ce.jolup.domain.competition.LeagueTable;
 import hongik.ce.jolup.domain.notification.Notification;
+import hongik.ce.jolup.domain.room.Room;
 import lombok.*;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -47,6 +48,9 @@ public class Member extends BaseTimeEntity implements UserDetails {
 
     @OneToMany(mappedBy = "member", cascade = CascadeType.ALL)
     private List<Join> joins = new ArrayList<>();
+
+    @OneToMany(mappedBy = "master", cascade = CascadeType.ALL)
+    private List<Room> rooms = new ArrayList<>();
 
     @OneToMany(mappedBy = "home", cascade = CascadeType.ALL)
     private List<LeagueGame> homeLeagueGames = new ArrayList<>();

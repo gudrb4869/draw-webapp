@@ -1,5 +1,6 @@
 package hongik.ce.jolup;
 
+import hongik.ce.jolup.domain.competition.CompetitionType;
 import hongik.ce.jolup.domain.join.Grade;
 import hongik.ce.jolup.domain.member.Member;
 import hongik.ce.jolup.domain.room.Room;
@@ -88,8 +89,9 @@ public class InitDb {
             for (int i = 0; i <= 32; i++) {
                 members.add(memberService.signup(createMember(i)));
             }
+            Member member = members.get(1);
 
-            Room room1 = createRoom("Test", Access.PRIVATE);
+            Room room1 = createRoom("Test", Access.PRIVATE, member);
             Long room1Id = roomService.saveRoom(room1);
 
             joinService.save(members.get(1).getId(), room1Id, Grade.ADMIN);
@@ -97,12 +99,12 @@ public class InitDb {
                 joinService.save(members.get(i).getId(), room1Id, Grade.USER);
             }
 
-            Room room2 = createRoom("private", Access.PRIVATE);
+            Room room2 = createRoom("private", Access.PRIVATE, member);
             Long room2Id = roomService.saveRoom(room2);
 
             joinService.save(members.get(1).getId(), room2Id, Grade.ADMIN);
 
-            Room room3 = createRoom("public", Access.PUBLIC);
+            Room room3 = createRoom("public", Access.PUBLIC, member);
             Long room3Id = roomService.saveRoom(room3);
 
             joinService.save(members.get(1).getId(), room3Id, Grade.ADMIN);
@@ -111,24 +113,24 @@ public class InitDb {
              * 대회, 경기 테스트 DB 생성
              */
 
-            /*Long worldCupId = competitionService.save("WorldCup", CompetitionType.TOURNAMENT, room1Id);
+            Long worldCupId = competitionService.save("WorldCup", CompetitionType.TOURNAMENT, room1Id).getId();
             List<Long> memberId32 = new ArrayList<>();
             for (int i = 1; i <= 32; i++) {
                 memberId32.add(members.get(i).getId());
             }
             singleLegGameService.save(memberId32, worldCupId);
 
-            Long eplId = competitionService.save("EPL", CompetitionType.LEAGUE, room1Id);
+            Long eplId = competitionService.save("EPL", CompetitionType.LEAGUE, room1Id).getId();
             List<Long> memberId20 = new ArrayList<>();
             for (int i = 1; i <= 20; i++) {
                 memberId20.add(members.get(i).getId());
             }
             leagueTableService.save(memberId20, eplId);
-            leagueGameService.save(memberId20, eplId);*/
+            leagueGameService.save(memberId20, eplId);
         }
 
-        private Room createRoom(String name, Access access) {
-            return Room.builder().name(name).access(access).build();
+        private Room createRoom(String name, Access access, Member master) {
+            return Room.builder().name(name).access(access).master(master).build();
         }
 
         private SignupForm createMember(int i) {

@@ -23,8 +23,8 @@
     </table>
     <div class="row">
         <div class="col">
-            <button type="button" class="btn btn-default pull-right" th:onclick="|location.href='@{/}'|">목록</button>
-            <button type="button" class="btn btn-default pull-right" th:onclick="|location.href='@{|/rooms/${roomId}/update|}'|"
+            <button type="button" class="btn btn-light link-secondary pull-right" th:onclick="|location.href='@{/}'|">목록</button>
+            <button type="button" class="btn btn-light link-secondary pull-right" th:onclick="|location.href='@{|/rooms/${roomId}/update|}'|"
                     th:if="${myJoin ne null and (myJoin.grade.name() eq 'ADMIN')}">수정</button>
             <form class="pull-right" th:action="@{|/rooms/${room.id}|}" method="post">
                 <input type="hidden" th:if="${myJoin ne null and (myJoin.grade.name() eq 'ADMIN')}" name="_method" value="delete"/>
@@ -50,7 +50,7 @@
         </tbody>
     </table>
     <hr/>
-    <button type="button" class="btn btn-default pull-right" th:onclick="|location.href='@{|/rooms/${roomId}/invite|}'|"
+    <button type="button" class="btn btn-light link-secondary pull-right" th:onclick="|location.href='@{|/rooms/${roomId}/invite|}'|"
             th:if="${myJoin ne null and (myJoin.grade.name() ne 'USER')}">초대</button>
     <div class="center text-center">
         <nav aria-label="Page navigation">
@@ -111,7 +111,7 @@
         </tbody>
     </table>
     <hr/>
-    <button type="button" class="btn btn-default pull-right" th:if="${myJoin ne null and (myJoin.grade.name() eq 'ADMIN')}"
+    <button type="button" class="btn btn-light link-secondary pull-right" th:if="${myJoin ne null and (myJoin.grade.name() eq 'ADMIN')}"
             th:onclick="|location.href='@{|/rooms/${roomId}/competitions/create|}'|">대회 만들기</button>
     <div class="center text-center">
         <nav aria-label="Page-navigation">

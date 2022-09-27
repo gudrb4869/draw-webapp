@@ -111,7 +111,7 @@ public class CompetitionController {
         } else if (competitionForm.getType().equals(CompetitionType.TOURNAMENT)) {
             singleLegGameService.save(memberIds, competitionId);
         }
-        return "redirect:/rooms/{roomId}";
+        return "redirect:/rooms/{roomId}/competitions/" + competitionId;
     }
 
     @GetMapping("/{competitionId}")
@@ -160,7 +160,7 @@ public class CompetitionController {
             model.addAttribute("hashMap", hashMap);
             return "competition/tournament";
         }
-        return "redirect:/";
+        return "redirect:/rooms/{roomId}";
     }
 
     @DeleteMapping("/{competitionId}")

@@ -29,14 +29,12 @@ public class JoinService {
 
     @Transactional
     public Long save(Long memberId, Long roomId, Grade grade) {
-        Optional<Member> optionalMember = memberRepository.findById(memberId);
-        Optional<Room> optionalRoom = roomRepository.findById(roomId);
-        if (optionalMember.isEmpty() || optionalRoom.isEmpty()) {
+        Member member = memberRepository.findById(memberId).orElse(null);
+        Room room = roomRepository.findById(roomId).orElse(null);
+        if (member == null || room == null) {
             return null;
         }
-
-        Member member = optionalMember.get();
-        Room room = optionalRoom.get();
+        room.addCount();
         Join join = Join.builder().member(member).room(room).grade(grade).build();
         return joinRepository.save(join).getId();
     }
@@ -63,8 +61,6 @@ public class JoinService {
             join.updateMember(null);
         }
     }
-
-
 
     public Page<Join> findByMemberId(Long memberId, Pageable pageable) {
         int page = (pageable.getPageNumber() == 0) ? 0 : (pageable.getPageNumber() - 1);

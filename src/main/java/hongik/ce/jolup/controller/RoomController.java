@@ -36,7 +36,6 @@ public class RoomController {
     private final MemberService memberService;
     private final JoinService joinService;
     private final RoomService roomService;
-//    private final AlarmService alarmService;
     private final CompetitionService competitionService;
 
     @GetMapping("/create")
@@ -55,27 +54,21 @@ public class RoomController {
             return "room/createRoomForm";
         }
 
-        Room room = Room.builder().name(roomForm.getName()).access(roomForm.getAccess()).build();
+        Room room = Room.builder().name(roomForm.getName()).access(roomForm.getAccess()).master(member).build();
         Long roomId = roomService.saveRoom(room);
         joinService.save(member.getId(), roomId, Grade.ADMIN);
-        return "redirect:/";
+        return "redirect:/rooms/" + roomId;
     }
 
     @GetMapping("/{roomId}")
-    public String roomDetail(@PathVariable Long roomId,
+    public String roomDetail(@PathVariable("roomId") Room room,
                              @AuthenticationPrincipal Member member,
                              @Qualifier("join") @PageableDefault Pageable joinPageable,
                              @Qualifier("competition") @PageableDefault Pageable competitionPageable,
                              Model model) {
         log.info("roomDetail");
 
-        Room room = roomService.findOne(roomId);
-        if (room == null) {
-            log.info("존재하지 않는 방임");
-            return "error";
-        }
-
-        Join myJoin = joinService.findOne(member.getId(), roomId);
+        Join myJoin = joinService.findOne(member.getId(), room.getId());
         if (myJoin == null && room.getAccess().equals(Access.PRIVATE)) {
             log.info("비공개 방이고 회원이 아님");
             return "error";
@@ -83,13 +76,13 @@ public class RoomController {
         model.addAttribute("room", room);
         model.addAttribute("myJoin", myJoin);
 
-        Page<Join> joins = joinService.findByRoomId(roomId, joinPageable);
+        Page<Join> joins = joinService.findByRoomId(room.getId(), joinPageable);
         model.addAttribute("joins", joins);
         log.info("총 element 수 : {}, 전체 page 수 : {}, 페이지에 표시할 element 수 : {}, 현재 페이지 index : {}, 현재 페이지의 element 수 : {}",
                 joins.getTotalElements(), joins.getTotalPages(), joins.getSize(),
                 joins.getNumber(), joins.getNumberOfElements());
 
-        Page<Competition> competitions = competitionService.findCompetitions(roomId, competitionPageable);
+        Page<Competition> competitions = competitionService.findCompetitions(room.getId(), competitionPageable);
 //        Page<Competition> competitions = competitionService.findCompetitions(roomId, competitionPageable);
         model.addAttribute("competitions", competitions);
 
@@ -164,14 +157,13 @@ public class RoomController {
     }
 
     @PostMapping("/{roomId}/invite")
-    public String invite(@PathVariable Long roomId,
+    public String invite(@PathVariable("roomId") Room room,
                          @Valid InviteForm inviteForm,
                          BindingResult result,
                          @AuthenticationPrincipal Member member) {
 
         log.info("inviteForm={}", inviteForm);
-        Room room = roomService.findOne(roomId);
-        List<Join> joins = joinService.findByRoomId(roomId);
+        List<Join> joins = joinService.findByRoomId(room.getId());
         Join join = joins.stream().filter(b -> b.getMember().getId().equals(member.getId()))
                 .findFirst().orElse(null);
         if (join == null || join.getGrade().equals(Grade.USER)) {
@@ -210,11 +202,6 @@ public class RoomController {
         }
 
         log.info("초대");
-        for (Member m : members) {
-            /*Notification notification = Notification.builder().sendMember(member).receiveMember(m)
-                    .notificationType(NotificationType.ROOM_INVITE).checked(false).requestId(roomId).build();
-            alarmService.save(notification);*/
-        }
         roomService.inviteRoom(room, members, member.getName());
 
         return "redirect:/rooms/{roomId}";
