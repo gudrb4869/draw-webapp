@@ -5,7 +5,7 @@ import hongik.ce.jolup.domain.join.Grade;
 import hongik.ce.jolup.domain.member.Member;
 import hongik.ce.jolup.domain.room.Room;
 import hongik.ce.jolup.domain.room.Access;
-import hongik.ce.jolup.model.SignupForm;
+import hongik.ce.jolup.dto.SignupForm;
 import hongik.ce.jolup.service.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
@@ -77,8 +77,8 @@ public class InitDb {
         private final RoomService roomService;
         private final CompetitionService competitionService;
         private final LeagueTableService leagueTableService;
-        private final LeagueGameService leagueGameService;
-        private final SingleLegGameService singleLegGameService;
+        private final LeagueService leagueService;
+        private final TournamentService tournamentService;
 
         public void dbInit() {
 
@@ -118,7 +118,7 @@ public class InitDb {
             for (int i = 1; i <= 32; i++) {
                 memberId32.add(members.get(i).getId());
             }
-            singleLegGameService.save(memberId32, worldCupId);
+            tournamentService.save(memberId32, worldCupId);
 
             Long eplId = competitionService.save("EPL", CompetitionType.LEAGUE, room1Id).getId();
             List<Long> memberId20 = new ArrayList<>();
@@ -126,7 +126,7 @@ public class InitDb {
                 memberId20.add(members.get(i).getId());
             }
             leagueTableService.save(memberId20, eplId);
-            leagueGameService.save(memberId20, eplId);
+            leagueService.save(memberId20, eplId);
         }
 
         private Room createRoom(String name, Access access, Member master) {

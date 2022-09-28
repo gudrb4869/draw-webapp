@@ -1,4 +1,4 @@
-package hongik.ce.jolup.model;
+package hongik.ce.jolup.dto;
 
 import lombok.Data;
 import org.hibernate.validator.constraints.Length;

@@ -1,4 +1,4 @@
-package hongik.ce.jolup.model;
+package hongik.ce.jolup.dto;
 
 import hongik.ce.jolup.domain.member.Member;
 import lombok.AccessLevel;

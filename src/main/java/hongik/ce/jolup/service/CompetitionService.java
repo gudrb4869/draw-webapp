@@ -2,7 +2,6 @@ package hongik.ce.jolup.service;
 
 import hongik.ce.jolup.domain.competition.Competition;
 import hongik.ce.jolup.domain.competition.CompetitionCreatedEvent;
-import hongik.ce.jolup.domain.competition.CompetitionOption;
 import hongik.ce.jolup.domain.competition.CompetitionType;
 import hongik.ce.jolup.domain.member.Member;
 import hongik.ce.jolup.domain.room.Room;
@@ -37,7 +36,7 @@ public class CompetitionService {
     }
 
     public void SendAlarm(Competition competition, Set<Member> members) {
-        eventPublisher.publishEvent(new CompetitionCreatedEvent(competition, "대회가 새로 생성됨", members));
+        eventPublisher.publishEvent(new CompetitionCreatedEvent(competition, "새로운 대회가 생성되었습니다.", members));
     }
 
     @Transactional
@@ -65,7 +64,7 @@ public class CompetitionService {
 
     public Page<Competition> findCompetitions(Long roomId, Pageable pageable) {
         int page = (pageable.getPageNumber() == 0) ? 0 : (pageable.getPageNumber() - 1);
-        return competitionRepository.findByRoomId(roomId, PageRequest.of(page, 3, Sort.by("createdDate").descending()));
+        return competitionRepository.findByRoomId(roomId, PageRequest.of(page, 9, Sort.by("createdDate").descending()));
     }
 
     public Competition findOne(Long competitionId, Long roomId) {

@@ -1,8 +1,8 @@
 package hongik.ce.jolup.domain.member;
 
 import hongik.ce.jolup.domain.BaseTimeEntity;
+import hongik.ce.jolup.domain.match.Match;
 import hongik.ce.jolup.domain.join.Join;
-import hongik.ce.jolup.domain.competition.LeagueGame;
 import hongik.ce.jolup.domain.competition.LeagueTable;
 import hongik.ce.jolup.domain.notification.Notification;
 import hongik.ce.jolup.domain.room.Room;
@@ -52,20 +52,14 @@ public class Member extends BaseTimeEntity implements UserDetails {
     @OneToMany(mappedBy = "master", cascade = CascadeType.ALL)
     private List<Room> rooms = new ArrayList<>();
 
-    @OneToMany(mappedBy = "home", cascade = CascadeType.ALL)
-    private List<LeagueGame> homeLeagueGames = new ArrayList<>();
-
-    @OneToMany(mappedBy = "away", cascade = CascadeType.ALL)
-    private List<LeagueGame> awayLeagueGames = new ArrayList<>();
-
     @OneToMany(mappedBy = "member", cascade = CascadeType.ALL)
     private List<LeagueTable> leagueTables = new ArrayList<>();
 
     @OneToMany(mappedBy = "home", cascade = CascadeType.ALL)
-    private List<LeagueGame> homeSingleLegGames = new ArrayList<>();
+    private List<Match> homeMatches = new ArrayList<>();
 
     @OneToMany(mappedBy = "away", cascade = CascadeType.ALL)
-    private List<LeagueGame> awaySingleLegGames = new ArrayList<>();
+    private List<Match> awayMatches = new ArrayList<>();
 
     @Builder
     public Member(Long id, String email, String password, String name, String image, Role role) {

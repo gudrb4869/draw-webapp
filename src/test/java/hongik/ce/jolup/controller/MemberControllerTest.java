@@ -1,7 +1,7 @@
 package hongik.ce.jolup.controller;
 
 import hongik.ce.jolup.domain.member.Member;
-import hongik.ce.jolup.model.SignupForm;
+import hongik.ce.jolup.dto.SignupForm;
 import hongik.ce.jolup.repository.MemberRepository;
 import hongik.ce.jolup.service.MemberService;
 import org.junit.jupiter.api.*;

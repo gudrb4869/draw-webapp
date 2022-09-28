@@ -2,38 +2,14 @@
 <html xmlns="http://www.w3.org/1999/xhtml"
       xmlns:th="http://www.thymeleaf.org">
 <head th:replace="fragments/header :: header" />
-<body class="d-flex flex-column min-vh-100">
+<body class="d-flex flex-column min-vh-100 bg-light">
 <div th:replace="fragments/bodyheader" :: bodyheader />
 <div class="container">
-    <table class="table table-hover">
-        <h3>방</h3>
-        <!--<form class="form-inline d-flex justify-content-end" method="get", th:action="@{/}" th:value="${param.searchText}">
-            <div class="form-group mx-sm-3 mb-2 pull-right">
-                <label for="searchText" class="sr-only">검색</label>
-                <input type="text" class="form-control" id="searchText" name="searchText">
-                <button type="submit" class="btn btn-primary mb-2">검색 </button>
-            </div>
-        </form>-->
-        <thead>
-        <tr>
-            <th class="col-6">방명</th>
-            <th class="col-3">인원수</th>
-            <th class="col-3">참여날짜</th>
-        </tr>
-        </thead>
-        <tbody>
-        <tr th:if="${joins.isEmpty()}">
-            <td class="text-center" colspan="12">방이 존재하지 않습니다.</td>
-        </tr>
-        <tr th:each="join : ${joins}" th:onclick="|location.href='@{|/rooms/${join.room.id}|}'|">
-            <td class="col-6" th:text="${join.room.name}"></td>
-            <td class="col-3" th:text="${join.room.count}"></td>
-            <td class="col-3" th:text="${#temporals.format(join.createdDate, 'yyyy-MM-dd HH:mm:ss')}">참여날짜</td>
-        </tr>
-        </tbody>
-    </table>
-    <hr/>
-    <button type="button" class="btn btn-light link-secondary pull-right" th:onclick="|location.href='@{/rooms/create}'|">방 만들기</button>
+    <div class="row justify-content-center pt-3">
+        <h5 class="font-weight-light">방</h5>
+        <div th:replace="fragments/list::room-List (roomList=${joins})"></div>
+    </div>
+    <button type="button" class="btn btn-outline-dark pull-right" th:onclick="|location.href='@{/rooms/create}'|">방 만들기</button>
 
     <div class="center text-center">
         <nav aria-label="Page navigation">

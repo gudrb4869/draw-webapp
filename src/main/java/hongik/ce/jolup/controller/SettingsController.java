@@ -1,13 +1,12 @@
 package hongik.ce.jolup.controller;
 
 import hongik.ce.jolup.domain.member.Member;
-import hongik.ce.jolup.model.PasswordForm;
-import hongik.ce.jolup.model.Profile;
+import hongik.ce.jolup.dto.PasswordForm;
+import hongik.ce.jolup.dto.Profile;
 import hongik.ce.jolup.service.MemberService;
 import hongik.ce.jolup.validator.PasswordFormValidator;
 import hongik.ce.jolup.validator.ProfileValidator;
 import lombok.*;
-import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;

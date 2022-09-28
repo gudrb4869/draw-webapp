@@ -1,9 +1,8 @@
 package hongik.ce.jolup.service;
 
 import hongik.ce.jolup.domain.member.Member;
-import hongik.ce.jolup.model.Profile;
-import hongik.ce.jolup.model.SignupForm;
-import hongik.ce.jolup.model.PasswordForm;
+import hongik.ce.jolup.dto.Profile;
+import hongik.ce.jolup.dto.SignupForm;
 import hongik.ce.jolup.repository.MemberRepository;
 import hongik.ce.jolup.domain.member.Role;
 import lombok.RequiredArgsConstructor;
@@ -12,7 +11,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
-import java.util.Optional;
 import java.util.Set;
 
 @Service

@@ -23,7 +23,7 @@ public class HomeController {
 
     @GetMapping("/")
     public String index(@AuthenticationPrincipal Member member, Model model, String keyword,
-                        @PageableDefault(size = 9, sort = "createdDate", direction = Sort.Direction.ASC) Pageable pageable) {
+                        @PageableDefault(size = 12, sort = "createdDate", direction = Sort.Direction.ASC) Pageable pageable) {
         log.info("home controller");
         if (member != null) {
             model.addAttribute("member", member);

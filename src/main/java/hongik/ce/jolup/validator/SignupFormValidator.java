@@ -1,6 +1,6 @@
 package hongik.ce.jolup.validator;
 
-import hongik.ce.jolup.model.SignupForm;
+import hongik.ce.jolup.dto.SignupForm;
 import hongik.ce.jolup.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;

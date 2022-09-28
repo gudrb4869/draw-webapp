@@ -64,7 +64,7 @@ public class JoinService {
 
     public Page<Join> findByMemberId(Long memberId, Pageable pageable) {
         int page = (pageable.getPageNumber() == 0) ? 0 : (pageable.getPageNumber() - 1);
-        return joinRepository.findByMemberId(memberId, PageRequest.of(page, 3, Sort.by("createdDate").descending()));
+        return joinRepository.findByMemberId(memberId, PageRequest.of(page, 12, Sort.by("createdDate").descending()));
     }
 
     public Join findByIdAndRoomId(Long id, Long roomId) {
@@ -81,6 +81,6 @@ public class JoinService {
 
     public Page<Join> findByRoomId(Long roomId, Pageable pageable) {
         int page = (pageable.getPageNumber() == 0) ? 0 : (pageable.getPageNumber() - 1);
-        return joinRepository.findByRoomId(roomId, PageRequest.of(page, 3, Sort.by("grade").ascending()));
+        return joinRepository.findByRoomId(roomId, PageRequest.of(page, 20, Sort.by("grade").ascending()));
     }
 }

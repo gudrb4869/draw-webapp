@@ -1,6 +1,7 @@
 package hongik.ce.jolup.domain.competition;
 
 import hongik.ce.jolup.domain.BaseTimeEntity;
+import hongik.ce.jolup.domain.match.Match;
 import hongik.ce.jolup.domain.room.Room;
 import lombok.*;
 
@@ -37,10 +38,7 @@ public class Competition extends BaseTimeEntity {
     private List<LeagueTable> leagueTables = new ArrayList<>();
 
     @OneToMany(mappedBy = "competition", cascade = CascadeType.ALL)
-    private List<LeagueGame> leagueGames = new ArrayList<>();
-
-    @OneToMany(mappedBy = "competition", cascade = CascadeType.ALL)
-    private List<SingleLegGame> singleLegGames = new ArrayList<>();
+    private List<Match> matches = new ArrayList<>();
 
     @Builder
     public Competition(Long id, String name, CompetitionType type/*, CompetitionOption option*/, Room room) {

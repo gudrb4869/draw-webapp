@@ -2,7 +2,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml"
       xmlns:th="http://www.thymeleaf.org">
 <head th:replace="fragments/header :: header" />
-<body class="d-flex flex-column min-vh-100">
+<body class="d-flex flex-column min-vh-100 bg-light">
 <div th:replace="fragments/bodyheader" :: bodyheader />
 <div class="container">
     <div class="py-5 text-center">
@@ -17,8 +17,8 @@
             <div class="mb-4"></div>
             <div class="row">
                 <div class="col">
-                    <button class="btn btn-light link-secondary" type="button" th:onclick="|location.href='@{|/rooms/${roomId}/competitions/${competitionId}/matches/${matchId}/update|}'|">경기결과 수정</button>
-                    <button class="btn btn-light link-secondary" type="button" th:onclick="|location.href='@{|/rooms/${roomId}/competitions/${competitionId}|}'|" >돌아가기</button>
+                    <button class="btn-outline-dark" type="button" th:onclick="|location.href='@{|/rooms/${roomId}/competitions/${competitionId}/matches/${matchId}/update|}'|">경기결과 수정</button>
+                    <button class="btn-outline-dark" type="button" th:onclick="|location.href='@{|/rooms/${roomId}/competitions/${competitionId}|}'|" >돌아가기</button>
                 </div>
             </div>
         </div>

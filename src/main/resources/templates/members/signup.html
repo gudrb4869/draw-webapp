@@ -2,7 +2,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml"
       xmlns:th="http://www.thymeleaf.org">
 <head th:replace="fragments/header :: header" />
-<body class="d-flex flex-column min-vh-100">
+<body class="d-flex flex-column min-vh-100 bg-light">
 <div th:replace="fragments/bodyheader" :: bodyheader />
 <div class="container">
     <div class="py-5 text-center">
@@ -35,8 +35,8 @@
             </div>
             <div class="mb-4"></div>
             <div class="form-group">
-                <button class="btn btn-light link-secondary" type="submit">가입하기</button>
-                <button class="btn btn-light link-secondary" type="button" th:onclick="|location.href='@{/}'|">취소</button>
+                <button class="btn btn-outline-dark" type="submit">가입하기</button>
+                <button class="btn btn-outline-dark" type="button" th:onclick="|location.href='@{/}'|">취소</button>
             </div>
         </form>
     </div>

@@ -2,12 +2,14 @@ package hongik.ce.jolup.service;
 
 import hongik.ce.jolup.domain.competition.Competition;
 import hongik.ce.jolup.domain.competition.Status;
+import hongik.ce.jolup.domain.match.MatchUpdatedEvent;
 import hongik.ce.jolup.domain.member.Member;
-import hongik.ce.jolup.domain.competition.SingleLegGame;
+import hongik.ce.jolup.domain.match.Match;
 import hongik.ce.jolup.repository.CompetitionRepository;
+import hongik.ce.jolup.repository.MatchRepository;
 import hongik.ce.jolup.repository.MemberRepository;
-import hongik.ce.jolup.repository.SingleLegGameRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -19,11 +21,12 @@ import java.util.*;
 @Service
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
-public class SingleLegGameService {
+public class TournamentService {
 
     private final MemberRepository memberRepository;
     private final CompetitionRepository competitionRepository;
-    private final SingleLegGameRepository singleLegGameRepository;
+    private final MatchRepository matchRepository;
+    private final ApplicationEventPublisher eventPublisher;
 
     @Transactional
     public void save(List<Long> memberIds, Long competitionId) {
@@ -50,7 +53,7 @@ public class SingleLegGameService {
                 if (i == round - 1 && auto_win_num > 0 && list.contains(j)) {
                     continue;
                 }
-                SingleLegGame singleLegGame = SingleLegGame.builder().competition(competition)
+                Match match = Match.builder().competition(competition)
                         .home(i == round - 1 ? members.remove(0) :
                                 (i == round - 2 && auto_win_num > 0 && list.contains(j * 2) ? members.remove(0) : null))
                         .away(i == round - 1 ? members.remove(0) :
@@ -60,7 +63,7 @@ public class SingleLegGameService {
                         .number(j)
                         .homeScore(0).awayScore(0)
                         .build();
-                singleLegGameRepository.save(singleLegGame);
+                matchRepository.save(match);
             }
             number *= 2;
         }
@@ -68,75 +71,79 @@ public class SingleLegGameService {
 
     @Transactional
     public void update(Long id, Long competitionId, Status status, Integer homeScore, Integer awayScore) {
-        SingleLegGame singleLegGame = singleLegGameRepository.findById(id).orElse(null);
-        if (singleLegGame == null) {
+        Match match = matchRepository.findById(id).orElse(null);
+        if (match == null) {
             return;
         }
 
-        if (singleLegGame.getStatus().equals(Status.AFTER)) {
-            if (singleLegGame.getHomeScore() > singleLegGame.getAwayScore() && homeScore <= awayScore) {
-                resetSingleLegGames(competitionId, singleLegGame);
+        if (match.getStatus().equals(Status.AFTER)) {
+            if (match.getHomeScore() > match.getAwayScore() && homeScore <= awayScore) {
+                resetMatches(competitionId, match);
             }
-            else if (singleLegGame.getHomeScore() < singleLegGame.getAwayScore() && homeScore >= awayScore) {
-                resetSingleLegGames(competitionId, singleLegGame);
+            else if (match.getHomeScore() < match.getAwayScore() && homeScore >= awayScore) {
+                resetMatches(competitionId, match);
             }
         }
         if (status.equals(Status.AFTER)) {
             if (homeScore > awayScore) {
-                setNextRoundSingleLegGame(competitionId, singleLegGame, singleLegGame.getHome());
+                setNextRoundMatch(competitionId, match, match.getHome());
             } else if (homeScore < awayScore) {
-                setNextRoundSingleLegGame(competitionId, singleLegGame, singleLegGame.getAway());
+                setNextRoundMatch(competitionId, match, match.getAway());
             }
         }
 
-        singleLegGame.updateStatus(status);
-        singleLegGame.updateScore(homeScore, awayScore);
+        match.updateStatus(status);
+        match.updateScore(homeScore, awayScore);
+    }
+
+    public void sendAlarm(Match match, Long roomId, Set<Member> members) {
+        eventPublisher.publishEvent(new MatchUpdatedEvent(match, roomId, "경기 결과가 수정되었습니다.", members));
     }
     
     @Transactional
     public void delete(Long id) {
-        singleLegGameRepository.deleteById(id);
+        matchRepository.deleteById(id);
     }
 
     @Transactional
     public void setNull(Long memberId) {
-        List<SingleLegGame> homeMatches = singleLegGameRepository.findByHomeId(memberId);
-        for (SingleLegGame match : homeMatches) {
+        List<Match> homeMatches = matchRepository.findByHomeId(memberId);
+        for (Match match : homeMatches) {
             match.updateHome(null);
         }
-        List<SingleLegGame> awayMatches = singleLegGameRepository.findByAwayId(memberId);
-        for (SingleLegGame match : awayMatches) {
+        List<Match> awayMatches = matchRepository.findByAwayId(memberId);
+        for (Match match : awayMatches) {
             match.updateAway(null);
         }
     }
 
-    public Page<SingleLegGame> findByCompetition(Long competitionId, int count, Pageable pageable) {
+    public Page<Match> findByCompetition(Long competitionId, int count, Pageable pageable) {
         int page = (pageable.getPageNumber() == 0) ? 0 : (pageable.getPageNumber() - 1);
-        return singleLegGameRepository.findByCompetitionId(competitionId, PageRequest.of(page, count / 2));
+        return matchRepository.findByCompetitionId(competitionId, PageRequest.of(page, count / 2));
     }
 
-    public List<SingleLegGame> findByCompetition(Long competitionId) {
-        return singleLegGameRepository.findByCompetitionId(competitionId);
+    public List<Match> findByCompetition(Long competitionId) {
+        return matchRepository.findByCompetitionId(competitionId);
     }
 
-    public SingleLegGame findByIdAndCompetitionId(Long id, Long competitionId) {
-        return singleLegGameRepository.findByIdAndCompetitionId(id, competitionId).orElse(null);
+    public Match findByIdAndCompetitionId(Long id, Long competitionId) {
+        return matchRepository.findByIdAndCompetitionId(id, competitionId).orElse(null);
     }
 
-    public SingleLegGame findOne(Long id) {
-        return singleLegGameRepository.findById(id).orElse(null);
+    public Match findOne(Long id) {
+        return matchRepository.findById(id).orElse(null);
     }
 
-    public SingleLegGame findOne(Long competitionId, Integer round, Integer number) {
-        return singleLegGameRepository.findByCompetitionIdAndRoundAndNumber(competitionId, round, number).orElse(null);
+    public Match findOne(Long competitionId, Integer round, Integer number) {
+        return matchRepository.findByCompetitionIdAndRoundAndNumber(competitionId, round, number).orElse(null);
     }
 
-    private void setNextRoundSingleLegGame(Long competitionId, SingleLegGame singleLegGame, Member member) {
-        SingleLegGame nextMatch = singleLegGameRepository
-                .findByCompetitionIdAndRoundAndNumber(competitionId, singleLegGame.getRound() - 1, singleLegGame.getNumber() / 2)
+    private void setNextRoundMatch(Long competitionId, Match match, Member member) {
+        Match nextMatch = matchRepository
+                .findByCompetitionIdAndRoundAndNumber(competitionId, match.getRound() - 1, match.getNumber() / 2)
                 .orElse(null);
         if (nextMatch != null) {
-            if (singleLegGame.getNumber() % 2 == 0) {
+            if (match.getNumber() % 2 == 0) {
                 nextMatch.updateHome(member);
             } else {
                 nextMatch.updateAway(member);
@@ -144,10 +151,10 @@ public class SingleLegGameService {
         }
     }
 
-    private void resetSingleLegGames(Long competitionId, SingleLegGame singleLegGame) {
-        SingleLegGame cur = singleLegGame;
+    private void resetMatches(Long competitionId, Match match) {
+        Match cur = match;
         while (true) {
-            SingleLegGame next = singleLegGameRepository
+            Match next = matchRepository
                     .findByCompetitionIdAndRoundAndNumber(competitionId, cur.getRound() - 1, cur.getNumber() / 2)
                     .orElse(null);
             if (next == null) {

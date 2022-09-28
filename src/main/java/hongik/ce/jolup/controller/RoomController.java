@@ -12,6 +12,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
@@ -63,8 +64,8 @@ public class RoomController {
     @GetMapping("/{roomId}")
     public String roomDetail(@PathVariable("roomId") Room room,
                              @AuthenticationPrincipal Member member,
-                             @Qualifier("join") @PageableDefault Pageable joinPageable,
-                             @Qualifier("competition") @PageableDefault Pageable competitionPageable,
+                             @Qualifier("join") @PageableDefault(size = 20, sort = "grade", direction = Sort.Direction.ASC) Pageable joinPageable,
+                             @Qualifier("competition") @PageableDefault(size = 9, sort = "createdDate", direction = Sort.Direction.ASC) Pageable competitionPageable,
                              Model model) {
         log.info("roomDetail");
 

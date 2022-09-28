@@ -1,13 +1,15 @@
 package hongik.ce.jolup.service;
 
-import hongik.ce.jolup.domain.competition.Competition;
-import hongik.ce.jolup.domain.competition.LeagueGame;
-import hongik.ce.jolup.domain.competition.Status;
+import hongik.ce.jolup.domain.competition.*;
+import hongik.ce.jolup.domain.match.Match;
+import hongik.ce.jolup.domain.match.MatchUpdatedEvent;
 import hongik.ce.jolup.domain.member.Member;
 import hongik.ce.jolup.repository.CompetitionRepository;
-import hongik.ce.jolup.repository.LeagueGameRepository;
+import hongik.ce.jolup.repository.MatchRepository;
+import hongik.ce.jolup.repository.LeagueTableRepository;
 import hongik.ce.jolup.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -19,11 +21,13 @@ import java.util.*;
 @Service
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
-public class LeagueGameService {
+public class LeagueService {
 
     private final MemberRepository memberRepository;
     private final CompetitionRepository competitionRepository;
-    private final LeagueGameRepository leagueGameRepository;
+    private final MatchRepository matchRepository;
+    private final LeagueTableRepository leagueTableRepository;
+    private final ApplicationEventPublisher eventPublisher;
 
     @Transactional
     public void save(List<Long> memberIds, Long competitionId) {
@@ -36,27 +40,28 @@ public class LeagueGameService {
         if (count % 2 == 1) {
             for (int i = 0; i < count; i++) {
                 for (int j = 0; j < count/2; j++) {
-                    LeagueGame leagueGame = LeagueGame.builder().competition(competition)
+                    Match match = Match.builder().competition(competition)
                             .home(i % 2 == 0 ? members.get((i + j) % count) : members.get((i + count - j - 2) % count))
                             .away(i % 2 == 0 ? members.get((i + count - j - 2) % count) : members.get((i + j) % count))
                             .status(Status.BEFORE)
                             .round(i)
+                            .number(j)
                             .homeScore(0).awayScore(0)
                             .build();
-                    leagueGameRepository.save(leagueGame);
+                    matchRepository.save(match);
                 }
             }
             /*if (option.equals(CompetitionOption.DOUBLE)) {
                 for (int i = 0; i < count; i++) {
                     for (int j = 0; j < count/2; j++) {
-                        LeagueGame leagueGame = LeagueGame.builder().league(league)
+                        Match Match = Match.builder().league(league)
                                 .home(i % 2 == 0 ? members.get((i + count - j - 2) % count) : members.get((i + j) % count))
                                 .away(i % 2 == 0 ? members.get((i + j) % count) : members.get((i + count - j - 2) % count))
                                 .status(Status.BEFORE)
                                 .round(count + i)
                                 .homeScore(0).awayScore(0)
                                 .build();
-                        leagueGameRepository.save(leagueGame);
+                        MatchRepository.save(Match);
                     }
                 }
             }*/
@@ -67,94 +72,137 @@ public class LeagueGameService {
             Member fixed = members.remove(random.nextInt(count));
             for (int i = 0; i < count - 1; i++) {
                 for (j = 0; j < count/2 - 1; j++) {
-                    LeagueGame leagueGame = LeagueGame.builder().competition(competition)
+                    Match match = Match.builder().competition(competition)
                             .home(members.get(i % 2 == 0 ? (i + j) % (count - 1) : (i + count - j - 2) % (count - 1)))
                             .away(members.get(i % 2 == 0 ? (i + count - j - 2) % (count - 1) : (i + j) % (count - 1)))
                             .status(Status.BEFORE)
                             .round(i)
+                            .number(j)
                             .homeScore(0).awayScore(0)
                             .build();
-                    leagueGameRepository.save(leagueGame);
+                    matchRepository.save(match);
                 }
-                LeagueGame match = LeagueGame.builder().competition(competition)
+                Match match = Match.builder().competition(competition)
                         .home(i % 2 == 0 ? members.get((i + j) % (count - 1)) : fixed)
                         .away(i % 2 == 0 ? fixed : members.get((i + j) % (count - 1)))
                         .status(Status.BEFORE)
                         .round(i)
+                        .number(j)
                         .homeScore(0).awayScore(0)
                         .build();
-                leagueGameRepository.save(match);
+                matchRepository.save(match);
             }
             /*if (option.equals(CompetitionOption.DOUBLE)) {
                 for (int i = 0; i < count - 1; i++) {
                     for (j = 0; j < count/2 - 1; j++) {
-                        LeagueGame match = LeagueGame.builder().league(league)
+                        Match match = Match.builder().league(league)
                                 .home(members.get(i % 2 == 0 ? (i + count - j - 2) % (count - 1) : (i + j) % (count - 1)))
                                 .away(members.get(i % 2 == 0 ? (i + j) % (count - 1) : (i + count - j - 2) % (count - 1)))
                                 .status(Status.BEFORE)
                                 .round(count - 1 + i)
                                 .homeScore(0).awayScore(0)
                                 .build();
-                        leagueGameRepository.save(match);
+                        MatchRepository.save(match);
                     }
-                    LeagueGame match = LeagueGame.builder().league(league)
+                    Match match = Match.builder().league(league)
                             .home(i % 2 == 0 ? fixed : members.get((i + j) % (count - 1)))
                             .away(i % 2 == 0 ? members.get((i + j) % (count - 1)) : fixed)
                             .status(Status.BEFORE)
                             .round(count - 1 + i)
                             .homeScore(0).awayScore(0)
                             .build();
-                    leagueGameRepository.save(match);
+                    MatchRepository.save(match);
                 }
             }*/
         }
     }
 
     @Transactional
-    public void update(Long matchId, Status status, Integer homeScore, Integer awayScore) {
-        LeagueGame leagueGame = leagueGameRepository.findById(matchId).orElse(null);
-        if (leagueGame == null) {
+    public void update(Long matchId, Long competitionId, Status status, Integer homeScore, Integer awayScore, Long homeId, Long awayId) {
+        Match match = matchRepository.findById(matchId).orElse(null);
+        LeagueTable home = leagueTableRepository.findByMemberIdAndCompetitionId(homeId, competitionId).orElse(null);
+        LeagueTable away = leagueTableRepository.findByMemberIdAndCompetitionId(awayId, competitionId).orElse(null);
+        if (match == null || home == null || away == null) {
             return;
         }
-        leagueGame.updateStatus(status);
-        leagueGame.updateScore(homeScore, awayScore);
+
+        if (match.getStatus().equals(Status.AFTER)) {
+            if (match.getHomeScore() > match.getAwayScore()) {
+                home.subWin(1);
+                away.subLose(1);
+            } else if (match.getHomeScore() < match.getAwayScore()) {
+                home.subLose(1);
+                away.subWin(1);
+            } else {
+                home.subDraw(1);
+                away.subDraw(1);
+            }
+            home.subGoalFor(match.getHomeScore());
+            home.subGoalAgainst(match.getAwayScore());
+            away.subGoalFor(match.getAwayScore());
+            away.subGoalAgainst(match.getHomeScore());
+        }
+
+        if (status.equals(Status.AFTER)) {
+            if (homeScore > awayScore) {
+                home.addWin(1);
+                away.addLose(1);
+            } else if (homeScore < awayScore) {
+                home.addLose(1);
+                away.addWin(1);
+            } else {
+                home.addDraw(1);
+                away.addDraw(1);
+            }
+            home.addGoalFor(homeScore);
+            home.addGoalAgainst(awayScore);
+            away.addGoalFor(awayScore);
+            away.addGoalAgainst(homeScore);
+        }
+
+        match.updateStatus(status);
+        match.updateScore(homeScore, awayScore);
+    }
+
+    public void sendAlarm(Match match, Long roomId, Set<Member> members) {
+        eventPublisher.publishEvent(new MatchUpdatedEvent(match, roomId, "경기 결과가 수정되었습니다.", members));
     }
     
     @Transactional
     public void delete(Long id) {
-        leagueGameRepository.deleteById(id);
+        matchRepository.deleteById(id);
     }
 
     @Transactional
     public void setNull(Long userId) {
-        List<LeagueGame> homeLeagueGames = leagueGameRepository.findByHomeId(userId);
-        for (LeagueGame leagueGame : homeLeagueGames) {
-            leagueGame.updateHome(null);
+        List<Match> homeMatchs = matchRepository.findByHomeId(userId);
+        for (Match Match : homeMatchs) {
+            Match.updateHome(null);
         }
-        List<LeagueGame> awayLeagueGames = leagueGameRepository.findByAwayId(userId);
-        for (LeagueGame leagueGame : awayLeagueGames) {
-            leagueGame.updateAway(null);
+        List<Match> awayMatchs = matchRepository.findByAwayId(userId);
+        for (Match Match : awayMatchs) {
+            Match.updateAway(null);
         }
     }
 
-    public Page<LeagueGame> findByCompetitionId(Long competitionId, int count, Pageable pageable) {
+    public Page<Match> findByCompetitionId(Long competitionId, int count, Pageable pageable) {
         int page = (pageable.getPageNumber() == 0) ? 0 : (pageable.getPageNumber() - 1);
-        return leagueGameRepository.findByCompetitionId(competitionId, PageRequest.of(page, count / 2));
+        return matchRepository.findByCompetitionId(competitionId, PageRequest.of(page, count / 2));
     }
 
-    public List<LeagueGame> findByCompetitionId(Long competitionId) {
-        return leagueGameRepository.findByCompetitionId(competitionId);
+    public List<Match> findByCompetitionId(Long competitionId) {
+        return matchRepository.findByCompetitionId(competitionId);
     }
 
-    public LeagueGame findByIdAndCompetitionId(Long id, Long competitionId) {
-        return leagueGameRepository.findByIdAndCompetitionId(id, competitionId).orElse(null);
+    public Match findByIdAndCompetitionId(Long id, Long competitionId) {
+        return matchRepository.findByIdAndCompetitionId(id, competitionId).orElse(null);
     }
 
-    public LeagueGame findOne(Long leagueGameId) {
-        return leagueGameRepository.findById(leagueGameId).orElse(null);
+    public Match findOne(Long MatchId) {
+        return matchRepository.findById(MatchId).orElse(null);
     }
 
-    public LeagueGame findOne(Long competitionId, Integer round) {
-        return leagueGameRepository.findByCompetitionIdAndRound(competitionId, round).orElse(null);
+    public Match findOne(Long competitionId, Integer round) {
+        return matchRepository.findByCompetitionIdAndRound(competitionId, round).orElse(null);
     }
 }

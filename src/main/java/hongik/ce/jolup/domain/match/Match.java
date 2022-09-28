@@ -1,6 +1,8 @@
-package hongik.ce.jolup.domain.competition;
+package hongik.ce.jolup.domain.match;
 
 import hongik.ce.jolup.domain.BaseTimeEntity;
+import hongik.ce.jolup.domain.competition.Competition;
+import hongik.ce.jolup.domain.competition.Status;
 import hongik.ce.jolup.domain.member.Member;
 import lombok.*;
 
@@ -9,8 +11,10 @@ import javax.persistence.*;
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@ToString
-public class LeagueGame extends BaseTimeEntity {
+//@Table(uniqueConstraints = {@UniqueConstraint(columnNames = {"id", "match_round", "match_number"})})
+@Table(name = "matches")
+@ToString(of = {"id", "round", "number", "status", "homeScore", "awayScore"})
+public class Match extends BaseTimeEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -32,8 +36,11 @@ public class LeagueGame extends BaseTimeEntity {
     @Column(nullable = false)
     private Status status;
 
-    @Column(name = "game_round", nullable = false)
+    @Column(name = "match_round", nullable = false)
     private Integer round;
+
+    @Column(name = "match_number", nullable = false)
+    private Integer number;
 
     @Column
     private Integer homeScore;
@@ -42,13 +49,14 @@ public class LeagueGame extends BaseTimeEntity {
     private Integer awayScore;
 
     @Builder
-    public LeagueGame(Long id, Competition competition, Member home, Member away, Status status, Integer round, Integer homeScore, Integer awayScore) {
+    public Match(Long id, Competition competition, Member home, Member away, Status status, Integer round, Integer number, Integer homeScore, Integer awayScore) {
         this.id = id;
         this.competition = competition;
         this.home = home;
         this.away = away;
         this.status = status;
         this.round = round;
+        this.number = number;
         this.homeScore = homeScore;
         this.awayScore = awayScore;
     }
@@ -69,8 +77,13 @@ public class LeagueGame extends BaseTimeEntity {
         this.round = round;
     }
 
+    public void updateNumber(Integer number) {
+        this.number = number;
+    }
+
     public void updateScore(Integer homeScore, Integer awayScore) {
         this.homeScore = homeScore;
         this.awayScore = awayScore;
     }
+
 }

@@ -2,7 +2,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml"
       xmlns:th="http://www.thymeleaf.org">
 <head th:replace="fragments/header :: header" />
-<body class="d-flex flex-column min-vh-100">
+<body class="d-flex flex-column min-vh-100 bg-light">
 <div th:replace="fragments/bodyheader" :: bodyheader />
 <div class="container">
     <div class="py-5 text-center">
@@ -30,8 +30,8 @@
             <div class="mb-4"></div>
             <div class="row">
                 <div class="col">
-                    <button type="submit" class="btn btn-light link-secondary">수정</button>
-                    <button type="button" class="btn btn-light link-secondary" th:onclick="|location.href='@{|/rooms/*{id}|}'|">취소</button>
+                    <button type="submit" class="btn btn-outline-dark">수정</button>
+                    <button type="button" class="btn btn-outline-dark" th:onclick="|location.href='@{|/rooms/*{id}|}'|">취소</button>
                 </div>
             </div>
         </form>

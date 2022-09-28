@@ -2,7 +2,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml"
       xmlns:th="http://www.thymeleaf.org">
 <head th:replace="fragments/header :: header" />
-<body class="d-flex flex-column min-vh-100">
+<body class="d-flex flex-column min-vh-100 bg-light">
 <div th:replace="fragments/bodyheader" :: bodyheader />
 <div class="container">
     <table class="table table-hover">
@@ -15,8 +15,8 @@
         </thead>
         <tbody>
         <tr>
-            <td class="col-4" th:text="${league.name}"></td>
-            <td class="col-4" th:text="${league.type.description}"></td>
+            <td class="col-4" th:text="${competition.name}"></td>
+            <td class="col-4" th:text="${competition.type.description}"></td>
             <td class="col-4" th:text="${leagueTables.size()}"></td>
         </tr>
         </tbody>
@@ -24,12 +24,12 @@
 
     <div class="row">
         <div class="col">
-            <button type="button" class="btn btn-default pull-right" th:onclick="|location.href='@{|/rooms/${roomId}|}'|">목록</button>
-            <button type="button" class="btn btn-default pull-right" th:onclick="|location.href='@{|/rooms/${roomId}/competitions/${competitionId}/update|}'|"
+            <button type="button" class="btn btn-outline-dark pull-right" th:onclick="|location.href='@{|/rooms/${roomId}|}'|">목록</button>
+            <button type="button" class="btn btn-outline-dark pull-right" th:onclick="|location.href='@{|/rooms/${roomId}/competitions/${competitionId}/update|}'|"
                     th:if="${myJoin ne null and (myJoin.grade.name() eq 'ADMIN')}">수정</button>
             <form class="pull-right" th:action="@{|/rooms/${roomId}/competitions/${competitionId}|}" method="post">
                 <input type="hidden" th:if="${myJoin ne null and (myJoin.grade.name() eq 'ADMIN')}" name="_method" value="delete"/>
-                <button class="btn btn-danger" type="submit"
+                <button class="btn btn-outline-danger" type="submit"
                         th:if="${myJoin ne null and (myJoin.grade.name() eq 'ADMIN')}">삭제</button>
             </form>
         </div>
@@ -64,7 +64,7 @@
                             <tr th:each="match : ${hashMap.get(key)}"
                                 th:onclick="${match.home != null} and ${match.away != null} and ${myJoin ne null and (myJoin.grade.name() eq 'ADMIN')}? |location.href='@{|/rooms/${roomId}/competitions/${competitionId}/matches/${match.id}|}'| :_">
                                 <td class="col-4" th:text="${match.home} ? |${match.home.email}(${match.home.name})| : '탈퇴한 사용자'">홈팀명</td>
-                                <td class="col-4" th:text="|${match.homeScore}:${match.awayScore}|" th:class="${match.status.name() eq 'END'}?'fw-bold'">스코어</td>
+                                <td class="col-4" th:text="|${match.homeScore}:${match.awayScore}|" th:class="${match.status.name() eq 'AFTER'}?'fw-bold'">스코어</td>
                                 <td class="col-4" th:text="${match.away} ? |${match.away.email}(${match.away.name})| : '탈퇴한 사용자'">어웨이팀명</td>
                             </tr>
                             </tbody>
@@ -146,13 +146,13 @@
         </table>
     </div>
 
-    <div class="d-sm-flex align-items-center justify-content-between mb-4">
+    <!--<div class="d-sm-flex align-items-center justify-content-between mb-4">
         <h1 class="h3 mb-0 text-gray-800">Dashboard</h1>
         <a href="#" class="d-none d-sm-inline-block btn btn-sm btn-primary shadow-sm">Generate Report</a>
     </div>
 
     <div class="row">
-        <!-- Earnings (Monthly) Card Example -->
+        &lt;!&ndash; Earnings (Monthly) Card Example &ndash;&gt;
         <div class="col-xl-3 col-md-6 mb-4">
             <div class="card border-left-primary shadow h-100 py-2">
                 <div class="card-body">
@@ -170,7 +170,7 @@
             </div>
         </div>
 
-        <!-- Earnings (Monthly) Card Example -->
+        &lt;!&ndash; Earnings (Monthly) Card Example &ndash;&gt;
         <div class="col-xl-3 col-md-6 mb-4">
             <div class="card border-left-success shadow h-100 py-2">
                 <div class="card-body">
@@ -188,7 +188,7 @@
             </div>
         </div>
 
-        <!-- Earnings (Monthly) Card Example -->
+        &lt;!&ndash; Earnings (Monthly) Card Example &ndash;&gt;
         <div class="col-xl-3 col-md-6 mb-4">
             <div class="card border-left-info shadow h-100 py-2">
                 <div class="card-body">
@@ -217,7 +217,7 @@
             </div>
         </div>
 
-        <!-- Pending Requests Card Example -->
+        &lt;!&ndash; Pending Requests Card Example &ndash;&gt;
         <div class="col-xl-3 col-md-6 mb-4">
             <div class="card border-left-warning shadow h-100 py-2">
                 <div class="card-body">
@@ -234,7 +234,7 @@
                 </div>
             </div>
         </div>
-    </div>
+    </div>-->
 </div> <!-- /container -->
 <div th:replace="fragments/footer" :: footer />
 </body>

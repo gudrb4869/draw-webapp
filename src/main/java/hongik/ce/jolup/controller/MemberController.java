@@ -1,6 +1,6 @@
 package hongik.ce.jolup.controller;
 
-import hongik.ce.jolup.model.SignupForm;
+import hongik.ce.jolup.dto.SignupForm;
 import hongik.ce.jolup.service.MemberService;
 import hongik.ce.jolup.validator.SignupFormValidator;
 import lombok.*;

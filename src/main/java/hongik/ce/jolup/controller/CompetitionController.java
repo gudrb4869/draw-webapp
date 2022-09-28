@@ -4,11 +4,10 @@ import hongik.ce.jolup.domain.join.Join;
 import hongik.ce.jolup.domain.join.Grade;
 import hongik.ce.jolup.domain.competition.Competition;
 import hongik.ce.jolup.domain.competition.CompetitionOption;
-import hongik.ce.jolup.domain.competition.LeagueGame;
 import hongik.ce.jolup.domain.competition.LeagueTable;
 import hongik.ce.jolup.domain.member.Member;
 import hongik.ce.jolup.domain.competition.CompetitionType;
-import hongik.ce.jolup.domain.competition.SingleLegGame;
+import hongik.ce.jolup.domain.match.Match;
 import hongik.ce.jolup.service.*;
 import lombok.*;
 import lombok.extern.slf4j.Slf4j;
@@ -37,8 +36,8 @@ public class CompetitionController {
     private final CompetitionService competitionService;
     private final JoinService joinService;
     private final LeagueTableService leagueTableService;
-    private final LeagueGameService leagueGameService;
-    private final SingleLegGameService singleLegGameService;
+    private final LeagueService leagueService;
+    private final TournamentService tournamentService;
 
     @GetMapping("/create")
     public String createForm(@PathVariable("roomId") Long roomId,
@@ -107,9 +106,9 @@ public class CompetitionController {
         Long competitionId = competition.getId();
         if (competitionForm.getType().equals(CompetitionType.LEAGUE)) {
             leagueTableService.save(memberIds, competitionId);
-            leagueGameService.save(memberIds, competitionId);
+            leagueService.save(memberIds, competitionId);
         } else if (competitionForm.getType().equals(CompetitionType.TOURNAMENT)) {
-            singleLegGameService.save(memberIds, competitionId);
+            tournamentService.save(memberIds, competitionId);
         }
         return "redirect:/rooms/{roomId}/competitions/" + competitionId;
     }
@@ -132,29 +131,26 @@ public class CompetitionController {
         if (competition == null) {
             return "error";
         }
-
+        model.addAttribute("competition", competition);
+        model.addAttribute("myJoin", myJoin);
         if (competition.getType().equals(CompetitionType.LEAGUE)) {
             List<LeagueTable> leagueTables = leagueTableService.findByCompetitionSort(competitionId);
-            model.addAttribute("league", competition);
-            model.addAttribute("myJoin", myJoin);
             model.addAttribute("leagueTables", leagueTables);
-            LinkedHashMap<Integer, List<LeagueGame>> hashMap = new LinkedHashMap<>();
-            Page<LeagueGame> leagueGames = leagueGameService.findByCompetitionId(competitionId, leagueTables.size(), pageable);
+            LinkedHashMap<Integer, List<Match>> hashMap = new LinkedHashMap<>();
+            Page<Match> matches = leagueService.findByCompetitionId(competitionId, leagueTables.size(), pageable);
             log.info("총 element 수 : {}, 전체 page 수 : {}, 페이지에 표시할 element 수 : {}, 현재 페이지 index : {}, 현재 페이지의 element 수 : {}",
-                    leagueGames.getTotalElements(), leagueGames.getTotalPages(), leagueGames.getSize(),
-                    leagueGames.getNumber(), leagueGames.getNumberOfElements());
-            for (LeagueGame leagueGame : leagueGames) {
+                    matches.getTotalElements(), matches.getTotalPages(), matches.getSize(),
+                    matches.getNumber(), matches.getNumberOfElements());
+            for (Match leagueGame : matches) {
                 hashMap.computeIfAbsent(leagueGame.getRound(), k -> new ArrayList<>()).add(leagueGame);
             }
             model.addAttribute("hashMap", hashMap);
-            model.addAttribute("matches", leagueGames);
+            model.addAttribute("matches", matches);
             return "competition/league";
         } else if (competition.getType().equals(CompetitionType.TOURNAMENT)) {
-            model.addAttribute("competition", competition);
-            model.addAttribute("myJoin", myJoin);
-            LinkedHashMap<Integer, LinkedHashMap<Integer, SingleLegGame>> hashMap = new LinkedHashMap<>();
-            List<SingleLegGame> matches = singleLegGameService.findByCompetition(competitionId);
-            for (SingleLegGame match : matches) {
+            LinkedHashMap<Integer, LinkedHashMap<Integer, Match>> hashMap = new LinkedHashMap<>();
+            List<Match> matches = tournamentService.findByCompetition(competitionId);
+            for (Match match : matches) {
                 hashMap.computeIfAbsent(match.getRound(), k -> new LinkedHashMap<>()).put(match.getNumber(), match);
             }
             model.addAttribute("hashMap", hashMap);

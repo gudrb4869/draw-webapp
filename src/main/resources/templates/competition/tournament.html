@@ -173,7 +173,7 @@
         margin-top: 1119px;
     }
 </style>
-<body class="d-flex flex-column min-vh-100">
+<body class="d-flex flex-column min-vh-100 bg-light">
 <div th:replace="fragments/bodyheader" :: bodyheader />
 <div class="container">
     <table class="table table-hover">
@@ -195,12 +195,12 @@
 
     <div class="row">
         <div class="col">
-            <button type="button" class="btn btn-default pull-right" th:onclick="|location.href='@{|/rooms/${roomId}|}'|">목록</button>
-            <button type="button" class="btn btn-default pull-right" th:onclick="|location.href='@{|/rooms/${roomId}/competitions/${competitionId}/update|}'|"
+            <button type="button" class="btn btn-outline-dark pull-right" th:onclick="|location.href='@{|/rooms/${roomId}|}'|">목록</button>
+            <button type="button" class="btn btn-outline-dark pull-right" th:onclick="|location.href='@{|/rooms/${roomId}/competitions/${competitionId}/update|}'|"
                     th:if="${myJoin ne null and (myJoin.grade.name() eq 'ADMIN')}">수정</button>
             <form class="pull-right" th:action="@{|/rooms/${roomId}/competitions/${competitionId}|}" method="post">
                 <input type="hidden" th:if="${myJoin ne null and (myJoin.grade.name() eq 'ADMIN')}" name="_method" value="delete"/>
-                <button class="btn btn-danger" type="submit"
+                <button class="btn btn-outline-danger" type="submit"
                         th:if="${myJoin ne null and (myJoin.grade.name() eq 'ADMIN')}">삭제</button>
             </form>
         </div>

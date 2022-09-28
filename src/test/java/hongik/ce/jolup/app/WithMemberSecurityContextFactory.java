@@ -1,6 +1,6 @@
 package hongik.ce.jolup.app;
 
-import hongik.ce.jolup.model.SignupForm;
+import hongik.ce.jolup.dto.SignupForm;
 import hongik.ce.jolup.service.MemberService;
 import hongik.ce.jolup.service.UserDetailsServiceImpl;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;

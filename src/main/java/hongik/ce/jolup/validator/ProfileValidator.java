@@ -1,7 +1,7 @@
 package hongik.ce.jolup.validator;
 
 import hongik.ce.jolup.domain.member.Member;
-import hongik.ce.jolup.model.Profile;
+import hongik.ce.jolup.dto.Profile;
 import hongik.ce.jolup.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
