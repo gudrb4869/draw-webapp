@@ -1,12 +1,16 @@
 package hongik.ce.jolup.module.member.endpoint;
 
+import hongik.ce.jolup.module.member.domain.entity.Member;
 import hongik.ce.jolup.module.member.endpoint.form.SignupForm;
 import hongik.ce.jolup.module.member.application.MemberService;
 import hongik.ce.jolup.module.member.endpoint.validator.SignupFormValidator;
+import hongik.ce.jolup.module.member.infra.repository.MemberRepository;
+import hongik.ce.jolup.module.member.support.CurrentMember;
 import lombok.*;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.authentication.logout.SecurityContextLogoutHandler;
 import org.springframework.stereotype.Controller;
@@ -27,6 +31,7 @@ public class MemberController {
 
     private final SignupFormValidator signupFormValidator;
     private final MemberService memberService;
+    private final MemberRepository memberRepository;
 
     @InitBinder("signupForm")
     public void initBinder(WebDataBinder webDataBinder) {
@@ -34,12 +39,12 @@ public class MemberController {
     }
 
     @GetMapping("/signup")
-    public String signupForm(Model model) {
-        if (isAuthenticated()) {
+    public String signupForm(@CurrentMember Member member, Model model) {
+        if (member != null) {
             return "redirect:/";
         }
-        model.addAttribute("signupForm", new SignupForm());
-        return "members/signup";
+        model.addAttribute(new SignupForm());
+        return "member/signup";
     }
 
     @PostMapping("/signup")
@@ -47,37 +52,18 @@ public class MemberController {
                          BindingResult result, RedirectAttributes attributes) {
 
         if (result.hasErrors()) {
-            return "members/signup";
+            return "member/signup";
         }
         memberService.signup(signupForm);
         attributes.addFlashAttribute("message", "회원가입에 성공했습니다.");
         return "redirect:/";
     }
 
-    @GetMapping("/login")
-    public String login() {
-        if (isAuthenticated()) {
-            return "redirect:/";
-        }
-        return "members/login";
-    }
-
-    @GetMapping("/logout")
-    public String logout(HttpServletRequest request, HttpServletResponse response) {
-
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        if (authentication != null) {
-            new SecurityContextLogoutHandler().logout(request, response, authentication);
-        }
-        return "redirect:/";
-    }
-
-    private boolean isAuthenticated() {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        if (authentication == null || AnonymousAuthenticationToken.class.
-                isAssignableFrom(authentication.getClass())) {
-            return false;
-        }
-        return authentication.isAuthenticated();
+    @GetMapping("/profile/{name}")
+    public String profile(@PathVariable String name, @CurrentMember Member member, Model model) {
+        Member byName = memberService.findByName(name);
+        model.addAttribute("member", byName);
+        model.addAttribute("isOwner", byName.equals(member));
+        return "member/profile";
     }
 }

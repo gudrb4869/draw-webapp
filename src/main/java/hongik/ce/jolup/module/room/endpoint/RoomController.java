@@ -1,15 +1,17 @@
 package hongik.ce.jolup.module.room.endpoint;
 
 import hongik.ce.jolup.module.competition.application.CompetitionService;
-import hongik.ce.jolup.module.room.domain.entity.Join;
-import hongik.ce.jolup.module.room.domain.entity.Grade;
 import hongik.ce.jolup.module.competition.domain.entity.Competition;
 import hongik.ce.jolup.module.member.application.MemberService;
 import hongik.ce.jolup.module.member.domain.entity.Member;
+import hongik.ce.jolup.module.member.support.CurrentMember;
 import hongik.ce.jolup.module.room.application.JoinService;
-import hongik.ce.jolup.module.room.domain.entity.Room;
-import hongik.ce.jolup.module.room.domain.entity.Access;
 import hongik.ce.jolup.module.room.application.RoomService;
+import hongik.ce.jolup.module.room.domain.entity.Access;
+import hongik.ce.jolup.module.room.domain.entity.Grade;
+import hongik.ce.jolup.module.room.domain.entity.Join;
+import hongik.ce.jolup.module.room.domain.entity.Room;
+import hongik.ce.jolup.module.room.endpoint.form.RoomForm;
 import lombok.*;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -17,7 +19,6 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -27,7 +28,10 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.validation.Valid;
-import javax.validation.constraints.*;
+import javax.validation.constraints.Max;
+import javax.validation.constraints.Min;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
@@ -44,19 +48,17 @@ public class RoomController {
     private final CompetitionService competitionService;
 
     @GetMapping("/create")
-    public String createForm(Model model) {
-        model.addAttribute("roomForm", new CreateRoomForm());
-        return "room/createRoomForm";
+    public String createForm(@CurrentMember Member member, Model model) {
+        model.addAttribute(member);
+        model.addAttribute(new RoomForm());
+        return "room/form";
     }
 
     @PostMapping("/create")
-    public String create(@ModelAttribute("roomForm") @Valid CreateRoomForm roomForm,
-                         BindingResult result, @AuthenticationPrincipal Member member,
+    public String create(@Valid RoomForm roomForm, BindingResult result, @CurrentMember Member member,
                          RedirectAttributes attributes) {
-
-        log.info("roomForm = {}", roomForm);
         if (result.hasErrors()) {
-            return "room/createRoomForm";
+            return "room/form";
         }
 
         Room room = Room.builder().name(roomForm.getName()).access(roomForm.getAccess()).master(member).build();
@@ -68,17 +70,13 @@ public class RoomController {
 
     @GetMapping("/{roomId}")
     public String roomDetail(@PathVariable("roomId") Room room,
-                             @AuthenticationPrincipal Member member,
+                             @CurrentMember Member member,
                              @Qualifier("join") @PageableDefault(size = 20, sort = "grade", direction = Sort.Direction.ASC) Pageable joinPageable,
                              @Qualifier("competition") @PageableDefault(size = 9, sort = "createdDate", direction = Sort.Direction.ASC) Pageable competitionPageable,
                              Model model) {
         log.info("roomDetail");
 
         Join myJoin = joinService.findOne(member.getId(), room.getId());
-        if (myJoin == null && room.getAccess().equals(Access.PRIVATE)) {
-            log.info("비공개 방이고 회원이 아님");
-            return "error";
-        }
         model.addAttribute("room", room);
         model.addAttribute("myJoin", myJoin);
 
@@ -103,13 +101,11 @@ public class RoomController {
     }
 
     @DeleteMapping("/{roomId}")
-    public String delete(@PathVariable Long roomId, @AuthenticationPrincipal Member member,
+    public String delete(@PathVariable Long roomId, @CurrentMember Member member,
                          RedirectAttributes attributes) {
         log.info("delete room");
         Join join = joinService.findOne(member.getId(), roomId);
-        if (join == null || !join.getGrade().equals(Grade.ADMIN)) {
-            return "error";
-        }
+
 
         log.info("delete room");
         roomService.deleteRoom(roomId);
@@ -118,7 +114,7 @@ public class RoomController {
     }
 
     @GetMapping("/{roomId}/update")
-    public String updateForm(@PathVariable Long roomId, Model model, @AuthenticationPrincipal Member member) {
+    public String updateForm(@PathVariable Long roomId, Model model, @CurrentMember Member member) {
         Join join = joinService.findOne(member.getId(), roomId);
         if (join == null || !join.getGrade().equals(Grade.ADMIN)) {
             return "error";
@@ -131,7 +127,7 @@ public class RoomController {
 
     @PostMapping("/{roomId}/update")
     public String update(@PathVariable Long roomId, @ModelAttribute("roomForm") @Valid UpdateRoomForm roomForm,
-                         BindingResult result, @AuthenticationPrincipal Member member,
+                         BindingResult result, @CurrentMember Member member,
                          RedirectAttributes attributes) {
         Join join = joinService.findOne(member.getId(), roomId);
         if (join == null || !join.getGrade().equals(Grade.ADMIN)) {
@@ -149,7 +145,7 @@ public class RoomController {
 
     @GetMapping("/{roomId}/invite")
     public String inviteForm(@PathVariable("roomId") Room room,
-                             @AuthenticationPrincipal Member member,
+                             @CurrentMember Member member,
                              Model model) {
 
         Join join = joinService.findOne(member.getId(), room.getId());
@@ -168,7 +164,7 @@ public class RoomController {
     public String invite(@PathVariable("roomId") Room room,
                          @Valid InviteForm inviteForm,
                          BindingResult result,
-                         @AuthenticationPrincipal Member member,
+                         @CurrentMember Member member,
                          RedirectAttributes attributes) {
 
         log.info("inviteForm={}", inviteForm);
@@ -214,17 +210,6 @@ public class RoomController {
         roomService.inviteRoom(room, members, member.getName());
         attributes.addFlashAttribute("message", "회원들에게 방 초대 요청을 보냈습니다.");
         return "redirect:/rooms/{roomId}";
-    }
-
-    @Getter @Setter @ToString
-    @NoArgsConstructor @AllArgsConstructor
-    static class CreateRoomForm {
-
-        @NotBlank(message = "방명을 입력하세요.")
-        private String name;
-
-        @NotNull(message = "공개 여부를 선택하세요.")
-        private Access access;
     }
 
     @Getter @Setter @ToString

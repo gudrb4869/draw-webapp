@@ -1,20 +1,22 @@
 package hongik.ce.jolup.module.member.endpoint;
 
 import hongik.ce.jolup.module.member.domain.entity.Member;
+import hongik.ce.jolup.module.member.endpoint.form.NameForm;
 import hongik.ce.jolup.module.member.endpoint.form.PasswordForm;
 import hongik.ce.jolup.module.member.endpoint.form.Profile;
 import hongik.ce.jolup.module.member.application.MemberService;
+import hongik.ce.jolup.module.member.endpoint.validator.NameFormValidator;
 import hongik.ce.jolup.module.member.endpoint.validator.PasswordFormValidator;
 import hongik.ce.jolup.module.member.endpoint.validator.ProfileValidator;
+import hongik.ce.jolup.module.member.support.CurrentMember;
 import lombok.*;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.validation.Errors;
+import org.springframework.web.bind.WebDataBinder;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.validation.Valid;
@@ -28,92 +30,92 @@ public class SettingsController {
     static final String SETTINGS_PROFILE_URL = "/" + SETTINGS_PROFILE_VIEW_NAME;
     static final String SETTINGS_PASSWORD_VIEW_NAME = "settings/password";
     static final String SETTINGS_PASSWORD_URL = "/" + SETTINGS_PASSWORD_VIEW_NAME;
+    static final String SETTINGS_MEMBER_VIEW_NAME = "settings/member";
+    static final String SETTINGS_MEMBER_URL = "/" + SETTINGS_MEMBER_VIEW_NAME;
     static final String SETTINGS_NOTIFICATION_VIEW_NAME = "settings/notification";
     static final String SETTINGS_NOTIFICATION_URL = "/" + SETTINGS_NOTIFICATION_VIEW_NAME;
 
     private final MemberService memberService;
     private final PasswordFormValidator passwordFormValidator;
     private final ProfileValidator profileValidator;
+    private final NameFormValidator nameFormValidator;
 
-    @GetMapping("/profile")
-    public String profile(/*@PathVariable String name, */@AuthenticationPrincipal Member member, Model model) {
-/*        Member byName = memberService.findByName(name);
-        if (byName == null) {
-            throw new IllegalArgumentException(name + "에 해당하는 사용자가 없습니다.");
-        }
-        log.info("byName = {}", byName);
-        log.info("member = {}", member);
-        log.info("byName equals member = {}", byName.equals(member));
-        model.addAttribute("member", byName);
-        model.addAttribute("isOwner", byName.equals(member));*/
-        model.addAttribute("member", member);
-        return "members/profile";
+    @InitBinder("profile")
+    public void profileValidator(WebDataBinder webDataBinder) {
+        webDataBinder.addValidators(profileValidator);
     }
 
-    @GetMapping("/settings/password")
-    public String updatePasswordForm(@AuthenticationPrincipal Member member, Model model) {
-        model.addAttribute(member);
-        PasswordForm passwordForm = new PasswordForm();
-        passwordForm.setEmail(member.getEmail());
-        model.addAttribute(passwordForm);
-        return "members/updatePasswordForm";
+    @InitBinder("nameForm")
+    public void nameFormValidator(WebDataBinder webDataBinder) {
+        webDataBinder.addValidators(nameFormValidator);
     }
 
-    @PostMapping("/settings/password")
-    public String updatePassword(@Valid @ModelAttribute PasswordForm passwordForm,
-                                 BindingResult result, @AuthenticationPrincipal Member member,
-                                 Model model, RedirectAttributes attributes) {
-        if (result.hasErrors()) {
-            model.addAttribute("member");
-            return "members/updatePasswordForm";
-        }
-        passwordFormValidator.validate(passwordForm, result);
-        if (result.hasErrors()) {
-            model.addAttribute("member");
-            return "members/updatePasswordForm";
-        }
-        memberService.updatePassword(member, passwordForm.getPassword_new());
-        attributes.addFlashAttribute("message", "비밀번호를 변경했습니다.");
-        return "redirect:/profile";
-    }
-
-    @GetMapping("/settings/profile")
-    public String updateMemberInfoForm(@AuthenticationPrincipal Member member, Model model) {
+    @GetMapping(SETTINGS_PROFILE_URL)
+    public String profileUpdateForm(@CurrentMember Member member, Model model) {
         model.addAttribute(member);
         model.addAttribute("profile", Profile.from(member));
-        return "members/updateMemberInfoForm";
+        return SETTINGS_PROFILE_VIEW_NAME;
     }
 
-    @PostMapping("/settings/profile")
-    public String updateMemberInfo(@ModelAttribute("profile") @Valid Profile profile,
-                                   BindingResult result, @AuthenticationPrincipal Member member,
+    @PostMapping(SETTINGS_PROFILE_URL)
+    public String updateProfile(@Valid Profile profile, Errors errors, @CurrentMember Member member,
                                    Model model, RedirectAttributes attributes) {
-        if (result.hasErrors()) {
+        profileValidator.validatePassword(profile, member, errors);
+        if (errors.hasErrors()) {
             model.addAttribute(member);
-            return "members/updateMemberInfoForm";
-        }
-        profileValidator.validate(profile, result);
-        if (result.hasErrors()) {
-            model.addAttribute(member);
-            return "members/updateMemberInfoForm";
+            return SETTINGS_PROFILE_VIEW_NAME;
         }
         memberService.updateProfile(member, profile);
-        attributes.addFlashAttribute("message", "회원정보를 수정하였습니다.");
-        return "redirect:/profile";
+        attributes.addFlashAttribute("message", "프로필을 수정하였습니다.");
+        return "redirect:" + SETTINGS_PROFILE_URL;
     }
 
-    @GetMapping("/settings/leave")
-    public String deleteMemberForm(@AuthenticationPrincipal Member member, Model model) {
-        model.addAttribute("memberForm", new DeleteMemberForm(member.getEmail()));
-        return "members/deleteMemberForm";
+    @GetMapping(SETTINGS_PASSWORD_URL)
+    public String passwordUpdateForm(@CurrentMember Member member, Model model) {
+        model.addAttribute(member);
+        model.addAttribute(new PasswordForm());
+        return SETTINGS_PASSWORD_VIEW_NAME;
     }
 
-    @PostMapping("/settings/leave")
+    @PostMapping(SETTINGS_PASSWORD_URL)
+    public String updatePassword(@Valid PasswordForm passwordForm, Errors errors, @CurrentMember Member member,
+                                 Model model, RedirectAttributes attributes) {
+        passwordFormValidator.validateForm(passwordForm, member, errors);
+        if (errors.hasErrors()) {
+            model.addAttribute("member");
+            return SETTINGS_PASSWORD_VIEW_NAME;
+        }
+        memberService.updatePassword(member, passwordForm.getNewPassword());
+        attributes.addFlashAttribute("message", "비밀번호를 변경했습니다.");
+        return "redirect:" + SETTINGS_PASSWORD_URL;
+    }
+
+    @GetMapping(SETTINGS_MEMBER_URL)
+    public String MemberInfoForm(@CurrentMember Member member, Model model) {
+        model.addAttribute(member);
+        model.addAttribute(new NameForm(member.getName()));
+        return SETTINGS_MEMBER_VIEW_NAME;
+    }
+
+    @PostMapping(SETTINGS_MEMBER_URL)
+    public String updateName(@CurrentMember Member member, @Valid NameForm nameForm, Errors errors,
+                             Model model, RedirectAttributes attributes) {
+        nameFormValidator.validatePassword(nameForm, member, errors);
+        if (errors.hasErrors()) {
+            model.addAttribute(member);
+            return SETTINGS_MEMBER_URL;
+        }
+        memberService.updateName(member, nameForm.getName());
+        attributes.addFlashAttribute("message", "이름을 수정하였습니다.");
+        return "redirect:" + SETTINGS_MEMBER_URL;
+    }
+
+    /*@DeleteMapping(SETTINGS_MEMBER_URL)
     public String deleteMember(@ModelAttribute("memberForm") @Valid DeleteMemberForm form,
-                               BindingResult result, @AuthenticationPrincipal Member member,
+                               BindingResult result, @CurrentMember Member member,
                                Model model, RedirectAttributes attributes) {
         if (result.hasErrors()) {
-            return "members/deleteMemberForm";
+            return SETTINGS_MEMBER_VIEW_NAME;
         }
         try {
             memberService.deleteMember(member.getId());
@@ -121,9 +123,9 @@ public class SettingsController {
             attributes.addFlashAttribute("message", "회원탈퇴에 성공하였습니다.");
         } catch (Exception e) {
             model.addAttribute("errorMessage", e.getMessage());
-            return "members/deleteMemberForm";
+            return SETTINGS_MEMBER_VIEW_NAME;
         }
-        return "redirect:/";
+        return "redirect:" + SETTINGS_MEMBER_URL;
     }
 
     @Getter @Setter @Builder @ToString
@@ -138,5 +140,5 @@ public class SettingsController {
         public DeleteMemberForm(String email) {
             this.email = email;
         }
-    }
+    }*/
 }

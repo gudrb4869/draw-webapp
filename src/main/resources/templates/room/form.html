@@ -1,9 +1,8 @@
 <!DOCTYPE HTML>
-<html xmlns="http://www.w3.org/1999/xhtml"
-      xmlns:th="http://www.thymeleaf.org">
-<head th:replace="fragments/header :: header" />
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="fragments.html :: head"></head>
 <body class="d-flex flex-column min-vh-100 bg-light">
-<div th:replace="fragments/bodyheader" :: bodyheader />
+<div th:replace="fragments.html :: navigation-bar"></div>
 <div class="container">
     <div class="py-5 text-center">
         <h2>방 만들기</h2>
@@ -21,8 +20,8 @@
                 <label th:for="roomSetting">공개 여부</label>
                 <select th:field="*{access}" class="form-select" th:errorclass="border-danger">
                     <option value="">==공개 여부 선택==</option>
-                    <option th:each="access : ${T(hongik.ce.jolup.domain.room.Access).values()}" th:value="${access.name()}"
-                            th:text="${access.description}"></option>
+                    <option th:value="PUBLIC">공개</option>
+                    <option th:value="PRIVATE">비공개</option>
                 </select>
                 <p th:errors="*{access}" class="text-danger">공개 여부 오류</p>
             </div>
@@ -36,6 +35,7 @@
         </form>
     </div>
 </div> <!-- /container -->
-<div th:replace="fragments/footer" :: footer />
+<div th:replace="fragments.html :: footer"></div>
+<script th:replace="fragments.html :: form-validation"></script>
 </body>
 </html>

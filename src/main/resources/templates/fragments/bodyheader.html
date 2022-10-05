@@ -2,7 +2,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml"
       xmlns:th="http://www.thymeleaf.org"
       xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
-<header class="p-3 mb-3 border-bottom" th:fragment="bodyHeader">
+<nav class="p-3 mb-3 border-bottom" th:fragment="bodyHeader">
     <div class="d-flex flex-wrap flex-md-nowrap align-items-center justify-content-lg-start px-3 px-md-4 px-lg-5">
         <div class="d-md-flex">
             <a href="/" th:href="@{/}" class="text-muted">
@@ -37,12 +37,12 @@
             <button type="button" class="btn btn-outline-warning" onclick="location.href='/signup'">회원가입</button>
         </div>
 
-        <div class="d-md-flex text-end me-2" sec:authorize="isAuthenticated()">
+        <!--<div class="d-md-flex text-end me-2" sec:authorize="isAuthenticated()">
             <a class="nav-link" th:href="@{/notifications}">
                 <i th:if="${!hasNotification}" class="fa fa-bell-o" aria-hidden="true"></i>
                 <i th:if="${hasNotification}" class="fa fa-bell" aria-hidden="true"></i>
             </a>
-        </div>
+        </div>-->
 
         <div class="d-md-flex dropdown" sec:authorize="isAuthenticated()">
             <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button" data-bs-toggle="dropdown"
@@ -71,5 +71,5 @@
             </ul>
         </div>
     </div>
-</header>
+</nav>
 </html>

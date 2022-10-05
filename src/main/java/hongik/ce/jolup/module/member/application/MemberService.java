@@ -1,11 +1,14 @@
 package hongik.ce.jolup.module.member.application;
 
+import hongik.ce.jolup.module.member.domain.UserMember;
 import hongik.ce.jolup.module.member.domain.entity.Member;
 import hongik.ce.jolup.module.member.endpoint.form.Profile;
 import hongik.ce.jolup.module.member.endpoint.form.SignupForm;
 import hongik.ce.jolup.module.member.infra.repository.MemberRepository;
-import hongik.ce.jolup.module.member.domain.entity.Role;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -13,41 +16,37 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 
 @Service
 @RequiredArgsConstructor
-@Transactional(readOnly = true)
+@Transactional
 public class MemberService implements UserDetailsService {
 
     private final MemberRepository memberRepository;
     private final PasswordEncoder passwordEncoder;
 
-    @Transactional
     public Member signup(SignupForm signupForm) {
         Member member = Member.builder().email(signupForm.getEmail())
                 .password(passwordEncoder.encode(signupForm.getPassword()))
-                .name(signupForm.getName()).role(Role.USER).build();
+                .name(signupForm.getName()).build();
 
         return memberRepository.save(member);
     }
 
-    @Transactional
     public Long updatePassword(Member member, String newPassword) {
         member.updatePassword(passwordEncoder.encode(newPassword));
         memberRepository.save(member);
         return member.getId();
     }
 
-    @Transactional
     public void updateProfile(Member member, Profile profile) {
-        member.updateName(profile.getName());
-        member.updateImage(profile.getImage());
+        member.updateProfile(profile);
         memberRepository.save(member);
     }
 
-    @Transactional
     public void deleteMember(Long id) {
         memberRepository.deleteById(id);
     }
@@ -61,7 +60,8 @@ public class MemberService implements UserDetailsService {
     }
 
     public Member findByName(String name) {
-        return memberRepository.findByName(name).orElse(null);
+        return memberRepository.findByName(name)
+                .orElseThrow(() -> new IllegalArgumentException(name + "에 해당하는 사용자가 존재하지 않습니다."));
     }
 
     public Set<Member> findMembers(List<String> emails) {
@@ -72,7 +72,16 @@ public class MemberService implements UserDetailsService {
     // UserDetails 가 기본 반환 타입, Account 가 이를 상속하고 있으므로 자동으로 다운캐스팅됨
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        return memberRepository.findByEmail(username)
+        Member member = memberRepository.findByEmail(username)
                 .orElseThrow(() -> new UsernameNotFoundException("Failed : No User Info -> " + username));
+        return new UserMember(member);
+    }
+
+    public void updateName(Member member, String name) {
+        member.updateName(name);
+        memberRepository.save(member);
+        UsernamePasswordAuthenticationToken token = new UsernamePasswordAuthenticationToken(new UserMember(member),
+                member.getPassword(), Collections.singleton(new SimpleGrantedAuthority("ROLE_USER")));
+        SecurityContextHolder.getContext().setAuthentication(token);
     }
 }
