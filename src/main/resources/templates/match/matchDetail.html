@@ -5,8 +5,12 @@
 <body class="d-flex flex-column min-vh-100 bg-light">
 <div th:replace="fragments/bodyheader" :: bodyheader />
 <div class="container">
+    <div th:if="${message}" class="alert alert-info alert-dismissible show mt-3" role="alert">
+        <span th:text="${message}">수정 완료</span>
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
     <div class="py-5 text-center">
-        <h1>리그 경기 정보</h1>
+        <h1>경기 정보</h1>
     </div>
     <div class="row mx-auto justify-content-center" th:object="${match}">
         <div class="col-md-6 mx-auto">
@@ -17,8 +21,8 @@
             <div class="mb-4"></div>
             <div class="row">
                 <div class="col">
-                    <button class="btn-outline-dark" type="button" th:onclick="|location.href='@{|/rooms/${roomId}/competitions/${competitionId}/matches/${matchId}/update|}'|">경기결과 수정</button>
-                    <button class="btn-outline-dark" type="button" th:onclick="|location.href='@{|/rooms/${roomId}/competitions/${competitionId}|}'|" >돌아가기</button>
+                    <button class="btn btn-outline-dark" type="button" th:onclick="|location.href='@{|/rooms/${roomId}/competitions/${competitionId}/matches/${matchId}/update|}'|">경기결과 수정</button>
+                    <button class="btn btn-outline-dark" type="button" th:onclick="|location.href='@{|/rooms/${roomId}/competitions/${competitionId}|}'|" >돌아가기</button>
                 </div>
             </div>
         </div>

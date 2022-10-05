@@ -1,9 +1,9 @@
 package hongik.ce.jolup.controller;
 
-import hongik.ce.jolup.domain.member.Member;
-import hongik.ce.jolup.dto.SignupForm;
-import hongik.ce.jolup.repository.MemberRepository;
-import hongik.ce.jolup.service.MemberService;
+import hongik.ce.jolup.module.member.domain.entity.Member;
+import hongik.ce.jolup.module.member.endpoint.form.SignupForm;
+import hongik.ce.jolup.module.member.infra.repository.MemberRepository;
+import hongik.ce.jolup.module.member.application.MemberService;
 import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -88,7 +88,7 @@ class MemberControllerTest {
         signupForm.setName("홍익");
         memberService.signup(signupForm);
         mockMvc.perform(post("/login")
-                        .param("email", "hongik")
+                        .param("username", "hongik")
                         .param("password", "hongik1!")
                         .with(csrf()))
                 .andExpect(status().is3xxRedirection())
@@ -100,7 +100,7 @@ class MemberControllerTest {
     @DisplayName("로그인 실패")
     void login_fail() throws Exception {
         mockMvc.perform(post("/login")
-                        .param("email", "wkrwjs")
+                        .param("username", "wkrwjs")
                         .param("password", "wkrwjs1!")
                         .with(csrf()))
                 .andExpect(status().is3xxRedirection())

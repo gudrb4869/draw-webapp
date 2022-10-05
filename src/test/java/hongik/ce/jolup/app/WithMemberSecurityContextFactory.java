@@ -1,8 +1,7 @@
 package hongik.ce.jolup.app;
 
-import hongik.ce.jolup.dto.SignupForm;
-import hongik.ce.jolup.service.MemberService;
-import hongik.ce.jolup.service.UserDetailsServiceImpl;
+import hongik.ce.jolup.module.member.endpoint.form.SignupForm;
+import hongik.ce.jolup.module.member.application.MemberService;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContext;
@@ -13,11 +12,9 @@ import org.springframework.security.test.context.support.WithSecurityContextFact
 public class WithMemberSecurityContextFactory implements WithSecurityContextFactory<WithMember> {
 
     private final MemberService memberService;
-    private final UserDetailsServiceImpl userDetailsService;
 
-    public WithMemberSecurityContextFactory(MemberService memberService, UserDetailsServiceImpl userDetailsService) {
+    public WithMemberSecurityContextFactory(MemberService memberService) {
         this.memberService = memberService;
-        this.userDetailsService = userDetailsService;
     }
 
     @Override
@@ -30,7 +27,7 @@ public class WithMemberSecurityContextFactory implements WithSecurityContextFact
         signupForm.setName(email);
         memberService.signup(signupForm);
 
-        UserDetails principal = userDetailsService.loadUserByUsername(email);
+        UserDetails principal = memberService.loadUserByUsername(email);
         Authentication authentication = new UsernamePasswordAuthenticationToken(principal, principal.getPassword(), principal.getAuthorities());
         SecurityContext context = SecurityContextHolder.createEmptyContext();
         context.setAuthentication(authentication);

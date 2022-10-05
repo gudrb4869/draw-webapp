@@ -176,6 +176,10 @@
 <body class="d-flex flex-column min-vh-100 bg-light">
 <div th:replace="fragments/bodyheader" :: bodyheader />
 <div class="container">
+    <div th:if="${message}" class="alert alert-info alert-dismissible show mt-3" role="alert">
+        <span th:text="${message}">수정 완료</span>
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
     <table class="table table-hover">
         <thead>
         <tr>

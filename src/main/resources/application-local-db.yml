@@ -1,0 +1,22 @@
+spring:
+#  profiles:
+#    include: oauth
+  datasource:
+    url: jdbc:mariadb://localhost:3306/jolup
+    driver-class-name: org.mariadb.jdbc.Driver
+    username: root
+    password: 1234
+  jpa:
+    hibernate:
+      ddl-auto: update
+    properties:
+      hibernate:
+        default_batch_fetch_size: 1000
+        format_sql: true
+logging:
+  level:
+    org.hibernate:
+      SQL: debug
+      type.descriptor.sql.BasicBinder: trace
+app:
+  host: http://localhost:8080

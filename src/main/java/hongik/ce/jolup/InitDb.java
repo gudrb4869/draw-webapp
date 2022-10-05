@@ -1,12 +1,18 @@
 package hongik.ce.jolup;
 
-import hongik.ce.jolup.domain.competition.CompetitionType;
-import hongik.ce.jolup.domain.join.Grade;
-import hongik.ce.jolup.domain.member.Member;
-import hongik.ce.jolup.domain.room.Room;
-import hongik.ce.jolup.domain.room.Access;
-import hongik.ce.jolup.dto.SignupForm;
-import hongik.ce.jolup.service.*;
+import hongik.ce.jolup.module.competition.application.LeagueTableService;
+import hongik.ce.jolup.module.competition.domain.entity.CompetitionType;
+import hongik.ce.jolup.module.competition.application.CompetitionService;
+import hongik.ce.jolup.module.match.application.LeagueService;
+import hongik.ce.jolup.module.match.application.TournamentService;
+import hongik.ce.jolup.module.room.domain.entity.Grade;
+import hongik.ce.jolup.module.member.application.MemberService;
+import hongik.ce.jolup.module.member.domain.entity.Member;
+import hongik.ce.jolup.module.room.application.JoinService;
+import hongik.ce.jolup.module.room.domain.entity.Room;
+import hongik.ce.jolup.module.room.domain.entity.Access;
+import hongik.ce.jolup.module.member.endpoint.form.SignupForm;
+import hongik.ce.jolup.module.room.application.RoomService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
@@ -23,7 +29,7 @@ public class InitDb {
 
     @PostConstruct
     public void init() {
-        initService.dbInit();
+//        initService.dbInit();
     }
 
     @Component
@@ -91,7 +97,7 @@ public class InitDb {
             }
             Member member = members.get(1);
 
-            Room room1 = createRoom("Test", Access.PRIVATE, member);
+            Room room1 = createRoom("1111", Access.PRIVATE, member);
             Long room1Id = roomService.saveRoom(room1);
 
             joinService.save(members.get(1).getId(), room1Id, Grade.ADMIN);
@@ -99,12 +105,12 @@ public class InitDb {
                 joinService.save(members.get(i).getId(), room1Id, Grade.USER);
             }
 
-            Room room2 = createRoom("private", Access.PRIVATE, member);
+            Room room2 = createRoom("2222", Access.PRIVATE, member);
             Long room2Id = roomService.saveRoom(room2);
 
             joinService.save(members.get(1).getId(), room2Id, Grade.ADMIN);
 
-            Room room3 = createRoom("public", Access.PUBLIC, member);
+            Room room3 = createRoom("3333", Access.PUBLIC, member);
             Long room3Id = roomService.saveRoom(room3);
 
             joinService.save(members.get(1).getId(), room3Id, Grade.ADMIN);
@@ -113,14 +119,14 @@ public class InitDb {
              * 대회, 경기 테스트 DB 생성
              */
 
-            Long worldCupId = competitionService.save("WorldCup", CompetitionType.TOURNAMENT, room1Id).getId();
+            Long worldCupId = competitionService.save("zxcv", CompetitionType.TOURNAMENT, room1Id).getId();
             List<Long> memberId32 = new ArrayList<>();
             for (int i = 1; i <= 32; i++) {
                 memberId32.add(members.get(i).getId());
             }
             tournamentService.save(memberId32, worldCupId);
 
-            Long eplId = competitionService.save("EPL", CompetitionType.LEAGUE, room1Id).getId();
+            Long eplId = competitionService.save("asdf", CompetitionType.LEAGUE, room1Id).getId();
             List<Long> memberId20 = new ArrayList<>();
             for (int i = 1; i <= 20; i++) {
                 memberId20.add(members.get(i).getId());

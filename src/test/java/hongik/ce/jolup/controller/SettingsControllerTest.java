@@ -1,10 +1,9 @@
 package hongik.ce.jolup.controller;
 
 import hongik.ce.jolup.app.WithMember;
-import hongik.ce.jolup.domain.member.Member;
-import hongik.ce.jolup.repository.MemberRepository;
+import hongik.ce.jolup.module.member.domain.entity.Member;
+import hongik.ce.jolup.module.member.infra.repository.MemberRepository;
 import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
