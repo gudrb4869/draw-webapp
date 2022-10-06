@@ -42,6 +42,7 @@ public class NotificationService {
     }
 
     public Notification findOne(Long id) {
-        return notificationRepository.findById(id).orElse(null);
+        return notificationRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 알림입니다."));
     }
 }

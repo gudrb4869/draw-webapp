@@ -10,7 +10,6 @@ import hongik.ce.jolup.module.member.application.MemberService;
 import hongik.ce.jolup.module.member.domain.entity.Member;
 import hongik.ce.jolup.module.room.application.JoinService;
 import hongik.ce.jolup.module.room.domain.entity.Room;
-import hongik.ce.jolup.module.room.domain.entity.Access;
 import hongik.ce.jolup.module.member.endpoint.form.SignupForm;
 import hongik.ce.jolup.module.room.application.RoomService;
 import lombok.RequiredArgsConstructor;
@@ -97,7 +96,7 @@ public class InitDb {
             }
             Member member = members.get(1);
 
-            Room room1 = createRoom("1111", Access.PRIVATE, member);
+            Room room1 = createRoom("1111", false, member);
             Long room1Id = roomService.saveRoom(room1);
 
             joinService.save(members.get(1).getId(), room1Id, Grade.ADMIN);
@@ -105,15 +104,12 @@ public class InitDb {
                 joinService.save(members.get(i).getId(), room1Id, Grade.USER);
             }
 
-            Room room2 = createRoom("2222", Access.PRIVATE, member);
-            Long room2Id = roomService.saveRoom(room2);
+            for (int i = 2; i <= 50; i++) {
+                Room room = createRoom(Integer.toString(i), true, member);
+                Long roomId = roomService.saveRoom(room);
 
-            joinService.save(members.get(1).getId(), room2Id, Grade.ADMIN);
-
-            Room room3 = createRoom("3333", Access.PUBLIC, member);
-            Long room3Id = roomService.saveRoom(room3);
-
-            joinService.save(members.get(1).getId(), room3Id, Grade.ADMIN);
+                joinService.save(members.get(1).getId(), roomId, Grade.ADMIN);
+            }
 
             /**
              * 대회, 경기 테스트 DB 생성
@@ -135,7 +131,7 @@ public class InitDb {
             leagueService.save(memberId20, eplId);
         }
 
-        private Room createRoom(String name, Access access, Member master) {
+        private Room createRoom(String name, boolean access, Member master) {
             return Room.builder().name(name).access(access).master(master).build();
         }
 

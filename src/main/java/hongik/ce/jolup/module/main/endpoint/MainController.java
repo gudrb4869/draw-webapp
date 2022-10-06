@@ -14,6 +14,8 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 
+import java.util.stream.Collectors;
+
 @Slf4j
 @Controller
 @RequiredArgsConstructor
@@ -23,10 +25,10 @@ public class MainController {
 
     @GetMapping("/")
     public String index(@CurrentMember Member member, Model model, String keyword,
-                        @PageableDefault(size = 12, sort = "createdDate", direction = Sort.Direction.ASC) Pageable pageable) {
+                        @PageableDefault(size = 8, sort = "createdDate", direction = Sort.Direction.ASC) Pageable pageable) {
         if (member != null) {
             model.addAttribute("member", member);
-            Page<Join> joins = joinRepository.findByMemberId(member.getId(), pageable);
+            Page<Join> joins = joinRepository.findWithJoinByMemberId(member.getId(), pageable);
             model.addAttribute("joins", joins);
             log.info("총 element 수 : {}, 전체 page 수 : {}, 페이지에 표시할 element 수 : {}, 현재 페이지 index : {}, 현재 페이지의 element 수 : {}",
             joins.getTotalElements(), joins.getTotalPages(), joins.getSize(),

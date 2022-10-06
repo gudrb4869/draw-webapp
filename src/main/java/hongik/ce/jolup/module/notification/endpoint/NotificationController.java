@@ -58,8 +58,10 @@ public class NotificationController {
     public String accept(@AuthenticationPrincipal Member member, @PathVariable Long id, RedirectAttributes attributes) {
         log.info("accept start");
         Notification notification = notificationService.findOne(id);
-        if (notification != null && notification.getNotificationType().equals(NotificationType.ROOM_INVITED)) {
-            joinService.save(Optional.ofNullable(notification.getMember()).map(Member::getId).orElse(null),
+        if (notification.getNotificationType().equals(NotificationType.ROOM_INVITED)) {
+            joinService.save(
+                    Optional.ofNullable(notification.getMember()).map(Member::getId)
+                            .orElseThrow(() -> new RuntimeException("예외가 발생했습니다.")),
                     Long.valueOf(notification.getLink()), Grade.USER);
             log.info("join room success");
         }

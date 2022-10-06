@@ -5,17 +5,14 @@
 <div th:replace="fragments.html :: navigation-bar"></div>
 <svg th:replace="fragments.html::svg-symbols"/>
 <div class="container">
-    <div th:if="${message}" class="alert alert-info alert-dismissible show mt-3" role="alert">
-        <svg th:replace="fragments.html::symbol-success"/>
-        <span th:text="${message}">수정 완료</span>
-        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-    </div>
+    <div th:replace="fragments.html :: room-info"></div>
+    <div th:replace="fragments.html :: room-menu (roomMenu)"></div>
     <div class="row">
         <div class="col-md-2">
             <h5 class="font-weight-light">방명</h5>
             <span class="col-4" th:text="${room.name}"></span>
             <h5 class="mt-3 font-weight-light">공개 여부</h5>
-            <span class="col-4" th:text="${room.access.description}"></span>
+            <span class="col-4" th:text="${room.access}"></span>
             <h5 class="mt-3 font-weight-light">인원수</h5>
             <span class="col-4" th:text="${joins.getTotalElements()}"></span>
             <div class="row">
@@ -23,8 +20,7 @@
                     <button type="button" class="btn btn-outline-dark pull-right" th:onclick="|location.href='@{/}'|">목록</button>
                     <button type="button" class="btn btn-outline-dark pull-right" th:onclick="|location.href='@{|/rooms/${room.id}/update|}'|"
                             th:if="${myJoin ne null and (myJoin.grade.name() eq 'ADMIN')}">수정</button>
-                    <form class="pull-right" th:action="@{|/rooms/${room.id}|}" method="post">
-                        <input type="hidden" th:if="${myJoin ne null and (myJoin.grade.name() eq 'ADMIN')}" name="_method" value="delete"/>
+                    <form class="pull-right" th:action="@{|/rooms/${room.id}|}" th:method="delete">
                         <button class="btn btn-outline-danger" type="submit"
                                 th:if="${myJoin ne null and (myJoin.grade.name() eq 'ADMIN')}">삭제</button>
                     </form>

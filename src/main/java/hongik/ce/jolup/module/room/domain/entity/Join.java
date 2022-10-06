@@ -11,6 +11,13 @@ import javax.persistence.*;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @ToString(of = {"id", "member", "room", "grade"})
 @Table(name = "joins")
+@NamedEntityGraph(
+        name = "Join.withAll",
+        attributeNodes = {
+                @NamedAttributeNode("room"),
+                @NamedAttributeNode("member")
+        }
+)
 public class Join extends BaseTimeEntity {
 
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)

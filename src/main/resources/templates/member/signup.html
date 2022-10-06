@@ -12,7 +12,7 @@
             <div class="form-group mb-3">
                 <label th:for="email">아이디</label>
                 <input type="text" th:field="*{email}" placeholder="아이디를 입력하세요" autofocus="autofocus"
-                       th:errorclass="is-invalid" class="form-control">
+                       th:errorclass="is-invalid" class="form-control" required>
                 <small class="invalid-feedback">아이디를 입력하세요.</small>
                 <small th:errors="*{email}" class="form-text text-danger">아이디 오류</small>
             </div>
@@ -20,7 +20,7 @@
             <div class="form-group mb-3">
                 <label th:for="password">비밀번호</label>
                 <input type="password" th:field="*{password}" placeholder="비밀번호를 입력하세요"
-                       th:errorclass="is-invalid" class="form-control">
+                       th:errorclass="is-invalid" class="form-control" required>
                 <small class="invalid-feedback">비밀번호를 입력하세요.</small>
                 <small th:errors="*{password}" class="form-text text-danger">비밀번호 오류</small>
             </div>
@@ -28,7 +28,7 @@
             <div class="form-group mb-3">
                 <label th:for="name">이름</label>
                 <input type="text" th:field="*{name}" placeholder="이름을 입력하세요"
-                       th:errorclass="is-invalid" class="form-control">
+                       th:errorclass="is-invalid" class="form-control" required>
                 <small class="invalid-feedback">이름을 입력하세요.</small>
                 <small th:errors="*{name}" class="form-text text-danger">이름 오류</small>
             </div>

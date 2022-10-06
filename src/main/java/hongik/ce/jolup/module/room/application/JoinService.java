@@ -19,26 +19,20 @@ import java.util.List;
 
 @Service
 @RequiredArgsConstructor
-@Transactional(readOnly = true)
+@Transactional
 public class JoinService {
 
     private final MemberRepository memberRepository;
     private final JoinRepository joinRepository;
     private final RoomRepository roomRepository;
 
-    @Transactional
-    public Long save(Long memberId, Long roomId, Grade grade) {
-        Member member = memberRepository.findById(memberId).orElse(null);
-        Room room = roomRepository.findById(roomId).orElse(null);
-        if (member == null || room == null) {
-            return null;
-        }
-        room.addCount();
+    public Join save(Long memberId, Long roomId, Grade grade) {
+        Member member = memberRepository.findById(memberId).orElseThrow(() -> new IllegalArgumentException("존재하지 않는 회원입니다."));
+        Room room = roomRepository.findById(roomId).orElseThrow(() -> new IllegalArgumentException("존재하지 않는 방입니다."));
         Join join = Join.builder().member(member).room(room).grade(grade).build();
-        return joinRepository.save(join).getId();
+        return joinRepository.save(join);
     }
 
-    @Transactional
     public Long update(Long id, Grade grade) {
         Join join = joinRepository.findById(id).orElse(null);
         if (join == null) {
@@ -48,12 +42,10 @@ public class JoinService {
         return join.getId();
     }
 
-    @Transactional
     public void delete(Long joinId) {
         joinRepository.deleteById(joinId);
     }
 
-    @Transactional
     public void setNull(Long memberId) {
         List<Join> joins = joinRepository.findByMemberId(memberId);
         for (Join join : joins) {

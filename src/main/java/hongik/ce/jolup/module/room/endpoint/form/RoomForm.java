@@ -1,6 +1,5 @@
 package hongik.ce.jolup.module.room.endpoint.form;
 
-import hongik.ce.jolup.module.room.domain.entity.Access;
 import lombok.*;
 
 import javax.validation.constraints.NotBlank;
@@ -13,5 +12,5 @@ public class RoomForm {
     private String name;
 
     @NotNull(message = "공개 여부를 선택하세요.")
-    private Access access;
+    private boolean access;
 }

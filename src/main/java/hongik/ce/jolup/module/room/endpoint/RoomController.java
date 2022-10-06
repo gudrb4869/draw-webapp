@@ -7,11 +7,11 @@ import hongik.ce.jolup.module.member.domain.entity.Member;
 import hongik.ce.jolup.module.member.support.CurrentMember;
 import hongik.ce.jolup.module.room.application.JoinService;
 import hongik.ce.jolup.module.room.application.RoomService;
-import hongik.ce.jolup.module.room.domain.entity.Access;
 import hongik.ce.jolup.module.room.domain.entity.Grade;
 import hongik.ce.jolup.module.room.domain.entity.Join;
 import hongik.ce.jolup.module.room.domain.entity.Room;
 import hongik.ce.jolup.module.room.endpoint.form.RoomForm;
+import hongik.ce.jolup.module.room.infra.repository.JoinRepository;
 import lombok.*;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -46,6 +46,7 @@ public class RoomController {
     private final JoinService joinService;
     private final RoomService roomService;
     private final CompetitionService competitionService;
+    private final JoinRepository joinRepository;
 
     @GetMapping("/create")
     public String createForm(@CurrentMember Member member, Model model) {
@@ -55,27 +56,25 @@ public class RoomController {
     }
 
     @PostMapping("/create")
-    public String create(@Valid RoomForm roomForm, BindingResult result, @CurrentMember Member member,
-                         RedirectAttributes attributes) {
+    public String create(@Valid RoomForm roomForm, BindingResult result, @CurrentMember Member member, RedirectAttributes attributes) {
         if (result.hasErrors()) {
             return "room/form";
         }
 
-        Room room = Room.builder().name(roomForm.getName()).access(roomForm.getAccess()).master(member).build();
-        Long roomId = roomService.saveRoom(room);
-        joinService.save(member.getId(), roomId, Grade.ADMIN);
+        Room room = roomService.createNewRoom(roomForm, member);
+        joinService.save(member.getId(), room.getId(), Grade.ADMIN);
         attributes.addFlashAttribute("message", "새로운 방을 만들었습니다.");
-        return "redirect:/";
+        return "redirect:/rooms/" + room.getId();
     }
 
-    @GetMapping("/{roomId}")
-    public String roomDetail(@PathVariable("roomId") Room room,
+    @GetMapping("/{id}")
+    public String roomDetail(@PathVariable Long id,
                              @CurrentMember Member member,
                              @Qualifier("join") @PageableDefault(size = 20, sort = "grade", direction = Sort.Direction.ASC) Pageable joinPageable,
                              @Qualifier("competition") @PageableDefault(size = 9, sort = "createdDate", direction = Sort.Direction.ASC) Pageable competitionPageable,
                              Model model) {
         log.info("roomDetail");
-
+        Room room = roomService.findOne(id);
         Join myJoin = joinService.findOne(member.getId(), room.getId());
         model.addAttribute("room", room);
         model.addAttribute("myJoin", myJoin);
@@ -87,72 +86,48 @@ public class RoomController {
                 joins.getNumber(), joins.getNumberOfElements());
 
         Page<Competition> competitions = competitionService.findCompetitions(room.getId(), competitionPageable);
-//        Page<Competition> competitions = competitionService.findCompetitions(roomId, competitionPageable);
         model.addAttribute("competitions", competitions);
-
-
         log.info("총 element 수 : {}, 전체 page 수 : {}, 페이지에 표시할 element 수 : {}, 현재 페이지 index : {}, 현재 페이지의 element 수 : {}",
                 competitions.getTotalElements(), competitions.getTotalPages(), competitions.getSize(),
                 competitions.getNumber(), competitions.getNumberOfElements());
-        /*log.info("총 element 수 : {}, 전체 page 수 : {}, 페이지에 표시할 element 수 : {}, 현재 페이지 index : {}, 현재 페이지의 element 수 : {}",
-                competitions.getTotalElements(), competitions.getTotalPages(), competitions.getSize(),
-                competitions.getNumber(), competitions.getNumberOfElements());*/
         return "room/detail";
     }
 
-    @DeleteMapping("/{roomId}")
-    public String delete(@PathVariable Long roomId, @CurrentMember Member member,
+    @DeleteMapping("/{id}")
+    public String delete(@PathVariable Long id, @CurrentMember Member member,
                          RedirectAttributes attributes) {
         log.info("delete room");
-        Join join = joinService.findOne(member.getId(), roomId);
-
-
-        log.info("delete room");
-        roomService.deleteRoom(roomId);
+        roomService.deleteRoom(id);
         attributes.addFlashAttribute("message", "방을 삭제했습니다.");
         return "redirect:/";
     }
 
-    @GetMapping("/{roomId}/update")
-    public String updateForm(@PathVariable Long roomId, Model model, @CurrentMember Member member) {
-        Join join = joinService.findOne(member.getId(), roomId);
-        if (join == null || !join.getGrade().equals(Grade.ADMIN)) {
-            return "error";
-        }
-
-        Room room = join.getRoom();
-        model.addAttribute("roomForm", new UpdateRoomForm(room.getId(), room.getName(), room.getAccess()));
+    @GetMapping("/{id}/update")
+    public String updateForm(@PathVariable Long id, Model model, @CurrentMember Member member) {
+        Room room = roomService.findOne(id);
+        model.addAttribute("roomForm", new UpdateRoomForm(room.getId(), room.getName(), room.isAccess()));
         return "room/updateRoomForm";
     }
 
-    @PostMapping("/{roomId}/update")
-    public String update(@PathVariable Long roomId, @ModelAttribute("roomForm") @Valid UpdateRoomForm roomForm,
+    @PostMapping("/{id}/update")
+    public String update(@PathVariable Long id, @ModelAttribute("roomForm") @Valid UpdateRoomForm roomForm,
                          BindingResult result, @CurrentMember Member member,
                          RedirectAttributes attributes) {
-        Join join = joinService.findOne(member.getId(), roomId);
-        if (join == null || !join.getGrade().equals(Grade.ADMIN)) {
-            return "error";
-        }
-
         if (result.hasErrors()) {
             return "room/updateRoomForm";
         }
         log.info("room = {}", roomForm);
-        roomService.updateRoom(roomForm.getId(), roomForm.getName(), roomForm.getAccess());
+        roomService.updateRoom(roomForm.getId(), roomForm.getName(), roomForm.isAccess());
         attributes.addFlashAttribute("message", "방 정보를 수정했습니다.");
         return "redirect:/rooms/{roomId}";
     }
 
-    @GetMapping("/{roomId}/invite")
-    public String inviteForm(@PathVariable("roomId") Room room,
+    @GetMapping("/{id}/invite")
+    public String inviteForm(@PathVariable Long id,
                              @CurrentMember Member member,
                              Model model) {
 
-        Join join = joinService.findOne(member.getId(), room.getId());
-        if (join == null || join.getGrade().equals(Grade.USER)) {
-            return "error";
-        }
-
+        Room room = roomService.findOne(id);
         InviteForm inviteForm = new InviteForm();
         log.info("inviteForm = {}", inviteForm);
         model.addAttribute("room", room);
@@ -171,10 +146,6 @@ public class RoomController {
         List<Join> joins = joinService.findByRoomId(room.getId());
         Join join = joins.stream().filter(b -> b.getMember().getId().equals(member.getId()))
                 .findFirst().orElse(null);
-        if (join == null || join.getGrade().equals(Grade.USER)) {
-            log.info("방의 회원이 아니거나, 방장 또는 매니저가 아니라 초대 불가능!");
-            return "error";
-        }
 
         List<String> emails = inviteForm.getEmails();
 
@@ -223,7 +194,7 @@ public class RoomController {
         private String name;
 
         @NotNull(message = "공개 여부를 선택하세요.")
-        private Access access;
+        private boolean access;
     }
 
     @Getter @Setter @ToString

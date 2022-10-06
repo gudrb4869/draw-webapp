@@ -11,46 +11,74 @@
 
     <div class="row justify-content-center pt-3">
         <h5 class="font-weight-light">방</h5>
-        <div th:replace="fragments/list::room-List (roomList=${joins})"></div>
+        <div class="row row-cols-1 row-cols-md-2 row-cols-lg-4" th:if="${!#lists.isEmpty(joins)}">
+            <div class="col mb-4" th:each="join: ${joins}">
+                <div class="card">
+                    <div class="card-body">
+                        <a th:href="@{'/rooms/' + ${join.room.id}}" class="text-decoration-none">
+                            <h5 class="card-title context" th:text="${join.room.name}"></h5>
+                        </a>
+                        <p class="card-text">
+                            <span>
+                                <i class="fa fa-calendar-o"></i>
+                                <span class="calendar" th:text="${join.room.createdDate}">Last updated 3 mins ago</span>
+                            </span>
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
-    <button type="button" class="btn btn-outline-dark pull-right" th:onclick="|location.href='@{/rooms/create}'|">방 만들기</button>
 
-    <div class="center text-center">
-        <nav aria-label="Page navigation">
-            <ul class="pagination justify-content-center"
-                th:with="start=${T(java.lang.Math).floor(joins.number/5)*5 + 1},
-                    last=(${start + 4 < joins.totalPages ? start + 4 : joins.totalPages})">
-                <li>
-                    <a th:href="@{/(page=1)}" aria-label="First">
-                        <span aria-hidden="true"><<</span>
-                    </a>
-                </li>
+    <div class="row justify-content-center pt-3">
+        <div class="justify-content-end">
+            <button type="button" class="btn btn-outline-dark pull-right" th:onclick="|location.href='@{/rooms/create}'|">방 만들기</button>
+        </div>
+    </div>
 
-                <li th:class="${joins.first} ? 'disabled'">
-                    <a th:href="${joins.first} ? '#' :@{/(page=${joins.number})}" aria-label="Previous">
-                        <span aria-hidden="true">&lt;</span>
-                    </a>
-                </li>
+    <div class="row justify-content-center pt-3">
+        <div class="col-sm-10">
+            <nav>
+                <ul class="pagination justify-content-center"
+                    th:with="start=${T(java.lang.Math).floor(joins.number/5)*5},
+                    last=(${start + 4 < joins.totalPages - 1? start + 4 : joins.totalPages - 1})">
+                    <li class="page-item" th:classappend="${!joins.hasPrevious()}? disabled">
+                        <a th:href="@{/(page=0)}" class="page-link" aria-disabled="true">
+                            <<
+                        </a>
+                    </li>
 
-                <li th:each="page: ${#numbers.sequence(start, last, 1)}" th:class="${page == joins.number + 1} ? 'active'">
-                    <a th:text="${page}" th:href="@{/(page=${page})}"></a>
-                </li>
+                    <li class="page-item" th:classappend="${joins.first}? disabled">
+                        <a th:href="@{/(page=${joins.number - 1})}"
+                           class="page-link" aria-disabled="true">
+                            <
+                        </a>
+                    </li>
 
-                <li th:class="${joins.last} ? 'disabled'">
-                    <a th:href="${joins.last} ? '#' : @{/(page=${joins.number + 2})}" aria-label="Next">
-                        <span aria-hidden="true">&gt;</span>
-                    </a>
-                </li>
+                    <li class="page-item" th:class="${i == joins.number}? active"
+                        th:each="i: ${#numbers.sequence(start, last)}">
+                        <a th:text="${i + 1}" th:href="@{/(page=${i})}"
+                           class="page-link">1</a>
+                    </li>
 
-                <li>
-                    <a th:href="@{/(page=${joins.totalPages})}" aria-label="Last">
-                        <span aria-hidden="true">>></span>
-                    </a>
-                </li>
-            </ul>
-        </nav>
+                    <li class="page-item" th:classappend="${joins.last}? disabled">
+                        <a th:href="@{/(page=${joins.number + 1})}" class="page-link">
+                            >
+                        </a>
+                    </li>
+
+                    <li class="page-item" th:classappend="${!joins.hasNext()}? disabled">
+                        <a th:href="@{/(page=${joins.totalPages - 1})}"
+                           class="page-link">
+                            >>
+                        </a>
+                    </li>
+                </ul>
+            </nav>
+        </div>
     </div>
 </div> <!-- /container -->
-<div th:replace="fragments.html :: footer"/>
+<div th:replace="fragments.html :: footer"></div>
+<div th:replace="fragments.html :: date-time"></div>
 </body>
 </html>
