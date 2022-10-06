@@ -53,11 +53,6 @@ public class JoinService {
         }
     }
 
-    public Page<Join> findByMemberId(Long memberId, Pageable pageable) {
-        int page = (pageable.getPageNumber() == 0) ? 0 : (pageable.getPageNumber() - 1);
-        return joinRepository.findByMemberId(memberId, PageRequest.of(page, 12, Sort.by("createdDate").descending()));
-    }
-
     public Join findByIdAndRoomId(Long id, Long roomId) {
         return joinRepository.findByIdAndRoomId(id, roomId).orElse(null);
     }

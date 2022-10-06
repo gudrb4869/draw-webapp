@@ -35,10 +35,6 @@ public class RoomService {
         eventPublisher.publishEvent(new RoomInvitedEvent(room, admin +"님이 회원님을 방에 초대하였습니다.", members));
     }
 
-    public void deleteRoom(Long roomId) {
-        roomRepository.deleteById(roomId);
-    }
-
     public Room findOne(Long roomId) {
         return roomRepository.findById(roomId)
                 .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 방입니다."));

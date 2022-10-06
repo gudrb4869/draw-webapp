@@ -4,13 +4,17 @@
 <body class="d-flex flex-column min-vh-100 bg-light">
 <div th:replace="fragments.html :: navigation-bar"></div>
 <div class="container">
-    <div th:if="${message}" class="alert alert-info alert-dismissible show mt-3" role="alert">
-        <span th:text="${message}">수정 완료</span>
-        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-    </div>
-
-    <div class="row justify-content-center pt-3">
+    <div th:replace="fragments.html :: message"></div>
+    <div class="py-5 text-center">
         <h5 class="font-weight-light">방</h5>
+        <p class="lead" th:if="${joins.getTotalElements() == 0}">
+            참여중인 방이 없습니다.
+        </p>
+        <p class="lead" th:if="${joins.getTotalElements() > 0}">
+            현재 <span th:text="${joins.getTotalElements()}"></span>개의 방에 참여중입니다.
+        </p>
+    </div>
+    <div class="row justify-content-center pt-3">
         <div class="row row-cols-1 row-cols-md-2 row-cols-lg-4" th:if="${!#lists.isEmpty(joins)}">
             <div class="col mb-4" th:each="join: ${joins}">
                 <div class="card">
@@ -36,7 +40,7 @@
         </div>
     </div>
 
-    <div class="row justify-content-center pt-3">
+    <div class="row justify-content-center pt-3" th:if="${joins.getTotalElements() > 0}">
         <div class="col-sm-10">
             <nav>
                 <ul class="pagination justify-content-center"
