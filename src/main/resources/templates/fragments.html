@@ -49,7 +49,7 @@
 
 <div th:fragment="settings-menu (currentMenu)" class="list-group">
     <a class="list-group-item list-group-item-action" th:classappend="${currentMenu == 'profile'} ? active" href="#" th:href="@{/settings/profile}">프로필</a>
-    <a class="list-group-item list-group-item-action" th:classappend="${currentMenu == 'password'} ? active" href="#" th:href="@{/settings/password}">패스워드</a>
+    <a class="list-group-item list-group-item-action" th:classappend="${currentMenu == 'password'} ? active" href="#" th:href="@{/settings/password}">비밀번호</a>
     <a class="list-group-item list-group-item-action" th:classappend="${currentMenu == 'notification'} ? active" href="#" th:href="@{/settings/notification}">알림 설정</a>
     <a class="list-group-item list-group-item-action list-group-item-danger" th:classappend="${currentMenu == 'member'}? active" href="#" th:href="@{/settings/member}">계정</a>
 </div>
@@ -173,7 +173,7 @@
         <!--방 이름 표시-->
         <div class="col-6">
             <a href="#" class="text-decoration-none" th:href="@{'/rooms/' + ${room.id}}">
-                <span class="h2" th:text="${room.name}">방 이름</span>
+                <span class="h2" th:text="${room.title}">방 이름</span>
             </a>
         </div>
         <div class="col-4 text-end justify-content-end">
@@ -184,7 +184,7 @@
                         disabled>DRAFT</button>
             </span>
             <!--인증된 사용자이고 방 가입 가능한 경우-->
-            <span sec:authorize="isAuthenticated()"
+            <span sec:authorize="isAuthenticated()" th:if="${!room.isMember(#authentication.principal)}"
                   class="btn-group" role="group" aria-label="Basic example">
                 <!--방 가입 링크-->
                 <a class="btn btn-primary" th:href="@{'/rooms/' + ${room.id} + '/join'}">
@@ -192,21 +192,22 @@
                 </a>
                 <!--방 멤버 수-->
                 <a class="btn btn-primary" th:href="@{'/rooms/' + ${room.id} + '/members'}"
-                   th:text="${joins.getTotalElements()}">1</a>
+                   th:text="${room.joins.size()}">1</a>
             </span>
             <!--인증된 사용자이고 방 멤버인 경우-->
-            <span sec:authorize="isAuthenticated()" class="btn-group" role="group">
+            <span sec:authorize="isAuthenticated()" th:if="${room.isMember(#authentication.principal)}"
+                  class="btn-group" role="group">
                 <!--방 가입 링크-->
                 <a class="btn btn-outline-danger" th:href="@{'/rooms/' + ${room.id} + '/leave'}">
                     방 탈퇴
                 </a>
                 <!--스터디 멤버 수-->
                 <a class="btn btn-primary" th:href="@{'/rooms/' + ${room.id} + '/members'}"
-                   th:text="${joins.getTotalElements()}">1</a>
+                   th:text="${room.joins.size()}">1</a>
             </span>
             <!--인증된 사용자이고 스터디 관리자인 경우-->
             <span sec:authorize="isAuthenticated()"
-                  th:if="${myJoin?.grade.name() == 'ADMIN'}">
+                  th:if="${room.isAdmin(#authentication.principal)}">
                 <!--모임 만들기 링크-->
                 <a class="btn btn-outline-primary" th:href="@{'/rooms/' + ${room.id} + '/competitions/create'}">
                     <i class="fa fa-plus"></i> 대회 만들기
@@ -227,11 +228,32 @@
         <a class="nav-item nav-link" th:classappend="${roomMenu == 'competitions'}? active" href="#" th:href="@{'/rooms/' + ${room.id} + '/competitions'}">
             <i class="fa fa-calendar"></i> 대회
         </a>
-        <a sec:authorize="isAuthenticated()" th:if="${myJoin?.grade.name() == 'ADMIN'}"
-           class="nav-item nav-link" th:classappend="${roomMenu == 'settings'}? active" href="#" th:href="@{'/rooms/' + ${room.id} + '/settings/description'}">
+        <a sec:authorize="isAuthenticated()" th:if="${room.isAdmin(#authentication.principal)}"
+           class="nav-item nav-link" th:classappend="${roomMenu == 'settings'}? active" href="#" th:href="@{'/rooms/' + ${room.id} + '/settings'}">
             <i class="fa fa-cog"></i> 설정
         </a>
     </nav>
+</div>
+
+<div th:fragment="room-settings-menu (currentMenu)" class="list-group">
+    <!--<a class="list-group-item list-group-item-action" th:classappend="${currentMenu == 'description'}? active"
+       href="#" th:href="@{'/study/' + ${study.path} + '/settings/description'}">소개</a>
+    <a class="list-group-item list-group-item-action" th:classappend="${currentMenu == 'image'}? active"
+       href="#" th:href="@{'/study/' + ${study.path} + '/settings/banner'}">배너 이미지</a>
+    <a class="list-group-item list-group-item-action" th:classappend="${currentMenu == 'tags'}? active"
+       href="#" th:href="@{'/study/' + ${study.path} + '/settings/tags'}">스터디 주제</a>
+    <a class="list-group-item list-group-item-action" th:classappend="${currentMenu == 'zones'}? active"
+       href="#" th:href="@{'/study/' + ${study.path} + '/settings/zones'}">활동 지역</a>-->
+    <a class="list-group-item list-group-item-action list-group-item-danger" th:classappend="${currentMenu == 'room'}? active"
+       href="#" th:href="@{'/rooms/' + ${room.id} + '/settings'}">방</a>
+</div>
+
+<div th:fragment="message" th:if="${message}" class="alert alert-info alert-dismissible fade show mt-3" role="alert">
+    <svg class="bi flex-shrink-0 me-2" width="24" height="24" role="img" aria-label="Success:">
+        <use xlink:href="#check-circle-fill"/>
+    </svg>
+    <span th:text="${message}">완료</span>
+    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
 </div>
 
 <div th:fragment="date-time">
@@ -263,5 +285,12 @@
         })
     </script>
 </div>
+
+<!--툴팁 스크립트-->
+<script th:fragment="tooltip" type="application/javascript">
+    $(function () {
+        $('[data-toggle="tooltip"]').tooltip()
+    })
+</script>
 
 </html>

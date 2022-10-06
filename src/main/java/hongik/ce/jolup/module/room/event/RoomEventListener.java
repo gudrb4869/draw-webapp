@@ -31,11 +31,11 @@ public class RoomEventListener {
         for (Member member : members) {
             saveNotification(room, message, member);
         }
-        log.info("invited to " + room.getName() + ".");
+        log.info("invited to " + room.getTitle() + ".");
     }
 
     private void saveNotification(Room room, String message, Member member) {
-        notificationService.save(Notification.from(room.getName(), room.getId().toString(),
+        notificationService.save(Notification.from(room.getTitle(), room.getId().toString(),
                 message, false, member, NotificationType.ROOM_INVITED));
     }
 }

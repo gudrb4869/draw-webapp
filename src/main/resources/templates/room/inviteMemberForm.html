@@ -6,7 +6,7 @@
 <div th:replace="fragments.html :: navigation-bar"></div>
 <div class="container">
     <div class="py-5 text-center">
-        <h2>멤버 초대</h2>
+        <h2>회원 초대</h2>
     </div>
     <div class="row mx-auto justify-content-center">
         <form class="col-md-6 mx-auto" th:action th:object="${inviteForm}" method="post">
@@ -30,13 +30,13 @@
                     <th>아이디</th>
                 </tr>
                 </thead>
-                <tbody id="emails" name="emails">
-                <tr th:each="email : *{emails}">
-                    <td th:text="${emailStat.count}"></td>
+                <tbody id="names" name="names">
+                <tr th:each="name : *{names}">
+                    <td th:text="${nameStat.count}"></td>
                     <td>
-                        <input type="text" th:field="*{emails[__${emailStat.index}__]}"
+                        <input type="text" th:field="*{names[__${nameStat.index}__]}"
                                class="form-control" th:errorclass="is-invalid"/>
-                        <p th:errors="*{emails[__${emailStat.index}__]}" class="text-danger">이메일 형식이 올바르지 않음</p>
+                        <p th:errors="*{names[__${nameStat.index}__]}" class="text-danger">이메일 형식이 올바르지 않음</p>
                     </td>
                 </tr>
                 </tbody>
@@ -68,20 +68,20 @@
 <script th:inline="javascript">
     let updateForm = () => {
         let count = document.getElementById("count").value;
-        let emails = document.getElementById("emails");
-        let n = emails.childElementCount;
+        let names = document.getElementById("names");
+        let n = names.childElementCount;
         if (count > n) {
             for (let i = n + 1; i <= count; i++) {
-                const email = document.createElement('tr')
-                email.innerHTML = "<tr><td>" + i + "</td>" +
-                    "<td><input type='text' name='emails[" + (i - 1) + "]' class='form-control'/></td>" +
+                const name = document.createElement('tr')
+                name.innerHTML = "<tr><td>" + i + "</td>" +
+                    "<td><input type='text' name='names[" + (i - 1) + "]' class='form-control'/></td>" +
                     "</tr>";
-                emails.appendChild(email);
+                names.appendChild(name);
             }
         }
         else {
             for (let i = n; i > count; i--) {
-                emails.lastElementChild.remove();
+                names.lastElementChild.remove();
             }
         }
     }

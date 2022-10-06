@@ -96,7 +96,7 @@ public class InitDb {
             }
             Member member = members.get(1);
 
-            Room room1 = createRoom("1111", false, member);
+            Room room1 = createRoom("1", false);
             Long room1Id = roomService.saveRoom(room1);
 
             joinService.save(members.get(1).getId(), room1Id, Grade.ADMIN);
@@ -105,7 +105,7 @@ public class InitDb {
             }
 
             for (int i = 2; i <= 50; i++) {
-                Room room = createRoom(Integer.toString(i), true, member);
+                Room room = createRoom(Integer.toString(i), true);
                 Long roomId = roomService.saveRoom(room);
 
                 joinService.save(members.get(1).getId(), roomId, Grade.ADMIN);
@@ -131,8 +131,8 @@ public class InitDb {
             leagueService.save(memberId20, eplId);
         }
 
-        private Room createRoom(String name, boolean access, Member master) {
-            return Room.builder().name(name).access(access).master(master).build();
+        private Room createRoom(String title, boolean access) {
+            return Room.builder().title(title).access(access).build();
         }
 
         private SignupForm createMember(int i) {

@@ -46,9 +46,6 @@ public class Member extends BaseTimeEntity {
     @OneToMany(mappedBy = "member", cascade = CascadeType.ALL)
     private List<Join> joins = new ArrayList<>();
 
-    @OneToMany(mappedBy = "master", cascade = CascadeType.ALL)
-    private List<Room> rooms = new ArrayList<>();
-
     @OneToMany(mappedBy = "member", cascade = CascadeType.ALL)
     private List<LeagueTable> leagueTables = new ArrayList<>();
 

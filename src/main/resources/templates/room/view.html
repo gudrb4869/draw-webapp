@@ -6,9 +6,9 @@
 <svg th:replace="fragments.html::svg-symbols"/>
 <div class="container">
     <div th:replace="fragments.html :: room-info"></div>
-    <div th:replace="fragments.html :: room-menu (roomMenu)"></div>
+    <div th:replace="fragments.html :: room-menu ('info')"></div>
     <div class="row">
-        <div class="col-md-2">
+        <!--<div class="col-md-2">
             <h5 class="font-weight-light">방명</h5>
             <span class="col-4" th:text="${room.name}"></span>
             <h5 class="mt-3 font-weight-light">공개 여부</h5>
@@ -26,8 +26,8 @@
                     </form>
                 </div>
             </div>
-        </div>
-        <div class="col-md-7">
+        </div>-->
+        <!--<div class="col-md-7">
             <h5 class="font-weight-light">대회</h5>
             <div class="row justify-content-center pt-3">
                 <div th:replace="fragments/competitionList::competition-List (competitions=${competitions})"></div>
@@ -69,8 +69,8 @@
                     </ul>
                 </nav>
             </div>
-        </div>
-        <div class="col-md-3">
+        </div>-->
+        <!--<div class="col-md-3">
             <h5 class="font-weight-light">참여자</h5>
             <div class="list-group" th:if="${!#lists.isEmpty(joins)}">
                 <a href="#" th:href="@{|/rooms/${room.id}/joins/${join.id}|}" th:text="${join.member.name}"
@@ -114,9 +114,11 @@
                     </ul>
                 </nav>
             </div>
-        </div>
+        </div>-->
     </div>
 </div> <!-- /container -->
 <div th:replace="fragments.html :: footer"></div>
+<div th:replace="fragments.html :: date-time"></div>
+<script th:replace="fragments.html :: tooltip"></script>
 </body>
 </html>

@@ -2,6 +2,7 @@ package hongik.ce.jolup.module.room.domain.entity;
 
 import hongik.ce.jolup.BaseTimeEntity;
 import hongik.ce.jolup.module.competition.domain.entity.Competition;
+import hongik.ce.jolup.module.member.domain.UserMember;
 import hongik.ce.jolup.module.member.domain.entity.Member;
 import hongik.ce.jolup.module.room.endpoint.form.RoomForm;
 import lombok.*;
@@ -14,7 +15,14 @@ import java.util.List;
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@ToString(of = {"id", "name", "access"})
+@ToString(of = {"id", "title", "access"})
+@NamedEntityGraph(
+        name ="Room.withJoins",
+        attributeNodes = {
+                @NamedAttributeNode(value = "joins", subgraph = "member")
+        },
+        subgraphs = @NamedSubgraph(name = "member", attributeNodes = @NamedAttributeNode("member"))
+)
 public class Room extends BaseTimeEntity {
 
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -22,13 +30,9 @@ public class Room extends BaseTimeEntity {
     private Long id;
 
     @Column(nullable = false)
-    private String name;
+    private String title;
 
     private boolean access;
-
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "master_id")
-    private Member master;
 
     @ColumnDefault(value = "0")
     private Integer count = 0;
@@ -40,22 +44,31 @@ public class Room extends BaseTimeEntity {
     private List<Competition> competitions = new ArrayList<>();
 
     @Builder
-    public Room(Long id, String name, Member master, boolean access) {
+    public Room(Long id, String title, boolean access) {
         this.id = id;
-        this.name = name;
-        this.master = master;
+        this.title = title;
         this.access = access;
     }
 
     public static Room from(RoomForm roomForm) {
         Room room = new Room();
-        room.name = roomForm.getName();
+        room.title = roomForm.getTitle();
         room.access = roomForm.isAccess();
         return room;
     }
 
-    public void updateMaster(Member master) {
-        this.master = master;
+    public boolean isMember(UserMember userMember) {
+        Join join = this.joins.stream()
+                .filter(j -> j.getMember().equals(userMember.getMember()))
+                .findFirst().orElse(null);
+        return join != null;
+    }
+
+    public boolean isAdmin(UserMember userMember) {
+        Join join = this.joins.stream()
+                .filter(j -> j.getMember().equals(userMember.getMember()))
+                .findFirst().orElse(null);
+        return join != null && join.getGrade().equals(Grade.ADMIN);
     }
 
     public void addCount() {
@@ -66,12 +79,29 @@ public class Room extends BaseTimeEntity {
         this.count--;
     }
 
-    public void updateName(String name) {
-        this.name = name;
+    public void updateTitle(String newTitle) {
+        this.title = newTitle;
     }
-
 
     public void updateAccess(boolean access) {
         this.access = access;
+    }
+
+    public void reveal() {
+        if (this.access) {
+            throw new IllegalStateException("이미 공개된 방입니다.");
+        }
+        this.access = true;
+    }
+
+    public void conceal() {
+        if (!this.access) {
+            throw new IllegalStateException("이미 비공개된 방입니다.");
+        }
+        this.access = false;
+    }
+
+    public boolean isRemovable() {
+        return true;
     }
 }

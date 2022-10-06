@@ -14,8 +14,6 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 
-import java.util.stream.Collectors;
-
 @Slf4j
 @Controller
 @RequiredArgsConstructor
@@ -24,7 +22,7 @@ public class MainController {
     private final JoinRepository joinRepository;
 
     @GetMapping("/")
-    public String index(@CurrentMember Member member, Model model, String keyword,
+    public String index(@CurrentMember Member member, Model model,
                         @PageableDefault(size = 8, sort = "createdDate", direction = Sort.Direction.ASC) Pageable pageable) {
         if (member != null) {
             model.addAttribute("member", member);
