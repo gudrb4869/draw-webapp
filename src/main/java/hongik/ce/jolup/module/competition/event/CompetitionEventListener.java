@@ -31,11 +31,11 @@ public class CompetitionEventListener {
         for (Member member : members) {
             saveNotification(competition, message, member);
         }
-        log.info(competition.getName() + " is created.");
+        log.info(competition.getTitle() + " is created.");
     }
 
     private void saveNotification(Competition competition, String message, Member member) {
-        notificationService.save(Notification.from(competition.getName(),
+        notificationService.save(Notification.from(competition.getTitle(),
                 "/rooms/" + competition.getRoom().getId() + "/competitions/" + competition.getId(),
                 message, false, member, NotificationType.COMPETITION_CREATED));
     }

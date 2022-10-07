@@ -1,6 +1,7 @@
 package hongik.ce.jolup.module.competition.domain.entity;
 
 import hongik.ce.jolup.BaseTimeEntity;
+import hongik.ce.jolup.module.competition.endpoint.form.CompetitionForm;
 import hongik.ce.jolup.module.match.domain.entity.Match;
 import hongik.ce.jolup.module.room.domain.entity.Room;
 import lombok.*;
@@ -12,7 +13,7 @@ import java.util.List;
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@ToString(of = {"id", "name", "type", "room"})
+@ToString(of = {"id", "title", "type", "room"})
 public class Competition extends BaseTimeEntity {
 
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -20,7 +21,7 @@ public class Competition extends BaseTimeEntity {
     private Long id;
 
     @Column(nullable = false)
-    private String name;
+    private String title;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "room_id")
@@ -30,10 +31,6 @@ public class Competition extends BaseTimeEntity {
     @Enumerated(EnumType.STRING)
     private CompetitionType type;
 
-    /*@Column(nullable = false)
-    @Enumerated(EnumType.STRING)
-    private CompetitionOption option;*/
-
     @OneToMany(mappedBy = "competition", cascade = CascadeType.ALL)
     private List<LeagueTable> leagueTables = new ArrayList<>();
 
@@ -41,15 +38,22 @@ public class Competition extends BaseTimeEntity {
     private List<Match> matches = new ArrayList<>();
 
     @Builder
-    public Competition(Long id, String name, CompetitionType type/*, CompetitionOption option*/, Room room) {
+    public Competition(Long id, String title, CompetitionType type, Room room) {
         this.id = id;
-        this.name = name;
+        this.title = title;
         this.type = type;
-//        this.option = option;
         this.room = room;
     }
 
-    public void updateName(String name) {
-        this.name = name;
+    public static Competition from(CompetitionForm competitionForm, Room room) {
+        Competition competition = new Competition();
+        competition.title = competitionForm.getTitle();
+        competition.type = competitionForm.getType();
+        competition.room = room;
+        return competition;
+    }
+
+    public void updateTitle(String title) {
+        this.title = title;
     }
 }

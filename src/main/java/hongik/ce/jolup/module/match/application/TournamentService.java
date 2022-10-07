@@ -1,7 +1,7 @@
 package hongik.ce.jolup.module.match.application;
 
 import hongik.ce.jolup.module.competition.domain.entity.Competition;
-import hongik.ce.jolup.module.competition.Status;
+import hongik.ce.jolup.module.match.domain.entity.Status;
 import hongik.ce.jolup.module.match.event.MatchUpdatedEvent;
 import hongik.ce.jolup.module.member.domain.entity.Member;
 import hongik.ce.jolup.module.match.domain.entity.Match;
@@ -20,7 +20,7 @@ import java.util.*;
 
 @Service
 @RequiredArgsConstructor
-@Transactional(readOnly = true)
+@Transactional
 public class TournamentService {
 
     private final MemberRepository memberRepository;
@@ -28,7 +28,43 @@ public class TournamentService {
     private final MatchRepository matchRepository;
     private final ApplicationEventPublisher eventPublisher;
 
-    @Transactional
+    public void createMatches(List<Member> memberList, Competition competition) {
+        Collections.shuffle(memberList);
+        int count = memberList.size();
+        int round = (int)Math.ceil(Math.log(count) / Math.log(2)); // 총 라운드
+        int number = 1;
+        int auto_win_num = (int)Math.pow(2, round) - count; // 부전승 인원 수
+
+        Set<Integer> set = new HashSet<>(); //
+        while (set.size() < auto_win_num) {
+            double value = Math.random() * (int)Math.pow(2, round - 1);
+            set.add((int) value);
+        }
+        List<Integer> list = new ArrayList<>(set);
+        Collections.sort(list);
+
+        Set<Match> matches = new HashSet<>();
+        for (int i = 0; i < round; i++) {
+            for (int j = 0; j < number; j++) {
+                if (i == round - 1 && auto_win_num > 0 && list.contains(j)) {
+                    continue;
+                }
+                Match match = Match.builder().competition(competition)
+                        .home(i == round - 1 ? memberList.remove(0) :
+                                (i == round - 2 && auto_win_num > 0 && list.contains(j * 2) ? memberList.remove(0) : null))
+                        .away(i == round - 1 ? memberList.remove(0) :
+                                (i == round - 2 && auto_win_num > 0 && list.contains(j * 2 + 1) ? memberList.remove(0) : null))
+                        .status(Status.BEFORE)
+                        .round(i)
+                        .number(j)
+                        .homeScore(0).awayScore(0)
+                        .build();
+                matches.add(match);
+            }
+            number *= 2;
+        }
+        matchRepository.saveAll(matches);
+    }
     public void save(List<Long> memberIds, Long competitionId) {
         List<Member> members = memberRepository.findAllById(memberIds);
         Competition competition = competitionRepository.findById(competitionId).orElse(null);
@@ -69,7 +105,6 @@ public class TournamentService {
         }
     }
 
-    @Transactional
     public void update(Long id, Long competitionId, Status status, Integer homeScore, Integer awayScore) {
         Match match = matchRepository.findById(id).orElse(null);
         if (match == null) {
@@ -99,13 +134,11 @@ public class TournamentService {
     public void sendAlarm(Match match, Long roomId, Set<Member> members) {
         eventPublisher.publishEvent(new MatchUpdatedEvent(match, roomId, "경기 결과가 수정되었습니다.", members));
     }
-    
-    @Transactional
+
     public void delete(Long id) {
         matchRepository.deleteById(id);
     }
 
-    @Transactional
     public void setNull(Long memberId) {
         List<Match> homeMatches = matchRepository.findByHomeId(memberId);
         for (Match match : homeMatches) {

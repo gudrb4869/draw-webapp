@@ -1,6 +1,7 @@
 package hongik.ce.jolup.module.competition.infra.repository;
 
 import hongik.ce.jolup.module.competition.domain.entity.Competition;
+import hongik.ce.jolup.module.room.domain.entity.Room;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -21,4 +22,6 @@ public interface CompetitionRepository extends JpaRepository<Competition, Long> 
 
     @Query("select c from Competition c join fetch c.room where c.id = :id and c.room.id = :roomId")
     Optional<Competition> findByIdAndRoomId(@Param("id") Long id, @Param("roomId") Long roomId);
+
+    Page<Competition> findByRoom(Room room, Pageable pageable);
 }

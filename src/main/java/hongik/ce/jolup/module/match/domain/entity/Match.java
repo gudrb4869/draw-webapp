@@ -2,7 +2,6 @@ package hongik.ce.jolup.module.match.domain.entity;
 
 import hongik.ce.jolup.BaseTimeEntity;
 import hongik.ce.jolup.module.competition.domain.entity.Competition;
-import hongik.ce.jolup.module.competition.Status;
 import hongik.ce.jolup.module.member.domain.entity.Member;
 import lombok.*;
 

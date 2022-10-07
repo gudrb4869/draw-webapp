@@ -59,11 +59,11 @@ public class MemberController {
         return "redirect:/";
     }
 
-    @GetMapping("/profile/{name}")
-    public String profile(@PathVariable String name, @CurrentMember Member member, Model model) {
-        Member byName = memberService.findByName(name);
-        model.addAttribute("member", byName);
-        model.addAttribute("isOwner", byName.equals(member));
+    @GetMapping("/profile/{id}")
+    public String profile(@PathVariable Long id, @CurrentMember Member member, Model model) {
+        Member byId = memberService.getMember(id);
+        model.addAttribute("member", byId);
+        model.addAttribute("isOwner", byId.equals(member));
         return "member/profile";
     }
 }

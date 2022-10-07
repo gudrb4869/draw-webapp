@@ -102,21 +102,16 @@ public class RoomController {
     }
 
     /*@GetMapping("/{id}/invite")
-    public String inviteForm(@PathVariable Long id,
-                             @CurrentMember Member member,
-                             Model model) {
-        Room room = roomService.getRoomToInvite(member, id);
+    public String inviteForm(@PathVariable Long id, @CurrentMember Member member, Model model) {
+        Room room = roomService.getRoomToUpdate(member, id);
         model.addAttribute(room);
         model.addAttribute(new InviteForm());
         return "room/inviteMemberForm";
     }
 
     @PostMapping("/{id}/invite")
-    public String invite(@PathVariable Long id,
-                         @Valid InviteForm inviteForm,
-                         BindingResult result,
-                         @CurrentMember Member member,
-                         RedirectAttributes attributes) {
+    public String invite(@PathVariable Long id, @Valid InviteForm inviteForm, BindingResult result,
+                         @CurrentMember Member member, RedirectAttributes attributes) {
         log.info("inviteForm={}", inviteForm);
         Room room = roomService.getRoomToInvite(member, id);
         if (result.hasErrors()) {

@@ -8,7 +8,7 @@
         <h2>로그인</h2>
     </div>
     <div class="row mx-auto justify-content-center">
-        <form class="col-md-6 mx-auto" th:action method="post" novalidate>
+        <form class="col-md-6 col-lg-4 mx-auto" th:action method="post" novalidate>
             <div th:if="${param.error}" class="alert alert-danger" role="alert">
                 <p class="text-center">아이디 또는 비밀번호가 일치하지 않습니다.</p>
                 <p class="text-center"><a href="#" th:href="@{/find-password}">비밀번호 찾기</a></p>

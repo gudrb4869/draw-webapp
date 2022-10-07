@@ -42,7 +42,4 @@ public interface JoinRepository extends JpaRepository<Join, Long> {
     boolean existsByRoomAndMember(Room room, Member member);
 
     Optional<Join> findByRoomAndMember(Room room, Member member);
-
-    @Transactional
-    void deleteByRoomAndMember(Room room, Member member);
 }

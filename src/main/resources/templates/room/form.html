@@ -8,7 +8,7 @@
         <h2>방 만들기</h2>
     </div>
     <div class="row mx-auto justify-content-center">
-        <form class="col-md-6 mx-auto" th:action th:object="${roomForm}" method="post">
+        <form class="col-md-6 col-lg-4 mx-auto" th:action th:object="${roomForm}" method="post">
             <div class="mb-3">
                 <label th:for="title">방명</label>
                 <input type="text" th:field="*{title}" placeholder="방 이름을 입력하세요"

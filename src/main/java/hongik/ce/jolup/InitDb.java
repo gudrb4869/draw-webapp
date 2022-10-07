@@ -91,7 +91,7 @@ public class InitDb {
              * 회원 DB 생성
              */
             List<Member> members = new ArrayList<>();
-            for (int i = 0; i <= 32; i++) {
+            for (int i = 0; i <= 100; i++) {
                 members.add(memberService.signup(createMember(i)));
             }
             Member member = members.get(1);
@@ -100,7 +100,7 @@ public class InitDb {
             Long room1Id = roomService.saveRoom(room1);
 
             joinService.save(members.get(1).getId(), room1Id, Grade.ADMIN);
-            for (int i = 2; i <= 32; i++) {
+            for (int i = 2; i <= 100; i++) {
                 joinService.save(members.get(i).getId(), room1Id, Grade.USER);
             }
 
@@ -115,7 +115,7 @@ public class InitDb {
              * 대회, 경기 테스트 DB 생성
              */
 
-            Long worldCupId = competitionService.save("zxcv", CompetitionType.TOURNAMENT, room1Id).getId();
+            /*Long worldCupId = competitionService.save("zxcv", CompetitionType.TOURNAMENT, room1Id).getId();
             List<Long> memberId32 = new ArrayList<>();
             for (int i = 1; i <= 32; i++) {
                 memberId32.add(members.get(i).getId());
@@ -128,7 +128,7 @@ public class InitDb {
                 memberId20.add(members.get(i).getId());
             }
             leagueTableService.save(memberId20, eplId);
-            leagueService.save(memberId20, eplId);
+            leagueService.save(memberId20, eplId);*/
         }
 
         private Room createRoom(String title, boolean access) {

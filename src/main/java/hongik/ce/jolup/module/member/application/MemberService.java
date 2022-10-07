@@ -59,11 +59,6 @@ public class MemberService implements UserDetailsService {
         return memberRepository.findByEmail(email).orElse(null);
     }
 
-    public Member findByName(String name) {
-        return memberRepository.findByName(name)
-                .orElseThrow(() -> new IllegalArgumentException(name + "에 해당하는 사용자가 존재하지 않습니다."));
-    }
-
     public Set<Member> findMembers(List<String> emails) {
         return memberRepository.findByEmailIn(emails);
     }
@@ -83,5 +78,10 @@ public class MemberService implements UserDetailsService {
         UsernamePasswordAuthenticationToken token = new UsernamePasswordAuthenticationToken(new UserMember(member),
                 member.getPassword(), Collections.singleton(new SimpleGrantedAuthority("ROLE_USER")));
         SecurityContextHolder.getContext().setAuthentication(token);
+    }
+
+    public Member getMember(Long id) {
+        return memberRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 사용자입니다."));
     }
 }

@@ -1,4 +1,4 @@
-package hongik.ce.jolup.module.competition;
+package hongik.ce.jolup.module.match.domain.entity;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;

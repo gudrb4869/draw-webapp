@@ -2,22 +2,28 @@ package hongik.ce.jolup.module.competition.endpoint;
 
 import hongik.ce.jolup.module.competition.application.CompetitionService;
 import hongik.ce.jolup.module.competition.application.LeagueTableService;
+import hongik.ce.jolup.module.competition.endpoint.form.CompetitionForm;
+import hongik.ce.jolup.module.competition.endpoint.validator.CompetitionFormValidator;
+import hongik.ce.jolup.module.competition.infra.repository.CompetitionRepository;
 import hongik.ce.jolup.module.match.application.LeagueService;
 import hongik.ce.jolup.module.match.application.TournamentService;
+import hongik.ce.jolup.module.member.support.CurrentMember;
+import hongik.ce.jolup.module.room.application.RoomService;
 import hongik.ce.jolup.module.room.domain.entity.Join;
 import hongik.ce.jolup.module.room.domain.entity.Grade;
 import hongik.ce.jolup.module.competition.domain.entity.Competition;
-import hongik.ce.jolup.module.competition.domain.entity.CompetitionOption;
 import hongik.ce.jolup.module.competition.domain.entity.LeagueTable;
 import hongik.ce.jolup.module.member.application.MemberService;
 import hongik.ce.jolup.module.member.domain.entity.Member;
 import hongik.ce.jolup.module.competition.domain.entity.CompetitionType;
 import hongik.ce.jolup.module.match.domain.entity.Match;
 import hongik.ce.jolup.module.room.application.JoinService;
+import hongik.ce.jolup.module.room.domain.entity.Room;
 import lombok.*;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
@@ -25,12 +31,14 @@ import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
 import org.springframework.validation.ObjectError;
+import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.validation.Valid;
 import javax.validation.constraints.*;
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Controller
@@ -38,86 +46,78 @@ import java.util.*;
 @RequestMapping("rooms/{roomId}/competitions")
 public class CompetitionController {
 
-    private final MemberService memberService;
     private final CompetitionService competitionService;
+    private final RoomService roomService;
     private final JoinService joinService;
     private final LeagueTableService leagueTableService;
     private final LeagueService leagueService;
     private final TournamentService tournamentService;
+    private final CompetitionRepository competitionRepository;
+    private final CompetitionFormValidator competitionFormValidator;
+
+    @InitBinder("competitionForm")
+    public void competitionFormValidator(WebDataBinder webDataBinder) {
+        webDataBinder.addValidators(competitionFormValidator);
+    }
 
     @GetMapping("/create")
-    public String createForm(@PathVariable("roomId") Long roomId,
-                             @AuthenticationPrincipal Member member,
-                             Model model) {
-
-        Join myJoin = joinService.findOne(member.getId(), roomId);
-        if (myJoin == null || !myJoin.getGrade().equals(Grade.ADMIN)) {
-            return "error";
-        }
-
-        CreateCompetitionForm competitionForm = new CreateCompetitionForm();
-        log.info("GET: create, competitionForm = {}", competitionForm);
-        model.addAttribute("form", competitionForm);
-        return "competition/createCompetitionForm";
+    public String createForm(@CurrentMember Member member, @PathVariable("roomId") Long roomId, Model model) {
+        Room room = roomService.getRoomToUpdate(member, roomId);
+        model.addAttribute(member);
+        model.addAttribute(room);
+        List<Member> members = room.getJoins().stream().map(Join::getMember)
+                .collect(Collectors.toList());
+        model.addAttribute("members", members);
+        model.addAttribute(new CompetitionForm());
+        return "competition/form";
     }
 
     @PostMapping("/create")
-    public String create(@PathVariable("roomId") Long roomId,
-                         @ModelAttribute("form") @Valid CreateCompetitionForm competitionForm,
-                         BindingResult bindingResult, @AuthenticationPrincipal Member member,
-                         RedirectAttributes attributes) {
+    public String create(@CurrentMember Member member, @PathVariable Long roomId, Model model,
+                         @Valid CompetitionForm competitionForm, BindingResult bindingResult, RedirectAttributes attributes) {
 
-        log.info("POST : createCompetition. competitionForm = {}", competitionForm);
-
-        List<Join> joins = joinService.findByRoomId(roomId);
-        Join myJoin = joins.stream()
-                .filter(b -> b.getMember().getId().equals(member.getId())).findFirst().orElse(null);
-
-        if (myJoin == null || !myJoin.getGrade().equals(Grade.ADMIN)) {
-            return "error";
-        }
-
+        Room room = roomService.getRoomToUpdate(member, roomId);
+        List<Member> members = room.getJoins().stream().map(Join::getMember)
+                .collect(Collectors.toList());
         if (bindingResult.hasErrors()) {
-            return "competition/createCompetitionForm";
+            model.addAttribute(member);
+            model.addAttribute(room);
+            model.addAttribute("members", members);
+            return "competition/form";
         }
+        Competition competition = competitionService.createCompetition(room, competitionForm);
 
-        List<String> emails = competitionForm.getEmails();
-        if (competitionForm.getCount() != emails.size()) {
-            bindingResult.addError(new ObjectError("form", null, null, "대회 참가 인원과 참가자 아이디의 갯수가 일치하지 않습니다."));
-            return "competition/createCompetitionForm";
+        Set<Long> formMembers = competitionForm.getMembers();
+        List<Member> memberList = members.stream().filter(m -> formMembers.contains(m.getId())).collect(Collectors.toList());
+        switch (competitionForm.getType()) {
+            case LEAGUE:
+                leagueTableService.createLeagueTable(memberList, competition);
+                leagueService.createMatches(memberList, competition);
+                break;
+            case TOURNAMENT:
+                tournamentService.createMatches(memberList, competition);
+                break;
         }
-
-        if (emails.size() != emails.stream().distinct().count()) {
-            bindingResult.addError(new ObjectError("form", null, null, "동일한 아이디를 입력할 수 없습니다."));
-            return "competition/createCompetitionForm";
-        }
-
-        List<Long> memberIds = new ArrayList<>();
-        for(int i = 0; i < emails.size(); i++) {
-            String email = emails.get(i);
-            Join join = joins.stream()
-                    .filter(b -> b.getMember().getEmail().equals(email)).findFirst().orElse(null);
-            if (join == null) {
-                bindingResult.addError(new FieldError("form", "emails[" + i + "]", email, false, null, null, "존재하지 않는 회원입니다."));
-                return "competition/createCompetitionForm";
-            }
-            memberIds.add(join.getMember().getId());
-        }
-
-        Set<Member> members = memberService.findMembers(emails);
-        members.remove(member);
-        Competition competition = competitionService.save(competitionForm.getName(), competitionForm.getType(), roomId);
-        competitionService.SendAlarm(competition, members);
-
-        Long competitionId = competition.getId();
-        if (competitionForm.getType().equals(CompetitionType.LEAGUE)) {
-            leagueTableService.save(memberIds, competitionId);
-            leagueService.save(memberIds, competitionId);
+        /*if (competitionForm.getType().equals(CompetitionType.LEAGUE)) {
+            leagueTableService.save(competitionForm.getMembers(), competition);
+            leagueService.save(competitionForm.getMembers(), competition);
         } else if (competitionForm.getType().equals(CompetitionType.TOURNAMENT)) {
-            tournamentService.save(memberIds, competitionId);
-        }
+            tournamentService.save(competitionForm.getMembers(), competition);
+        }*/
         attributes.addFlashAttribute("message", "대회를 만들었습니다.");
-        return "redirect:/rooms/{roomId}";
+        return "redirect:/rooms/" + room.getId() + "/competitions";
+    }
+
+    @GetMapping
+    public String viewRoomCompetitions(@CurrentMember Member member, @PathVariable Long roomId,
+                                       @PageableDefault(size = 8, sort = {"createdDate"}, direction = Sort.Direction.DESC) Pageable pageable,
+                                       Model model) {
+        Room room = roomService.getRoom(member, roomId);
+        model.addAttribute(member);
+        model.addAttribute(room);
+        Page<Competition> competitions = competitionRepository.findByRoom(room, pageable);
+        model.addAttribute("competitions", competitions);
+        return "room/competitions";
     }
 
     @GetMapping("/{competitionId}")
@@ -204,7 +204,7 @@ public class CompetitionController {
         if (myJoin == null || !myJoin.getGrade().equals(Grade.ADMIN)) {
             return "error";
         }
-        model.addAttribute("form", new UpdateCompetitionForm(competition.getId(), competition.getName()));
+        model.addAttribute("form", new UpdateCompetitionForm(competition.getId(), competition.getTitle()));
         return "competition/updateCompetitionForm";
     }
 
@@ -233,35 +233,6 @@ public class CompetitionController {
         competitionService.updateCompetition(competitionForm.getId(), competitionForm.getName());
         attributes.addFlashAttribute("message", "대회 정보를 수정했습니다.");
         return "redirect:/rooms/{roomId}/competitions/{competitionId}";
-    }
-
-    @Getter @Setter @ToString
-    private static class CreateCompetitionForm {
-        @NotBlank(message = "대회명을 입력하세요.")
-//    @Pattern(regexp = "^(?:\\w+\\.?)*\\w+@(?:\\w+\\.)+\\w+$", message = "대회 이름 형식이 올바르지 않습니다.")
-        private String name;
-
-        @NotNull(message = "대회 방식을 선택하세요.")
-        private CompetitionType type;
-
-        @NotNull(message = "대회 옵션을 선택하세요.")
-        private CompetitionOption option;
-
-        @Min(value = 2, message = "참가자수는 최소 2명이어야 합니다.")
-        @Max(value = 64, message = "참가자수는 최대 64명이어야 합니다.")
-        @NotNull(message = "참가자수를 선택하세요.")
-        private Long count;
-
-        @NotNull(message = "null 값일 수 없습니다.")
-        private List<@NotBlank(message = "참가자 아이디를 입력하세요.") String> emails = new ArrayList<>();
-
-        public CreateCompetitionForm() {
-            this.type = CompetitionType.LEAGUE;
-            this.option = CompetitionOption.SINGLE;
-            this.count = 2L;
-            this.emails.add("");
-            this.emails.add("");
-        }
     }
 
     @Getter @Setter @AllArgsConstructor

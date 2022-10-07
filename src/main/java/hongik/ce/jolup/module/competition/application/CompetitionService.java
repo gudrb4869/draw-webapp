@@ -1,6 +1,7 @@
 package hongik.ce.jolup.module.competition.application;
 
 import hongik.ce.jolup.module.competition.domain.entity.Competition;
+import hongik.ce.jolup.module.competition.endpoint.form.CompetitionForm;
 import hongik.ce.jolup.module.competition.event.CompetitionCreatedEvent;
 import hongik.ce.jolup.module.competition.domain.entity.CompetitionType;
 import hongik.ce.jolup.module.member.domain.entity.Member;
@@ -21,17 +22,16 @@ import java.util.Set;
 
 @Service
 @RequiredArgsConstructor
-@Transactional(readOnly = true)
+@Transactional
 public class CompetitionService {
 
     private final CompetitionRepository competitionRepository;
     private final RoomRepository roomRepository;
     private final ApplicationEventPublisher eventPublisher;
 
-    @Transactional
-    public Competition save(String name, CompetitionType type, Long roomId) {
+    public Competition save(String title, CompetitionType type, Long roomId) {
         Room room = roomRepository.findById(roomId).orElse(null);
-        Competition competition = Competition.builder().name(name).type(type).room(room).build();
+        Competition competition = Competition.builder().title(title).type(type).room(room).build();
         return competitionRepository.save(competition);
     }
 
@@ -39,18 +39,16 @@ public class CompetitionService {
         eventPublisher.publishEvent(new CompetitionCreatedEvent(competition, "새로운 대회가 생성되었습니다.", members));
     }
 
-    @Transactional
     public void deleteCompetition(Long id) {
         competitionRepository.deleteById(id);
     }
 
-    @Transactional
     public Long updateCompetition(Long id, String name) {
         Competition competition = competitionRepository.findById(id).orElse(null);
         if (competition == null) {
             return null;
         }
-        competition.updateName(name);
+        competition.updateTitle(name);
         return competition.getId();
     }
 
@@ -69,5 +67,11 @@ public class CompetitionService {
 
     public Competition findOne(Long competitionId, Long roomId) {
         return competitionRepository.findByIdAndRoomId(competitionId, roomId).orElse(null);
+    }
+
+    public Competition createCompetition(Room room, CompetitionForm competitionForm) {
+        Competition competition = Competition.from(competitionForm, room);
+//        eventPublisher.publishEvent(new RoomUpdatedEvent(competition.getRoom(), "'" + competition.getTitle() + "' 대회가 생성되었습니다."));
+        return competitionRepository.save(competition);
     }
 }

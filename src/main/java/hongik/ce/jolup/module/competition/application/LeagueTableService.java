@@ -11,17 +11,23 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
-@Transactional(readOnly = true)
+@Transactional
 public class LeagueTableService {
 
     private final LeagueTableRepository leagueTableRepository;
     private final MemberRepository memberRepository;
     private final CompetitionRepository competitionRepository;
 
-    @Transactional
+    public void createLeagueTable(List<Member> memberList, Competition competition) {
+        List<LeagueTable> leagueTables = memberList.stream().map(m -> LeagueTable.builder().member(m).competition(competition)
+                .win(0).draw(0).lose(0).goalFor(0).goalAgainst(0).build()).collect(Collectors.toList());
+        leagueTableRepository.saveAll(leagueTables);
+    }
+
     public void save(List<Long> memberIds, Long leagueId) {
         List<Member> members = memberRepository.findAllById(memberIds);
         Competition competition = competitionRepository.findById(leagueId).orElse(null);
@@ -32,7 +38,6 @@ public class LeagueTableService {
         }
     }
 
-    @Transactional
     public Long save(Long memberId, Long leagueId) {
         Member member = memberRepository.findById(memberId).orElse(null);
         Competition competition = competitionRepository.findById(leagueId).orElse(null);
@@ -44,12 +49,10 @@ public class LeagueTableService {
         return null;
     }
 
-    @Transactional
     public void delete(Long id) {
         leagueTableRepository.deleteById(id);
     }
 
-    @Transactional
     public void setNull(Long memberId) {
         List<LeagueTable> leagueTables = leagueTableRepository.findByMemberId(memberId);
         for (LeagueTable leagueTable : leagueTables) {

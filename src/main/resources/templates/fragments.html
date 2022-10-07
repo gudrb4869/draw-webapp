@@ -38,7 +38,7 @@
     </style>
 </head>
 
-<footer th:fragment="footer" class="d-flex flex-wrap justify-content-between align-items-center py-3 my-4 border-top mt-auto">
+<footer th:fragment="footer" class="d-flex flex-wrap align-items-center pt-3 my-4 border-top mt-auto">
     <div class="col-6 col-md-4 d-flex align-items-center">
         <a href="/" class="mb-3 me-2 mb-md-0 text-muted text-decoration-none lh-1">
             <svg class="bi" width="30" height="24"><use xlink:href="#bootstrap"></use></svg>
@@ -106,7 +106,7 @@
                     <!-- 이미지가 존재하면 이미지를, 그렇지 않으면 아바타를 보여주도록 수정(끝) -->
                 </a>
                 <div class="dropdown-menu dropdown-menu-sm-end" aria-labelledby="userDropdown">
-                    <a class="dropdown-item" th:href="@{'/profile/' + ${#authentication.name}}">프로필</a>
+                    <a class="dropdown-item" th:href="@{'/profile/' + ${#authentication.principal.member.id}}">프로필</a>
                     <a class="dropdown-item" href="#" th:href="@{'/settings/profile'}">설정</a>
                     <div class="dropdown-divider"></div>
                     <form class="form-inline my-2 my-lg-0" action="#" th:action="@{/logout}" method="post">
@@ -195,7 +195,7 @@
                    th:text="${room.joins.size()}">1</a>
             </span>
             <!--인증된 사용자이고 방 멤버인 경우-->
-            <span sec:authorize="isAuthenticated()" th:if="${room.isMember(#authentication.principal)}"
+            <span sec:authorize="isAuthenticated()" th:if="${room.isMember(#authentication.principal) and !room.isAdmin(#authentication.principal)}"
                   class="btn-group" role="group">
                 <!--방 가입 링크-->
                 <a class="btn btn-outline-danger" th:href="@{'/rooms/' + ${room.id} + '/leave'}">

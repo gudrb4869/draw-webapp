@@ -3,7 +3,7 @@ package hongik.ce.jolup.module.match.endpoint;
 import hongik.ce.jolup.module.competition.application.LeagueTableService;
 import hongik.ce.jolup.module.competition.domain.entity.Competition;
 import hongik.ce.jolup.module.competition.domain.entity.CompetitionType;
-import hongik.ce.jolup.module.competition.Status;
+import hongik.ce.jolup.module.match.domain.entity.Status;
 import hongik.ce.jolup.module.competition.application.CompetitionService;
 import hongik.ce.jolup.module.match.application.LeagueService;
 import hongik.ce.jolup.module.match.application.TournamentService;

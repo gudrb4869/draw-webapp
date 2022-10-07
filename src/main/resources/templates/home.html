@@ -6,7 +6,6 @@
 <div class="container">
     <div th:replace="fragments.html :: message"></div>
     <div class="py-5 text-center">
-        <h5 class="font-weight-light">방</h5>
         <p class="lead" th:if="${joins.getTotalElements() == 0}">
             참여중인 방이 없습니다.
         </p>
@@ -14,20 +13,36 @@
             현재 <span th:text="${joins.getTotalElements()}"></span>개의 방에 참여중입니다.
         </p>
     </div>
-    <div class="row justify-content-center pt-3">
-        <div class="row row-cols-1 row-cols-md-2 row-cols-lg-4" th:if="${!#lists.isEmpty(joins)}">
-            <div class="col mb-4" th:each="join: ${joins}">
-                <div class="card">
-                    <div class="card-body">
-                        <a th:href="@{'/rooms/' + ${join.room.id}}" class="text-decoration-none">
-                            <h5 class="card-title context" th:text="${join.room.getTitle}"></h5>
-                        </a>
-                        <p class="card-text">
-                            <span>
-                                <i class="fa fa-calendar-o"></i>
-                                <span class="calendar" th:text="${join.room.createdDate}">Last updated 3 mins ago</span>
-                            </span>
-                        </p>
+    <div class="row justify-content-center">
+        <div class="col-sm-10">
+            <div class="row">
+                <div class="col-sm-6 col-lg-3" th:each="join: ${joins}">
+                    <div class="card mb-4 shadow-sm">
+                        <div class="card-body">
+                            <a th:href="@{'/rooms/' + ${join.room.id}}" class="text-decoration-none">
+                                <h5 class="card-title context" th:text="${join.room.title}"></h5>
+                            </a>
+                            <p class="card-text" th:text="${join.room.title}">Short description</p>
+                            <p class="card-text context">
+                                <!--<span th:each="tag: ${join.room.}" class="font-weight-light text-monospace badge badge-pill badge-info mr-3">
+                                    <a th:href="@{'/search/tag/' + ${tag.title}}" class="text-decoration-none text-white">
+                                        <i class="fa fa-tag"></i> <span th:text="${tag.title}">Tag</span>
+                                    </a>
+                                </span>
+                                <span th:each="zone: ${study.zones}" class="font-weight-light text-monospace badge badge-primary mr-3">
+                                    <a th:href="@{'/search/zone/' + ${zone.id}}" class="text-decoration-none text-white">
+                                        <i class="fa fa-globe"></i> <span th:text="${zone.localNameOfCity}" class="text-white">City</span>
+                                    </a>
+                                </span>-->
+                            </p>
+                            <div class="d-flex justify-content-between align-items-center">
+                                <small class="text-muted">
+                                    <i class="fa fa-user-circle"></i>
+                                    <span th:text="${join.room.count}"></span>명
+                                </small>
+                                <small class="text-muted date" th:text="${join.room.createdDate}">9 mins</small>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -35,8 +50,15 @@
     </div>
 
     <div class="row justify-content-center pt-3">
-        <div class="justify-content-end">
-            <button type="button" class="btn btn-outline-dark pull-right" th:onclick="|location.href='@{/rooms/create}'|">방 만들기</button>
+        <div class="col-sm-10 text-end justify-content-end">
+            <span class="btn-group" role="group">
+                <a class="btn btn-outline-dark" th:href="@{'/rooms/create'}">
+                    방 만들기
+                </a>
+            </span>
+            <!--<div class="justify-content-end">
+                <button type="button" class="btn btn-outline-dark pull-right" th:onclick="|location.href='@{/rooms/create}'|">방 만들기</button>
+            </div>-->
         </div>
     </div>
 
