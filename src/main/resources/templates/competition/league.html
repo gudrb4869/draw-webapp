@@ -1,9 +1,8 @@
 <!DOCTYPE HTML>
-<html xmlns="http://www.w3.org/1999/xhtml"
-      xmlns:th="http://www.thymeleaf.org">
-<head th:replace="fragments/header :: header" />
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="fragments.html :: head"></head>
 <body class="d-flex flex-column min-vh-100 bg-light">
-<div th:replace="fragments/bodyheader" :: bodyheader />
+<div th:replace="fragments.html :: navigation-bar"></div>
 <div class="container">
     <div th:if="${message}" class="alert alert-info alert-dismissible show mt-3" role="alert">
         <span th:text="${message}">수정 완료</span>
@@ -240,6 +239,7 @@
         </div>
     </div>-->
 </div> <!-- /container -->
-<div th:replace="fragments/footer" :: footer />
+<div th:replace="fragments.html :: footer"></div>
+<script th:replace="fragments.html :: date-time"></script>
 </body>
 </html>

@@ -59,7 +59,7 @@ public class RoomController {
             return "room/form";
         }
         Room room = roomService.createNewRoom(roomForm, member);
-        joinService.save(member.getId(), room.getId(), Grade.ADMIN);
+        joinService.addMember(room, member, Grade.ADMIN);
         attributes.addFlashAttribute("message", "새로운 방을 만들었습니다.");
         return "redirect:/rooms/" + room.getId();
     }
@@ -90,7 +90,7 @@ public class RoomController {
     @GetMapping("/{id}/join")
     public String joinRoom(@CurrentMember Member member, @PathVariable Long id) {
         Room room = roomService.findOne(id);
-        joinService.addMember(room, member);
+        joinService.addMember(room, member, Grade.USER);
         return "redirect:/rooms/" + room.getId() + "/members";
     }
 

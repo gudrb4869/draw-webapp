@@ -159,24 +159,52 @@
             <hr/>
             <div class="row">
                 <h5 class="col-sm-12 text-danger">방 삭제</h5>
-                <form class="col-sm-12" action="#"
+                <div class="alert alert-danger" role="alert">
+                    <svg th:replace="fragments.html::symbol-danger"/>
+                    방을 삭제하시면 방 관련 모든 기록을 삭제하며 복구하실 수 없습니다. <br/>
+                </div>
+                <div class="form-group">
+                    <button class="btn btn-outline-danger" data-bs-toggle="modal" data-bs-target="#remove">방 삭제
+                    </button>
+                </div>
+                <!--<form class="col-sm-12" action="#"
                       th:action="@{'/rooms/' + ${room.id} + '/settings/room/remove'}" th:method="delete"
                       novalidate>
                     <div class="alert alert-danger" role="alert">
                         <svg th:replace="fragments.html::symbol-danger"/>
                         방을 삭제하시면 방 관련 모든 기록을 삭제하며 복구하실 수 없습니다. <br/>
-                        <!--<b>다음에 해당하는 방은 자동으로 삭제 됩니다.</b>
+                        &lt;!&ndash;<b>다음에 해당하는 방은 자동으로 삭제 됩니다.</b>
                         <ul>
                             <li>만든지 1주일이 지난 비공개 스터디</li>
                             <li>방 생성 이후, 일년 동안 대회를 만들지 않은 방</li>
                             <li>스터디 공개 이후, 모임을 만들지 않고 종료한 스터디</li>
-                        </ul>-->
+                        </ul>&ndash;&gt;
                     </div>
                     <div class="form-group">
                         <button class="btn btn-outline-danger" type="submit" aria-describedby="submitHelp">방 삭제
                         </button>
                     </div>
-                </form>
+                </form>-->
+            </div>
+        </div>
+        <div class="modal fade" id="remove" tabindex="-1" role="dialog" aria-labelledby="removeTitle" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="removeTitle" th:text="${room.title}"></h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <p>방을 삭제하시겠습니까?</p>
+                        <p><strong>삭제</strong>을 누르시면 방, 대회 및 경기 관련 데이터를 삭제합니다.</p>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">닫기</button>
+                        <form th:action="@{'/rooms/' + ${room.id} + '/settings/room/remove'}" th:method="delete">
+                            <button class="btn btn-danger" type="submit" aria-describedby="submitHelp">삭제</button>
+                        </form>
+                    </div>
+                </div>
             </div>
         </div>
     </div>

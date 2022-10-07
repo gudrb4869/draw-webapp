@@ -16,6 +16,7 @@ import java.util.List;
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @ToString(of = {"id", "title", "access"})
+@EqualsAndHashCode(of = {"id"}, callSuper = true)
 @NamedEntityGraph(
         name ="Room.withJoins",
         attributeNodes = {

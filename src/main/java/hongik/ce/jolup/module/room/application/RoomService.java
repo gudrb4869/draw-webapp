@@ -22,10 +22,6 @@ public class RoomService {
     private final RoomRepository roomRepository;
     private final ApplicationEventPublisher eventPublisher;
 
-    public Long saveRoom(Room room) {
-        return roomRepository.save(room).getId();
-    }
-
     public Room createNewRoom(RoomForm roomForm, Member member) {
         Room room = Room.from(roomForm);
         return roomRepository.save(room);

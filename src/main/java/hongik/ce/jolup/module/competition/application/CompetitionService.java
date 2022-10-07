@@ -74,4 +74,12 @@ public class CompetitionService {
 //        eventPublisher.publishEvent(new RoomUpdatedEvent(competition.getRoom(), "'" + competition.getTitle() + "' 대회가 생성되었습니다."));
         return competitionRepository.save(competition);
     }
+
+    public Competition getCompetition(Member member, Room room, Long competitionId) {
+        Competition competition = competitionRepository.findCompetitionById(competitionId).orElse(null);
+        if (competition == null || !competition.getRoom().equals(room)) {
+            throw new IllegalArgumentException("존재하지 않는 대회입니다.");
+        }
+        return competition;
+    }
 }

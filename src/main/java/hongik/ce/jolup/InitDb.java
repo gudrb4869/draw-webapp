@@ -1,7 +1,6 @@
 package hongik.ce.jolup;
 
 import hongik.ce.jolup.module.competition.application.LeagueTableService;
-import hongik.ce.jolup.module.competition.domain.entity.CompetitionType;
 import hongik.ce.jolup.module.competition.application.CompetitionService;
 import hongik.ce.jolup.module.match.application.LeagueService;
 import hongik.ce.jolup.module.match.application.TournamentService;
@@ -12,6 +11,7 @@ import hongik.ce.jolup.module.room.application.JoinService;
 import hongik.ce.jolup.module.room.domain.entity.Room;
 import hongik.ce.jolup.module.member.endpoint.form.SignupForm;
 import hongik.ce.jolup.module.room.application.RoomService;
+import hongik.ce.jolup.module.room.endpoint.form.RoomForm;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
@@ -92,23 +92,23 @@ public class InitDb {
              */
             List<Member> members = new ArrayList<>();
             for (int i = 0; i <= 100; i++) {
-                members.add(memberService.signup(createMember(i)));
+                members.add(memberService.signup(createMemberForm(i)));
             }
             Member member = members.get(1);
 
-            Room room1 = createRoom("1", false);
-            Long room1Id = roomService.saveRoom(room1);
+            RoomForm roomForm1 = createRoomForm("1", false);
+            Room room1 = roomService.createNewRoom(roomForm1, member);
 
-            joinService.save(members.get(1).getId(), room1Id, Grade.ADMIN);
+            joinService.addMember(room1, member, Grade.ADMIN);
             for (int i = 2; i <= 100; i++) {
-                joinService.save(members.get(i).getId(), room1Id, Grade.USER);
+                joinService.addMember(room1, members.get(i), Grade.USER);
             }
 
             for (int i = 2; i <= 50; i++) {
-                Room room = createRoom(Integer.toString(i), true);
-                Long roomId = roomService.saveRoom(room);
+                RoomForm roomForm = createRoomForm(Integer.toString(i), true);
+                Room room = roomService.createNewRoom(roomForm, member);
 
-                joinService.save(members.get(1).getId(), roomId, Grade.ADMIN);
+                joinService.addMember(room, member, Grade.ADMIN);
             }
 
             /**
@@ -131,11 +131,14 @@ public class InitDb {
             leagueService.save(memberId20, eplId);*/
         }
 
-        private Room createRoom(String title, boolean access) {
-            return Room.builder().title(title).access(access).build();
+        private RoomForm createRoomForm(String title, boolean access) {
+            RoomForm roomForm = new RoomForm();
+            roomForm.setTitle(title);
+            roomForm.setAccess(access);
+            return roomForm;
         }
 
-        private SignupForm createMember(int i) {
+        private SignupForm createMemberForm(int i) {
             SignupForm signupForm = new SignupForm();
             signupForm.setEmail(Integer.toString(i));
             signupForm.setPassword("1");

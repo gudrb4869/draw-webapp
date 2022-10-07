@@ -18,31 +18,32 @@
             <div class="row">
                 <div class="col-sm-6 col-lg-3" th:each="join: ${joins}">
                     <div class="card mb-4 shadow-sm">
-                        <div class="card-body">
-                            <a th:href="@{'/rooms/' + ${join.room.id}}" class="text-decoration-none">
+                        <a th:href="@{'/rooms/' + ${join.room.id}}" class="text-decoration-none">
+                            <div class="card-body">
                                 <h5 class="card-title context" th:text="${join.room.title}"></h5>
-                            </a>
-                            <p class="card-text" th:text="${join.room.title}">Short description</p>
-                            <p class="card-text context">
-                                <!--<span th:each="tag: ${join.room.}" class="font-weight-light text-monospace badge badge-pill badge-info mr-3">
-                                    <a th:href="@{'/search/tag/' + ${tag.title}}" class="text-decoration-none text-white">
-                                        <i class="fa fa-tag"></i> <span th:text="${tag.title}">Tag</span>
-                                    </a>
-                                </span>
-                                <span th:each="zone: ${study.zones}" class="font-weight-light text-monospace badge badge-primary mr-3">
-                                    <a th:href="@{'/search/zone/' + ${zone.id}}" class="text-decoration-none text-white">
-                                        <i class="fa fa-globe"></i> <span th:text="${zone.localNameOfCity}" class="text-white">City</span>
-                                    </a>
-                                </span>-->
-                            </p>
-                            <div class="d-flex justify-content-between align-items-center">
-                                <small class="text-muted">
-                                    <i class="fa fa-user-circle"></i>
-                                    <span th:text="${join.room.count}"></span>명
-                                </small>
-                                <small class="text-muted date" th:text="${join.room.createdDate}">9 mins</small>
+                                <p class="card-text" th:text="${join.room.title}">Short description</p>
+                                <p class="card-text context">
+                                    <!--<span th:each="tag: ${join.room.}" class="font-weight-light text-monospace badge badge-pill badge-info mr-3">
+                                        <a th:href="@{'/search/tag/' + ${tag.title}}" class="text-decoration-none text-white">
+                                            <i class="fa fa-tag"></i> <span th:text="${tag.title}">Tag</span>
+                                        </a>
+                                    </span>
+                                    <span th:each="zone: ${study.zones}" class="font-weight-light text-monospace badge badge-primary mr-3">
+                                        <a th:href="@{'/search/zone/' + ${zone.id}}" class="text-decoration-none text-white">
+                                            <i class="fa fa-globe"></i> <span th:text="${zone.localNameOfCity}" class="text-white">City</span>
+                                        </a>
+                                    </span>-->
+                                </p>
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <small class="text-muted">
+                                        <i class="fa fa-user-circle"></i>
+                                        <span th:text="${join.room.count}"></span>명
+                                    </small>
+                                    <small class="text-muted date-weekday-time" th:text="${join.room.createdDate}">9 mins</small>
+                                </div>
                             </div>
-                        </div>
+                        </a>
+
                     </div>
                 </div>
             </div>

@@ -37,26 +37,6 @@
                 <p th:errors="*{option}" class="text-danger">대회방식 오류</p>
             </div>
 
-            <!-- single checkbox -->
-            <!--<div>판매 여부</div>
-            <div>
-                <div class="form-check">
-                    <input type="checkbox" id="open" th:field="*{open}" class="form-check-input">
-                    <label for="open" class="form-check-label">판매 오픈</label>
-                </div>
-            </div>-->
-
-            <!-- multi checkbox -->
-            <!--<div>
-                <div>등록 지역</div>
-                <div th:each="region : ${regions}" class="form-check form-check-inline">
-                    <input type="checkbox" th:field="*{regions}" th:value="${region.key}"
-                           class="form-check-input">
-                    <label th:for="${#ids.prev('regions')}"
-                           th:text="${region.value}" class="form-check-label">서울</label>
-                </div>
-            </div>-->
-
             <div class="mb-3">
                 <div class="fw-bold mb-1">대회 참가자 선택</div>
                 <div th:each="member : ${members}" class="form-check form-check-inline">
@@ -67,8 +47,6 @@
                         <img th:if="${!#strings.isEmpty(member.image)}" th:src="${member.image}" width="40" height="40" class="rounded border me-3"/>
                         <b th:text="${member.name}">이름</b>
                     </label>
-                    <!--<label th:for="${#ids.prev('members')}"
-                           th:text="${member.name}" class="form-check-label">이름</label>-->
                 </div>
                 <p th:errors="*{members}" class="text-danger">대회방식 오류</p>
             </div>
@@ -81,45 +59,8 @@
         </form>
         <div class="mb-4"></div>
     </div>
-</div> <!-- /container -->
+</div>
 <div th:replace="fragments.html :: footer"></div>
+<script th:replace="fragments.html :: form-validation"></script>
 </body>
-<!--<script>
-    let updateCount = (t) => {
-        let count = document.getElementById("count");
-        if (t == "LEAGUE") {
-            for (let i = 64; i >= 25; i&#45;&#45;) {
-                count.lastElementChild.remove();
-            }
-        } else if (t == "TOURNAMENT") {
-            for (let i = 25; i <= 64; i++) {
-                const option = document.createElement('option')
-                option.value = i
-                option.innerHTML = i
-                count.appendChild(option);
-            }
-        }
-    }
-</script>
-<script th:inline="javascript">
-    let updateForm = () => {
-        let count = document.getElementById("count").value;
-        let emails = document.getElementById("emails");
-        let n = emails.childElementCount;
-        if (count > n) {
-            for (let i = n + 1; i <= count; i++) {
-                const email = document.createElement('tr')
-                email.innerHTML = "<tr><td>" + i + "</td>" +
-                    "<td><input type='text' name='emails[" + (i - 1) + "]' class='form-control'/></td>" +
-                    "</tr>";
-                emails.appendChild(email);
-            }
-        }
-        else {
-            for (let i = n; i > count; i&#45;&#45;) {
-                emails.lastElementChild.remove();
-            }
-        }
-    }
-</script>-->
 </html>

@@ -61,7 +61,7 @@ public class CompetitionController {
     }
 
     @GetMapping("/create")
-    public String createForm(@CurrentMember Member member, @PathVariable("roomId") Long roomId, Model model) {
+    public String createForm(@CurrentMember Member member, @PathVariable Long roomId, Model model) {
         Room room = roomService.getRoomToUpdate(member, roomId);
         model.addAttribute(member);
         model.addAttribute(room);
@@ -98,12 +98,6 @@ public class CompetitionController {
                 tournamentService.createMatches(memberList, competition);
                 break;
         }
-        /*if (competitionForm.getType().equals(CompetitionType.LEAGUE)) {
-            leagueTableService.save(competitionForm.getMembers(), competition);
-            leagueService.save(competitionForm.getMembers(), competition);
-        } else if (competitionForm.getType().equals(CompetitionType.TOURNAMENT)) {
-            tournamentService.save(competitionForm.getMembers(), competition);
-        }*/
         attributes.addFlashAttribute("message", "대회를 만들었습니다.");
         return "redirect:/rooms/" + room.getId() + "/competitions";
     }
@@ -121,25 +115,15 @@ public class CompetitionController {
     }
 
     @GetMapping("/{competitionId}")
-    public String competitionDetail(@PathVariable("roomId") Long roomId,
-                                    @PathVariable("competitionId") Long competitionId,
-                                    @AuthenticationPrincipal Member member,
-                                    @PageableDefault Pageable pageable,
-                                    Model model) {
+    public String viewCompetition(@PathVariable Long roomId, @PathVariable Long competitionId,
+                                  @CurrentMember Member member, @PageableDefault Pageable pageable, Model model) {
 
-        log.info("GET : CompetitionDetail. competitionId = {}", competitionId);
+        Room room = roomService.getRoom(member, roomId);
+        Competition competition = competitionService.getCompetition(member, room, competitionId);
 
-        Join myJoin = joinService.findOne(member.getId(), roomId);
-        if (myJoin == null) {
-            return "error";
-        }
-
-        Competition competition = competitionService.findOne(competitionId, roomId);
-        if (competition == null) {
-            return "error";
-        }
-        model.addAttribute("competition", competition);
-        model.addAttribute("myJoin", myJoin);
+        model.addAttribute(member);
+        model.addAttribute(competition);
+        model.addAttribute("type", competition.getType().name());
         if (competition.getType().equals(CompetitionType.LEAGUE)) {
             List<LeagueTable> leagueTables = leagueTableService.findByCompetitionSort(competitionId);
             model.addAttribute("leagueTables", leagueTables);
@@ -163,14 +147,11 @@ public class CompetitionController {
             model.addAttribute("hashMap", hashMap);
             return "competition/tournament";
         }
-        return "redirect:/rooms/{roomId}";
+        return "competition/view";
     }
 
     @DeleteMapping("/{competitionId}")
-    public String delete(@PathVariable("roomId") Long roomId,
-                         @PathVariable("competitionId") Long competitionId,
-                         @AuthenticationPrincipal Member member,
-                         RedirectAttributes attributes) {
+    public String delete(@CurrentMember Member member, @PathVariable Long roomId, @PathVariable Long competitionId, RedirectAttributes attributes) {
 
         log.info("DELETE : competitionId = {}", competitionId);
 
@@ -190,10 +171,7 @@ public class CompetitionController {
     }
 
     @GetMapping("/{competitionId}/update")
-    public String updateForm(@PathVariable("roomId") Long roomId,
-                             @PathVariable("competitionId") Long competitionId,
-                             @AuthenticationPrincipal Member member,
-                             Model model) {
+    public String updateForm(@CurrentMember Member member, @PathVariable Long roomId, @PathVariable Long competitionId, Model model) {
         Competition competition = competitionService.findOne(competitionId, roomId);
         log.info("GET : editCompetition, competition = {}", competition);
         if (competition == null) {
@@ -209,12 +187,8 @@ public class CompetitionController {
     }
 
     @PostMapping("/{competitionId}/update")
-    public String update(@PathVariable("roomId") Long roomId,
-                         @PathVariable("competitionId") Long competitionId,
-                         @AuthenticationPrincipal Member member,
-                         @ModelAttribute("form") @Valid UpdateCompetitionForm competitionForm,
-                         BindingResult result,
-                         RedirectAttributes attributes) {
+    public String update(@CurrentMember Member member, @PathVariable Long roomId, @PathVariable Long competitionId,
+                         @Valid UpdateCompetitionForm competitionForm, BindingResult result, RedirectAttributes attributes) {
         log.info("POST : UpdateCompetitionForm = {}", competitionForm);
 
         if (result.hasErrors()) {

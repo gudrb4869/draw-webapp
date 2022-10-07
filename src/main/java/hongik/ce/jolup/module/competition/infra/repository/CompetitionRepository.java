@@ -4,6 +4,7 @@ import hongik.ce.jolup.module.competition.domain.entity.Competition;
 import hongik.ce.jolup.module.room.domain.entity.Room;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -24,4 +25,7 @@ public interface CompetitionRepository extends JpaRepository<Competition, Long> 
     Optional<Competition> findByIdAndRoomId(@Param("id") Long id, @Param("roomId") Long roomId);
 
     Page<Competition> findByRoom(Room room, Pageable pageable);
+
+    @EntityGraph(attributePaths = "room")
+    Optional<Competition> findCompetitionById(Long id);
 }

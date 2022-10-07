@@ -42,10 +42,6 @@ public class JoinService {
         return join.getId();
     }
 
-    public void delete(Long joinId) {
-        joinRepository.deleteById(joinId);
-    }
-
     public void setNull(Long memberId) {
         List<Join> joins = joinRepository.findByMemberId(memberId);
         for (Join join : joins) {
@@ -61,15 +57,12 @@ public class JoinService {
         return joinRepository.findByMemberIdAndRoomId(memberId, roomId).orElse(null);
     }
 
-    public List<Join> findByRoomId(Long roomId) {
-        return joinRepository.findByRoomId(roomId);
-    }
-
-    public Join addMember(Room room, Member member) {
+    public Join addMember(Room room, Member member, Grade grade) {
         if (joinRepository.existsByRoomAndMember(room, member)) {
             throw new IllegalArgumentException("이미 방에 참여중입니다.");
         }
-        return joinRepository.save(Join.builder().room(room).member(member).grade(Grade.USER).build());
+        room.addCount();
+        return joinRepository.save(Join.builder().room(room).member(member).grade(grade).build());
     }
 
     public void removeMember(Room room, Member member) {
@@ -78,6 +71,7 @@ public class JoinService {
         if (join.getGrade().equals(Grade.ADMIN)) {
             throw new IllegalArgumentException("관리자는 방을 나갈 수 없습니다. 설정에 들어가서 방을 삭제하세요.");
         }
+        room.subCount();
         joinRepository.delete(join);
     }
 }
