@@ -1,20 +1,17 @@
 package hongik.ce.jolup.module.match.application;
 
 import hongik.ce.jolup.module.competition.domain.entity.Competition;
-import hongik.ce.jolup.module.competition.domain.entity.LeagueTable;
+import hongik.ce.jolup.module.competition.domain.entity.Participate;
 import hongik.ce.jolup.module.match.domain.entity.Status;
 import hongik.ce.jolup.module.match.domain.entity.Match;
 import hongik.ce.jolup.module.match.event.MatchUpdatedEvent;
 import hongik.ce.jolup.module.member.domain.entity.Member;
 import hongik.ce.jolup.module.competition.infra.repository.CompetitionRepository;
 import hongik.ce.jolup.module.match.infra.repository.MatchRepository;
-import hongik.ce.jolup.module.competition.infra.repository.LeagueTableRepository;
+import hongik.ce.jolup.module.competition.infra.repository.ParticipateRepository;
 import hongik.ce.jolup.module.member.infra.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.ApplicationEventPublisher;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -28,7 +25,7 @@ public class LeagueService {
     private final MemberRepository memberRepository;
     private final CompetitionRepository competitionRepository;
     private final MatchRepository matchRepository;
-    private final LeagueTableRepository leagueTableRepository;
+    private final ParticipateRepository participateRepository;
     private final ApplicationEventPublisher eventPublisher;
 
 
@@ -206,8 +203,8 @@ public class LeagueService {
 
     public void update(Long matchId, Long competitionId, Status status, Integer homeScore, Integer awayScore, Long homeId, Long awayId) {
         Match match = matchRepository.findById(matchId).orElse(null);
-        LeagueTable home = leagueTableRepository.findByMemberIdAndCompetitionId(homeId, competitionId).orElse(null);
-        LeagueTable away = leagueTableRepository.findByMemberIdAndCompetitionId(awayId, competitionId).orElse(null);
+        Participate home = participateRepository.findByMemberIdAndCompetitionId(homeId, competitionId).orElse(null);
+        Participate away = participateRepository.findByMemberIdAndCompetitionId(awayId, competitionId).orElse(null);
         if (match == null || home == null || away == null) {
             return;
         }
@@ -267,11 +264,6 @@ public class LeagueService {
         for (Match Match : awayMatchs) {
             Match.updateAway(null);
         }
-    }
-
-    public Page<Match> findByCompetitionId(Long competitionId, int count, Pageable pageable) {
-        int page = (pageable.getPageNumber() == 0) ? 0 : (pageable.getPageNumber() - 1);
-        return matchRepository.findByCompetitionId(competitionId, PageRequest.of(page, count / 2));
     }
 
     public List<Match> findByCompetitionId(Long competitionId) {

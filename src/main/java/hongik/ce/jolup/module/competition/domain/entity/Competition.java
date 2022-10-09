@@ -23,7 +23,7 @@ public class Competition extends BaseTimeEntity {
     @Column(nullable = false)
     private String title;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne
     @JoinColumn(name = "room_id")
     private Room room;
 
@@ -32,7 +32,7 @@ public class Competition extends BaseTimeEntity {
     private CompetitionType type;
 
     @OneToMany(mappedBy = "competition", cascade = CascadeType.ALL)
-    private List<LeagueTable> leagueTables = new ArrayList<>();
+    private List<Participate> participates = new ArrayList<>();
 
     @OneToMany(mappedBy = "competition", cascade = CascadeType.ALL)
     private List<Match> matches = new ArrayList<>();

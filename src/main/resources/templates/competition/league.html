@@ -4,9 +4,15 @@
 <body class="d-flex flex-column min-vh-100 bg-light">
 <div th:replace="fragments.html :: navigation-bar"></div>
 <div class="container">
-    <div th:if="${message}" class="alert alert-info alert-dismissible show mt-3" role="alert">
-        <span th:text="${message}">수정 완료</span>
-        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    <div class="row py-4 text-center justify-content-center bg-light">
+        <div class="col-10">
+                <span class="h2">
+                <a href="#" class="text-decoration-none" th:href="@{'/rooms/' + ${room.id}}">
+                    <span th:text="${room.title}">방 이름</span>
+                </a> / <a href="#" class="text-decoration-none" th:href="@{'/rooms/' + ${room.id} + '/competitions/' + ${competition.id}}">
+                    <span th:text="${competition.title}">대회 이름</span>
+                </a></span>
+        </div>
     </div>
     <table class="table table-hover">
         <thead>
@@ -20,7 +26,7 @@
         <tr>
             <td class="col-4" th:text="${competition.getTitle}"></td>
             <td class="col-4" th:text="${competition.type.description}"></td>
-            <td class="col-4" th:text="${leagueTables.size()}"></td>
+            <td class="col-4" th:text="${participates.size()}"></td>
         </tr>
         </tbody>
     </table>
@@ -133,7 +139,7 @@
             </tr>
             </thead>
             <tbody>
-            <tr th:each="rank : ${leagueTables}">
+            <tr th:each="rank : ${participates}">
                 <td class="col-1" th:text="${rankStat.count}"></td>
                 <td class="col-3" th:text="${rank.member} ? ${rank.member.name} : '탈퇴한 사용자'"></td>
                 <td class="col-1" th:text="${rank.win} + ${rank.draw} + ${rank.lose}"></td>

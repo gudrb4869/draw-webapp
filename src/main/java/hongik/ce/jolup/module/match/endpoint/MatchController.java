@@ -1,6 +1,6 @@
 package hongik.ce.jolup.module.match.endpoint;
 
-import hongik.ce.jolup.module.competition.application.LeagueTableService;
+import hongik.ce.jolup.module.competition.application.ParticipateService;
 import hongik.ce.jolup.module.competition.domain.entity.Competition;
 import hongik.ce.jolup.module.competition.domain.entity.CompetitionType;
 import hongik.ce.jolup.module.match.domain.entity.Status;
@@ -37,7 +37,7 @@ public class MatchController {
 
     private final LeagueService leagueService;
     private final TournamentService tournamentService;
-    private final LeagueTableService leagueTableService;
+    private final ParticipateService participateService;
     private final JoinService joinService;
     private final CompetitionService competitionService;
 

@@ -1,13 +1,11 @@
 package hongik.ce.jolup;
 
-import hongik.ce.jolup.module.competition.application.LeagueTableService;
+import hongik.ce.jolup.module.competition.application.ParticipateService;
 import hongik.ce.jolup.module.competition.application.CompetitionService;
 import hongik.ce.jolup.module.match.application.LeagueService;
 import hongik.ce.jolup.module.match.application.TournamentService;
-import hongik.ce.jolup.module.room.domain.entity.Grade;
 import hongik.ce.jolup.module.member.application.MemberService;
 import hongik.ce.jolup.module.member.domain.entity.Member;
-import hongik.ce.jolup.module.room.application.JoinService;
 import hongik.ce.jolup.module.room.domain.entity.Room;
 import hongik.ce.jolup.module.member.endpoint.form.SignupForm;
 import hongik.ce.jolup.module.room.application.RoomService;
@@ -78,10 +76,9 @@ public class InitDb {
 //            }
 
         private final MemberService memberService;
-        private final JoinService joinService;
         private final RoomService roomService;
         private final CompetitionService competitionService;
-        private final LeagueTableService leagueTableService;
+        private final ParticipateService participateService;
         private final LeagueService leagueService;
         private final TournamentService tournamentService;
 
@@ -96,19 +93,16 @@ public class InitDb {
             }
             Member member = members.get(1);
 
-            RoomForm roomForm1 = createRoomForm("1", false);
+            RoomForm roomForm1 = createRoomForm("1", true);
             Room room1 = roomService.createNewRoom(roomForm1, member);
 
-            joinService.addMember(room1, member, Grade.ADMIN);
             for (int i = 2; i <= 100; i++) {
-                joinService.addMember(room1, members.get(i), Grade.USER);
+                roomService.addMember(room1, members.get(i));
             }
 
             for (int i = 2; i <= 50; i++) {
                 RoomForm roomForm = createRoomForm(Integer.toString(i), true);
-                Room room = roomService.createNewRoom(roomForm, member);
-
-                joinService.addMember(room, member, Grade.ADMIN);
+                roomService.createNewRoom(roomForm, member);
             }
 
             /**

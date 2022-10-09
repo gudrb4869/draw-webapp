@@ -13,6 +13,7 @@
     <link rel="stylesheet" href="/node_modules/bootstrap/dist/css/bootstrap.min.css"/>
     <link rel="stylesheet" href="/node_modules/font-awesome/css/font-awesome.min.css"/>
     <link rel="stylesheet" href="/node_modules/@yaireo/tagify/dist/tagify.css"/>
+    <link rel="stylesheet" href="/tournament.css"/>
     <script defer src="/node_modules/jdenticon/dist/jdenticon.min.js"></script>
     <script src="/node_modules/jquery/dist/jquery.min.js"></script>
     <script src="/node_modules/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
@@ -61,7 +62,7 @@
             <path d="M6.5 14.5v-3.505c0-.245.25-.495.5-.495h2c.25 0 .5.25.5.5v3.5a.5.5 0 0 0 .5.5h4a.5.5 0 0 0 .5-.5v-7a.5.5 0 0 0-.146-.354L13 5.793V2.5a.5.5 0 0 0-.5-.5h-1a.5.5 0 0 0-.5.5v1.293L8.354 1.146a.5.5 0 0 0-.708 0l-6 6A.5.5 0 0 0 1.5 7.5v7a.5.5 0 0 0 .5.5h4a.5.5 0 0 0 .5-.5z"/>
         </svg>
     </a>
-    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent"
+    <button class="navbar-toggler collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent"
             aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
         <span class="navbar-toggler-icon"></span>
     </button>
@@ -292,5 +293,15 @@
         $('[data-toggle="tooltip"]').tooltip()
     })
 </script>
+
+<div th:fragment="competition-menu (currentMenu)" class="list-group">
+    <a class="list-group-item list-group-item-action" th:classappend="${currentMenu == 'matches'}? active"
+       href="#" th:href="@{'/rooms/' + ${room.id} + '/competitions/' + ${competition.id}}">경기</a>
+    <a class="list-group-item list-group-item-action" th:classappend="${currentMenu == 'ranking'}? active"
+       href="#" th:href="@{'/rooms/' + ${room.id} + '/competitions/' + ${competition.id} + '/ranking'}">순위</a>
+    <a sec:authorize="isAuthenticated()" th:if="${room.isAdmin(#authentication.principal)}"
+       class="list-group-item list-group-item-action list-group-item-danger" th:classappend="${currentMenu == 'settings'}? active"
+       href="#" th:href="@{'/rooms/' + ${room.id} + '/competitions/' + ${competition.id} + '/settings'}">설정</a>
+</div>
 
 </html>

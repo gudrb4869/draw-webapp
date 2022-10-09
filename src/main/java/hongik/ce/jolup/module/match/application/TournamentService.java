@@ -150,11 +150,6 @@ public class TournamentService {
         }
     }
 
-    public Page<Match> findByCompetition(Long competitionId, int count, Pageable pageable) {
-        int page = (pageable.getPageNumber() == 0) ? 0 : (pageable.getPageNumber() - 1);
-        return matchRepository.findByCompetitionId(competitionId, PageRequest.of(page, count / 2));
-    }
-
     public List<Match> findByCompetition(Long competitionId) {
         return matchRepository.findByCompetitionId(competitionId);
     }

@@ -1,8 +1,10 @@
 package hongik.ce.jolup.module.match.infra.repository;
 
+import hongik.ce.jolup.module.competition.domain.entity.Competition;
 import hongik.ce.jolup.module.match.domain.entity.Match;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -27,12 +29,11 @@ public interface MatchRepository extends JpaRepository<Match, Long> {
             " where m.id = :id and m.competition.id = :competitionId")
     Optional<Match> findByIdAndCompetitionId(@Param("id") Long id, @Param("competitionId") Long competitionId);
 
-    @Query(value = "select m from Match m join fetch m.competition" +
+    /*@Query(value = "select m from Match m join fetch m.competition" +
             " left join fetch m.home left join fetch m.away" +
-            " where m.competition.id = :competitionId" +
-            " order by m.round asc, m.number asc",
-            countQuery = "select count(m) from Match m where m.competition.id = :competitionId")
-    Page<Match> findByCompetitionId(@Param("competitionId") Long competitionId, Pageable pageable);
+            " where m.competition = :competition",
+            countQuery = "select count(m) from Match m where m.competition = :competition")
+    Page<Match> findByCompetition(@Param("competition") Competition competition, Pageable pageable);*/
 
     @Query("select m from Match m join fetch m.competition" +
             " left join fetch m.home left join fetch m.away" +
@@ -43,4 +44,10 @@ public interface MatchRepository extends JpaRepository<Match, Long> {
             " left join fetch m.home left join fetch m.away" +
             " where m.away.id = :awayId")
     List<Match> findByAwayId(@Param("awayId") Long awayId);
+
+    @EntityGraph(attributePaths = {"competition", "home", "away"})
+    Page<Match> findMatchWithAllByCompetition(Competition competition, Pageable pageable);
+
+    @EntityGraph(attributePaths = {"competition", "home", "away"})
+    List<Match> findMatchWithAllByCompetition(Competition competition);
 }

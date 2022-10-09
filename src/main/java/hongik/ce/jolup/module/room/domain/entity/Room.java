@@ -18,11 +18,15 @@ import java.util.List;
 @ToString(of = {"id", "title", "access"})
 @EqualsAndHashCode(of = {"id"}, callSuper = true)
 @NamedEntityGraph(
-        name ="Room.withJoins",
+        name ="Room.withJoinsAndMembers",
         attributeNodes = {
                 @NamedAttributeNode(value = "joins", subgraph = "member")
         },
         subgraphs = @NamedSubgraph(name = "member", attributeNodes = @NamedAttributeNode("member"))
+)
+@NamedEntityGraph(
+        name ="Room.withJoins",
+        attributeNodes = @NamedAttributeNode("joins")
 )
 public class Room extends BaseTimeEntity {
 

@@ -32,7 +32,6 @@ public class MemberService implements UserDetailsService {
         Member member = Member.builder().email(signupForm.getEmail())
                 .password(passwordEncoder.encode(signupForm.getPassword()))
                 .name(signupForm.getName()).build();
-
         return memberRepository.save(member);
     }
 

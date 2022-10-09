@@ -1,0 +1,60 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="fragments.html :: head"></head>
+<body class="d-flex flex-column min-vh-100 bg-light">
+<div th:replace="fragments.html :: navigation-bar"></div>
+<div class="container">
+    <div class="row py-4 text-center justify-content-center bg-light">
+        <div class="col-10">
+            <span class="h2">
+            <a href="#" class="text-decoration-none" th:href="@{'/rooms/' + ${room.id} + '/competitions'}">
+                <span th:text="${room.title}">방 이름</span>
+            </a> / <a href="#" class="text-decoration-none" th:href="@{'/rooms/' + ${room.id} + '/competitions/' + ${competition.id}}">
+                <span th:text="${competition.title}">대회 이름</span>
+            </a>
+            </span>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-lg-2">
+            <div th:replace="fragments.html :: competition-menu (currentMenu='ranking')"></div>
+        </div>
+        <div class="col-lg-10">
+            <table class="table table-hover">
+                <h3>순위</h3>
+                <thead>
+                <tr>
+                    <th class="col-1">#</th>
+                    <th class="col-3">회원명</th>
+                    <th class="col-1">경기수</th>
+                    <th class="col-1">승</th>
+                    <th class="col-1">무</th>
+                    <th class="col-1">패</th>
+                    <th class="col-1">승점</th>
+                    <th class="col-1">득점</th>
+                    <th class="col-1">실점</th>
+                    <th class="col-1">득실차</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="rank : ${ranking}">
+                    <td class="col-1" th:text="${rankStat.count}"></td>
+                    <td class="col-3" th:text="${rank.member?.name}"></td>
+                    <td class="col-1" th:text="${rank.win + rank.draw + rank.lose}"></td>
+                    <td class="col-1" th:text="${rank.win}"></td>
+                    <td class="col-1" th:text="${rank.draw}"></td>
+                    <td class="col-1" th:text="${rank.lose}"></td>
+                    <td class="col-1 fw-bolder" th:text="${rank.win * 3 + rank.draw}"></td>
+                    <td class="col-1" th:text="${rank.goalFor}"></td>
+                    <td class="col-1" th:text="${rank.goalAgainst}"></td>
+                    <td class="col-1" th:text="${rank.goalFor - rank.goalAgainst}"></td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div> <!-- /container -->
+<div th:replace="fragments.html :: footer"></div>
+<script th:replace="fragments.html :: date-time"></script>
+</body>
+</html>

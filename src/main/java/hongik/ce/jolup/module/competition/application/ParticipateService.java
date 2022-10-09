@@ -1,9 +1,9 @@
 package hongik.ce.jolup.module.competition.application;
 
 import hongik.ce.jolup.module.competition.domain.entity.Competition;
-import hongik.ce.jolup.module.competition.domain.entity.LeagueTable;
+import hongik.ce.jolup.module.competition.domain.entity.Participate;
 import hongik.ce.jolup.module.competition.infra.repository.CompetitionRepository;
-import hongik.ce.jolup.module.competition.infra.repository.LeagueTableRepository;
+import hongik.ce.jolup.module.competition.infra.repository.ParticipateRepository;
 import hongik.ce.jolup.module.member.domain.entity.Member;
 import hongik.ce.jolup.module.member.infra.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
@@ -16,25 +16,25 @@ import java.util.stream.Collectors;
 @Service
 @RequiredArgsConstructor
 @Transactional
-public class LeagueTableService {
+public class ParticipateService {
 
-    private final LeagueTableRepository leagueTableRepository;
+    private final ParticipateRepository participateRepository;
     private final MemberRepository memberRepository;
     private final CompetitionRepository competitionRepository;
 
-    public void createLeagueTable(List<Member> memberList, Competition competition) {
-        List<LeagueTable> leagueTables = memberList.stream().map(m -> LeagueTable.builder().member(m).competition(competition)
+    public void createRankingTables(List<Member> memberList, Competition competition) {
+        List<Participate> participates = memberList.stream().map(m -> Participate.builder().member(m).competition(competition)
                 .win(0).draw(0).lose(0).goalFor(0).goalAgainst(0).build()).collect(Collectors.toList());
-        leagueTableRepository.saveAll(leagueTables);
+        participateRepository.saveAll(participates);
     }
 
     public void save(List<Long> memberIds, Long leagueId) {
         List<Member> members = memberRepository.findAllById(memberIds);
         Competition competition = competitionRepository.findById(leagueId).orElse(null);
         for (Member member : members) {
-            LeagueTable leagueTable = LeagueTable.builder().member(member).competition(competition)
+            Participate participate = Participate.builder().member(member).competition(competition)
                     .win(0).draw(0).lose(0).goalFor(0).goalAgainst(0).build();
-            leagueTableRepository.save(leagueTable);
+            participateRepository.save(participate);
         }
     }
 
@@ -42,37 +42,33 @@ public class LeagueTableService {
         Member member = memberRepository.findById(memberId).orElse(null);
         Competition competition = competitionRepository.findById(leagueId).orElse(null);
         if (member != null && competition != null) {
-            LeagueTable leagueTable = LeagueTable.builder().member(member).competition(competition)
+            Participate participate = Participate.builder().member(member).competition(competition)
                     .win(0).draw(0).lose(0).goalFor(0).goalAgainst(0).build();
-            return leagueTableRepository.save(leagueTable).getId();
+            return participateRepository.save(participate).getId();
         }
         return null;
     }
 
     public void delete(Long id) {
-        leagueTableRepository.deleteById(id);
+        participateRepository.deleteById(id);
     }
 
     public void setNull(Long memberId) {
-        List<LeagueTable> leagueTables = leagueTableRepository.findByMemberId(memberId);
-        for (LeagueTable leagueTable : leagueTables) {
-            leagueTable.updateMember(null);
+        List<Participate> participates = participateRepository.findByMemberId(memberId);
+        for (Participate participate : participates) {
+            participate.updateMember(null);
         }
     }
 
-    public List<LeagueTable> findByMemberId(Long memberId) {
-        return leagueTableRepository.findByMemberId(memberId);
+    public List<Participate> findByMemberId(Long memberId) {
+        return participateRepository.findByMemberId(memberId);
     }
 
-    public List<LeagueTable> findByCompetitionId(Long competitionId) {
-        return leagueTableRepository.findByCompetitionId(competitionId);
+    public List<Participate> findByCompetitionId(Long competitionId) {
+        return participateRepository.findByCompetitionId(competitionId);
     }
 
-    public LeagueTable findOne(Long memberId, Long competitionId) {
-        return leagueTableRepository.findByMemberIdAndCompetitionId(memberId, competitionId).orElse(null);
-    }
-
-    public List<LeagueTable> findByCompetitionSort(Long competitionId) {
-        return leagueTableRepository.findByCompetitionIdSort(competitionId);
+    public Participate findOne(Long memberId, Long competitionId) {
+        return participateRepository.findByMemberIdAndCompetitionId(memberId, competitionId).orElse(null);
     }
 }

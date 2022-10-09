@@ -6,6 +6,7 @@ import hongik.ce.jolup.module.member.domain.entity.Member;
 import lombok.*;
 
 import javax.persistence.*;
+import java.time.LocalDateTime;
 
 @Entity
 @Getter
@@ -19,15 +20,15 @@ public class Match extends BaseTimeEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne
     @JoinColumn(name = "competition_id")
     private Competition competition;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne
     @JoinColumn(name = "home_id")
     private Member home;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne
     @JoinColumn(name = "away_id")
     private Member away;
 
@@ -46,6 +47,8 @@ public class Match extends BaseTimeEntity {
 
     @Column
     private Integer awayScore;
+
+    private LocalDateTime startDateTime;
 
     @Builder
     public Match(Long id, Competition competition, Member home, Member away, Status status, Integer round, Integer number, Integer homeScore, Integer awayScore) {

@@ -4,7 +4,133 @@
 <body class="d-flex flex-column min-vh-100 bg-light">
 <div th:replace="fragments.html :: navigation-bar"></div>
 <div class="container">
+    <div class="row py-4 text-center justify-content-center bg-light">
+        <div class="col-10">
+            <span class="h2">
+            <a href="#" class="text-decoration-none" th:href="@{'/rooms/' + ${room.id} + '/competitions'}">
+                <span th:text="${room.title}">방 이름</span>
+            </a> / <a href="#" class="text-decoration-none" th:href="@{'/rooms/' + ${room.id} + '/competitions/' + ${competition.id}}">
+                <span th:text="${competition.title}">대회 이름</span>
+            </a>
+            </span>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-lg-2">
+            <div th:replace="fragments.html :: competition-menu (currentMenu='matches')"></div>
+        </div>
+        <div class="col-lg-10" th:if="${#strings.equals(type, 'LEAGUE')}">
+            <div th:if="${matches.getTotalElements() == 0}" class="col">
+                경기가 없습니다.
+            </div>
+            <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3" th:if="${matches.getTotalElements() > 0}">
+                <div class="col mb-4" th:each="match: ${matches.getContent()}">
+                    <div class="card">
+                        <div class="card-header">
+                            <span th:text="${match.round + 1} + '라운드 / ' + ${match.number + 1} + '경기'">경기 정보</span>
+                        </div>
+                        <div class="card-body text-center">
+                            <div class="row">
+                                <div class="col-4">
+                                    <svg th:if="${#strings.isEmpty(match.home?.image)}" th:data-jdenticon-value="${match.home.name}" width="24" height="24" class="rounded border bg-light me-3"></svg>
+                                    <img th:if="${!#strings.isEmpty(match.home?.image)}" th:src="${match.home.image}" width="24" height="24" class="rounded border me-3"/>
+                                    <span th:text="${match.home?.name}"></span>
+                                </div>
+                                <div class="col-4">
+                                    <span th:text="${match.homeScore} + ' : ' + ${match.awayScore}"></span>
+                                </div>
+                                <div class="col-4">
+                                    <svg th:if="${#strings.isEmpty(match.away?.image)}" th:data-jdenticon-value="${match.away.name}" width="24" height="24" class="rounded border bg-light me-3"></svg>
+                                    <img th:if="${!#strings.isEmpty(match.away?.image)}" th:src="${match.away.image}" width="24" height="24" class="rounded border me-3"/>
+                                    <span th:text="${match.away?.name}"></span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <nav th:if="${matches.getTotalElements() > 0}">
+                <ul class="pagination justify-content-center"
+                    th:with="start=${T(java.lang.Math).floor(matches.number/5)*5},
+                    last=(${start + 4 < matches.totalPages - 1? start + 4 : matches.totalPages - 1})">
+                    <li class="page-item" th:classappend="${!matches.hasPrevious()}? disabled">
+                        <a th:href="@{'/rooms/' + ${room.id} + '/competitions/' + ${competition.id}(page=0)}" class="page-link" aria-disabled="true">
+                            <<
+                        </a>
+                    </li>
 
+                    <li class="page-item" th:classappend="${matches.first}? disabled">
+                        <a th:href="@{'/rooms/' + ${room.id} + '/competitions/' + ${competition.id}(page=${matches.number - 1})}"
+                           class="page-link" aria-disabled="true">
+                            <
+                        </a>
+                    </li>
+
+                    <li class="page-item" th:class="${i == matches.number}? active"
+                        th:each="i: ${#numbers.sequence(start, last)}">
+                        <a th:text="${i + 1}" th:href="@{'/rooms/' + ${room.id} + '/competitions/' + ${competition.id}(page=${i})}"
+                           class="page-link">1</a>
+                    </li>
+
+                    <li class="page-item" th:classappend="${matches.last}? disabled">
+                        <a th:href="@{'/rooms/' + ${room.id} + '/competitions/' + ${competition.id}(page=${matches.number + 1})}" class="page-link">
+                            >
+                        </a>
+                    </li>
+
+                    <li class="page-item" th:classappend="${!matches.hasNext()}? disabled">
+                        <a th:href="@{'/rooms/' + ${room.id} + '/competitions/' + ${competition.id}(page=${matches.totalPages - 1})}"
+                           class="page-link">
+                            >>
+                        </a>
+                    </li>
+                </ul>
+            </nav>
+        </div>
+        <div class="col-lg-10" th:if="${#strings.equals(type, 'TOURNAMENT')}">
+            <div class="d-flex justify-content-center">
+                <div class="m-0 p-0 row" th:each="key : ${#numbers.sequence(T(java.util.Collections).max(matches.keySet()), 0, -1)}"
+                     th:with="cnt=${T(java.lang.Math).pow(2, key)}">
+                    <div class="p-0 col" th:classappend="|round${keyStat.count}|">
+                        <div th:each="k : ${#numbers.sequence(0, cnt - 1, 1)}" th:with="match=${matches.get(key).get(k)}"
+                             class="match" th:classappend="${match == null} ? 'invisible'">
+                            <div class="row-cols-1" th:if="${match != null}" th:onclick="(${match.home != null} or ${match.away != null})?|location.href='@{|/rooms/${roomId}/competitions/${competitionId}/matches/${match.id}|}'|">
+                                <!--<svg th:if="${#strings.isEmpty(match.home?.image)}" th:data-jdenticon-value="${match.home.name}" width="24" height="24" class="rounded border bg-light me-3"></svg>
+                                <img th:if="${!#strings.isEmpty(match.home?.image)}" th:src="${match.home.image}" width="24" height="24" class="rounded border me-3"/>-->
+                                <div class="player">
+                                    <svg th:if="${#strings.isEmpty(match.home?.image)}" th:data-jdenticon-value="${match.home != null ? match.home.name:_}" width="24" height="24" class="rounded border bg-light me-3"></svg>
+                                    <img th:if="${!#strings.isEmpty(match.home?.image)}" th:src="${match.home.image}" width="24" height="24" class="rounded border me-3"/>
+                                    <span th:text="${match.home != null} ? ${match.home.name} : _"></span>
+                                    <div class="score" th:text="${match.homeScore}">
+                                        0
+                                    </div>
+                                </div>
+                                <div class="player">
+                                    <svg th:if="${#strings.isEmpty(match.away?.image)}" th:data-jdenticon-value="${match.away != null ? match.away.name:_}" width="24" height="24" class="rounded border bg-light me-3"></svg>
+                                    <img th:if="${!#strings.isEmpty(match.away?.image)}" th:src="${match.away.image}" width="24" height="24" class="rounded border me-3"/>
+                                    <span th:text="${match.away != null} ? ${match.away.name} : _"></span>
+                                    <div class="score" th:text="${match.awayScore}">
+                                        0
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="connector-area p-0 col" th:classappend="|round${keyStat.count}|" th:if="${!keyStat.last}">
+                        <div class="connector" th:each="k: ${#numbers.sequence(0, cnt - 1, 2)}">
+                            <div class="home" th:classappend="${matches.get(key).get(k) == null} ? 'invisible'"></div>
+                            <div class="away" th:classappend="${matches.get(key).get(k + 1) == null} ? 'invisible'"></div>
+                        </div>
+                    </div>
+
+                    <div class="line-area p-0 col" th:classappend="|round${keyStat.count}|" th:if="${!keyStat.last}">
+                        <div class="line" th:each="k: ${#numbers.sequence(0, cnt - 1, 2)}"
+                             th:classappend="${matches.get(key).get(k) == null and matches.get(key).get(k + 1) == null} ? 'invisible'"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 </div> <!-- /container -->
 <div th:replace="fragments.html :: footer"></div>
 <script th:replace="fragments.html :: date-time"></script>

@@ -10,17 +10,17 @@ import javax.persistence.*;
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @ToString
-public class LeagueTable extends BaseTimeEntity {
+public class Participate extends BaseTimeEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne
     @JoinColumn(name = "member_id")
     private Member member;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne
     @JoinColumn(name = "competition_id")
     private Competition competition;
 
@@ -40,7 +40,7 @@ public class LeagueTable extends BaseTimeEntity {
     private Integer goalAgainst;
 
     @Builder
-    public LeagueTable(Long id, Member member, Competition competition, Integer win, Integer draw, Integer lose, Integer goalFor, Integer goalAgainst) {
+    public Participate(Long id, Member member, Competition competition, Integer win, Integer draw, Integer lose, Integer goalFor, Integer goalAgainst) {
         this.id = id;
         this.member = member;
         this.competition = competition;

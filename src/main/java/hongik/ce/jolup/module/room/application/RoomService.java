@@ -6,6 +6,7 @@ import hongik.ce.jolup.module.room.domain.entity.Join;
 import hongik.ce.jolup.module.room.domain.entity.Room;
 import hongik.ce.jolup.module.room.endpoint.form.RoomForm;
 import hongik.ce.jolup.module.room.event.RoomInvitedEvent;
+import hongik.ce.jolup.module.room.infra.repository.JoinRepository;
 import hongik.ce.jolup.module.room.infra.repository.RoomRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.ApplicationEventPublisher;
@@ -20,11 +21,14 @@ import java.util.Set;
 public class RoomService {
 
     private final RoomRepository roomRepository;
+    private final JoinRepository joinRepository;
     private final ApplicationEventPublisher eventPublisher;
 
     public Room createNewRoom(RoomForm roomForm, Member member) {
-        Room room = Room.from(roomForm);
-        return roomRepository.save(room);
+        Room room = roomRepository.save(Room.from(roomForm));
+        room.addCount();
+        joinRepository.save(Join.builder().room(room).member(member).grade(Grade.ADMIN).build());
+        return room;
     }
 
     public void inviteRoom(Room room, Set<Member> members, String admin) {
@@ -37,7 +41,7 @@ public class RoomService {
     }
 
     public Room getRoom(Long id) {
-        return roomRepository.findRoomWithJoinsById(id)
+        return roomRepository.findRoomWithJoinsAndMembersById(id)
                 .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 방입니다."));
     }
 
@@ -93,5 +97,23 @@ public class RoomService {
             throw new IllegalStateException("방을 삭제할 수 없습니다.");
         }
         roomRepository.delete(room);
+    }
+
+    public void addMember(Room room, Member member) {
+        if (joinRepository.existsByRoomAndMember(room, member)) {
+            throw new IllegalArgumentException("이미 방에 참여중입니다.");
+        }
+        room.addCount();
+        joinRepository.save(Join.builder().room(room).member(member).grade(Grade.USER).build());
+    }
+
+    public void removeMember(Room room, Member member) {
+        Join join = joinRepository.findByRoomAndMember(room, member)
+                .orElseThrow(() -> new IllegalArgumentException("방에 참여중인 회원이 아닙니다."));
+        if (join.getGrade().equals(Grade.ADMIN)) {
+            throw new IllegalArgumentException("관리자는 방을 나갈 수 없습니다. 설정에 들어가서 방을 삭제하세요.");
+        }
+        room.subCount();
+        joinRepository.delete(join);
     }
 }

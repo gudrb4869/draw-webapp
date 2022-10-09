@@ -1,16 +1,12 @@
 package hongik.ce.jolup.module.member.domain.entity;
 
 import hongik.ce.jolup.BaseTimeEntity;
+import hongik.ce.jolup.module.competition.domain.entity.Participate;
 import hongik.ce.jolup.module.match.domain.entity.Match;
 import hongik.ce.jolup.module.member.endpoint.form.Profile;
 import hongik.ce.jolup.module.room.domain.entity.Join;
-import hongik.ce.jolup.module.competition.domain.entity.LeagueTable;
 import hongik.ce.jolup.module.notification.domain.entity.Notification;
-import hongik.ce.jolup.module.room.domain.entity.Room;
 import lombok.*;
-import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import org.springframework.security.core.userdetails.UserDetails;
 
 import javax.persistence.*;
 import java.util.*;
@@ -47,7 +43,7 @@ public class Member extends BaseTimeEntity {
     private List<Join> joins = new ArrayList<>();
 
     @OneToMany(mappedBy = "member", cascade = CascadeType.ALL)
-    private List<LeagueTable> leagueTables = new ArrayList<>();
+    private List<Participate> participates = new ArrayList<>();
 
     @OneToMany(mappedBy = "home", cascade = CascadeType.ALL)
     private List<Match> homeMatches = new ArrayList<>();
