@@ -294,13 +294,25 @@
     })
 </script>
 
+<div th:fragment="competition-info" class="row py-4 text-center justify-content-center bg-light">
+    <div class="col-10">
+        <span class="h2">
+        <a href="#" class="text-decoration-none" th:href="@{'/rooms/' + ${room.id} + '/competitions'}">
+            <span th:text="${room.title}">방 이름</span>
+        </a> / <a href="#" class="text-decoration-none" th:href="@{'/rooms/' + ${room.id} + '/competitions/' + ${competition.id}}">
+            <span th:text="${competition.title}">대회 이름</span>
+        </a>
+        </span>
+    </div>
+</div>
+
 <div th:fragment="competition-menu (currentMenu)" class="list-group">
     <a class="list-group-item list-group-item-action" th:classappend="${currentMenu == 'matches'}? active"
        href="#" th:href="@{'/rooms/' + ${room.id} + '/competitions/' + ${competition.id}}">경기</a>
     <a class="list-group-item list-group-item-action" th:classappend="${currentMenu == 'ranking'}? active"
        href="#" th:href="@{'/rooms/' + ${room.id} + '/competitions/' + ${competition.id} + '/ranking'}">순위</a>
     <a sec:authorize="isAuthenticated()" th:if="${room.isAdmin(#authentication.principal)}"
-       class="list-group-item list-group-item-action list-group-item-danger" th:classappend="${currentMenu == 'settings'}? active"
+       class="list-group-item list-group-item-action" th:classappend="${currentMenu == 'settings'}? active"
        href="#" th:href="@{'/rooms/' + ${room.id} + '/competitions/' + ${competition.id} + '/settings'}">설정</a>
 </div>
 

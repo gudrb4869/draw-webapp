@@ -1,0 +1,55 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="fragments.html :: head"></head>
+<body class="d-flex flex-column min-vh-100 bg-light">
+<div th:replace="fragments.html :: navigation-bar"></div>
+<div class="container">
+    <div th:replace="fragments.html :: message"></div>
+    <div th:replace="fragments.html :: competition-info"></div>
+    <div class="row">
+        <div class="col-md-3"></div>
+        <div class="col-md-6 mx-auto" th:object="${match}">
+            <div class="mb-3">
+                <div class="card">
+                    <div class="card-header">
+                        <span th:if="${competition.type.name() == 'LEAGUE'}" th:text="${match.round + 1} + '라운드 / ' + ${match.number + 1} + '경기'">경기 정보</span>
+                        <span th:if="${competition.type.name() == 'TOURNAMENT' and match.round == 0}" th:text="'결승'">경기 정보</span>
+                        <span th:if="${competition.type.name() == 'TOURNAMENT' and match.round == 1}" th:text="'준결승 / ' + ${match.number + 1} + '경기'">경기 정보</span>
+                        <span th:if="${competition.type.name() == 'TOURNAMENT' and match.round == 2}" th:text="'8강 / ' + ${match.number + 1} + '경기'">경기 정보</span>
+                        <span th:if="${competition.type.name() == 'TOURNAMENT' and match.round == 3}" th:text="'16강 / ' + ${match.number + 1} + '경기'">경기 정보</span>
+                        <span th:if="${competition.type.name() == 'TOURNAMENT' and match.round == 4}" th:text="'32강 / ' + ${match.number + 1} + '경기'">경기 정보</span>
+                        <span th:if="${competition.type.name() == 'TOURNAMENT' and match.round == 5}" th:text="'64강 / ' + ${match.number + 1} + '경기'">경기 정보</span>
+                    </div>
+                    <div class="card-body text-center">
+                        <div class="row">
+                            <div class="col-4">
+                                <svg th:if="${#strings.isEmpty(match.home?.image)}" th:data-jdenticon-value="${match.home.name}" width="24" height="24" class="rounded border bg-light me-3"></svg>
+                                <img th:if="${!#strings.isEmpty(match.home?.image)}" th:src="${match.home.image}" width="24" height="24" class="rounded border me-3"/>
+                                <span th:text="${match.home?.name}"></span>
+                            </div>
+                            <div class="col-4">
+                                <span th:text="${match.homeScore} + ' : ' + ${match.awayScore}"></span>
+                            </div>
+                            <div class="col-4">
+                                <svg th:if="${#strings.isEmpty(match.away?.image)}" th:data-jdenticon-value="${match.away.name}" width="24" height="24" class="rounded border bg-light me-3"></svg>
+                                <img th:if="${!#strings.isEmpty(match.away?.image)}" th:src="${match.away.image}" width="24" height="24" class="rounded border me-3"/>
+                                <span th:text="${match.away?.name}"></span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="mb-4"></div>
+            <div class="row">
+                <div class="col">
+                    <button class="btn btn-outline-dark" type="button" th:onclick="|location.href='@{|/rooms/${roomId}/competitions/${competitionId}/matches/${matchId}/update|}'|">경기결과 수정</button>
+                    <button class="btn btn-outline-dark" type="button" th:onclick="|location.href='@{|/rooms/${roomId}/competitions/${competitionId}|}'|" >돌아가기</button>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3"></div>
+    </div>
+</div> <!-- /container -->
+<div th:replace="fragments.html :: footer"></div>
+</body>
+</html>

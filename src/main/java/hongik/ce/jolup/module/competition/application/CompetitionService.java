@@ -31,22 +31,12 @@ public class CompetitionService {
         eventPublisher.publishEvent(new CompetitionCreatedEvent(competition, "새로운 대회가 생성되었습니다.", members));
     }
 
-    public Competition findOne(Long competitionId) {
-        return competitionRepository.findById(competitionId).orElse(null);
-    }
-
     public Competition findOne(Long competitionId, Long roomId) {
         return competitionRepository.findByIdAndRoomId(competitionId, roomId).orElse(null);
     }
 
     public Competition getCompetition(Room room, Long competitionId) {
         Competition competition = competitionRepository.findCompetitionById(competitionId).orElse(null);
-        checkExistsCompetition(room, competition);
-        return competition;
-    }
-
-    public Competition getCompetitionWithMatch(Room room, Long competitionId) {
-        Competition competition = competitionRepository.findCompetitionWithMatchesById(competitionId).orElse(null);
         checkExistsCompetition(room, competition);
         return competition;
     }

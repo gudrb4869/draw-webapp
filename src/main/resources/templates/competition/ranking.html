@@ -4,17 +4,7 @@
 <body class="d-flex flex-column min-vh-100 bg-light">
 <div th:replace="fragments.html :: navigation-bar"></div>
 <div class="container">
-    <div class="row py-4 text-center justify-content-center bg-light">
-        <div class="col-10">
-            <span class="h2">
-            <a href="#" class="text-decoration-none" th:href="@{'/rooms/' + ${room.id} + '/competitions'}">
-                <span th:text="${room.title}">방 이름</span>
-            </a> / <a href="#" class="text-decoration-none" th:href="@{'/rooms/' + ${room.id} + '/competitions/' + ${competition.id}}">
-                <span th:text="${competition.title}">대회 이름</span>
-            </a>
-            </span>
-        </div>
-    </div>
+    <div th:replace="fragments.html :: competition-info"></div>
     <div class="row">
         <div class="col-lg-2">
             <div th:replace="fragments.html :: competition-menu (currentMenu='ranking')"></div>

@@ -29,6 +29,6 @@ public interface CompetitionRepository extends JpaRepository<Competition, Long> 
     @EntityGraph(attributePaths = {"room", "participates"})
     Optional<Competition> findCompetitionById(Long id);
 
-    @EntityGraph(attributePaths = {"room", "matches", "participates"})
+    @EntityGraph(attributePaths = {"room", "matches"})
     Optional<Competition> findCompetitionWithMatchesById(Long id);
 }

@@ -42,13 +42,6 @@ public class JoinService {
         return join.getId();
     }
 
-    public void setNull(Long memberId) {
-        List<Join> joins = joinRepository.findByMemberId(memberId);
-        for (Join join : joins) {
-            join.updateMember(null);
-        }
-    }
-
     public Join findByIdAndRoomId(Long id, Long roomId) {
         return joinRepository.findByIdAndRoomId(id, roomId).orElse(null);
     }

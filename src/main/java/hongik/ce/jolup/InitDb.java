@@ -1,9 +1,6 @@
 package hongik.ce.jolup;
 
-import hongik.ce.jolup.module.competition.application.ParticipateService;
 import hongik.ce.jolup.module.competition.application.CompetitionService;
-import hongik.ce.jolup.module.match.application.LeagueService;
-import hongik.ce.jolup.module.match.application.TournamentService;
 import hongik.ce.jolup.module.member.application.MemberService;
 import hongik.ce.jolup.module.member.domain.entity.Member;
 import hongik.ce.jolup.module.room.domain.entity.Room;
@@ -78,9 +75,6 @@ public class InitDb {
         private final MemberService memberService;
         private final RoomService roomService;
         private final CompetitionService competitionService;
-        private final ParticipateService participateService;
-        private final LeagueService leagueService;
-        private final TournamentService tournamentService;
 
         public void dbInit() {
 

@@ -35,8 +35,8 @@ public class RoomService {
         eventPublisher.publishEvent(new RoomInvitedEvent(room, admin +"님이 회원님을 방에 초대하였습니다.", members));
     }
 
-    public Room findOne(Long roomId) {
-        return roomRepository.findById(roomId)
+    public Room findOne(Long id) {
+        return roomRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 방입니다."));
     }
 
@@ -51,14 +51,13 @@ public class RoomService {
         return room;
     }
 
-    private Join check(Member member, Room room) {
+    private void check(Member member, Room room) {
         Join join = room.getJoins().stream()
                 .filter(j -> j.getMember().equals(member))
                 .findFirst().orElse(null);
         if (join == null && !room.isAccess()) {
             throw new IllegalArgumentException("비공개 방입니다.");
         }
-        return join;
     }
 
     public Room getRoomToUpdate(Member member, Long id) {

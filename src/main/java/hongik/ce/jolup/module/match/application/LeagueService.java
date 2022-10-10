@@ -1,3 +1,4 @@
+/*
 package hongik.ce.jolup.module.match.application;
 
 import hongik.ce.jolup.module.competition.domain.entity.Competition;
@@ -22,8 +23,6 @@ import java.util.*;
 @Transactional
 public class LeagueService {
 
-    private final MemberRepository memberRepository;
-    private final CompetitionRepository competitionRepository;
     private final MatchRepository matchRepository;
     private final ParticipateRepository participateRepository;
     private final ApplicationEventPublisher eventPublisher;
@@ -47,7 +46,8 @@ public class LeagueService {
                     matches.add(match);
                 }
             }
-            /*if (option.equals(CompetitionOption.DOUBLE)) {
+            */
+/*if (option.equals(CompetitionOption.DOUBLE)) {
                 for (int i = 0; i < count; i++) {
                     for (int j = 0; j < count/2; j++) {
                         Match Match = Match.builder().league(league)
@@ -60,7 +60,8 @@ public class LeagueService {
                         MatchRepository.save(Match);
                     }
                 }
-            }*/
+            }*//*
+
         }
         else {
             int j;
@@ -88,7 +89,8 @@ public class LeagueService {
                         .build();
                 matches.add(match);
             }
-            /*if (option.equals(CompetitionOption.DOUBLE)) {
+            */
+/*if (option.equals(CompetitionOption.DOUBLE)) {
                 for (int i = 0; i < count - 1; i++) {
                     for (j = 0; j < count/2 - 1; j++) {
                         Match match = Match.builder().league(league)
@@ -109,96 +111,10 @@ public class LeagueService {
                             .build();
                     MatchRepository.save(match);
                 }
-            }*/
+            }*//*
+
         }
         matchRepository.saveAll(matches);
-    }
-
-    public void save(List<Long> memberIds, Long competitionId) {
-        List<Member> members = memberRepository.findAllById(memberIds);
-        Competition competition = competitionRepository.findById(competitionId).orElse(null);
-
-        assert competition != null;
-        Collections.shuffle(members);
-        int count = members.size();
-        if (count % 2 == 1) {
-            for (int i = 0; i < count; i++) {
-                for (int j = 0; j < count/2; j++) {
-                    Match match = Match.builder().competition(competition)
-                            .home(i % 2 == 0 ? members.get((i + j) % count) : members.get((i + count - j - 2) % count))
-                            .away(i % 2 == 0 ? members.get((i + count - j - 2) % count) : members.get((i + j) % count))
-                            .status(Status.BEFORE)
-                            .round(i)
-                            .number(j)
-                            .homeScore(0).awayScore(0)
-                            .build();
-                    matchRepository.save(match);
-                }
-            }
-            /*if (option.equals(CompetitionOption.DOUBLE)) {
-                for (int i = 0; i < count; i++) {
-                    for (int j = 0; j < count/2; j++) {
-                        Match Match = Match.builder().league(league)
-                                .home(i % 2 == 0 ? members.get((i + count - j - 2) % count) : members.get((i + j) % count))
-                                .away(i % 2 == 0 ? members.get((i + j) % count) : members.get((i + count - j - 2) % count))
-                                .status(Status.BEFORE)
-                                .round(count + i)
-                                .homeScore(0).awayScore(0)
-                                .build();
-                        MatchRepository.save(Match);
-                    }
-                }
-            }*/
-        }
-        else {
-            int j;
-            Random random = new Random();
-            Member fixed = members.remove(random.nextInt(count));
-            for (int i = 0; i < count - 1; i++) {
-                for (j = 0; j < count/2 - 1; j++) {
-                    Match match = Match.builder().competition(competition)
-                            .home(members.get(i % 2 == 0 ? (i + j) % (count - 1) : (i + count - j - 2) % (count - 1)))
-                            .away(members.get(i % 2 == 0 ? (i + count - j - 2) % (count - 1) : (i + j) % (count - 1)))
-                            .status(Status.BEFORE)
-                            .round(i)
-                            .number(j)
-                            .homeScore(0).awayScore(0)
-                            .build();
-                    matchRepository.save(match);
-                }
-                Match match = Match.builder().competition(competition)
-                        .home(i % 2 == 0 ? members.get((i + j) % (count - 1)) : fixed)
-                        .away(i % 2 == 0 ? fixed : members.get((i + j) % (count - 1)))
-                        .status(Status.BEFORE)
-                        .round(i)
-                        .number(j)
-                        .homeScore(0).awayScore(0)
-                        .build();
-                matchRepository.save(match);
-            }
-            /*if (option.equals(CompetitionOption.DOUBLE)) {
-                for (int i = 0; i < count - 1; i++) {
-                    for (j = 0; j < count/2 - 1; j++) {
-                        Match match = Match.builder().league(league)
-                                .home(members.get(i % 2 == 0 ? (i + count - j - 2) % (count - 1) : (i + j) % (count - 1)))
-                                .away(members.get(i % 2 == 0 ? (i + j) % (count - 1) : (i + count - j - 2) % (count - 1)))
-                                .status(Status.BEFORE)
-                                .round(count - 1 + i)
-                                .homeScore(0).awayScore(0)
-                                .build();
-                        MatchRepository.save(match);
-                    }
-                    Match match = Match.builder().league(league)
-                            .home(i % 2 == 0 ? fixed : members.get((i + j) % (count - 1)))
-                            .away(i % 2 == 0 ? members.get((i + j) % (count - 1)) : fixed)
-                            .status(Status.BEFORE)
-                            .round(count - 1 + i)
-                            .homeScore(0).awayScore(0)
-                            .build();
-                    MatchRepository.save(match);
-                }
-            }*/
-        }
     }
 
     public void update(Long matchId, Long competitionId, Status status, Integer homeScore, Integer awayScore, Long homeId, Long awayId) {
@@ -250,21 +166,6 @@ public class LeagueService {
     public void sendAlarm(Match match, Long roomId, Set<Member> members) {
         eventPublisher.publishEvent(new MatchUpdatedEvent(match, roomId, "경기 결과가 수정되었습니다.", members));
     }
-    
-    public void delete(Long id) {
-        matchRepository.deleteById(id);
-    }
-
-    public void setNull(Long userId) {
-        List<Match> homeMatchs = matchRepository.findByHomeId(userId);
-        for (Match Match : homeMatchs) {
-            Match.updateHome(null);
-        }
-        List<Match> awayMatchs = matchRepository.findByAwayId(userId);
-        for (Match Match : awayMatchs) {
-            Match.updateAway(null);
-        }
-    }
 
     public List<Match> findByCompetitionId(Long competitionId) {
         return matchRepository.findByCompetitionId(competitionId);
@@ -273,12 +174,4 @@ public class LeagueService {
     public Match findByIdAndCompetitionId(Long id, Long competitionId) {
         return matchRepository.findByIdAndCompetitionId(id, competitionId).orElse(null);
     }
-
-    public Match findOne(Long MatchId) {
-        return matchRepository.findById(MatchId).orElse(null);
-    }
-
-    public Match findOne(Long competitionId, Integer round) {
-        return matchRepository.findByCompetitionIdAndRound(competitionId, round).orElse(null);
-    }
-}
+}*/

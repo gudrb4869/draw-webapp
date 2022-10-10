@@ -1,21 +1,18 @@
 package hongik.ce.jolup.module.competition.endpoint;
 
 import hongik.ce.jolup.module.competition.application.CompetitionService;
-import hongik.ce.jolup.module.competition.application.ParticipateService;
 import hongik.ce.jolup.module.competition.domain.entity.Participate;
 import hongik.ce.jolup.module.competition.endpoint.form.CompetitionForm;
 import hongik.ce.jolup.module.competition.endpoint.validator.CompetitionFormValidator;
 import hongik.ce.jolup.module.competition.infra.repository.CompetitionRepository;
 import hongik.ce.jolup.module.competition.infra.repository.ParticipateRepository;
-import hongik.ce.jolup.module.match.application.LeagueService;
-import hongik.ce.jolup.module.match.application.TournamentService;
+import hongik.ce.jolup.module.match.application.MatchService;
 import hongik.ce.jolup.module.match.infra.repository.MatchRepository;
 import hongik.ce.jolup.module.member.support.CurrentMember;
 import hongik.ce.jolup.module.room.application.RoomService;
 import hongik.ce.jolup.module.room.domain.entity.Join;
 import hongik.ce.jolup.module.competition.domain.entity.Competition;
 import hongik.ce.jolup.module.member.domain.entity.Member;
-import hongik.ce.jolup.module.competition.domain.entity.CompetitionType;
 import hongik.ce.jolup.module.match.domain.entity.Match;
 import hongik.ce.jolup.module.room.domain.entity.Room;
 import lombok.*;
@@ -41,11 +38,9 @@ import java.util.stream.Collectors;
 @RequestMapping("rooms/{roomId}/competitions")
 public class CompetitionController {
 
-    private final CompetitionService competitionService;
     private final RoomService roomService;
-    private final ParticipateService participateService;
-    private final LeagueService leagueService;
-    private final TournamentService tournamentService;
+    private final CompetitionService competitionService;
+    private final MatchService matchService;
     private final CompetitionRepository competitionRepository;
     private final MatchRepository matchRepository;
     private final ParticipateRepository participateRepository;
@@ -86,15 +81,8 @@ public class CompetitionController {
 
         Set<Long> formMembers = competitionForm.getMembers();
         List<Member> memberList = members.stream().filter(m -> formMembers.contains(m.getId())).collect(Collectors.toList());
-        participateService.createRankingTables(memberList, competition);
-        switch (competitionForm.getType()) {
-            case LEAGUE:
-                leagueService.createMatches(memberList, competition);
-                break;
-            case TOURNAMENT:
-                tournamentService.createMatches(memberList, competition);
-                break;
-        }
+        matchService.createMatches(memberList, competition);
+
         attributes.addFlashAttribute("message", "대회를 만들었습니다.");
         return "redirect:/rooms/" + room.getId() + "/competitions";
     }
