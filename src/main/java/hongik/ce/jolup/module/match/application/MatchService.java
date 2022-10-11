@@ -6,15 +6,13 @@ import hongik.ce.jolup.module.competition.domain.entity.Participate;
 import hongik.ce.jolup.module.competition.infra.repository.ParticipateRepository;
 import hongik.ce.jolup.module.match.domain.entity.Match;
 import hongik.ce.jolup.module.match.domain.entity.Status;
+import hongik.ce.jolup.module.match.endpoint.form.MatchForm;
 import hongik.ce.jolup.module.match.infra.repository.MatchRepository;
 import hongik.ce.jolup.module.member.domain.entity.Member;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.*;
-import java.util.stream.Collectors;
 
 @Service
 @Transactional
@@ -25,127 +23,60 @@ public class MatchService {
     private final ParticipateRepository participateRepository;
     private final ApplicationEventPublisher publisher;
 
-    public void createMatches(List<Member> memberList, Competition competition) {
-        List<Participate> participates = memberList.stream().map(m -> Participate.builder().member(m).competition(competition)
-                .win(0).draw(0).lose(0).goalFor(0).goalAgainst(0).build()).collect(Collectors.toList());
-        Collections.shuffle(memberList);
-        Set<Match> matches = new HashSet<>();
-        int count = memberList.size();
-        if (competition.getType().equals(CompetitionType.LEAGUE)) {
-            if (count % 2 == 1) {
-                for (int i = 0; i < count; i++) {
-                    for (int j = 0; j < count/2; j++) {
-                        Match match = Match.builder().competition(competition)
-                                .home(i % 2 == 0 ? memberList.get((i + j) % count) : memberList.get((i + count - j - 2) % count))
-                                .away(i % 2 == 0 ? memberList.get((i + count - j - 2) % count) : memberList.get((i + j) % count))
-                                .status(Status.BEFORE)
-                                .round(i)
-                                .number(j)
-                                .homeScore(0).awayScore(0)
-                                .build();
-                        matches.add(match);
-                    }
-                }
-            /*if (option.equals(CompetitionOption.DOUBLE)) {
-                for (int i = 0; i < count; i++) {
-                    for (int j = 0; j < count/2; j++) {
-                        Match Match = Match.builder().league(league)
-                                .home(i % 2 == 0 ? memberList.get((i + count - j - 2) % count) : memberList.get((i + j) % count))
-                                .away(i % 2 == 0 ? memberList.get((i + j) % count) : memberList.get((i + count - j - 2) % count))
-                                .status(Status.BEFORE)
-                                .round(count + i)
-                                .homeScore(0).awayScore(0)
-                                .build();
-                        MatchRepository.save(Match);
-                    }
-                }
-            }*/
-            }
-            else {
-                int j;
-                Random random = new Random();
-                Member fixed = memberList.remove(random.nextInt(count));
-                for (int i = 0; i < count - 1; i++) {
-                    for (j = 0; j < count/2 - 1; j++) {
-                        Match match = Match.builder().competition(competition)
-                                .home(memberList.get(i % 2 == 0 ? (i + j) % (count - 1) : (i + count - j - 2) % (count - 1)))
-                                .away(memberList.get(i % 2 == 0 ? (i + count - j - 2) % (count - 1) : (i + j) % (count - 1)))
-                                .status(Status.BEFORE)
-                                .round(i)
-                                .number(j)
-                                .homeScore(0).awayScore(0)
-                                .build();
-                        matches.add(match);
-                    }
-                    Match match = Match.builder().competition(competition)
-                            .home(i % 2 == 0 ? memberList.get((i + j) % (count - 1)) : fixed)
-                            .away(i % 2 == 0 ? fixed : memberList.get((i + j) % (count - 1)))
-                            .status(Status.BEFORE)
-                            .round(i)
-                            .number(j)
-                            .homeScore(0).awayScore(0)
-                            .build();
-                    matches.add(match);
-                }
-            /*if (option.equals(CompetitionOption.DOUBLE)) {
-                for (int i = 0; i < count - 1; i++) {
-                    for (j = 0; j < count/2 - 1; j++) {
-                        Match match = Match.builder().league(league)
-                                .home(memberList.get(i % 2 == 0 ? (i + count - j - 2) % (count - 1) : (i + j) % (count - 1)))
-                                .away(memberList.get(i % 2 == 0 ? (i + j) % (count - 1) : (i + count - j - 2) % (count - 1)))
-                                .status(Status.BEFORE)
-                                .round(count - 1 + i)
-                                .homeScore(0).awayScore(0)
-                                .build();
-                        MatchRepository.save(match);
-                    }
-                    Match match = Match.builder().league(league)
-                            .home(i % 2 == 0 ? fixed : memberList.get((i + j) % (count - 1)))
-                            .away(i % 2 == 0 ? memberList.get((i + j) % (count - 1)) : fixed)
-                            .status(Status.BEFORE)
-                            .round(count - 1 + i)
-                            .homeScore(0).awayScore(0)
-                            .build();
-                    MatchRepository.save(match);
-                }
-            }*/
-            }
-        }
-        else if (competition.getType().equals(CompetitionType.TOURNAMENT)) {
-            int round = (int)Math.ceil(Math.log(count) / Math.log(2)); // 총 라운드
-            int number = 1;
-            int auto_win_num = (int)Math.pow(2, round) - count; // 부전승 인원 수
+    public void updateMatch(Competition competition, Match match, MatchForm matchForm) {
+        Participate home = competition.getParticipates().stream().filter(p -> p.getMember().equals(match.getHome())).findAny().orElseThrow(() -> new IllegalStateException("존재하지 않는 참가자입니다."));
+        Participate away = competition.getParticipates().stream().filter(p -> p.getMember().equals(match.getAway())).findAny().orElseThrow(() -> new IllegalStateException("존재하지 않는 참가자입니다."));
 
-            Set<Integer> set = new HashSet<>(); //
-            while (set.size() < auto_win_num) {
-                double value = Math.random() * (int)Math.pow(2, round - 1);
-                set.add((int) value);
-            }
-            List<Integer> list = new ArrayList<>(set);
-            Collections.sort(list);
-
-            for (int i = 0; i < round; i++) {
-                for (int j = 0; j < number; j++) {
-                    if (i == round - 1 && auto_win_num > 0 && list.contains(j)) {
-                        continue;
-                    }
-                    Match match = Match.builder().competition(competition)
-                            .home(i == round - 1 ? memberList.remove(0) :
-                                    (i == round - 2 && auto_win_num > 0 && list.contains(j * 2) ? memberList.remove(0) : null))
-                            .away(i == round - 1 ? memberList.remove(0) :
-                                    (i == round - 2 && auto_win_num > 0 && list.contains(j * 2 + 1) ? memberList.remove(0) : null))
-                            .status(Status.BEFORE)
-                            .round(i)
-                            .number(j)
-                            .homeScore(0).awayScore(0)
-                            .build();
-                    matches.add(match);
-                }
-                number *= 2;
-            }
+        if (matchForm.getStatus().equals(Status.BEFORE)) {
+            matchForm.setHomeScore(0);
+            matchForm.setAwayScore(0);
         }
-        participateRepository.saveAll(participates);
-        matchRepository.saveAll(matches);
+        if (match.getStatus().equals(Status.AFTER)) {
+            if (match.getHomeScore() > match.getAwayScore()) {
+                home.subWin(1);
+                away.subLose(1);
+                if (competition.getType().equals(CompetitionType.TOURNAMENT) && matchForm.getHomeScore() <= matchForm.getAwayScore()) {
+                    resetMatches(competition, match);
+                }
+            } else if (match.getHomeScore() < match.getAwayScore()) {
+                home.subLose(1);
+                away.subWin(1);
+                if (competition.getType().equals(CompetitionType.TOURNAMENT) && matchForm.getHomeScore() >= matchForm.getAwayScore()) {
+                    resetMatches(competition, match);
+                }
+            } else {
+                home.subDraw(1);
+                away.subDraw(1);
+            }
+            home.subGoalFor(match.getHomeScore());
+            home.subGoalAgainst(match.getAwayScore());
+            away.subGoalFor(match.getAwayScore());
+            away.subGoalAgainst(match.getHomeScore());
+        }
+
+        if (matchForm.getStatus().equals(Status.AFTER)) {
+            if (matchForm.getHomeScore() > matchForm.getAwayScore()) {
+                home.addWin(1);
+                away.addLose(1);
+                if (competition.getType().equals(CompetitionType.TOURNAMENT)) {
+                    setNextRoundMatch(competition, match, match.getHome());
+                }
+            } else if (matchForm.getHomeScore() < matchForm.getAwayScore()) {
+                home.addLose(1);
+                away.addWin(1);
+                if (competition.getType().equals(CompetitionType.TOURNAMENT)) {
+                    setNextRoundMatch(competition, match, match.getAway());
+                }
+            } else {
+                home.addDraw(1);
+                away.addDraw(1);
+            }
+            home.addGoalFor(matchForm.getHomeScore());
+            home.addGoalAgainst(matchForm.getAwayScore());
+            away.addGoalFor(matchForm.getAwayScore());
+            away.addGoalAgainst(matchForm.getHomeScore());
+        }
+        match.update(matchForm);
     }
 
     private void setNextRoundMatch(Competition competition, Match match, Member member) {

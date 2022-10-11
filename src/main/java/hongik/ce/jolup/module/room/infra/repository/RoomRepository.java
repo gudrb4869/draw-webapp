@@ -9,9 +9,6 @@ import java.util.Optional;
 
 @Transactional(readOnly = true)
 public interface RoomRepository extends JpaRepository<Room, Long> {
-    @EntityGraph(value = "Room.withJoins")
-    Optional<Room> findRoomWithJoinsById(Long id);
-
     @EntityGraph(value = "Room.withJoinsAndMembers")
     Optional<Room> findRoomWithJoinsAndMembersById(Long id);
 }

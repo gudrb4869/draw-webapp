@@ -70,21 +70,16 @@ public class CompetitionController {
         Room room = roomService.getRoomToUpdate(member, roomId);
         List<Member> members = room.getJoins().stream().map(Join::getMember)
                 .collect(Collectors.toList());
-//        competitionFormValidator.validateMembers(competitionForm.getMembers(), bindingResult, members);
         if (bindingResult.hasErrors()) {
             model.addAttribute(member);
             model.addAttribute(room);
             model.addAttribute("members", members);
             return "competition/form";
         }
-        Competition competition = competitionService.createCompetition(room, competitionForm);
-
-        Set<Long> formMembers = competitionForm.getMembers();
-        List<Member> memberList = members.stream().filter(m -> formMembers.contains(m.getId())).collect(Collectors.toList());
-        matchService.createMatches(memberList, competition);
+        Competition competition = competitionService.createCompetition(members, room, competitionForm);
 
         attributes.addFlashAttribute("message", "대회를 만들었습니다.");
-        return "redirect:/rooms/" + room.getId() + "/competitions";
+        return "redirect:/rooms/" + room.getId() + "/competitions/" + competition.getId();
     }
 
     @GetMapping
@@ -94,7 +89,7 @@ public class CompetitionController {
         Room room = roomService.getRoom(member, roomId);
         model.addAttribute(member);
         model.addAttribute(room);
-        Page<Competition> competitions = competitionRepository.findByRoom(room, pageable);
+        Page<Competition> competitions = competitionRepository.findCompetitionsByRoom(room, pageable);
         model.addAttribute("competitions", competitions);
         return "room/competitions";
     }
@@ -110,7 +105,6 @@ public class CompetitionController {
         model.addAttribute(competition);
         String type = competition.getType().name();
         model.addAttribute("type", type);
-        log.info("type = {}", type);
         if (type.equals("LEAGUE")) {
 //            LinkedHashMap<Integer, List<Match>> hashMap = new LinkedHashMap<>();
             Page<Match> matches = matchRepository.findMatchWithAllByCompetition(competition, pageable);

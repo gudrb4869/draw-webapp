@@ -2,6 +2,7 @@ package hongik.ce.jolup.module.match.domain.entity;
 
 import hongik.ce.jolup.BaseTimeEntity;
 import hongik.ce.jolup.module.competition.domain.entity.Competition;
+import hongik.ce.jolup.module.match.endpoint.form.MatchForm;
 import hongik.ce.jolup.module.member.domain.entity.Member;
 import lombok.*;
 
@@ -88,4 +89,9 @@ public class Match extends BaseTimeEntity {
         this.awayScore = awayScore;
     }
 
+    public void update(MatchForm matchForm) {
+        this.homeScore = matchForm.getHomeScore();
+        this.awayScore = matchForm.getAwayScore();
+        this.status = matchForm.getStatus();
+    }
 }

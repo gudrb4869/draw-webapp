@@ -1,20 +1,28 @@
 package hongik.ce.jolup;
 
 import hongik.ce.jolup.module.competition.application.CompetitionService;
+import hongik.ce.jolup.module.competition.domain.entity.Competition;
+import hongik.ce.jolup.module.competition.domain.entity.CompetitionOption;
+import hongik.ce.jolup.module.competition.domain.entity.CompetitionType;
+import hongik.ce.jolup.module.competition.endpoint.form.CompetitionForm;
 import hongik.ce.jolup.module.member.application.MemberService;
 import hongik.ce.jolup.module.member.domain.entity.Member;
-import hongik.ce.jolup.module.room.domain.entity.Room;
 import hongik.ce.jolup.module.member.endpoint.form.SignupForm;
 import hongik.ce.jolup.module.room.application.RoomService;
+import hongik.ce.jolup.module.room.domain.entity.Join;
+import hongik.ce.jolup.module.room.domain.entity.Room;
 import hongik.ce.jolup.module.room.endpoint.form.RoomForm;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.PostConstruct;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
+@Slf4j
 @Component
 @RequiredArgsConstructor
 public class InitDb {
@@ -27,7 +35,6 @@ public class InitDb {
     }
 
     @Component
-    @Transactional
     @RequiredArgsConstructor
     static class InitService {
 
@@ -71,7 +78,6 @@ public class InitDb {
 //                Belong belong = Belong.builder().member(members.get(i)).room(room3).belongType(BelongType.USER).build();
 //                em.persist(belong);
 //            }
-
         private final MemberService memberService;
         private final RoomService roomService;
         private final CompetitionService competitionService;
@@ -102,21 +108,24 @@ public class InitDb {
             /**
              * 대회, 경기 테스트 DB 생성
              */
+            Room room = roomService.getRoom(room1.getId());
+            List<Member> memberList = room.getJoins().stream().map(Join::getMember).collect(Collectors.toList());
+            Competition competition1 = competitionService.createCompetition(memberList, room,
+                    createCompetitionForm(members, "zxcv", CompetitionType.LEAGUE, CompetitionOption.DOUBLE, 1, 20));
 
-            /*Long worldCupId = competitionService.save("zxcv", CompetitionType.TOURNAMENT, room1Id).getId();
-            List<Long> memberId32 = new ArrayList<>();
-            for (int i = 1; i <= 32; i++) {
-                memberId32.add(members.get(i).getId());
-            }
-            tournamentService.save(memberId32, worldCupId);
+            Competition competition2 = competitionService.createCompetition(memberList, room,
+                    createCompetitionForm(members, "asdf", CompetitionType.TOURNAMENT, CompetitionOption.SINGLE, 51, 100));
+        }
 
-            Long eplId = competitionService.save("asdf", CompetitionType.LEAGUE, room1Id).getId();
-            List<Long> memberId20 = new ArrayList<>();
-            for (int i = 1; i <= 20; i++) {
-                memberId20.add(members.get(i).getId());
+        private CompetitionForm createCompetitionForm(List<Member> members, String title, CompetitionType type, CompetitionOption option, int start, int end) {
+            CompetitionForm competitionForm = new CompetitionForm();
+            competitionForm.setTitle(title);
+            competitionForm.setType(type);
+            competitionForm.setOption(option);
+            for (int i = start; i <= end; i++) {
+                competitionForm.getMembers().add(members.get(i).getId());
             }
-            leagueTableService.save(memberId20, eplId);
-            leagueService.save(memberId20, eplId);*/
+            return competitionForm;
         }
 
         private RoomForm createRoomForm(String title, boolean access) {

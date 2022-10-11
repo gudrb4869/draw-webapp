@@ -1,6 +1,7 @@
 package hongik.ce.jolup.module.match.endpoint.form;
 
 import hongik.ce.jolup.module.match.domain.entity.Match;
+import hongik.ce.jolup.module.match.domain.entity.Status;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -8,6 +9,7 @@ import lombok.NoArgsConstructor;
 
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
+import javax.validation.constraints.NotNull;
 
 @Data
 @NoArgsConstructor
@@ -23,6 +25,8 @@ public class MatchForm {
     @Max(100)
     private Integer awayScore;
     private String away = "";
+    @NotNull
+    private Status status;
 
     public static Object from(Match match) {
         MatchForm matchForm = new MatchForm();
