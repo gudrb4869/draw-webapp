@@ -13,7 +13,6 @@ import hongik.ce.jolup.module.room.domain.entity.Join;
 import hongik.ce.jolup.module.room.domain.entity.Room;
 import hongik.ce.jolup.module.room.endpoint.form.RoomForm;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -22,7 +21,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
-@Slf4j
 @Component
 @RequiredArgsConstructor
 public class InitDb {
@@ -31,7 +29,8 @@ public class InitDb {
 
     @PostConstruct
     public void init() {
-//        initService.dbInit();
+        Long id = initService.dbInit();
+        initService.createCompetition(id);
     }
 
     @Component
@@ -82,39 +81,42 @@ public class InitDb {
         private final RoomService roomService;
         private final CompetitionService competitionService;
 
-        public void dbInit() {
+        @Transactional
+        public Long dbInit() {
 
             /**
              * 회원 DB 생성
              */
             List<Member> members = new ArrayList<>();
-            for (int i = 0; i <= 100; i++) {
+            for (int i = 0; i <= 50; i++) {
                 members.add(memberService.signup(createMemberForm(i)));
             }
             Member member = members.get(1);
 
             RoomForm roomForm1 = createRoomForm("1", true);
-            Room room1 = roomService.createNewRoom(roomForm1, member);
-
-            for (int i = 2; i <= 100; i++) {
-                roomService.addMember(room1, members.get(i));
+            Room room = roomService.createNewRoom(roomForm1, member);
+            for (int i = 2; i <= 50; i++) {
+                roomService.addMember(room, members.get(i));
             }
 
             for (int i = 2; i <= 50; i++) {
                 RoomForm roomForm = createRoomForm(Integer.toString(i), true);
                 roomService.createNewRoom(roomForm, member);
             }
+            return room.getId();
+        }
 
+        public void createCompetition(Long id) {
+            Room room = roomService.getRoom(id);
             /**
              * 대회, 경기 테스트 DB 생성
              */
-            Room room = roomService.getRoom(room1.getId());
-            List<Member> memberList = room.getJoins().stream().map(Join::getMember).collect(Collectors.toList());
-            Competition competition1 = competitionService.createCompetition(memberList, room,
-                    createCompetitionForm(members, "zxcv", CompetitionType.LEAGUE, CompetitionOption.DOUBLE, 1, 20));
+            List<Member> members = room.getJoins().stream().map(Join::getMember).collect(Collectors.toList());
+            /*Competition competition1 = competitionService.createCompetition(memberList, room,
+                    createCompetitionForm(memberList, "zxcv", CompetitionType.LEAGUE, CompetitionOption.DOUBLE, 0, 19));*/
 
-            Competition competition2 = competitionService.createCompetition(memberList, room,
-                    createCompetitionForm(members, "asdf", CompetitionType.TOURNAMENT, CompetitionOption.SINGLE, 51, 100));
+            Competition competition2 = competitionService.createCompetition(members, room,
+                    createCompetitionForm(members, "asdf", CompetitionType.TOURNAMENT, CompetitionOption.SINGLE, 20, 49));
         }
 
         private CompetitionForm createCompetitionForm(List<Member> members, String title, CompetitionType type, CompetitionOption option, int start, int end) {

@@ -10,24 +10,20 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 
 @Service
+@Transactional
 @RequiredArgsConstructor
-@Transactional(readOnly = true)
 public class NotificationService {
 
     private final NotificationRepository notificationRepository;
 
-    @Transactional
     public Notification save(Notification notification) {
         return notificationRepository.save(notification);
     }
 
-    @Transactional
     public void markAsRead(List<Notification> notifications) {
         notifications.forEach(Notification::read);
-        notificationRepository.saveAll(notifications);
     }
 
-    @Transactional
     public List<Notification> findByMemberAndCheckedOrderByCreatedDateDesc(Member member, boolean b) {
         return notificationRepository.findByMemberAndCheckedOrderByCreatedDateDesc(member, b);
     }
@@ -36,13 +32,28 @@ public class NotificationService {
         return notificationRepository.countByMemberAndChecked(member, b);
     }
 
-    @Transactional
     public void deleteByMemberAndChecked(Member member, boolean b) {
         notificationRepository.deleteByMemberAndChecked(member, b);
     }
 
-    public Notification findOne(Long id) {
+    public Notification getNotification(Member member, Long id) {
+        Notification notification = getNotification(id);
+        check(member, notification);
+        return notification;
+    }
+
+    private void check(Member member, Notification notification) {
+        if (!notification.getMember().equals(member)) {
+            throw new IllegalStateException("잘못된 접근입니다.");
+        }
+    }
+
+    private Notification getNotification(Long id) {
         return notificationRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 알림입니다."));
+    }
+
+    public void read(Notification notification) {
+        notification.read();
     }
 }

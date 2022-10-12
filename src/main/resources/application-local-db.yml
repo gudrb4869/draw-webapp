@@ -8,12 +8,11 @@ spring:
     password: 1234
   jpa:
     hibernate:
-      ddl-auto: update
+      ddl-auto: create
     properties:
       hibernate:
         default_batch_fetch_size: 1000
         format_sql: true
-#    open-in-view: false
 logging:
   level:
     org.hibernate:
@@ -24,6 +23,6 @@ app:
 server:
   servlet:
     session:
-      timeout: 900
+      timeout: 30m
   tomcat:
     max-http-form-post-size: 5MB

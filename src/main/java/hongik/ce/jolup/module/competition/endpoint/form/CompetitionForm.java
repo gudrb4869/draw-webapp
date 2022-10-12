@@ -8,8 +8,8 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.hibernate.validator.constraints.Length;
 
+import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Pattern;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -18,7 +18,8 @@ import java.util.Set;
 @AllArgsConstructor
 @Builder
 public class CompetitionForm {
-    @Pattern(regexp = "^[a-zA-Z가-힣0-9_-]{1,50}$", message = "대회 이름을 1자에서 50자이내로 입력하세요.")
+    @NotBlank
+    @Length(min = 1, max = 50)
     private String title;
 
     @NotNull(message = "대회 방식을 선택하세요.")

@@ -44,7 +44,7 @@ class MemberControllerTest {
         mockMvc.perform(get("/signup"))
                 .andDo(print())
                 .andExpect(status().isOk())
-                .andExpect(view().name("members/signup"))
+                .andExpect(view().name("member/signup"))
                 .andExpect(model().attributeExists("signupForm"));
     }
 
@@ -58,7 +58,7 @@ class MemberControllerTest {
                         .with(csrf()))
                 .andDo(print())
                 .andExpect(status().isOk())
-                .andExpect(view().name("members/signup"));
+                .andExpect(view().name("member/signup"));
     }
 
     @Test
@@ -93,7 +93,7 @@ class MemberControllerTest {
                         .with(csrf()))
                 .andExpect(status().is3xxRedirection())
                 .andExpect(redirectedUrl("/"))
-                .andExpect(authenticated().withUsername("hongik"));
+                .andExpect(authenticated().withUsername("홍익"));
     }
 
     @Test

@@ -44,15 +44,6 @@
     </div>
 </div> <!-- /container -->
 <div th:replace="fragments.html :: footer"></div>
+<div th:replace="fragments.html :: date-time"></div>
 </body>
-<script th:inline="javascript">
-    function init(roomId, competitionId, matchId) {
-        console.log("ㅎ");
-        let form = document.createElement("form");
-        form.setAttribute("method", "post");
-        form.setAttribute("action", "/rooms/" + roomId + "/competitions/" + competitionId + "/matches/" + matchId + "/init");
-        document.body.appendChild(form);
-        form.submit();
-    }
-</script>
 </html>

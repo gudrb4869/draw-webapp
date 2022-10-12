@@ -46,22 +46,6 @@ public class MemberService implements UserDetailsService {
         memberRepository.save(member);
     }
 
-    public void deleteMember(Long id) {
-        memberRepository.deleteById(id);
-    }
-
-    public Member findOne(Long memberId) {
-        return memberRepository.findById(memberId).orElse(null);
-    }
-
-    public Member findByEmail(String email) {
-        return memberRepository.findByEmail(email).orElse(null);
-    }
-
-    public Set<Member> findMembers(List<String> emails) {
-        return memberRepository.findByEmailIn(emails);
-    }
-
     // UserDetailService 상속시 필수로 구현해야 하는 메소드
     // UserDetails 가 기본 반환 타입, Account 가 이를 상속하고 있으므로 자동으로 다운캐스팅됨
     @Override

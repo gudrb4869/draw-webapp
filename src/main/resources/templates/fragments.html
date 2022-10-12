@@ -90,6 +90,40 @@
                     <span class="text-info"><i th:if="${hasNotification}" class="fa fa-bell" aria-hidden="true"></i></span>
                 </a>
             </li>-->
+            <li class="nav-item dropdown" sec:authorize="isAuthenticated()">
+                <a class="nav-link dropdown-toggle" href="#" id="alertsDropdown" role="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    <i th:if="${!hasNotification}" class="fa fa-bell-o" aria-hidden="true"></i>
+<!--                    <span class="text-warning"><i th:if="${hasNotification}" class="fa fa-bell" aria-hidden="true"></i></span>-->
+                    <!-- Counter - Alerts -->
+                    <!--<span th:if="${hasNotification}" class="badge bg-danger"
+                          th:text="${notificationCount < 100 ? notificationCount : notificationCount + '+'}">0</span>-->
+                    <span class="text-warning">
+                        <i th:if="${hasNotification}" class="fa fa-bell position-relative" aria-hidden="true">
+                            <span class="position-absolute top-0 start-100 translate-middle p-1 bg-danger border border-light rounded-circle">
+                                <span class="visually-hidden">New Alerts</span>
+                            </span>
+                        </i>
+                    </span>
+                </a>
+                <!-- Dropdown - Alerts -->
+                <div class="dropdown-list dropdown-menu dropdown-menu-sm-end shadow animated--grow-in" aria-labelledby="alertsDropdown">
+                    <h6 class="dropdown-header text-center">
+                        알림 정보
+                    </h6>
+                    <a class="dropdown-item d-flex align-items-center" href="#" th:href="@{'/notifications/' + ${notification.id}}" th:each="notification : ${notifications}">
+                        <!--<div class="mr-3">
+                            <div class="badge bg-primary">
+                                <i class="fa fa-file text-white"></i>
+                            </div>
+                        </div>-->
+                        <div>
+                            <div class="small fromNow text-muted" th:text="${notification.createdDate}">December 12, 2019</div>
+                            <span class="font-weight-bold" th:text="${notification.message}">A new monthly report is ready to download!</span>
+                        </div>
+                    </a>
+                    <a class="dropdown-item text-center small text-gray-500" href="#" th:href="@{/notifications}">전체 알림 보기</a>
+                </div>
+            </li>
             <!--<li class="nav-item" sec:authorize="isAuthenticated()">
                 <a class="nav-link btn btn-outline-primary" th:href="@{/new-study}">
                     <i class="fa fa-plus" aria-hidden="true"></i>스터디 개설 &lt;!&ndash;"스터디 개설" 문자열 앞에 플러스 아이콘 추가&ndash;&gt;
@@ -290,7 +324,7 @@
 <!--툴팁 스크립트-->
 <script th:fragment="tooltip" type="application/javascript">
     $(function () {
-        $('[data-toggle="tooltip"]').tooltip()
+        $('[data-bs-toggle="tooltip"]').tooltip()
     })
 </script>
 
@@ -315,5 +349,16 @@
        class="list-group-item list-group-item-action" th:classappend="${currentMenu == 'settings'}? active"
        href="#" th:href="@{'/rooms/' + ${room.id} + '/competitions/' + ${competition.id} + '/settings'}">설정</a>
 </div>
+
+<ul th:fragment="notification-list (notifications)" class="list-group list-group-flush">
+    <a href="#" th:href="@{'/notifications/' + ${notification.id}}" th:each="notification: ${notifications}"
+       class="list-group-item list-group-item-action">
+        <div class="d-flex w-100 justify-content-between">
+            <small th:class="${notification.checked}? text-muted" th:text="${notification.title}">Noti title</small>
+            <small th:text="${notification.message}" class="text-left mb-0 mt-1" th:classappend="${notification.checked}? text-muted">message</small>
+            <small class="fromNow" th:classappend="${notification.checked}? text-muted" th:text="${notification.createdDate}">3 days ago</small>
+        </div>
+    </a>
+</ul>
 
 </html>

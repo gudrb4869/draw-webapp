@@ -42,7 +42,7 @@ class SettingsControllerTest {
     void updatePasswordForm() throws Exception {
         mockMvc.perform(get("/settings/password"))
                 .andExpect(status().isOk())
-                .andExpect(view().name("members/updatePasswordForm"))
+                .andExpect(view().name("settings/password"))
                 .andExpect(model().attributeExists("member"))
                 .andExpect(model().attributeExists("passwordForm"));
     }
@@ -52,13 +52,12 @@ class SettingsControllerTest {
     @WithMember("hongik")
     void updatePassword() throws Exception {
         mockMvc.perform(post("/settings/password")
-                        .param("email", "hongik")
-                        .param("password_current", "qwer1234")
-                        .param("password_new", "asdf1234")
-                        .param("password_confirm", "asdf1234")
+                        .param("currentPassword", "qwer1234")
+                        .param("newPassword", "asdf1234")
+                        .param("newPasswordConfirm", "asdf1234")
                         .with(csrf()))
                 .andExpect(status().is3xxRedirection())
-                .andExpect(redirectedUrl("/profile"))
+                .andExpect(redirectedUrl("/settings/password"))
                 .andExpect(flash().attributeExists("message"));
         Member member = memberRepository.findByEmail("hongik").orElse(null);
         assertNotNull(member);
@@ -70,16 +69,15 @@ class SettingsControllerTest {
     @WithMember("hongik")
     void updatePasswordWithNotMatchedCurrentPassword() throws Exception {
         mockMvc.perform(post("/settings/password")
-                        .param("email", "hongik")
-                        .param("password_current", "zxcv1234")
-                        .param("password_new", "asdf1234")
-                        .param("password_confirm", "asdf1234")
+                        .param("currentPassword", "zxcv1234")
+                        .param("newPassword", "asdf1234")
+                        .param("newPasswordConfirm", "asdf1234")
                         .with(csrf()))
                 .andExpect(status().isOk())
-                .andExpect(view().name("members/updatePasswordForm"))
+                .andExpect(view().name("settings/password"))
                 .andExpect(model().hasErrors())
-                .andExpect(model().attributeExists("passwordForm"));
-//                .andExpect(model().attributeExists("member"));
+                .andExpect(model().attributeExists("passwordForm"))
+                .andExpect(model().attributeExists("member"));
     }
 
     @Test
@@ -87,16 +85,15 @@ class SettingsControllerTest {
     @WithMember("hongik")
     void updatePasswordCurrentPasswordEqualsNewPassword() throws Exception {
         mockMvc.perform(post("/settings/password")
-                        .param("email", "hongik")
-                        .param("password_current", "qwer1234")
-                        .param("password_new", "qwer1234")
-                        .param("password_confirm", "qwer1234")
+                        .param("currentPassword", "qwer1234")
+                        .param("newPassword", "qwer1234")
+                        .param("newPasswordConfirm", "qwer1234")
                         .with(csrf()))
                 .andExpect(status().isOk())
-                .andExpect(view().name("members/updatePasswordForm"))
+                .andExpect(view().name("settings/password"))
                 .andExpect(model().hasErrors())
-                .andExpect(model().attributeExists("passwordForm"));
-//                .andExpect(model().attributeExists("member"));
+                .andExpect(model().attributeExists("passwordForm"))
+                .andExpect(model().attributeExists("member"));
     }
 
     @Test
@@ -104,16 +101,15 @@ class SettingsControllerTest {
     @WithMember("hongik")
     void updatePasswordWithNotMatchedNewPasswordAndConfirmPassword() throws Exception {
         mockMvc.perform(post("/settings/password")
-                        .param("email", "hongik")
-                        .param("password_current", "qwer1234")
-                        .param("password_new", "asdf1234")
-                        .param("password_confirm", "zxcv1234")
+                        .param("currentPassword", "qwer1234")
+                        .param("newPassword", "asdf1234")
+                        .param("newPasswordConfirm", "zxcv1234")
                         .with(csrf()))
                 .andExpect(status().isOk())
-                .andExpect(view().name("members/updatePasswordForm"))
+                .andExpect(view().name("settings/password"))
                 .andExpect(model().hasErrors())
-                .andExpect(model().attributeExists("passwordForm"));
-//                .andExpect(model().attributeExists("member"));
+                .andExpect(model().attributeExists("passwordForm"))
+                .andExpect(model().attributeExists("member"));
     }
 
     @Test
@@ -121,15 +117,14 @@ class SettingsControllerTest {
     @WithMember("hongik")
     void updatePasswordWithLengthError() throws Exception {
         mockMvc.perform(post("/settings/password")
-                        .param("email", "hongik")
-                        .param("password_current", "qwer1234")
-                        .param("password_new", "abc123")
-                        .param("password_confirm", "abc123")
+                        .param("currentPassword", "qwer1234")
+                        .param("newPassword", "abc123")
+                        .param("newPasswordConfirm", "abc123")
                         .with(csrf()))
                 .andExpect(status().isOk())
-                .andExpect(view().name("members/updatePasswordForm"))
+                .andExpect(view().name("settings/password"))
                 .andExpect(model().hasErrors())
-                .andExpect(model().attributeExists("passwordForm"));
-//                .andExpect(model().attributeExists("member"));
+                .andExpect(model().attributeExists("passwordForm"))
+                .andExpect(model().attributeExists("member"));
     }
 }

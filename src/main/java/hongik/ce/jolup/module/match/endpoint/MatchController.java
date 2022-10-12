@@ -73,30 +73,7 @@ public class MatchController {
             model.addAttribute(match);
             return "match/update-form";
         }
-
         matchService.updateMatch(competition, match, matchForm);
-
-        /*if (competition.getType().equals(CompetitionType.LEAGUE)) {
-            leagueService.update(match.getId(), competitionId, Status.AFTER, matchForm.getHomeScore(), matchForm.getAwayScore(), matchForm.getHomeId(), matchForm.getAwayId());
-            Set<Member> members = new HashSet<>();
-            List<Match> matches = leagueService.findByCompetitionId(competitionId);
-            for (Match m : matches) {
-                members.add(m.getHome());
-                members.add(m.getAway());
-            }
-            members.remove(member);
-            leagueService.sendAlarm(match, roomId, members);
-        } else if (competition.getType().equals(CompetitionType.TOURNAMENT)) {
-            tournamentService.update(matchId, competitionId, Status.AFTER, matchForm.getHomeScore(), matchForm.getAwayScore());
-            Set<Member> members = new HashSet<>();
-            List<Match> matches = leagueService.findByCompetitionId(competitionId);
-            for (Match m : matches) {
-                members.add(m.getHome());
-                members.add(m.getAway());
-            }
-            members.remove(member);
-            tournamentService.sendAlarm(match, roomId, members);
-        }*/
         attributes.addFlashAttribute("message", "경기 결과를 수정했습니다.");
         return "redirect:/rooms/" + room.getId() + "/competitions/" + competition.getId() + "/matches/" + match.getId();
     }

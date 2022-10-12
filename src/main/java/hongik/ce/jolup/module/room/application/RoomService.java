@@ -26,13 +26,12 @@ public class RoomService {
 
     public Room createNewRoom(RoomForm roomForm, Member member) {
         Room room = roomRepository.save(Room.from(roomForm));
-        room.addCount();
         joinRepository.save(Join.builder().room(room).member(member).grade(Grade.ADMIN).build());
         return room;
     }
 
-    public void inviteRoom(Room room, Set<Member> members, String admin) {
-        eventPublisher.publishEvent(new RoomInvitedEvent(room, admin +"님이 회원님을 방에 초대하였습니다.", members));
+    public void inviteRoom(Room room) {
+        eventPublisher.publishEvent(new RoomInvitedEvent(room));
     }
 
     public Room findOne(Long id) {

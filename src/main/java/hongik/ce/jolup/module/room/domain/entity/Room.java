@@ -16,7 +16,7 @@ import java.util.List;
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @ToString(of = {"id", "title", "access"})
-@EqualsAndHashCode(of = {"id"}, callSuper = true)
+@EqualsAndHashCode(of = {"id"}, callSuper = false)
 @NamedEntityGraph(
         name ="Room.withJoinsAndMembers",
         attributeNodes = {
@@ -59,6 +59,7 @@ public class Room extends BaseTimeEntity {
         Room room = new Room();
         room.title = roomForm.getTitle();
         room.access = roomForm.isAccess();
+        room.count = 1;
         return room;
     }
 

@@ -82,7 +82,7 @@ public class SettingsController {
                                  Model model, RedirectAttributes attributes) {
         passwordFormValidator.validateForm(passwordForm, member, errors);
         if (errors.hasErrors()) {
-            model.addAttribute("member");
+            model.addAttribute(member);
             return SETTINGS_PASSWORD_VIEW_NAME;
         }
         memberService.updatePassword(member, passwordForm.getNewPassword());

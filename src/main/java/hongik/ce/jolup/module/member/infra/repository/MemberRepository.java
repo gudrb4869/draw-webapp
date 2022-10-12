@@ -11,12 +11,7 @@ import java.util.Set;
 
 @Transactional(readOnly = true)
 public interface MemberRepository extends JpaRepository<Member, Long> {
-
-    List<Member> findAllById(Iterable<Long> longs);
-
-    Set<Member> findByEmailIn(Collection<String> emails);
     Optional<Member> findByEmail(String email);
-    Optional<Member> findByName(String name);
 
     boolean existsByEmail(String email);
 

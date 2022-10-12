@@ -3,7 +3,7 @@ package hongik.ce.jolup.module.match.application;
 import hongik.ce.jolup.module.competition.domain.entity.Competition;
 import hongik.ce.jolup.module.competition.domain.entity.CompetitionType;
 import hongik.ce.jolup.module.competition.domain.entity.Participate;
-import hongik.ce.jolup.module.competition.infra.repository.ParticipateRepository;
+import hongik.ce.jolup.module.competition.event.MatchUpdatedEvent;
 import hongik.ce.jolup.module.match.domain.entity.Match;
 import hongik.ce.jolup.module.match.domain.entity.Status;
 import hongik.ce.jolup.module.match.endpoint.form.MatchForm;
@@ -20,7 +20,6 @@ import org.springframework.transaction.annotation.Transactional;
 public class MatchService {
 
     private final MatchRepository matchRepository;
-    private final ParticipateRepository participateRepository;
     private final ApplicationEventPublisher publisher;
 
     public void updateMatch(Competition competition, Match match, MatchForm matchForm) {
@@ -76,6 +75,7 @@ public class MatchService {
             away.addGoalFor(matchForm.getAwayScore());
             away.addGoalAgainst(matchForm.getHomeScore());
         }
+        publisher.publishEvent(new MatchUpdatedEvent(competition));
         match.update(matchForm);
     }
 

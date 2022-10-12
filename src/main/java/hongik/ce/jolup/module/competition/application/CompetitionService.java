@@ -159,12 +159,8 @@ public class CompetitionService {
         }
         participateRepository.saveAll(participates);
         matchRepository.saveAll(matches);
-//        eventPublisher.publishEvent(new RoomUpdatedEvent(competition.getRoom(), "'" + competition.getTitle() + "' 대회가 생성되었습니다."));
+        eventPublisher.publishEvent(new CompetitionCreatedEvent(competition));
         return competition;
-    }
-
-    public void SendAlarm(Competition competition, Set<Member> members) {
-        eventPublisher.publishEvent(new CompetitionCreatedEvent(competition, "새로운 대회가 생성되었습니다.", members));
     }
 
     public Competition getCompetition(Room room, Long competitionId) {

@@ -5,6 +5,7 @@ import hongik.ce.jolup.module.competition.endpoint.form.CompetitionForm;
 import hongik.ce.jolup.module.match.domain.entity.Match;
 import hongik.ce.jolup.module.room.domain.entity.Room;
 import lombok.*;
+import org.hibernate.annotations.ColumnDefault;
 
 import javax.persistence.*;
 import java.util.ArrayList;
@@ -14,6 +15,15 @@ import java.util.List;
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @ToString(of = {"id", "title", "type", "room"})
+@NamedEntityGraph(
+        name = "Competition.withRoomAndParticipatesAndMembers",
+        attributeNodes = {
+                @NamedAttributeNode("room"),
+                @NamedAttributeNode(value = "participates", subgraph = "member")
+        },
+        subgraphs = @NamedSubgraph(name = "member", attributeNodes = @NamedAttributeNode("member"))
+)
+@EqualsAndHashCode(of = {"id"}, callSuper = false)
 public class Competition extends BaseTimeEntity {
 
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -30,6 +40,9 @@ public class Competition extends BaseTimeEntity {
     @Column(nullable = false)
     @Enumerated(EnumType.STRING)
     private CompetitionType type;
+
+    @ColumnDefault(value = "0")
+    private Integer count = 0;
 
     @OneToMany(mappedBy = "competition", cascade = CascadeType.ALL)
     private List<Participate> participates = new ArrayList<>();
@@ -50,6 +63,7 @@ public class Competition extends BaseTimeEntity {
         competition.title = competitionForm.getTitle();
         competition.type = competitionForm.getType();
         competition.room = room;
+        competition.count = competitionForm.getMembers().size();
         return competition;
     }
 
