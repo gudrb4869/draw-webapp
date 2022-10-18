@@ -1,5 +1,6 @@
 <!DOCTYPE HTML>
-<html xmlns:th="http://www.thymeleaf.org">
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 <head th:replace="fragments.html :: head"></head>
 <body class="d-flex flex-column min-vh-100 bg-light">
 <div th:replace="fragments.html :: navigation-bar"></div>
@@ -15,22 +16,158 @@
         <div class="col-8">
             <!-- nickname-->
             <h1 class="display-4" th:text="${member.name}">name</h1>
-            <div th:if="${!isOwner and !isFollowing}">
-                <a class="btn btn-outline-primary" href="#" th:href="@{'/profile/' + ${member.id} + '/follow'}">팔로우</a>
-            </div>
-            <div th:if="${!isOwner and isFollowing}">
-                <a class="btn btn-outline-primary" href="#" th:href="@{'/profile/' + ${member.id} + '/unfollow'}">언팔로우</a>
-            </div>
-            <div th:if="${isOwner}">
-                <a class="btn btn-outline-primary" href="#" th:href="@{/settings/profile}">프로필 수정</a>
-            </div>
             <!-- bio -->
-<!--            <p class="lead" th:if="${!#strings.isEmpty(account.profile.bio)}" th:text="${account.profile.bio}">bio</p>-->
-<!--            <p class="lead" th:if="${#strings.isEmpty(account.profile.bio) && isOwner}">한 줄 소개를 추가해주세요.</p>-->
+            <p class="lead" th:if="${!#strings.isEmpty(member.bio)}" th:text="${member.bio}">bio</p>
+            <p class="lead" th:if="${#strings.isEmpty(member.bio) && isOwner}">한 줄 소개를 추가해주세요.</p>
+        </div>
+        <div class="row mt-3 justify-content-center">
+            <div class="col-2">
+                <div class="nav flex-column nav-pills" id="v-pills-tab" role="tablist" aria-orientation="vertical">
+                    <a class="nav-link active" id="v-pills-intro-tab" data-bs-toggle="pill" href="#v-pills-profile"
+                       role="tab" aria-controls="v-pills-profile" aria-selected="true">소개</a>
+                    <a class="nav-link" id="v-pills-follower-tab" data-bs-toggle="pill" href="#v-pills-follower" role="tab"
+                       aria-controls="v-pills-follower" aria-selected="false">팔로워 <span th:text="${followers.size()}">0</span></a>
+                    <a class="nav-link" id="v-pills-following-tab" data-bs-toggle="pill" href="#v-pills-following" role="tab"
+                       aria-controls="v-pills-following" aria-selected="false">팔로잉 <span th:text="${followings.size()}">0</span></a>
+
+                </div>
+            </div>
+            <div class="col-8">
+                <div class="tab-content" id="v-pills-tabContent">
+                    <div class="tab-pane fade show active" id="v-pills-profile" role="tabpanel"
+                         aria-labelledby="v-pills-home-tab">
+                        <!--<p th:if="${!#strings.isEmpty(member.bio)}">
+                            <span style="...">
+                                <i class="fa fa-link col-1"></i>
+                            </span>
+                            <span th:text="${member.bio}" class="col-11"></span>
+                        </p>
+                        <p th:if="${!#strings.isEmpty(member.bio)}">
+                            <span style="...">
+                                <i class="fa fa-briefcase col-1"></i>
+                            </span>
+                            <span th:text="${member.bio}" class="col-9"></span>
+                        </p>
+                        <p th:if="${!#strings.isEmpty(member.bio)}">
+                            <span style="...">
+                                <i class="fa fa-location-arrow col-1"></i>
+                            </span>
+                            <span th:text="${member.bio}" class="col-9"></span>
+                        </p>-->
+                        <p th:if="${isOwner}">
+                            <span style="font-size: 20px">
+                                <i class="fa fa-envelope-o col-1"></i>
+                            </span>
+                            <span th:text="${member.email}" class="col-9"></span>
+                        </p>
+                        <p>
+                            <span style="font-size: 20px">
+                                <i class="fa fa-calendar-o col-1"></i>
+                            </span>
+                            <span th:text="${#temporals.format(member.createdDate, 'yyyy년 M월 가입')}" class="col-9"></span>
+                        </p>
+                        <div sec:authorize="isAuthenticated()" th:if="${!isOwner and !isFollowing}">
+                            <form class="needs-validation" th:action="@{'/profile/' + ${member.id} + '/follow'}" method="post" novalidate>
+                                <div class="form-group">
+                                    <button class="btn btn-outline-primary" type="submit">팔로우</button>
+                                </div>
+                            </form>
+<!--                            <a id="follow" class="btn btn-outline-primary" href="#">팔로우</a>-->
+                        </div>
+                        <div sec:authorize="isAuthenticated()" th:if="${!isOwner and isFollowing}">
+                            <form class="needs-validation" th:action="@{'/profile/' + ${member.id} + '/unfollow'}" method="post" novalidate>
+                                <div class="form-group">
+                                    <button class="btn btn-outline-primary" type="submit">언팔로우</button>
+                                </div>
+                            </form>
+<!--                            <a id="unfollow" class="btn btn-outline-primary" href="#">언팔로우</a>-->
+                        </div>
+                        <div th:if="${isOwner}">
+                            <a class="btn btn-outline-primary" href="#" th:href="@{/settings/profile}">프로필 수정</a>
+                        </div>
+                    </div>
+                    <div class="tab-pane fade" id="v-pills-follower" role="tabpanel" aria-labelledby="v-pills-profile-tab">
+                        <span th:if="${followers.size() == 0}">팔로워 없음</span>
+                        <ul class="list-unstyled col-10" th:if="${followers.size() > 0}">
+                            <a href="#" th:href="@{'/profile/' + ${follower.id}}" class="text-decoration-none text-black" th:each="follower: ${followers}">
+                                <li class="d-flex mt-3">
+                                    <div class="flex-shrink-0">
+                                        <svg th:if="${#strings.isEmpty(follower.image)}" th:data-jdenticon-value="${follower.name}" width="64" height="64" class="rounded border bg-light me-3"></svg>
+                                        <img th:if="${!#strings.isEmpty(follower.image)}" th:src="${follower.image}" width="64" height="64" class="rounded border me-3"/>
+                                    </div>
+                                    <div class="flex-grow-1 ms-3">
+                                        <h5 class="mt-0 mb-1">
+                                            <span th:text="${follower.name}"></span>
+                                        </h5>
+                                        <span th:text="${follower.bio}"></span>
+                                    </div>
+                                </li>
+                            </a>
+                        </ul>
+                    </div>
+                    <div class="tab-pane fade" id="v-pills-following" role="tabpanel" aria-labelledby="v-pills-profile-tab">
+                        <span th:if="${followings.size() == 0}">팔로잉 없음</span>
+                        <ul class="list-unstyled col-10" th:if="${followings.size() > 0}">
+                            <a href="#" th:href="@{'/profile/' + ${following.id}}" class="text-decoration-none text-black" th:each="following: ${followings}">
+                                <li class="d-flex mt-3">
+                                    <div class="flex-shrink-0">
+                                        <svg th:if="${#strings.isEmpty(following.image)}" th:data-jdenticon-value="${following.name}" width="64" height="64" class="rounded border bg-light me-3"></svg>
+                                        <img th:if="${!#strings.isEmpty(following.image)}" th:src="${following.image}" width="64" height="64" class="rounded border me-3"/>
+                                    </div>
+                                    <div class="flex-grow-1 ms-3">
+                                        <h5 class="mt-0 mb-1">
+                                            <span th:text="${following.name}"></span>
+                                        </h5>
+                                        <span th:text="${following.bio}"></span>
+                                    </div>
+                                </li>
+                            </a>
+                        </ul>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 </div> <!-- /container -->
 <div th:replace="fragments.html :: footer"></div>
 <div th:replace="fragments.html :: date-time"></div>
+<!--<script th:replace="fragments.html :: ajax-csrf-header"></script>-->
+<!--<script type="application/javascript" th:inline="javascript">
+    $(function () {
+        function followRequest() {
+            $.ajax({
+                dataType: "json",
+                contentType: "application/json; charset=utf-8",
+                method: "POST",
+                url: "[('/profile/' + ${member.id})]" + "/follow",
+            }).done(function (status) {
+                console.log("status is ${status}");
+            });
+        }
+        function unfollowRequest() {
+            $.ajax({
+                dataType: "json",
+                contentType: "application/json; charset=utf-8",
+                method: "POST",
+                url: "[('/profile/' + ${member.id})]" + "/unfollow",
+            }).done(function (status) {
+                console.log("status is ${status}");
+            });
+        }
+
+        var followbtn = document.querySelector("#follow");
+        if (followbtn != null) {
+            followbtn.addEventListener("click", function (){
+                followRequest();
+            })
+        }
+        var unfollowbtn = document.querySelector("#unfollow");
+        if (unfollowbtn != null) {
+            unfollowbtn.addEventListener("click", function (){
+                unfollowRequest();
+            })
+        }
+    });
+</script>-->
 </body>
 </html>

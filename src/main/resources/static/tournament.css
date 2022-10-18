@@ -84,7 +84,7 @@
         width: 0.3125rem;
     }
     .player-name {
-        display:none;
+        display: none;
     }
 }
 @media (min-width:992px) {

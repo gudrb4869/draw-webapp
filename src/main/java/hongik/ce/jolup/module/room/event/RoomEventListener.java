@@ -1,8 +1,8 @@
 package hongik.ce.jolup.module.room.event;
 
-import hongik.ce.jolup.module.member.domain.entity.Friend;
+import hongik.ce.jolup.module.member.domain.entity.Follow;
 import hongik.ce.jolup.module.member.domain.entity.Member;
-import hongik.ce.jolup.module.member.infra.repository.FriendRepository;
+import hongik.ce.jolup.module.member.infra.repository.FollowRepository;
 import hongik.ce.jolup.module.notification.domain.entity.Notification;
 import hongik.ce.jolup.module.notification.infra.repository.NotificationRepository;
 import hongik.ce.jolup.module.room.domain.entity.Grade;
@@ -23,7 +23,7 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class RoomEventListener {
 
-    private final FriendRepository friendRepository;
+    private final FollowRepository followRepository;
     private final NotificationRepository notificationRepository;
 
     @EventListener
@@ -32,8 +32,8 @@ public class RoomEventListener {
         Member following = room.getJoins().stream().filter(j -> j.getGrade().equals(Grade.ADMIN)).map(Join::getMember)
                 .findAny().orElseThrow(() -> new IllegalStateException("방장이 없습니다."));
         String message = roomEvent.getMessage();
-        List<Member> members = friendRepository.findByFollowing(following).stream()
-                .map(Friend::getFollower)
+        List<Member> members = followRepository.findByFollowing(following).stream()
+                .map(Follow::getFollower)
                 .collect(Collectors.toList());
         for (Member member : members) {
             saveNotification(room, message, member);
@@ -41,6 +41,6 @@ public class RoomEventListener {
     }
 
     private void saveNotification(Room room, String message, Member member) {
-        notificationRepository.save(Notification.from(room.getTitle(), "/rooms/" + room.getId(), false, message, member));
+        notificationRepository.save(Notification.from("/rooms/" + room.getId(), false, message, member));
     }
 }

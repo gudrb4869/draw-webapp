@@ -36,8 +36,13 @@ public class Member extends BaseTimeEntity {
     @Basic(fetch = FetchType.EAGER)
     private String image;
 
+    private String bio;
+
     @OneToMany(mappedBy = "following")
-    private List<Friend> friends;
+    private List<Follow> followings;
+
+    @OneToMany(mappedBy = "follower")
+    private List<Follow> followers;
 
     @OneToMany(mappedBy = "member", cascade = CascadeType.ALL)
     private List<Notification> notifications = new ArrayList<>();
@@ -77,10 +82,11 @@ public class Member extends BaseTimeEntity {
 
     public void updateProfile(Profile profile) {
         this.image = profile.getImage();
+        this.bio = profile.getBio();
     }
 
-    public boolean isFriend(Member member) {
-        return this.friends.stream()
+    public boolean isFollowing(Member member) {
+        return this.followings.stream()
                 .anyMatch(f -> f.getFollower().equals(member));
     }
 }

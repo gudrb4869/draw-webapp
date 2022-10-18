@@ -1,10 +1,12 @@
 package hongik.ce.jolup.module.member.endpoint;
 
-import hongik.ce.jolup.module.member.application.FriendService;
+import hongik.ce.jolup.module.member.application.FollowService;
+import hongik.ce.jolup.module.member.domain.entity.Follow;
 import hongik.ce.jolup.module.member.domain.entity.Member;
 import hongik.ce.jolup.module.member.endpoint.form.SignupForm;
 import hongik.ce.jolup.module.member.application.MemberService;
 import hongik.ce.jolup.module.member.endpoint.validator.SignupFormValidator;
+import hongik.ce.jolup.module.member.infra.repository.FollowRepository;
 import hongik.ce.jolup.module.member.support.CurrentMember;
 import lombok.*;
 import lombok.extern.slf4j.Slf4j;
@@ -16,6 +18,8 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.validation.Valid;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Controller
@@ -24,7 +28,8 @@ public class MemberController {
 
     private final SignupFormValidator signupFormValidator;
     private final MemberService memberService;
-    private final FriendService friendService;
+    private final FollowRepository followRepository;
+    private final FollowService followService;
 
     @InitBinder("signupForm")
     public void initBinder(WebDataBinder webDataBinder) {
@@ -55,29 +60,39 @@ public class MemberController {
     @GetMapping("/profile/{id}")
     public String profile(@CurrentMember Member member, @PathVariable Long id, Model model) {
         Member byId = memberService.getMember(id);
+        List<Member> followings = followRepository.findByFollowing(byId)
+                .stream().map(Follow::getFollower)
+                .collect(Collectors.toList());
+        List<Member> followers = followRepository.findByFollower(byId)
+                .stream().map(Follow::getFollowing)
+                .collect(Collectors.toList());
         model.addAttribute("member", byId);
         model.addAttribute("isOwner", byId.equals(member));
-        model.addAttribute("isFollowing", friendService.isFollow(member, byId));
+        model.addAttribute("isFollowing", followService.isFollow(member, byId));
+        model.addAttribute("followings", followings);
+        model.addAttribute("followers", followers);
         return "member/profile";
     }
 
-    @GetMapping("/profile/{id}/follow")
+    @PostMapping("/profile/{id}/follow")
+//    @ResponseStatus(HttpStatus.OK)
     public String follow(@CurrentMember Member member, @PathVariable Long id) {
         Member byId = memberService.getMember(id);
         if (byId.equals(member)) {
             throw new IllegalStateException("잘못된 접근입니다.");
         }
-        friendService.createFriends(member, byId);
+        followService.createFollow(member, byId);
         return "redirect:/profile/" + byId.getId();
     }
 
-    @GetMapping("/profile/{id}/unfollow")
+    @PostMapping("/profile/{id}/unfollow")
+//    @ResponseStatus(HttpStatus.OK)
     public String unfollow(@CurrentMember Member member, @PathVariable Long id) {
         Member byId = memberService.getMember(id);
         if (byId.equals(member)) {
             throw new IllegalStateException("잘못된 접근입니다.");
         }
-        friendService.deleteFriends(member, byId);
+        followService.deleteFriends(member, byId);
         return "redirect:/profile/" + byId.getId();
     }
 }

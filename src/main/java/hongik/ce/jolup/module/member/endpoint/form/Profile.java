@@ -4,6 +4,7 @@ import hongik.ce.jolup.module.member.domain.entity.Member;
 import lombok.AccessLevel;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.hibernate.validator.constraints.Length;
 
 import javax.validation.constraints.NotBlank;
 
@@ -15,6 +16,8 @@ public class Profile {
     private String password;
 
     private String image;
+    @Length(max = 35)
+    private String bio;
 
     public static Profile from(Member member) {
         return new Profile(member);
@@ -22,5 +25,6 @@ public class Profile {
 
     protected Profile(Member member) {
         this.image = member.getImage();
+        this.bio = member.getBio();
     }
 }

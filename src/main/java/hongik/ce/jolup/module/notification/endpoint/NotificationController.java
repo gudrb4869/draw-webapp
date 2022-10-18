@@ -36,6 +36,14 @@ public class NotificationController {
         return "redirect:" + notification.getLink();
     }
 
+    @GetMapping("/notifications/all-read")
+    public String allRead(@CurrentMember Member member, RedirectAttributes attributes) {
+        List<Notification> notifications = notificationRepository.findByMemberAndCheckedOrderByCreatedDateDesc(member, false);
+        notificationService.markAsRead(notifications);
+        attributes.addFlashAttribute("message", "읽지 않은 알림들을 읽음 처리 했습니다.");
+        return "redirect:/notifications";
+    }
+
     @DeleteMapping("/notifications/{id}")
     public String deleteNotifications(@CurrentMember Member member, @PathVariable Long id, RedirectAttributes attributes) {
         notificationService.deleteByMemberAndChecked(member, true);

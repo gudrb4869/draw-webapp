@@ -24,7 +24,7 @@ public class CompetitionEventListener {
     private final NotificationRepository notificationRepository;
 
     @EventListener
-    public void handleCompetitionEvent(CompetitionEvent competitionEvent) {
+    public void handleCompetitionCreatedEvent(CompetitionEvent competitionEvent) {
         Competition competition = competitionEvent.getCompetition();
         Room room = competition.getRoom();
         List<Member> members = room.getJoins().stream().map(Join::getMember)
@@ -35,7 +35,7 @@ public class CompetitionEventListener {
     }
 
     private void saveNotification(CompetitionEvent competitionEvent, Member member, Room room, Competition competition) {
-        notificationRepository.save(Notification.from(room.getTitle() + " / " + competition.getTitle(),
+        notificationRepository.save(Notification.from(
                 "/rooms/" + room.getId() + "/competitions/" + competition.getId(), false,
                 competitionEvent.getMessage(), member));
     }

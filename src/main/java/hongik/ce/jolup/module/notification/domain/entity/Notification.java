@@ -15,8 +15,6 @@ public class Notification extends BaseTimeEntity {
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private String title;
-
     private String link;
 
     private String message;
@@ -26,9 +24,8 @@ public class Notification extends BaseTimeEntity {
     @ManyToOne
     private Member member;
 
-    public static Notification from(String title, String link, boolean checked, String message, Member member) {
+    public static Notification from(String link, boolean checked, String message, Member member) {
         Notification notification = new Notification();
-        notification.title = title;
         notification.link = link;
         notification.checked = checked;
         notification.message = message;

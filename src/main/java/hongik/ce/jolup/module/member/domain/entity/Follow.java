@@ -11,7 +11,7 @@ import javax.persistence.*;
 @AllArgsConstructor(access = AccessLevel.PROTECTED)
 @ToString
 @Builder
-public class Friend extends BaseTimeEntity {
+public class Follow extends BaseTimeEntity {
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
@@ -23,10 +23,10 @@ public class Friend extends BaseTimeEntity {
     @JoinColumn(name = "follower")
     private Member follower;
 
-    public static Friend from(Member following, Member follower) {
-        Friend friend = new Friend();
-        friend.following = following;
-        friend.follower = follower;
-        return friend;
+    public static Follow from(Member following, Member follower) {
+        Follow follow = new Follow();
+        follow.following = following;
+        follow.follower = follower;
+        return follow;
     }
 }

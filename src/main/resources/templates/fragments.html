@@ -22,10 +22,6 @@
             max-width: 100%;
         }
 
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, "Noto Sans KR", "Segoe UI", "Roboto Light", serif, Arial, "Noto Sans";
-        }
-
         body,
         input,
         button,
@@ -42,7 +38,9 @@
 <footer th:fragment="footer" class="d-flex flex-wrap align-items-center pt-3 my-4 border-top mt-auto">
     <div class="col-6 col-md-4 d-flex align-items-center">
         <a href="/" class="mb-3 me-2 mb-md-0 text-muted text-decoration-none lh-1">
-            <svg class="bi" width="30" height="24"><use xlink:href="#bootstrap"></use></svg>
+            <svg class="bi flex-shrink-0 me-2" width="30" height="24">
+                <use xlink:href="#bootstrap"/>
+            </svg>
         </a>
         <span class="text-muted">© 2022 Hongik University Computer Engineering</span>
     </div>
@@ -110,6 +108,9 @@
                     <h6 class="dropdown-header text-center">
                         알림 정보
                     </h6>
+                    <div class="dropdown-item text-center small" th:if="${notifications.size == 0}">
+                        <span class="font-weight-bold">알림이 없습니다.</span>
+                    </div>
                     <a class="dropdown-item d-flex align-items-center" href="#" th:href="@{'/notifications/' + ${notification.id}}" th:each="notification : ${notifications}">
                         <!--<div class="mr-3">
                             <div class="badge bg-primary">
@@ -203,6 +204,12 @@
     <use xlink:href="#exclamation-triangle-fill"/>
 </svg>
 
+<div th:fragment="message" th:if="${message}" class="alert alert-info alert-dismissible fade show mt-3" role="alert">
+    <svg th:replace="fragments.html::symbol-success"/>
+    <span th:text="${message}">완료</span>
+    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+</div>
+
 <div th:fragment="room-info">
     <div class="row pt-4 text-left justify-content-center bg-light">
         <!--방 이름 표시-->
@@ -283,14 +290,6 @@
        href="#" th:href="@{'/rooms/' + ${room.id} + '/settings'}">방</a>
 </div>
 
-<div th:fragment="message" th:if="${message}" class="alert alert-info alert-dismissible fade show mt-3" role="alert">
-    <svg class="bi flex-shrink-0 me-2" width="24" height="24" role="img" aria-label="Success:">
-        <use xlink:href="#check-circle-fill"/>
-    </svg>
-    <span th:text="${message}">완료</span>
-    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-</div>
-
 <div th:fragment="date-time">
     <script src="/node_modules/moment/min/moment-with-locales.min.js"></script>
     <script type="application/javascript">
@@ -354,11 +353,21 @@
     <a href="#" th:href="@{'/notifications/' + ${notification.id}}" th:each="notification: ${notifications}"
        class="list-group-item list-group-item-action">
         <div class="d-flex w-100 justify-content-between">
-            <small th:class="${notification.checked}? text-muted" th:text="${notification.title}">Noti title</small>
+<!--            <small th:class="${notification.checked}? text-muted" th:text="${notification.title}">Noti title</small>-->
             <small th:text="${notification.message}" class="text-left mb-0 mt-1" th:classappend="${notification.checked}? text-muted">message</small>
             <small class="fromNow" th:classappend="${notification.checked}? text-muted" th:text="${notification.createdDate}">3 days ago</small>
         </div>
     </a>
 </ul>
+
+<script type="application/javascript" th:inline="javascript" th:fragment="ajax-csrf-header">
+    $(function () {
+        var csrfToken = /*[[${_csrf.token}]]*/ null;
+        var csrfHeader = /*[[${_csrf.headerName}]]*/ null;
+        $(document).ajaxSend(function (e, xhr, options) {
+            xhr.setRequestHeader(csrfHeader, csrfToken);
+        });
+    });
+</script>
 
 </html>

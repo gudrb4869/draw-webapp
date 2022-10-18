@@ -64,7 +64,7 @@ public class MemberService implements UserDetailsService {
     }
 
     public Member getMember(Long id) {
-        return memberRepository.findById(id)
+        return memberRepository.findMemberWithFollowById(id)
                 .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 사용자입니다."));
     }
 }

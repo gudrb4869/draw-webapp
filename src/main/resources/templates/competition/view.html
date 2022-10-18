@@ -17,8 +17,10 @@
                 <div class="col mb-4" th:each="match: ${matches.getContent()}">
                     <a th:href="@{'/rooms/' + ${room.id} + '/competitions/' + ${competition.id} + '/matches/' + ${match.id}}" class="text-decoration-none">
                         <div class="card">
-                            <div class="card-header">
-                                <span th:text="${match.round + 1} + '라운드 / ' + ${match.number + 1} + '경기'">경기 정보</span>
+                            <div class="card-header d-flex justify-content-between align-items-center">
+                                <small th:text="${match.round + 1} + '라운드 / ' + ${match.number + 1} + '경기'">경기 정보</small>
+                                <small th:if="${match.startDateTime == null}" class="text-warning">시간 미정</small>
+                                <small th:if="${match.startDateTime != null}" class="date-time text-dark" th:text="${match.startDateTime}">경기 시간</small>
                             </div>
                             <div class="card-body text-center">
                                 <div class="row">
@@ -88,21 +90,18 @@
                              class="match" th:classappend="${match == null} ? 'invisible'">
                             <a th:if="${match != null}" th:href="@{'/rooms/' + ${room.id} + '/competitions/' + ${competition.id} + '/matches/' + ${match.id}}" class="text-decoration-none">
                                 <div class="row-cols-1">
-                                    <div class="player">
+                                    <div class="player" tabindex="0" data-bs-toggle="tooltip" data-placement="bottom" th:title="${match.home != null} ? ${match.home.name} : _">
                                         <svg th:if="${#strings.isEmpty(match.home?.image)}" th:data-jdenticon-value="${match.home != null ? match.home.name:_}" width="24" height="24" class="rounded border bg-light me-3"></svg>
                                         <img th:if="${!#strings.isEmpty(match.home?.image)}" th:src="${match.home.image}" width="24" height="24" class="rounded border me-3"/>
                                         <span class="player-name" th:text="${match.home != null} ? ${match.home.name} : _"></span>
-                                        <div class="score" th:text="${match.homeScore}">
-                                            0
-                                        </div>
+<!--                                        <div class="player-name" th:text="${match.home != null} ? ${match.home.name} : _"></div>-->
+                                        <span class="score" th:text="${match.homeScore}">0</span>
                                     </div>
-                                    <div class="player">
+                                    <div class="player" tabindex="0" data-bs-toggle="tooltip" data-placement="bottom" th:title="${match.away != null} ? ${match.away.name} : _">
                                         <svg th:if="${#strings.isEmpty(match.away?.image)}" th:data-jdenticon-value="${match.away != null ? match.away.name:_}" width="24" height="24" class="rounded border bg-light me-3"></svg>
                                         <img th:if="${!#strings.isEmpty(match.away?.image)}" th:src="${match.away.image}" width="24" height="24" class="rounded border me-3"/>
                                         <span class="player-name" th:text="${match.away != null} ? ${match.away.name} : _"></span>
-                                        <div class="score" th:text="${match.awayScore}">
-                                            0
-                                        </div>
+                                        <span class="score" th:text="${match.awayScore}">0</span>
                                     </div>
                                 </div>
                             </a>
