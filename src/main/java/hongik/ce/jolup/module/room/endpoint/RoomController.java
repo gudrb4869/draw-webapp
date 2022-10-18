@@ -1,11 +1,10 @@
 package hongik.ce.jolup.module.room.endpoint;
 
+import hongik.ce.jolup.module.member.domain.entity.Follow;
 import hongik.ce.jolup.module.member.domain.entity.Member;
-import hongik.ce.jolup.module.member.infra.repository.MemberRepository;
+import hongik.ce.jolup.module.member.infra.repository.FollowRepository;
 import hongik.ce.jolup.module.member.support.CurrentMember;
-import hongik.ce.jolup.module.room.application.JoinService;
 import hongik.ce.jolup.module.room.application.RoomService;
-import hongik.ce.jolup.module.room.domain.entity.Grade;
 import hongik.ce.jolup.module.room.domain.entity.Join;
 import hongik.ce.jolup.module.room.domain.entity.Room;
 import hongik.ce.jolup.module.room.endpoint.form.InviteForm;
@@ -28,6 +27,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import javax.validation.Valid;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Controller
@@ -36,9 +36,8 @@ import java.util.Set;
 public class RoomController {
 
     private final JoinRepository joinRepository;
-    private final JoinService joinService;
     private final RoomService roomService;
-    private final MemberRepository memberRepository;
+    private final FollowRepository followRepository;
     private final InviteFormValidator inviteFormValidator;
 
     @InitBinder("inviteForm")
@@ -100,25 +99,35 @@ public class RoomController {
         return "redirect:/rooms/" + room.getId() + "/members";
     }
 
-    /*@GetMapping("/{id}/invite")
+    @GetMapping("/{id}/invite")
     public String inviteForm(@PathVariable Long id, @CurrentMember Member member, Model model) {
         Room room = roomService.getRoomToUpdate(member, id);
+        List<Member> members = room.getJoins().stream().map(Join::getMember)
+                .collect(Collectors.toList());
+        List<Member> followers = followRepository.findByFollowing(member).stream().map(Follow::getFollower).collect(Collectors.toList());
+        List<Member> friends = followers.stream().filter(f -> !members.contains(f)).collect(Collectors.toList());
+        model.addAttribute(member);
         model.addAttribute(room);
+        model.addAttribute("members", friends);
         model.addAttribute(new InviteForm());
-        return "room/inviteMemberForm";
+        return "room/invite-form";
     }
 
     @PostMapping("/{id}/invite")
-    public String invite(@PathVariable Long id, @Valid InviteForm inviteForm, BindingResult result,
-                         @CurrentMember Member member, RedirectAttributes attributes) {
-        log.info("inviteForm={}", inviteForm);
-        Room room = roomService.getRoomToInvite(member, id);
+    public String invite(@CurrentMember Member member, @PathVariable Long id, Model model,
+                         @Valid InviteForm inviteForm, BindingResult result, RedirectAttributes attributes) {
+        Room room = roomService.getRoomToUpdate(member, id);
+        List<Member> members = room.getJoins().stream().map(Join::getMember).collect(Collectors.toList());
+        List<Member> followers = followRepository.findByFollowing(member).stream().map(Follow::getFollower).collect(Collectors.toList());
+        List<Member> friends = followers.stream().filter(f -> !members.contains(f)).collect(Collectors.toList());
         if (result.hasErrors()) {
-            return "room/inviteMemberForm";
+            model.addAttribute(member);
+            model.addAttribute(room);
+            model.addAttribute("members", friends);
+            return "room/invite-form";
         }
-        Set<Member> members = memberRepository.findMembersByNameIn(inviteForm.getNames());
-        roomService.inviteRoom(room, members, member.getName());
+        roomService.inviteRoom(members, room, inviteForm);
         attributes.addFlashAttribute("message", "회원들에게 방 초대 요청을 보냈습니다.");
         return "redirect:/rooms/" + room.getId();
-    }*/
+    }
 }

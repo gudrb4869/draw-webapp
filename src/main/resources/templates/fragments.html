@@ -230,7 +230,7 @@
                   class="btn-group" role="group" aria-label="Basic example">
                 <!--방 가입 링크-->
                 <a class="btn btn-primary" th:href="@{'/rooms/' + ${room.id} + '/join'}">
-                    방 가입
+                    방 들어가기
                 </a>
                 <!--방 멤버 수-->
                 <a class="btn btn-primary" th:href="@{'/rooms/' + ${room.id} + '/members'}"
@@ -241,16 +241,19 @@
                   class="btn-group" role="group">
                 <!--방 가입 링크-->
                 <a class="btn btn-outline-danger" th:href="@{'/rooms/' + ${room.id} + '/leave'}">
-                    방 탈퇴
+                    방 나가기
                 </a>
-                <!--스터디 멤버 수-->
+                <!--방 멤버 수-->
                 <a class="btn btn-primary" th:href="@{'/rooms/' + ${room.id} + '/members'}"
                    th:text="${room.joins.size()}">1</a>
             </span>
-            <!--인증된 사용자이고 스터디 관리자인 경우-->
-            <span sec:authorize="isAuthenticated()"
-                  th:if="${room.isAdmin(#authentication.principal)}">
-                <!--모임 만들기 링크-->
+            <!--인증된 사용자이고 방 관리자인 경우-->
+            <span sec:authorize="isAuthenticated()" th:if="${room.isAdmin(#authentication.principal)}">
+                <!--친구 초대 링크-->
+                <a class="btn btn-outline-primary" th:href="@{'/rooms/' + ${room.id} + '/invite'}">
+                    친구 초대
+                </a>
+                <!--대회 만들기 링크-->
                 <a class="btn btn-outline-primary" th:href="@{'/rooms/' + ${room.id} + '/competitions/create'}">
                     <i class="fa fa-plus"></i> 대회 만들기
                 </a>
@@ -275,19 +278,6 @@
             <i class="fa fa-cog"></i> 설정
         </a>
     </nav>
-</div>
-
-<div th:fragment="room-settings-menu (currentMenu)" class="list-group">
-    <!--<a class="list-group-item list-group-item-action" th:classappend="${currentMenu == 'description'}? active"
-       href="#" th:href="@{'/study/' + ${study.path} + '/settings/description'}">소개</a>
-    <a class="list-group-item list-group-item-action" th:classappend="${currentMenu == 'image'}? active"
-       href="#" th:href="@{'/study/' + ${study.path} + '/settings/banner'}">배너 이미지</a>
-    <a class="list-group-item list-group-item-action" th:classappend="${currentMenu == 'tags'}? active"
-       href="#" th:href="@{'/study/' + ${study.path} + '/settings/tags'}">스터디 주제</a>
-    <a class="list-group-item list-group-item-action" th:classappend="${currentMenu == 'zones'}? active"
-       href="#" th:href="@{'/study/' + ${study.path} + '/settings/zones'}">활동 지역</a>-->
-    <a class="list-group-item list-group-item-action list-group-item-danger" th:classappend="${currentMenu == 'room'}? active"
-       href="#" th:href="@{'/rooms/' + ${room.id} + '/settings'}">방</a>
 </div>
 
 <div th:fragment="date-time">

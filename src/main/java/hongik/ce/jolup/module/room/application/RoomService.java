@@ -4,6 +4,7 @@ import hongik.ce.jolup.module.member.domain.entity.Member;
 import hongik.ce.jolup.module.room.domain.entity.Grade;
 import hongik.ce.jolup.module.room.domain.entity.Join;
 import hongik.ce.jolup.module.room.domain.entity.Room;
+import hongik.ce.jolup.module.room.endpoint.form.InviteForm;
 import hongik.ce.jolup.module.room.endpoint.form.RoomForm;
 import hongik.ce.jolup.module.room.event.RoomInvitedEvent;
 import hongik.ce.jolup.module.room.infra.repository.JoinRepository;
@@ -13,7 +14,9 @@ import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -30,8 +33,9 @@ public class RoomService {
         return room;
     }
 
-    public void inviteRoom(Room room) {
-        eventPublisher.publishEvent(new RoomInvitedEvent(room));
+    public void inviteRoom(List<Member> members, Room room, InviteForm inviteForm) {
+        List<Member> memberList = members.stream().filter(m -> inviteForm.getMembers().contains(m.getId())).collect(Collectors.toList());
+        eventPublisher.publishEvent(new RoomInvitedEvent(room, "방 '" + room.getTitle() + "'에서 회원님을 초대하였습니다.", memberList));
     }
 
     public Room findOne(Long id) {

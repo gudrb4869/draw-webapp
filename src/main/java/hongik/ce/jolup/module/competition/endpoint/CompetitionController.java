@@ -6,7 +6,6 @@ import hongik.ce.jolup.module.competition.endpoint.form.CompetitionForm;
 import hongik.ce.jolup.module.competition.endpoint.validator.CompetitionFormValidator;
 import hongik.ce.jolup.module.competition.infra.repository.CompetitionRepository;
 import hongik.ce.jolup.module.competition.infra.repository.ParticipateRepository;
-import hongik.ce.jolup.module.match.application.MatchService;
 import hongik.ce.jolup.module.match.infra.repository.MatchRepository;
 import hongik.ce.jolup.module.member.support.CurrentMember;
 import hongik.ce.jolup.module.room.application.RoomService;
@@ -40,7 +39,6 @@ public class CompetitionController {
 
     private final RoomService roomService;
     private final CompetitionService competitionService;
-    private final MatchService matchService;
     private final CompetitionRepository competitionRepository;
     private final MatchRepository matchRepository;
     private final ParticipateRepository participateRepository;

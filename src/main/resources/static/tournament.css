@@ -149,6 +149,7 @@
 }
 @media (min-width:1400px) {
     .match {
+        flex: 0 0 auto;
         width: 9.375rem;
         height: 3.75rem;
         border: 0.125rem solid black;

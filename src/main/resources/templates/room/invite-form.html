@@ -6,50 +6,41 @@
 <div th:replace="fragments.html :: navigation-bar"></div>
 <div class="container">
     <div class="py-5 text-center">
-        <h2>회원 초대</h2>
+        <h2>친구 초대</h2>
     </div>
-    <div class="row mx-auto justify-content-center">
+    <div class="row mx-auto justify-content-center" th:if="${members.size() > 0}">
         <form class="col-md-6 mx-auto" th:action th:object="${inviteForm}" method="post">
-
             <div th:if="${#fields.hasGlobalErrors()}">
                 <p class="text-danger" th:each="err : ${#fields.globalErrors()}" th:text="${err}">전체 오류 메시지</p>
             </div>
-
             <div class="mb-3">
-                <label th:for="count">초대 인원수</label>
-                <select th:field="*{count}" class="form-select" th:errorclass="border-danger" onchange="updateForm()">
-                    <option th:each="count : ${#numbers.sequence(1, 100)}" th:value="${count}" th:text="${count}"></option>
-                </select>
-                <p th:errors="*{count}" class="text-danger">인원수 오류</p>
+                <div class="fw-bold mb-1">친구 목록</div>
+                <div th:each="member : ${members}" class="form-check form-check-inline">
+                    <input type="checkbox" th:field="*{members}" th:value="${member.id}"
+                           class="form-check-input">
+                    <label class="flex-shrink-0 form-check-label" th:for="${#ids.prev('members')}">
+                        <svg th:if="${#strings.isEmpty(member.image)}" th:data-jdenticon-value="${member.name}" width="40" height="40" class="rounded border bg-light me-3"></svg>
+                        <img th:if="${!#strings.isEmpty(member.image)}" th:src="${member.image}" width="40" height="40" class="rounded border me-3"/>
+                        <b th:text="${member.name}">이름</b>
+                    </label>
+                </div>
+                <p th:errors="*{members}" class="text-danger">오류</p>
             </div>
-
-            <table class="table table-hover">
-                <thead>
-                <tr>
-                    <th>번호</th>
-                    <th>아이디</th>
-                </tr>
-                </thead>
-                <tbody id="names" name="names">
-                <tr th:each="name : *{names}">
-                    <td th:text="${nameStat.count}"></td>
-                    <td>
-                        <input type="text" th:field="*{names[__${nameStat.index}__]}"
-                               class="form-control" th:errorclass="is-invalid"/>
-                        <p th:errors="*{names[__${nameStat.index}__]}" class="text-danger">이메일 형식이 올바르지 않음</p>
-                    </td>
-                </tr>
-                </tbody>
-            </table>
-
             <div class="row">
                 <div class="col">
-                    <button type="submit" class="btn btn-outline-dark">초대</button>
-                    <button type="button" class="btn btn-outline-dark" th:onclick="|location.href='@{|/rooms/${room.id}|}'|">취소</button>
+                    <button type="submit" class="btn btn-outline-dark">초대하기</button>
+                    <button type="button" class="btn btn-outline-dark" th:onclick="|location.href='@{|/rooms/${id}|}'|">취소</button>
                 </div>
             </div>
         </form>
-        <div class="mb-4"></div>
+    </div>
+    <div class="text-center" th:if="${members.size() == 0}">
+        <p class="lead text-muted">
+            초대 가능한 친구가 없습니다.<br/>
+        </p>
+        <p>
+            <a th:href="@{'/rooms/' + ${id}}" class="btn btn-primary my-2">돌아가기</a>
+        </p>
     </div>
 </div> <!-- /container -->
 <div th:replace="fragments.html :: footer"></div>
