@@ -81,7 +81,7 @@
                 </ul>
             </nav>
         </div>
-        <div class="col-lg-10" th:if="${#strings.equals(type, 'TOURNAMENT')}">
+        <!--<div class="col-lg-10" th:if="${#strings.equals(type, 'TOURNAMENT')}">
             <div class="d-flex justify-content-center">
                 <div class="m-0 p-0 row" th:each="key : ${#numbers.sequence(T(java.util.Collections).max(matches.keySet()), 0, -1)}"
                      th:with="cnt=${T(java.lang.Math).pow(2, key)}">
@@ -94,7 +94,7 @@
                                         <svg th:if="${#strings.isEmpty(match.home?.image)}" th:data-jdenticon-value="${match.home != null ? match.home.name:_}" width="24" height="24" class="rounded border bg-light me-3"></svg>
                                         <img th:if="${!#strings.isEmpty(match.home?.image)}" th:src="${match.home.image}" width="24" height="24" class="rounded border me-3"/>
                                         <span class="player-name" th:text="${match.home != null} ? ${match.home.name} : _"></span>
-<!--                                        <div class="player-name" th:text="${match.home != null} ? ${match.home.name} : _"></div>-->
+&lt;!&ndash;                                        <div class="player-name" th:text="${match.home != null} ? ${match.home.name} : _"></div>&ndash;&gt;
                                         <span class="score" th:text="${match.homeScore}">0</span>
                                     </div>
                                     <div class="player" tabindex="0" data-bs-toggle="tooltip" data-placement="bottom" th:title="${match.away != null} ? ${match.away.name} : _">
@@ -119,6 +119,76 @@
                              th:classappend="${matches.get(key).get(k) == null and matches.get(key).get(k + 1) == null} ? 'invisible'"></div>
                     </div>
                 </div>
+            </div>
+        </div>-->
+        <div class="col-lg-10 tournament-bracket tournament-bracket--rounded" th:if="${#strings.equals(type, 'TOURNAMENT')}">
+            <div class="tournament-bracket__round" th:classappend="'tournament-bracket__round--' + ${#numbers.formatInteger(cnt, 0)}" th:each="key : ${#numbers.sequence(T(java.util.Collections).max(matches.keySet()), 0, -1)}"
+                 th:with="cnt=${T(java.lang.Math).pow(2, key)}">
+                <h3 class="tournament-bracket__round-title" th:text="${key == 0} ? '결승' : (${key == 1} ? '준결승' : (${key == 2} ? '8강' : (${key == 3} ? '16강' : (${key == 4} ? '32강' : '64강'))))"></h3>
+                <ul class="tournament-bracket__list">
+                    <li class="tournament-bracket__item" th:each="k : ${#numbers.sequence(0, cnt - 1, 1)}" th:with="match=${matches.get(key).get(k)}"
+                        th:onclick="${match != null} ? |location.href='@{|/rooms/${room.id}/competitions/${competition.id}/matches/${match.id}|}'|">
+                        <div class="tournament-bracket__match" tabindex="0">
+                            <table class="tournament-bracket__table">
+                                <caption class="tournament-bracket__caption" th:if="${match != null}">
+                                    <span th:if="${match.startDateTime == null}" class="text-warning">시간 미정</span>
+                                    <span th:if="${match.startDateTime != null}" class="date-time text-dark" th:text="${match.startDateTime}">경기 시간</span>
+                                </caption>
+                                <caption class="tournament-bracket__caption" th:if="${match == null}">
+                                    <span>부전승</span>
+                                </caption>
+                                <thead class="sr-only">
+                                    <tr>
+                                        <th>Team</th>
+                                        <th>Score</th>
+                                    </tr>
+                                </thead>
+                                <tbody class="tournament-bracket__content">
+                                    <tr class="tournament-bracket__team" th:classappend="${match.homeScore > match.awayScore} ? 'tournament-bracket__team--winner'" th:if="${match != null}">
+                                        <td class="tournament-bracket__country">
+                                            <span class="tournament-bracket__code" tabindex="0" data-bs-toggle="tooltip" data-placement="bottom"
+                                                  th:title="${match.home != null} ? ${match.home.name} : _" th:text="${match.home != null} ? ${match.home.name} : _"></span>
+                                            <svg th:if="${#strings.isEmpty(match.home?.image)}" th:data-jdenticon-value="${match.home != null ? match.home.name:_}" width="24" height="24" class="rounded border bg-light"></svg>
+                                            <img th:if="${!#strings.isEmpty(match.home?.image)}" th:src="${match.home.image}" width="24" height="24" class="rounded border"/>
+                                        </td>
+                                        <td class="tournament-bracket__score">
+                                            <span class="tournament-bracket__number" th:text="${match.homeScore}">4</span>
+                                        </td>
+                                    </tr>
+                                    <tr class="tournament-bracket__team" th:if="${match == null}">
+                                        <td class="tournament-bracket__country">
+                                            <span class="tournament-bracket__code">부전승</span>
+                                            <svg th:data-jdenticon-value="${_}" width="24" height="24" class="rounded border bg-light"></svg>
+                                        </td>
+                                        <td class="tournament-bracket__score">
+                                            <span class="tournament-bracket__number">0</span>
+                                        </td>
+                                    </tr>
+                                    <tr class="tournament-bracket__team" th:classappend="${match.homeScore < match.awayScore} ? 'tournament-bracket__team--winner'" th:if="${match != null}">
+                                        <td class="tournament-bracket__country">
+                                            <span class="tournament-bracket__code" tabindex="0" data-bs-toggle="tooltip" data-placement="bottom"
+                                                  th:title="${match.away != null} ? ${match.away.name} : _" th:text="${match.away != null} ? ${match.away.name} : _"></span>
+                                            <svg th:if="${#strings.isEmpty(match.away?.image)}" th:data-jdenticon-value="${match.away != null ? match.away.name:_}" width="24" height="24" class="rounded border bg-light"></svg>
+                                            <img th:if="${!#strings.isEmpty(match.away?.image)}" th:src="${match.away.image}" width="24" height="24" class="rounded border"/>
+                                        </td>
+                                        <td class="tournament-bracket__score">
+                                            <span class="tournament-bracket__number" th:text="${match.awayScore}">1</span>
+                                        </td>
+                                    </tr>
+                                    <tr class="tournament-bracket__team" th:if="${match == null}">
+                                        <td class="tournament-bracket__country">
+                                            <span class="tournament-bracket__code">부전승</span>
+                                            <svg th:data-jdenticon-value="${_}" width="24" height="24" class="rounded border bg-light"></svg>
+                                        </td>
+                                        <td class="tournament-bracket__score">
+                                            <span class="tournament-bracket__number">0</span>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </li>
+                </ul>
             </div>
         </div>
     </div>

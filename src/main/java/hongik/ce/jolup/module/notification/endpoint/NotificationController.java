@@ -22,9 +22,9 @@ public class NotificationController {
 
     @GetMapping("/notifications")
     public String getNotifications(@CurrentMember Member member, Model model) {
-        List<Notification> notifications = notificationRepository.findByMemberOrderByCreatedDateDesc(member);
+        List<Notification> notificationList = notificationRepository.findByMemberOrderByCreatedDateDesc(member);
         long numberOfNotChecked = notificationRepository.countByMemberAndChecked(member, false);
-        model.addAttribute("notifications", notifications);
+        model.addAttribute("notificationList", notificationList);
         model.addAttribute("numberOfNotChecked", numberOfNotChecked);
         return "notification/list";
     }
