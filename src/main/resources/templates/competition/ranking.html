@@ -5,11 +5,9 @@
 <div th:replace="fragments.html :: navigation-bar"></div>
 <div class="container">
     <div th:replace="fragments.html :: competition-info"></div>
-    <div class="row">
-        <div class="col-lg-2">
-            <div th:replace="fragments.html :: competition-menu (currentMenu='ranking')"></div>
-        </div>
-        <div class="col-lg-10">
+    <div th:replace="fragments.html :: competition-menu (currentMenu='ranking')"></div>
+    <div class="row justify-content-center">
+        <div class="col-lg-10 py-3">
             <table class="table table-hover">
                 <h3>순위</h3>
                 <thead>

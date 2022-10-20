@@ -1,5 +1,6 @@
 <!DOCTYPE HTML>
-<html xmlns:th="http://www.thymeleaf.org">
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 <head th:replace="fragments.html :: head"></head>
 <body class="d-flex flex-column min-vh-100 bg-light">
 <div th:replace="fragments.html :: navigation-bar"></div>
@@ -44,7 +45,7 @@
             <div class="mb-4"></div>
             <div class="row">
                 <div class="col">
-                    <button class="btn btn-outline-dark" type="button" th:onclick="|location.href='@{|/rooms/${roomId}/competitions/${competitionId}/matches/${matchId}/update|}'|">경기결과 수정</button>
+                    <button sec:authorize="isAuthenticated()" th:if="${room.isAdmin(#authentication.principal)}" class="btn btn-outline-dark" type="button" th:onclick="|location.href='@{|/rooms/${roomId}/competitions/${competitionId}/matches/${matchId}/update|}'|">경기결과 수정</button>
                     <button class="btn btn-outline-dark" type="button" th:onclick="|location.href='@{|/rooms/${roomId}/competitions/${competitionId}|}'|" >돌아가기</button>
                 </div>
             </div>

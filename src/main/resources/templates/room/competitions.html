@@ -8,7 +8,7 @@
     <div th:replace="fragments.html :: room-info"></div>
     <div th:replace="fragments.html :: room-menu ('competitions')"></div>
     <div class="row justify-content-center mx-3 my-3">
-        <div class="col-10 px-0 row">
+        <div class="col-lg-10 px-0 row">
             <div class="row row-cols-1 row-cols-md-2">
                 <div th:if="${competitions.getTotalElements() == 0}" class="col">
                     대회가 없습니다.
@@ -54,6 +54,7 @@
             </div>
         </div>
     </div>
+    <div th:replace="fragments.html :: page (pages=${competitions}, url='/rooms/' + ${room.id} + '/competitions')"></div>
 </div> <!-- /container -->
 <div th:replace="fragments.html :: footer"></div>
 <div th:replace="fragments.html :: date-time"></div>

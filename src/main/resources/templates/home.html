@@ -57,53 +57,11 @@
                     방 만들기
                 </a>
             </span>
-            <!--<div class="justify-content-end">
-                <button type="button" class="btn btn-outline-dark pull-right" th:onclick="|location.href='@{/rooms/create}'|">방 만들기</button>
-            </div>-->
         </div>
     </div>
 
-    <div class="row justify-content-center pt-3" th:if="${joins.getTotalElements() > 0}">
-        <div class="col-sm-10">
-            <nav>
-                <ul class="pagination justify-content-center"
-                    th:with="start=${T(java.lang.Math).floor(joins.number/5)*5},
-                    last=(${start + 4 < joins.totalPages - 1? start + 4 : joins.totalPages - 1})">
-                    <li class="page-item" th:classappend="${!joins.hasPrevious()}? disabled">
-                        <a th:href="@{/(page=0)}" class="page-link" aria-disabled="true">
-                            <<
-                        </a>
-                    </li>
+    <div th:replace="fragments.html :: page (pages=${joins}, url='/')"></div>
 
-                    <li class="page-item" th:classappend="${joins.first}? disabled">
-                        <a th:href="@{/(page=${joins.number - 1})}"
-                           class="page-link" aria-disabled="true">
-                            <
-                        </a>
-                    </li>
-
-                    <li class="page-item" th:class="${i == joins.number}? active"
-                        th:each="i: ${#numbers.sequence(start, last)}">
-                        <a th:text="${i + 1}" th:href="@{/(page=${i})}"
-                           class="page-link">1</a>
-                    </li>
-
-                    <li class="page-item" th:classappend="${joins.last}? disabled">
-                        <a th:href="@{/(page=${joins.number + 1})}" class="page-link">
-                            >
-                        </a>
-                    </li>
-
-                    <li class="page-item" th:classappend="${!joins.hasNext()}? disabled">
-                        <a th:href="@{/(page=${joins.totalPages - 1})}"
-                           class="page-link">
-                            >>
-                        </a>
-                    </li>
-                </ul>
-            </nav>
-        </div>
-    </div>
 </div> <!-- /container -->
 <div th:replace="fragments.html :: footer"></div>
 <div th:replace="fragments.html :: date-time"></div>

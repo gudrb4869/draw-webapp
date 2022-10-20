@@ -3,24 +3,6 @@
 *::after {
     box-sizing: border-box;
 }
-html {
-    font-size: 16px;
-}
-@media (min-width: 768px) {
-    html {
-        font-size: 14px;
-    }
-}
-@media (min-width: 992px) {
-    html {
-        font-size: 15px;
-    }
-}
-@media (min-width: 1200px) {
-    html {
-        font-size: 16px;
-    }
-}
 
 .sr-only {
     position: absolute;
@@ -41,7 +23,8 @@ html {
         flex-direction: row;
     }
 }
-.tournament-bracket__round {
+.tournament-bracket__round,
+.round-robin {
     display: block;
     margin-left: -3px;
     flex: 1;
@@ -54,7 +37,8 @@ html {
     font-style: italic;
     margin-bottom: 0.5em;
 }
-.tournament-bracket__list {
+.tournament-bracket__list,
+.round-robin__list {
     display: flex;
     flex-direction: column;
     flex-flow: row wrap;
@@ -68,13 +52,15 @@ html {
     transition: padding 0.2s ease-in-out, margin 0.2s ease-in-out;
 }
 @media (max-width: 576px) {
-    .tournament-bracket__list {
+    .tournament-bracket__list,
+    .round-robin__list {
         padding-bottom: 1em;
         margin-bottom: 1em;
     }
 }
 @media (min-width: 768px) {
-    .tournament-bracket__list {
+    .tournament-bracket__list,
+    .round-robin__list {
         margin-bottom: 0;
         padding-bottom: 0;
         border-right: 1px dashed #e5e5e5;
@@ -85,6 +71,20 @@ html {
     border: 0;
 }
 .tournament-bracket__item {
+    display: flex;
+    flex: 0 1 auto;
+    justify-content: center;
+    flex-direction: column;
+    align-items: flex-start;
+    position: relative;
+    padding: 0 0;
+    width: 48%;
+    transition: padding 0.2s linear;
+    margin-left: 1%;
+    margin-right: 1%;
+}
+
+.round-robin__item {
     display: flex;
     flex: 0 1 auto;
     justify-content: center;
@@ -167,14 +167,16 @@ html {
     }*/
 }
 @media (min-width: 992px) {
-    .tournament-bracket__item {
+    .tournament-bracket__item,
+    .round-robin__item {
         padding: 0.5em 1.5em;
     }
     .tournament-bracket__item::after {
         width: 1.5em;
     }
 }
-.tournament-bracket__match {
+.tournament-bracket__match,
+.round-robin__match {
     display: flex;
     width: 100%;
     background-color: #ffffff;
@@ -186,7 +188,8 @@ html {
     cursor: pointer;
     transition: padding 0.2s ease-in-out, border 0.2s linear;
 }
-.tournament-bracket__match:focus {
+.tournament-bracket__match:focus,
+.round-robin__match:focus {
     border-color: #2196F3;
 }
 .tournament-bracket__match::before,
@@ -442,10 +445,3 @@ html {
         display: none;
     }
 }
-
-/*
-@media (min-width: 768px) {
-    .my-hidden {
-        visibility: hidden;
-    }
-}*/

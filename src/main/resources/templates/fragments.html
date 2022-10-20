@@ -271,7 +271,7 @@
             <i class="fa fa-user"></i> 구성원
         </a>
         <a class="nav-item nav-link" th:classappend="${roomMenu == 'competitions'}? active" href="#" th:href="@{'/rooms/' + ${room.id} + '/competitions'}">
-            <i class="fa fa-calendar"></i> 대회
+            <i class="fa fa-soccer-ball-o"></i> 대회
         </a>
         <a sec:authorize="isAuthenticated()" th:if="${room.isAdmin(#authentication.principal)}"
            class="nav-item nav-link" th:classappend="${roomMenu == 'settings'}? active" href="#" th:href="@{'/rooms/' + ${room.id} + '/settings'}">
@@ -332,14 +332,16 @@
     </div>
 </div>
 
-<div th:fragment="competition-menu (currentMenu)" class="list-group">
-    <a class="list-group-item list-group-item-action" th:classappend="${currentMenu == 'matches'}? active"
-       href="#" th:href="@{'/rooms/' + ${room.id} + '/competitions/' + ${competition.id}}">경기</a>
-    <a class="list-group-item list-group-item-action" th:classappend="${currentMenu == 'ranking'}? active"
-       href="#" th:href="@{'/rooms/' + ${room.id} + '/competitions/' + ${competition.id} + '/ranking'}">순위</a>
-    <a sec:authorize="isAuthenticated()" th:if="${room.isAdmin(#authentication.principal)}"
-       class="list-group-item list-group-item-action" th:classappend="${currentMenu == 'settings'}? active"
-       href="#" th:href="@{'/rooms/' + ${room.id} + '/competitions/' + ${competition.id} + '/settings'}">설정</a>
+<div th:fragment="competition-menu (currentMenu)" class="row px-3 justify-content-center bg-light">
+    <nav class="col-10 nav nav-tabs">
+        <a class="nav-item nav-link" th:classappend="${currentMenu == 'matches'}? active"
+           href="#" th:href="@{'/rooms/' + ${room.id} + '/competitions/' + ${competition.id}}">경기</a>
+        <a class="nav-item nav-link" th:classappend="${currentMenu == 'ranking'}? active"
+           href="#" th:href="@{'/rooms/' + ${room.id} + '/competitions/' + ${competition.id} + '/ranking'}">순위</a>
+        <a sec:authorize="isAuthenticated()" th:if="${room.isAdmin(#authentication.principal)}"
+           class="nav-item nav-link" th:classappend="${currentMenu == 'settings'}? active"
+           href="#" th:href="@{'/rooms/' + ${room.id} + '/competitions/' + ${competition.id} + '/settings'}">설정</a>
+    </nav>
 </div>
 
 <ul th:fragment="notification-list (notifications)" class="list-group list-group-flush">
@@ -347,8 +349,8 @@
        class="list-group-item list-group-item-action">
         <div class="d-flex w-100 justify-content-between">
 <!--            <small th:class="${notification.checked}? text-muted" th:text="${notification.title}">Noti title</small>-->
-            <small th:text="${notification.message}" class="text-left mb-0 mt-1" th:classappend="${notification.checked}? text-muted">message</small>
-            <small class="fromNow" th:classappend="${notification.checked}? text-muted" th:text="${notification.createdDate}">3 days ago</small>
+            <small th:text="${notification.message}" class="text-left mb-0 mt-1" th:classappend="${notification.checked}? 'text-muted'">message</small>
+            <small class="fromNow" th:classappend="${notification.checked}? 'text-muted'" th:text="${notification.createdDate}">3 days ago</small>
         </div>
     </a>
 </ul>
@@ -362,5 +364,125 @@
         });
     });
 </script>
+
+<table th:fragment="match" style="width: 100%; table-layout: fixed; border-spacing: 0;">
+    <tbody>
+    <tr>
+        <td style="width: 64px; padding-left:24px;"></td>
+        <td style="width: 64px;"></td>
+        <td style="padding-left: 6px; width: 6px;"></td>
+        <td style="width: 1px; padding: 0"></td>
+        <td style="width: 104px;"></td>
+<!--        <td style="padding: 0"></td>-->
+    </tr>
+    <tr>
+        <td style="color: #70757a;" colspan="5"></td>
+    </tr>
+    <tr>
+        <td colspan="3"></td>
+        <td style="background-color: #ecedef" rowspan="5"></td>
+        <td rowspan="5" style="font-size: 14px; color: #202124; text-align: center; padding: 0; position: relative;">
+            <div style="line-height: 1.4";>
+                <div style="font-weight: normal;">
+                    <div style="font-size: 14px; color: #70757a; white-space: nowrap; vertical-align: middle;">
+                        <span th:if="${match == null}" class="text-dark">부전승</span>
+                        <span th:if="${match != null and match.startDateTime == null}" class="text-warning">시간 미정</span>
+                        <span th:if="${match?.startDateTime != null}" class="day text-dark" th:text="${match?.startDateTime}">경기 날짜</span>
+                    </div>
+                    <div style="font-size: 14px; color: #70757a; white-space: nowrap; vertical-align: middle;">
+                        <span th:if="${match?.startDateTime != null}" class="time text-dark" th:text="${match?.startDateTime}">경기 시간</span>
+                    </div>
+                </div>
+            </div>
+        </td>
+        <td></td>
+    </tr>
+    <tr>
+        <td></td>
+    </tr>
+    <tr style="height: 32px;">
+        <td style="width: 64px; padding-left: 24px;">
+            <svg th:if="${#strings.isEmpty(match?.home?.image)}" th:data-jdenticon-value="${match?.home?.name}" width="24" height="24" class="rounded border bg-light"></svg>
+            <img th:if="${!#strings.isEmpty(match?.home?.image)}" th:src="${match?.home?.image}" width="24" height="24" class="rounded border"/>
+        </td>
+        <td style="padding: 0; font-size: 14px; line-height: 20px; color: #202124;">
+            <div style="padding-left: 8px; text-align: right; float: right;">
+                <div style="line-height: 20px;">
+                    <span th:text="${match?.homeScore}">4</span>
+                </div>
+            </div>
+            <div style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
+                <span tabindex="0" data-bs-toggle="tooltip" data-placement="bottom"
+                      th:title="${match?.home?.name}" th:text="${match?.home?.name}"></span>
+                <span></span>
+            </div>
+        </td>
+    </tr>
+    <tr style="height: 32px;">
+        <td style="width: 64px; padding-left: 24px;">
+            <svg th:if="${#strings.isEmpty(match?.away?.image)}" th:data-jdenticon-value="${match?.away?.name}" width="24" height="24" class="rounded border bg-light"></svg>
+            <img th:if="${!#strings.isEmpty(match?.away?.image)}" th:src="${match?.away?.image}" width="24" height="24" class="rounded border"/>
+        </td>
+        <td style="padding: 0; font-size: 14px; line-height: 20px; color: #202124;">
+            <div style="padding-left: 8px; text-align: right; float: right;">
+                <div style="line-height: 20px;">
+                    <span th:text="${match?.awayScore}">1</span>
+                </div>
+            </div>
+            <div style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
+                <span tabindex="0" data-bs-toggle="tooltip" data-placement="bottom"
+                      th:title="${match?.away?.name}" th:text="${match?.away?.name}"></span>
+                <span></span>
+            </div>
+        </td>
+    </tr>
+    <tr>
+        <td></td>
+    </tr>
+    <tr></tr>
+    </tbody>
+</table>
+
+<div th:fragment="page (pages, url)" th:if="${pages.getTotalElements() > 0 and pages.number <= pages.totalPages - 1}" class="row justify-content-center pt-3">
+    <div class="col-sm-10">
+        <nav>
+            <ul class="pagination justify-content-center"
+                th:with="start=${T(java.lang.Math).floor(pages.number/5)*5},
+                    last=(${start + 4 < pages.totalPages - 1? start + 4 : pages.totalPages - 1})">
+                <li class="page-item" th:classappend="${!pages.hasPrevious()}? disabled">
+                    <a th:href="@{${url}(page=0)}" class="page-link" aria-disabled="true">
+                        <<
+                    </a>
+                </li>
+
+                <li class="page-item" th:classappend="${pages.first}? disabled">
+                    <a th:href="@{${url}(page=${pages.number - 1})}"
+                       class="page-link" aria-disabled="true">
+                        <
+                    </a>
+                </li>
+
+                <li class="page-item" th:class="${i == pages.number}? active"
+                    th:each="i: ${#numbers.sequence(start, last)}">
+                    <a th:text="${i + 1}" th:href="@{${url}(page=${i})}"
+                       class="page-link">1</a>
+                </li>
+
+                <li class="page-item" th:classappend="${pages.last}? disabled">
+                    <a th:href="@{${url}(page=${pages.number + 1})}" class="page-link">
+                        >
+                    </a>
+                </li>
+
+                <li class="page-item" th:classappend="${!pages.hasNext()}? disabled">
+                    <a th:href="@{${url}(page=${pages.totalPages - 1})}"
+                       class="page-link">
+                        >>
+                    </a>
+                </li>
+            </ul>
+        </nav>
+    </div>
+</div>
 
 </html>
