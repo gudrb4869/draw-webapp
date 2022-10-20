@@ -2,6 +2,7 @@ package hongik.ce.jolup.module.member.application;
 
 import hongik.ce.jolup.module.member.domain.UserMember;
 import hongik.ce.jolup.module.member.domain.entity.Member;
+import hongik.ce.jolup.module.member.endpoint.form.NotificationForm;
 import hongik.ce.jolup.module.member.endpoint.form.Profile;
 import hongik.ce.jolup.module.member.endpoint.form.SignupForm;
 import hongik.ce.jolup.module.member.infra.repository.MemberRepository;
@@ -29,9 +30,15 @@ public class MemberService implements UserDetailsService {
     private final PasswordEncoder passwordEncoder;
 
     public Member signup(SignupForm signupForm) {
-        Member member = Member.builder().email(signupForm.getEmail())
+        /*Member member = Member.builder().email(signupForm.getEmail())
                 .password(passwordEncoder.encode(signupForm.getPassword()))
-                .name(signupForm.getName()).build();
+                .name(signupForm.getName()).build();*/
+        Member member = saveNewMember(signupForm);
+        return member;
+    }
+
+    private Member saveNewMember(SignupForm signupForm) {
+        Member member = Member.with(signupForm.getEmail(), signupForm.getName(), passwordEncoder.encode(signupForm.getPassword()));
         return memberRepository.save(member);
     }
 
@@ -66,5 +73,10 @@ public class MemberService implements UserDetailsService {
     public Member getMember(Long id) {
         return memberRepository.findMemberWithFollowById(id)
                 .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 사용자입니다."));
+    }
+
+    public void updateNotification(Member member, NotificationForm notificationForm) {
+        member.updateNotification(notificationForm);
+        memberRepository.save(member);
     }
 }

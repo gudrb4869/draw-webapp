@@ -1,4 +1,3 @@
-/*
 package hongik.ce.jolup.module.match.event;
 
 import hongik.ce.jolup.module.competition.domain.entity.Participate;
@@ -16,7 +15,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Async
-@Transactional(readOnly = true)
+@Transactional
 @Component
 @RequiredArgsConstructor
 public class MatchEventListener {
@@ -24,18 +23,19 @@ public class MatchEventListener {
     private final NotificationRepository notificationRepository;
 
     @EventListener
-    public void handleMatchEvent(MatchEvent matchEvent) {
-        Match match = matchEvent.getMatch();
-        String message = matchEvent.getMessage();
-        List<Member> members = match.getCompetition().getParticipates().stream().map(Participate::getMember).collect(Collectors.toList());
-        for (Member member : members) {
-            saveNotification(match, message, member);
-        }
+    public void handleMatchUpdatedEvent(MatchUpdatedEvent matchUpdatedEvent) {
+        Match match = matchUpdatedEvent.getMatch();
+        String message = matchUpdatedEvent.getMessage();
+        List<Member> members = matchUpdatedEvent.getMembers();
+        members.forEach(member -> {
+            if (member.isMatchUpdatedByWeb()) {
+                saveNotification(match, message, member);
+            }
+        });
     }
 
     private void saveNotification(Match match, String message, Member member) {
-        notificationRepository.save(Notification.from(match.getHome().getName() + " : " + match.getAway().getName(),
-                "/rooms/" + match.getCompetition().getRoom().getId() + "/competitions/" + match.getCompetition().getId(), false, message, member));
+        notificationRepository.save(Notification.from("/rooms/" + match.getCompetition().getRoom().getId() + "/competitions/" + match.getCompetition().getId() + "/matches/" + match.getId(),
+                false, message, member));
     }
 }
-*/

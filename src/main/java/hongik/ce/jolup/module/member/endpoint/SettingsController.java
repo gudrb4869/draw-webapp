@@ -2,6 +2,7 @@ package hongik.ce.jolup.module.member.endpoint;
 
 import hongik.ce.jolup.module.member.domain.entity.Member;
 import hongik.ce.jolup.module.member.endpoint.form.NameForm;
+import hongik.ce.jolup.module.member.endpoint.form.NotificationForm;
 import hongik.ce.jolup.module.member.endpoint.form.PasswordForm;
 import hongik.ce.jolup.module.member.endpoint.form.Profile;
 import hongik.ce.jolup.module.member.application.MemberService;
@@ -88,6 +89,24 @@ public class SettingsController {
         memberService.updatePassword(member, passwordForm.getNewPassword());
         attributes.addFlashAttribute("message", "비밀번호를 변경했습니다.");
         return "redirect:" + SETTINGS_PASSWORD_URL;
+    }
+
+    @GetMapping(SETTINGS_NOTIFICATION_URL)
+    public String notificationForm(@CurrentMember Member member, Model model) {
+        model.addAttribute(member);
+        model.addAttribute(NotificationForm.from(member));
+        return SETTINGS_NOTIFICATION_VIEW_NAME;
+    }
+
+    @PostMapping(SETTINGS_NOTIFICATION_URL)
+    public String updateNotification(@CurrentMember Member member, @Valid NotificationForm notificationForm, BindingResult bindingResult, Model model, RedirectAttributes attributes) {
+        if (bindingResult.hasErrors()) {
+            model.addAttribute(member);
+            return SETTINGS_NOTIFICATION_VIEW_NAME;
+        }
+        memberService.updateNotification(member, notificationForm);
+        attributes.addFlashAttribute("message", "알림설정을 수정하였습니다.");
+        return "redirect:" + SETTINGS_NOTIFICATION_URL;
     }
 
     @GetMapping(SETTINGS_MEMBER_URL)

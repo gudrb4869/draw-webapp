@@ -3,16 +3,19 @@ package hongik.ce.jolup.module.match.application;
 import hongik.ce.jolup.module.competition.domain.entity.Competition;
 import hongik.ce.jolup.module.competition.domain.entity.CompetitionType;
 import hongik.ce.jolup.module.competition.domain.entity.Participate;
-import hongik.ce.jolup.module.competition.event.MatchUpdatedEvent;
 import hongik.ce.jolup.module.match.domain.entity.Match;
 import hongik.ce.jolup.module.match.domain.entity.Status;
 import hongik.ce.jolup.module.match.endpoint.form.MatchForm;
+import hongik.ce.jolup.module.match.event.MatchUpdatedEvent;
 import hongik.ce.jolup.module.match.infra.repository.MatchRepository;
 import hongik.ce.jolup.module.member.domain.entity.Member;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @Transactional
@@ -75,7 +78,9 @@ public class MatchService {
             away.addGoalFor(matchForm.getAwayScore());
             away.addGoalAgainst(matchForm.getHomeScore());
         }
-        publisher.publishEvent(new MatchUpdatedEvent(competition));
+
+        List<Member> members = competition.getParticipates().stream().map(Participate::getMember).collect(Collectors.toList());
+        publisher.publishEvent(new MatchUpdatedEvent(match, "대회 '" + match.getCompetition().getTitle() + "'에서 경기 결과가 수정되었습니다.", members));
         match.update(matchForm);
     }
 

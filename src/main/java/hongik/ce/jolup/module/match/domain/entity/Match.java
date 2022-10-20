@@ -15,6 +15,15 @@ import java.time.LocalDateTime;
 //@Table(uniqueConstraints = {@UniqueConstraint(columnNames = {"id", "match_round", "match_number"})})
 @Table(name = "matches")
 @ToString(of = {"id", "round", "number", "status", "homeScore", "awayScore"})
+@NamedEntityGraph(
+        name = "Match.withCompetitionAndRoomAndHomeAndAway",
+        attributeNodes = {
+                @NamedAttributeNode(value = "competition", subgraph = "room"),
+                @NamedAttributeNode("home"),
+                @NamedAttributeNode("away")
+        },
+        subgraphs = @NamedSubgraph(name = "room", attributeNodes = @NamedAttributeNode("room"))
+)
 public class Match extends BaseTimeEntity {
 
     @Id

@@ -21,13 +21,18 @@ public class RoomEventListener {
     private final NotificationRepository notificationRepository;
 
     @EventListener
+    public void handleRoomCreatedEvent(RoomCreatedEvent roomCreatedEvent) {
+
+    }
+
+    @EventListener
     public void handleRoomInvitedEvent(RoomInvitedEvent roomInvitedEvent) {
         Room room = roomInvitedEvent.getRoom();
         String message = roomInvitedEvent.getMessage();
         List<Member> members = roomInvitedEvent.getMembers();
-        for (Member member : members) {
+        members.forEach(member -> {
             saveNotification(room, message, member);
-        }
+        });
     }
 
     private void saveNotification(Room room, String message, Member member) {

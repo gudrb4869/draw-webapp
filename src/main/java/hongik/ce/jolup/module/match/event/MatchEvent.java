@@ -1,4 +1,3 @@
-/*
 package hongik.ce.jolup.module.match.event;
 
 import hongik.ce.jolup.module.match.domain.entity.Match;
@@ -11,4 +10,3 @@ public class MatchEvent {
     private final Match match;
     private final String message;
 }
-*/

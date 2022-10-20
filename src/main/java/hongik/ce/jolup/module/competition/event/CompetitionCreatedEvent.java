@@ -1,9 +1,16 @@
 package hongik.ce.jolup.module.competition.event;
 
 import hongik.ce.jolup.module.competition.domain.entity.Competition;
+import hongik.ce.jolup.module.member.domain.entity.Member;
+import lombok.Getter;
+import lombok.RequiredArgsConstructor;
 
-public class CompetitionCreatedEvent extends CompetitionEvent{
-    public CompetitionCreatedEvent(Competition competition) {
-        super(competition, "방 '" + competition.getRoom().getTitle() + "'에서 새로운 대회 '" + competition.getTitle() + "'가 생성되었습니다.");
-    }
+import java.util.List;
+
+@Getter
+@RequiredArgsConstructor
+public class CompetitionCreatedEvent {
+    private final Competition competition;
+    private final String message;
+    private final List<Member> members;
 }

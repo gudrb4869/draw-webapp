@@ -22,6 +22,6 @@ public interface MatchRepository extends JpaRepository<Match, Long> {
     @EntityGraph(attributePaths = {"competition", "home", "away"})
     List<Match> findMatchWithAllByCompetition(Competition competition);
 
-    @EntityGraph(attributePaths = {"competition", "home", "away"})
+    @EntityGraph(value = "Match.withCompetitionAndRoomAndHomeAndAway")
     Optional<Match> findMatchById(Long matchId);
 }

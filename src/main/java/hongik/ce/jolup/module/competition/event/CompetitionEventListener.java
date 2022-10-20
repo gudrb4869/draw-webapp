@@ -4,7 +4,6 @@ import hongik.ce.jolup.module.competition.domain.entity.Competition;
 import hongik.ce.jolup.module.member.domain.entity.Member;
 import hongik.ce.jolup.module.notification.domain.entity.Notification;
 import hongik.ce.jolup.module.notification.infra.repository.NotificationRepository;
-import hongik.ce.jolup.module.room.domain.entity.Join;
 import hongik.ce.jolup.module.room.domain.entity.Room;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.event.EventListener;
@@ -13,7 +12,6 @@ import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Async
 @Transactional
@@ -24,19 +22,20 @@ public class CompetitionEventListener {
     private final NotificationRepository notificationRepository;
 
     @EventListener
-    public void handleCompetitionCreatedEvent(CompetitionEvent competitionEvent) {
-        Competition competition = competitionEvent.getCompetition();
-        Room room = competition.getRoom();
-        List<Member> members = room.getJoins().stream().map(Join::getMember)
-                .collect(Collectors.toList());
-        for (Member member : members) {
-            saveNotification(competitionEvent, member, room, competition);
-        }
+    public void handleCompetitionCreatedEvent(CompetitionCreatedEvent competitionCreatedEvent) {
+        Competition competition = competitionCreatedEvent.getCompetition();
+        String message = competitionCreatedEvent.getMessage();
+        List<Member> members = competitionCreatedEvent.getMembers();
+        members.forEach(member -> {
+            if (member.isCompetitionCreatedByWeb()) {
+                saveNotification(member, competition, message);
+            }
+        });
     }
 
-    private void saveNotification(CompetitionEvent competitionEvent, Member member, Room room, Competition competition) {
+    private void saveNotification(Member member, Competition competition, String message) {
         notificationRepository.save(Notification.from(
-                "/rooms/" + room.getId() + "/competitions/" + competition.getId(), false,
-                competitionEvent.getMessage(), member));
+                "/rooms/" + competition.getRoom().getId() + "/competitions/" + competition.getId(), false,
+                message, member));
     }
 }

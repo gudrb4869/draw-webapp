@@ -3,6 +3,7 @@ package hongik.ce.jolup.module.member.domain.entity;
 import hongik.ce.jolup.BaseTimeEntity;
 import hongik.ce.jolup.module.competition.domain.entity.Participate;
 import hongik.ce.jolup.module.match.domain.entity.Match;
+import hongik.ce.jolup.module.member.endpoint.form.NotificationForm;
 import hongik.ce.jolup.module.member.endpoint.form.Profile;
 import hongik.ce.jolup.module.room.domain.entity.Join;
 import hongik.ce.jolup.module.notification.domain.entity.Notification;
@@ -59,6 +60,9 @@ public class Member extends BaseTimeEntity {
     @OneToMany(mappedBy = "away", cascade = CascadeType.ALL)
     private List<Match> awayMatches = new ArrayList<>();
 
+    private boolean competitionCreatedByWeb = true;
+    private boolean matchUpdatedByWeb = true;
+
     @Builder
     public Member(Long id, String email, String password, String name, String image) {
         this.id = id;
@@ -66,6 +70,14 @@ public class Member extends BaseTimeEntity {
         this.password = password;
         this.name = name;
         this.image = image;
+    }
+
+    public static Member with(String email, String name, String password) {
+        Member member = new Member();
+        member.email = email;
+        member.name = name;
+        member.password = password;
+        return member;
     }
 
     public void updatePassword(String password) {
@@ -76,10 +88,6 @@ public class Member extends BaseTimeEntity {
         this.name = name;
     }
 
-    public void updateImage(String image) {
-        this.image = image;
-    }
-
     public void updateProfile(Profile profile) {
         this.image = profile.getImage();
         this.bio = profile.getBio();
@@ -88,5 +96,10 @@ public class Member extends BaseTimeEntity {
     public boolean isFollowing(Member member) {
         return this.followings.stream()
                 .anyMatch(f -> f.getFollower().equals(member));
+    }
+
+    public void updateNotification(NotificationForm notificationForm) {
+        this.competitionCreatedByWeb = notificationForm.isCompetitionCreatedByWeb();
+        this.matchUpdatedByWeb = notificationForm.isMatchUpdatedByWeb();
     }
 }
