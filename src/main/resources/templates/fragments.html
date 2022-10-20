@@ -291,6 +291,9 @@
             $(".date").text(function(index, dateTime) {
                 return moment(dateTime, "YYYY-MM-DD`T`hh:mm").format('LL');
             });
+            $(".day").text(function(index, dateTime) {
+                return moment(dateTime, "YYYY-MM-DD`T`hh:mm").format('L');
+            });
             $(".weekday").text(function(index, dateTime) {
                 return moment(dateTime, "YYYY-MM-DD`T`hh:mm").format('dddd');
             });
