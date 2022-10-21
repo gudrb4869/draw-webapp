@@ -70,4 +70,8 @@ public class Competition extends BaseTimeEntity {
     public void updateTitle(String title) {
         this.title = title;
     }
+
+    public boolean isRemovable() {
+        return true;
+    }
 }

@@ -175,4 +175,19 @@ public class CompetitionService {
             throw new IllegalArgumentException("존재하지 않는 대회입니다.");
         }
     }
+
+    public boolean isValidTitle(String newTitle) {
+        return newTitle.length() > 0 && newTitle.length() <= 50;
+    }
+
+    public void updateCompetitionTitle(Competition competition, String newTitle) {
+        competition.updateTitle(newTitle);
+    }
+
+    public void remove(Competition competition) {
+        if (!competition.isRemovable()) {
+            throw new IllegalStateException("대회를 삭제할 수 없습니다.");
+        }
+        competitionRepository.delete(competition);
+    }
 }

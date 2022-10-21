@@ -6,7 +6,7 @@
 <div class="container">
     <div th:replace="fragments.html :: competition-info"></div>
     <div th:replace="fragments.html :: competition-menu (currentMenu='matches')"></div>
-    <div class="row justify-content-center">
+    <div class="row mt-3 justify-content-center">
         <div class="col-lg-10 py-3" th:if="${#strings.equals(type, 'LEAGUE')}">
             <div th:if="${matches.getTotalElements() == 0}" class="col">
                 경기가 없습니다.

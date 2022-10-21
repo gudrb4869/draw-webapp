@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="fragments.html :: head"></head>
+<svg th:replace="fragments.html :: svg-symbols"/>
+<body class="d-flex flex-column min-vh-100 bg-light">
+<nav th:replace="fragments.html :: navigation-bar"></nav>
+<div class="container">
+    <div th:replace="fragments.html :: competition-info"></div>
+    <div th:replace="fragments.html :: competition-menu (currentMenu='settings')"></div>
+    <div class="row mt-3 justify-content-center">
+        <div class="col-9">
+            <div th:replace="fragments.html :: message"></div>
+            <div class="row">
+                <h5 class="col-sm-12">대회 이름</h5>
+                <form class="needs-validation col-12" action="#"
+                      th:action="@{'/rooms/' + ${room.id} + '/competitions/' + ${competition.id} + '/settings/competition/title'}" method="post" novalidate>
+                    <div class="alert alert-warning" role="alert">
+                        <svg th:replace="fragments.html::symbol-warning"/>
+                        대회명을 수정합니다.<br/>
+                    </div>
+                    <div class="form-group">
+                        <label th:for="title">대회명</label>
+                        <input type="text" name="newTitle" th:value="${competition.title}" class="form-control"
+                               placeholder="대회명" aria-describedby="titleHelp" required maxlength="50">
+                        <small id="titleHelp" class="form-text text-muted">
+                            대회명을 50자 이내로 입력하세요.
+                        </small>
+                        <small class="invalid-feedback">대회명을 입력하세요.</small>
+                        <small class="form-text text-danger" th:if="${studyTitleError}"
+                               th:text="${studyTitleError}">Title Error</small>
+                    </div>
+                    <div class="form-group mt-3">
+                        <button class="btn btn-outline-warning" type="submit" aria-describedby="submitHelp">대회명
+                            수정
+                        </button>
+                    </div>
+                </form>
+            </div>
+
+            <hr/>
+            <div class="row">
+                <h5 class="col-sm-12 text-danger">대회 삭제</h5>
+                <div class="col-12">
+                    <div class="alert alert-danger" role="alert">
+                        <svg th:replace="fragments.html::symbol-danger"/>
+                        대회를 삭제하면 대회 및 경기 모든 기록을 삭제하며 복구하실 수 없습니다. <br/>
+                    </div>
+                    <div class="form-group">
+                        <button class="btn btn-outline-danger" data-bs-toggle="modal" data-bs-target="#remove">대회 삭제</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="modal fade" id="remove" tabindex="-1" role="dialog" aria-labelledby="removeTitle" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="removeTitle" th:text="${competition.title}"></h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <p>대회를 삭제하시겠습니까?</p>
+                        <p><strong>삭제</strong>을 누르시면 대회 및 경기 관련 데이터를 삭제합니다.</p>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">닫기</button>
+                        <form th:action="@{'/rooms/' + ${room.id} + '/competitions/' + ${competition.id} + '/settings/competition/remove'}" th:method="delete">
+                            <button class="btn btn-danger" type="submit" aria-describedby="submitHelp">삭제</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div th:replace="fragments.html :: footer"></div>
+<div th:replace="fragments.html :: date-time"></div>
+<script th:replace="fragments.html :: tooltip"></script>
+<script th:replace="fragments.html :: form-validation"></script>
+</body>
+</html>
