@@ -51,6 +51,6 @@ public class CompetitionSettingController {
         Room room = roomService.getRoomToUpdate(member, roomId);
         Competition competition = competitionService.getCompetition(room, competitionId);
         competitionService.remove(competition);
-        return "redirect:/rooms/" + room.getId();
+        return "redirect:/rooms/" + room.getId() + "/competitions";
     }
 }

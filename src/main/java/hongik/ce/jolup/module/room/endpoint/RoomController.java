@@ -64,7 +64,7 @@ public class RoomController {
 
     @GetMapping("/{id}")
     public String viewRoom(@CurrentMember Member member, @PathVariable Long id, Model model) {
-        Room room = roomService.getRoom(member, id);
+        Room room = roomService.getRoom(id);
         model.addAttribute(member);
         model.addAttribute(room);
         return "room/view";

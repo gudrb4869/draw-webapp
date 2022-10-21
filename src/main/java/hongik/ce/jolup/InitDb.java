@@ -113,10 +113,10 @@ public class InitDb {
              */
             List<Member> members = room.getJoins().stream().map(Join::getMember).collect(Collectors.toList());
             Competition competition1 = competitionService.createCompetition(members, room,
-                    createCompetitionForm(members, "zxcv", CompetitionType.LEAGUE, CompetitionOption.DOUBLE, 0, 11));
+                    createCompetitionForm(members, "zxcv", CompetitionType.LEAGUE, CompetitionOption.DOUBLE_ELIMINATION_TOURNAMENT, 0, 11));
 
             Competition competition2 = competitionService.createCompetition(members, room,
-                    createCompetitionForm(members, "asdf", CompetitionType.TOURNAMENT, CompetitionOption.SINGLE, 20, 49));
+                    createCompetitionForm(members, "asdf", CompetitionType.TOURNAMENT, CompetitionOption.SINGLE_ELIMINATION_TOURNAMENT, 20, 49));
         }
 
         private CompetitionForm createCompetitionForm(List<Member> members, String title, CompetitionType type, CompetitionOption option, int start, int end) {

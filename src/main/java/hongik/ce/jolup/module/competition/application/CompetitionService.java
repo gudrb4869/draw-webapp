@@ -40,91 +40,48 @@ public class CompetitionService {
 
         Collections.shuffle(memberList);
         Set<Match> matches = new HashSet<>();
-        int count = memberList.size();
         if (competition.getType().equals(CompetitionType.LEAGUE)) {
-            if (count % 2 == 1) {
-                for (int i = 0; i < count; i++) {
-                    for (int j = 0; j < count/2; j++) {
-                        Match match = Match.builder().competition(competition)
-                                .home(i % 2 == 0 ? memberList.get((i + j) % count) : memberList.get((i + count - j - 2) % count))
-                                .away(i % 2 == 0 ? memberList.get((i + count - j - 2) % count) : memberList.get((i + j) % count))
-                                .status(Status.BEFORE)
-                                .round(i)
-                                .number(j)
-                                .homeScore(0).awayScore(0)
-                                .build();
-                        matches.add(match);
-                    }
-                }
-                if (competitionForm.getOption().equals(CompetitionOption.DOUBLE)) {
-                    for (int i = 0; i < count; i++) {
-                        for (int j = 0; j < count/2; j++) {
-                            Match match = Match.builder().competition(competition)
-                                    .home(i % 2 == 0 ? memberList.get((i + count - j - 2) % count) : memberList.get((i + j) % count))
-                                    .away(i % 2 == 0 ? memberList.get((i + j) % count) : memberList.get((i + count - j - 2) % count))
-                                    .status(Status.BEFORE)
-                                    .round(count + i)
-                                    .number(j)
-                                    .homeScore(0).awayScore(0)
-                                    .build();
-                            matches.add(match);
-                        }
-                    }
-                }
+            Random random = new Random();
+            Member fixed = null;
+            if (memberList.size() % 2 == 0) {
+                fixed = memberList.remove(random.nextInt(memberList.size()));
             }
-            else {
-                int j;
-                Random random = new Random();
-                Member fixed = memberList.remove(random.nextInt(count));
-                for (int i = 0; i < count - 1; i++) {
-                    for (j = 0; j < count/2 - 1; j++) {
-                        Match match = Match.builder().competition(competition)
-                                .home(memberList.get(i % 2 == 0 ? (i + j) % (count - 1) : (i + count - j - 2) % (count - 1)))
-                                .away(memberList.get(i % 2 == 0 ? (i + count - j - 2) % (count - 1) : (i + j) % (count - 1)))
-                                .status(Status.BEFORE)
-                                .round(i)
-                                .number(j)
-                                .homeScore(0).awayScore(0)
-                                .build();
-                        matches.add(match);
-                    }
-                    Match match = Match.builder().competition(competition)
-                            .home(i % 2 == 0 ? memberList.get((i + j) % (count - 1)) : fixed)
-                            .away(i % 2 == 0 ? fixed : memberList.get((i + j) % (count - 1)))
-                            .status(Status.BEFORE)
-                            .round(i)
-                            .number(j)
-                            .homeScore(0).awayScore(0)
-                            .build();
-                    matches.add(match);
-                }
-                if (competitionForm.getOption().equals(CompetitionOption.DOUBLE)) {
-                    for (int i = 0; i < count - 1; i++) {
-                        for (j = 0; j < count/2 - 1; j++) {
-                            Match match = Match.builder().competition(competition)
-                                    .home(memberList.get(i % 2 == 0 ? (i + count - j - 2) % (count - 1) : (i + j) % (count - 1)))
-                                    .away(memberList.get(i % 2 == 0 ? (i + j) % (count - 1) : (i + count - j - 2) % (count - 1)))
-                                    .status(Status.BEFORE)
-                                    .round(count - 1 + i)
-                                    .number(j)
-                                    .homeScore(0).awayScore(0)
-                                    .build();
-                            matches.add(match);
+            int count = memberList.size();
+            for (int i = 0; i < count; i++) {
+                for (int j = 0; j < count/2; j++) {
+                    int first = (i + j) % count;
+                    int second = (i + count - j - 2) % count;
+                    if (i % 2 == 0) {
+                        matches.add(Match.from(competition, memberList.get(first), memberList.get(second), i, j));
+                        if (competitionForm.getOption().equals(CompetitionOption.DOUBLE_ROUND_ROBIN)) {
+                            matches.add(Match.from(competition, memberList.get(second), memberList.get(first), count + i, j));
                         }
-                        Match match = Match.builder().competition(competition)
-                                .home(i % 2 == 0 ? fixed : memberList.get((i + j) % (count - 1)))
-                                .away(i % 2 == 0 ? memberList.get((i + j) % (count - 1)) : fixed)
-                                .status(Status.BEFORE)
-                                .round(count - 1 + i)
-                                .number(j)
-                                .homeScore(0).awayScore(0)
-                                .build();
-                        matches.add(match);
+                    } else {
+                        matches.add(Match.from(competition, memberList.get(second), memberList.get(first), i, j));
+                        if (competitionForm.getOption().equals(CompetitionOption.DOUBLE_ROUND_ROBIN)) {
+                            matches.add(Match.from(competition, memberList.get(first), memberList.get(second), count + i, j));
+                        }
+                    }
+                }
+                if (fixed != null) {
+                    int j = count / 2;
+                    int last = (i + count - 1) % count;
+                    if (i % 2 == 0) {
+                        matches.add(Match.from(competition, memberList.get(last), fixed, i, j));
+                        if (competitionForm.getOption().equals(CompetitionOption.DOUBLE_ROUND_ROBIN)) {
+                            matches.add(Match.from(competition, fixed, memberList.get(last), count + i, j));
+                        }
+                    } else {
+                        matches.add(Match.from(competition, fixed, memberList.get(last), i, j));
+                        if (competitionForm.getOption().equals(CompetitionOption.DOUBLE_ROUND_ROBIN)) {
+                            matches.add(Match.from(competition, memberList.get(last), fixed, count + i, j));
+                        }
                     }
                 }
             }
         }
         else if (competition.getType().equals(CompetitionType.TOURNAMENT)) {
+            int count = memberList.size();
             int round = (int)Math.ceil(Math.log(count) / Math.log(2)); // 총 라운드
             int number = 1;
             int auto_win_num = (int)Math.pow(2, round) - count; // 부전승 인원 수
@@ -142,17 +99,11 @@ public class CompetitionService {
                     if (i == round - 1 && auto_win_num > 0 && list.contains(j)) {
                         continue;
                     }
-                    Match match = Match.builder().competition(competition)
-                            .home(i == round - 1 ? memberList.remove(0) :
-                                    (i == round - 2 && auto_win_num > 0 && list.contains(j * 2) ? memberList.remove(0) : null))
-                            .away(i == round - 1 ? memberList.remove(0) :
-                                    (i == round - 2 && auto_win_num > 0 && list.contains(j * 2 + 1) ? memberList.remove(0) : null))
-                            .status(Status.BEFORE)
-                            .round(i)
-                            .number(j)
-                            .homeScore(0).awayScore(0)
-                            .build();
-                    matches.add(match);
+                    if ((i == round - 1) || (i == round - 2 && auto_win_num > 0 && list.contains(j * 2))) {
+                        matches.add(Match.from(competition, memberList.remove(0), memberList.remove(0), i, j));
+                    } else {
+                        matches.add(Match.from(competition, null, null, i, j));
+                    }
                 }
                 number *= 2;
             }

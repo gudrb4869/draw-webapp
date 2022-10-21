@@ -44,7 +44,7 @@ public class Match extends BaseTimeEntity {
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
-    private Status status;
+    private Status status = Status.BEFORE;
 
     @Column(name = "match_round", nullable = false)
     private Integer round;
@@ -53,24 +53,21 @@ public class Match extends BaseTimeEntity {
     private Integer number;
 
     @Column
-    private Integer homeScore;
+    private Integer homeScore = 0;
 
     @Column
-    private Integer awayScore;
+    private Integer awayScore = 0;
 
     private LocalDateTime startDateTime;
 
-    @Builder
-    public Match(Long id, Competition competition, Member home, Member away, Status status, Integer round, Integer number, Integer homeScore, Integer awayScore) {
-        this.id = id;
-        this.competition = competition;
-        this.home = home;
-        this.away = away;
-        this.status = status;
-        this.round = round;
-        this.number = number;
-        this.homeScore = homeScore;
-        this.awayScore = awayScore;
+    public static Match from(Competition competition, Member home, Member away, int round, int number) {
+        Match match = new Match();
+        match.competition = competition;
+        match.home = home;
+        match.away = away;
+        match.round = round;
+        match.number = number;
+        return match;
     }
 
     public void updateHome(Member home) {

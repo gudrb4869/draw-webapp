@@ -26,7 +26,7 @@ public class CompetitionForm {
     private CompetitionType type = CompetitionType.LEAGUE;
 
     @NotNull(message = "대회 옵션을 선택하세요.")
-    private CompetitionOption option = CompetitionOption.SINGLE;
+    private CompetitionOption option = CompetitionOption.SINGLE_ROUND_ROBIN;
 
     private Set<Long> members = new HashSet<>();
 }
