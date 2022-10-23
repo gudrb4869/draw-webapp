@@ -15,7 +15,29 @@
                 <div class="col mb-4" th:each="match: ${matches.getContent()}">
                     <a th:href="@{'/rooms/' + ${room.id} + '/competitions/' + ${competition.id} + '/matches/' + ${match.id}}" class="text-decoration-none">
                         <div class="card">
-                            <div th:replace="fragments.html :: match"></div>
+<!--                            <div th:replace="fragments.html :: match"></div>-->
+                            <div class="card-header d-flex justify-content-between align-items-center">
+                                <small th:text="${match.round + 1} + '라운드 / ' + ${match.number + 1} + '경기'">경기 정보</small>
+                                <small th:if="${match.startDateTime == null}" class="text-warning">시간 미정</small>
+                                <small th:if="${match.startDateTime != null}" class="date-time text-dark" th:text="${match.startDateTime}">경기 시간</small>
+                            </div>
+                            <div class="card-body text-center">
+                                <div class="row">
+                                    <div class="col-4">
+                                        <svg th:if="${#strings.isEmpty(match.home?.image)}" th:data-jdenticon-value="${match.home.name}" width="24" height="24" class="rounded border bg-light me-3"></svg>
+                                        <img th:if="${!#strings.isEmpty(match.home?.image)}" th:src="${match.home.image}" width="24" height="24" class="rounded border me-3"/>
+                                        <span th:text="${match.home?.name}"></span>
+                                    </div>
+                                    <div class="col-4">
+                                        <span th:text="${match.homeScore} + ' : ' + ${match.awayScore}"></span>
+                                    </div>
+                                    <div class="col-4">
+                                        <svg th:if="${#strings.isEmpty(match.away?.image)}" th:data-jdenticon-value="${match.away.name}" width="24" height="24" class="rounded border bg-light me-3"></svg>
+                                        <img th:if="${!#strings.isEmpty(match.away?.image)}" th:src="${match.away.image}" width="24" height="24" class="rounded border me-3"/>
+                                        <span th:text="${match.away?.name}"></span>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                     </a>
                 </div>
@@ -32,6 +54,27 @@
                         th:onclick="${match != null} ? |location.href='@{|/rooms/${room.id}/competitions/${competition.id}/matches/${match.id}|}'|" th:classappend="${match == null} ? 'my-hidden'">
                         <div class="tournament-bracket__match" tabindex="0">
                             <div th:replace="fragments.html :: match"></div>
+                            <!--<div class="card-header d-flex justify-content-between align-items-center">
+                                <small th:if="${match?.startDateTime == null}" class="text-warning">시간 미정</small>
+                                <small th:if="${match?.startDateTime != null}" class="date-time text-dark" th:text="${match.startDateTime}">경기 시간</small>
+                            </div>
+                            <div class="card-body text-center">
+                                <div class="row">
+                                    <div class="col-4">
+                                        <svg th:if="${#strings.isEmpty(match?.home?.image)}" th:data-jdenticon-value="${match?.home?.name}" width="24" height="24" class="rounded border bg-light me-3"></svg>
+                                        <img th:if="${!#strings.isEmpty(match?.home?.image)}" th:src="${match?.home?.image}" width="24" height="24" class="rounded border me-3"/>
+                                        <span th:text="${match?.home?.name}"></span>
+                                    </div>
+                                    <div class="col-4">
+                                        <span th:text="${match?.homeScore} + ' : ' + ${match?.awayScore}"></span>
+                                    </div>
+                                    <div class="col-4">
+                                        <svg th:if="${#strings.isEmpty(match?.away?.image)}" th:data-jdenticon-value="${match?.away?.name}" width="24" height="24" class="rounded border bg-light me-3"></svg>
+                                        <img th:if="${!#strings.isEmpty(match?.away?.image)}" th:src="${match?.away.image}" width="24" height="24" class="rounded border me-3"/>
+                                        <span th:text="${match?.away?.name}"></span>
+                                    </div>
+                                </div>
+                            </div>-->
                         </div>
                     </li>
                 </ul>

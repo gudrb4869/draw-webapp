@@ -44,37 +44,6 @@
     </div>
 </div> <!-- /container -->
 <div th:replace="fragments.html :: footer"></div>
+<div th:replace="fragments.html :: date-time"></div>
 </body>
-<script>
-    const add_textbox = () => {
-        const box = document.getElementById("box");
-        const newP = document.createElement('p');
-        newP.innerHTML = "<input type='text'> <input type='button' value='삭제' onclick='remove(this)'>";
-        box.appendChild(newP);
-    }
-    const remove = (obj) => {
-        document.getElementById('box').removeChild(obj.parentNode);
-    }
-</script>
-<script th:inline="javascript">
-    let updateForm = () => {
-        let count = document.getElementById("count").value;
-        let names = document.getElementById("names");
-        let n = names.childElementCount;
-        if (count > n) {
-            for (let i = n + 1; i <= count; i++) {
-                const name = document.createElement('tr')
-                name.innerHTML = "<tr><td>" + i + "</td>" +
-                    "<td><input type='text' name='names[" + (i - 1) + "]' class='form-control'/></td>" +
-                    "</tr>";
-                names.appendChild(name);
-            }
-        }
-        else {
-            for (let i = n; i > count; i--) {
-                names.lastElementChild.remove();
-            }
-        }
-    }
-</script>
 </html>
