@@ -39,10 +39,10 @@ public class Member extends BaseTimeEntity {
 
     private String bio;
 
-    @OneToMany(mappedBy = "following")
+    @OneToMany(mappedBy = "following", cascade = CascadeType.ALL)
     private List<Follow> followings;
 
-    @OneToMany(mappedBy = "follower")
+    @OneToMany(mappedBy = "follower", cascade = CascadeType.ALL)
     private List<Follow> followers;
 
     @OneToMany(mappedBy = "member", cascade = CascadeType.ALL)

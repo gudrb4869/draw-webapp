@@ -34,20 +34,48 @@
                         <div class="form-text text-danger" th:errors="*{password}">password Error
                         </div>
                     </div>
-                    <button type="submit" class="btn btn-outline-primary">변경하기</button>
+                    <button type="submit" class="btn btn-primary">변경하기</button>
                 </form>
             </div>
-            <div class="dropdown-divider"></div>
+            <hr/>
+            <!--<div class="row">
+                <h2 class="col-sm-12 mt-3">회원 탈퇴</h2>
+                <div class="alert alert-danger d-flex align-items-center" role="alert">
+                    <svg th:replace="fragments.html::symbol-danger"/>
+                    <div>
+                        회원 탈퇴를 하시면 회원 정보를 복구하실 수 없습니다.
+                    </div>
+                </div>
+            </div>-->
             <div class="row">
                 <div class="col-sm-12 mt-3">
-                    <h2 class="text-danger">계정 삭제</h2>
+                    <h2 class="text-danger">회원 탈퇴</h2>
                     <div class="alert alert-danger d-flex align-items-center" role="alert">
                         <svg th:replace="fragments.html::symbol-danger"/>
                         <div>
-                            이 계정은 삭제할 수 없습니다.
+                            회원 탈퇴를 하시면 회원 정보를 복구하실 수 없습니다.
                         </div>
                     </div>
-                    <button class="btn btn-outline-danger disabled">계정 삭제</button>
+                    <button class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#remove">탈퇴하기</button>
+                </div>
+            </div>
+            <div class="modal fade" id="remove" tabindex="-1" role="dialog" aria-labelledby="removeTitle" aria-hidden="true">
+                <div class="modal-dialog modal-dialog-centered" role="document">
+                    <div class="modal-content">
+                        <!--<div class="modal-header">
+                            <h5 class="modal-title" id="removeTitle"></h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>-->
+                        <div class="modal-body">
+                            <p>정말로 회원 탈퇴 하시겠습니까?</p>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">닫기</button>
+                            <form th:action th:method="delete">
+                                <button class="btn btn-danger" type="submit" aria-describedby="submitHelp">탈퇴</button>
+                            </form>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>

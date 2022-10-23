@@ -48,17 +48,10 @@ public class Room extends BaseTimeEntity {
     @OneToMany(mappedBy = "room", cascade = CascadeType.ALL)
     private List<Competition> competitions = new ArrayList<>();
 
-    @Builder
-    public Room(Long id, String title, boolean access) {
-        this.id = id;
-        this.title = title;
-        this.access = access;
-    }
-
     public static Room from(RoomForm roomForm) {
         Room room = new Room();
         room.title = roomForm.getTitle();
-        room.access = roomForm.isAccess();
+        room.access = roomForm.getAccess();
         room.count = 1;
         return room;
     }
@@ -75,6 +68,10 @@ public class Room extends BaseTimeEntity {
                 .filter(j -> j.getMember().equals(userMember.getMember()))
                 .findFirst().orElse(null);
         return join != null && join.getGrade().equals(Grade.ADMIN);
+    }
+
+    public boolean isPublic() {
+        return this.access;
     }
 
     public void addCount() {

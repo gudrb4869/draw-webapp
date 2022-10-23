@@ -79,4 +79,9 @@ public class MemberService implements UserDetailsService {
         member.updateNotification(notificationForm);
         memberRepository.save(member);
     }
+
+    public void remove(Member member) {
+        memberRepository.delete(member);
+        SecurityContextHolder.getContext().setAuthentication(null);
+    }
 }

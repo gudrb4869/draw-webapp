@@ -16,7 +16,8 @@ public class Profile {
     private String password;
 
     private String image;
-    @Length(max = 35)
+
+    @Length(max = 30, message = "30자를 초과하였습니다.")
     private String bio;
 
     public static Profile from(Member member) {

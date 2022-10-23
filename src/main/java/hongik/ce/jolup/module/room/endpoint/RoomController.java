@@ -87,7 +87,7 @@ public class RoomController {
 
     @GetMapping("/{id}/join")
     public String joinRoom(@CurrentMember Member member, @PathVariable Long id) {
-        Room room = roomService.findOne(id);
+        Room room = roomService.getRoom(member, id);
         roomService.addMember(room, member);
         return "redirect:/rooms/" + room.getId() + "/members";
     }
@@ -127,7 +127,7 @@ public class RoomController {
             return "room/invite-form";
         }
         roomService.inviteRoom(members, room, inviteForm);
-        attributes.addFlashAttribute("message", "회원들에게 방 초대 요청을 보냈습니다.");
+        attributes.addFlashAttribute("message", "친구들에게 방 초대 요청을 보냈습니다.");
         return "redirect:/rooms/" + room.getId();
     }
 }

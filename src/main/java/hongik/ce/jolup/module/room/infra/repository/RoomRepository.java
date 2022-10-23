@@ -8,7 +8,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.Optional;
 
 @Transactional(readOnly = true)
-public interface RoomRepository extends JpaRepository<Room, Long> {
+public interface RoomRepository extends JpaRepository<Room, Long>, RoomRepositoryExtension {
     @EntityGraph(value = "Room.withJoinsAndMembers")
     Optional<Room> findRoomWithJoinsAndMembersById(Long id);
 }

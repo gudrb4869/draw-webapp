@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="fragments.html :: head"></head>
+<body class="d-flex flex-column min-vh-100 bg-light">
+<div th:replace="fragments.html::navigation-bar"></div>
+<div class="container">
+    <div class="py-5 text-center">
+        <p class="lead" th:if="${roomPage.getTotalElements() == 0}">
+            <strong th:text="${keyword}" id="keyword" class="context"></strong>에 해당하는 스터디가 없습니다.
+        </p>
+        <p class="lead" th:if="${roomPage.getTotalElements() > 0}">
+            <strong th:text="${keyword}" id="keyword" class="context"></strong>에 해당하는 스터디를
+            <span th:text="${roomPage.getTotalElements()}"></span>개 찾았습니다.
+        </p>
+    </div>
+
+    <div th:replace="fragments.html::room-list (roomList=${roomPage.getContent()})"></div>
+
+    <div th:replace="fragments.html :: page (pages=${roomPage}, url='/search/room?keyword=' + ${keyword})"></div>
+</div>
+<div th:replace="fragments.html :: footer"></div>
+<script th:replace="fragments.html :: date-time"></script>
+</body>
+</html>

@@ -129,35 +129,12 @@ public class SettingsController {
         return "redirect:" + SETTINGS_MEMBER_URL;
     }
 
-    /*@DeleteMapping(SETTINGS_MEMBER_URL)
-    public String deleteMember(@ModelAttribute("memberForm") @Valid DeleteMemberForm form,
-                               BindingResult result, @CurrentMember Member member,
+    @DeleteMapping(SETTINGS_MEMBER_URL)
+    public String deleteMember(@CurrentMember Member member,
                                Model model, RedirectAttributes attributes) {
-        if (result.hasErrors()) {
-            return SETTINGS_MEMBER_VIEW_NAME;
-        }
-        try {
-            memberService.deleteMember(member.getId());
-            SecurityContextHolder.clearContext();
-            attributes.addFlashAttribute("message", "회원탈퇴에 성공하였습니다.");
-        } catch (Exception e) {
-            model.addAttribute("errorMessage", e.getMessage());
-            return SETTINGS_MEMBER_VIEW_NAME;
-        }
-        return "redirect:" + SETTINGS_MEMBER_URL;
+        memberService.remove(member);
+        attributes.addFlashAttribute("message", "회원탈퇴에 성공하였습니다.");
+        return "redirect:/";
     }
 
-    @Getter @Setter @Builder @ToString
-    @NoArgsConstructor @AllArgsConstructor
-    private static class DeleteMemberForm {
-        @NotBlank(message = "아이디는 필수 입력 값입니다!")
-        private String email;
-
-        @NotBlank(message = "현재 비밀번호를 입력하세요.")
-        private String password_current;
-
-        public DeleteMemberForm(String email) {
-            this.email = email;
-        }
-    }*/
 }
