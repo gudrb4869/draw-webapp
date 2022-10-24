@@ -19,7 +19,8 @@ public class RoomRepositoryImpl extends QuerydslRepositorySupport implements Roo
     public Page<Room> findByKeyword(String keyword, Pageable pageable) {
         QRoom room = QRoom.room;
         JPQLQuery<Room> query = from(room)
-                .where(room.title.containsIgnoreCase(keyword))
+                .where(room.title.containsIgnoreCase(keyword)
+                        .and(room.access.isTrue()))
                 .distinct();
         JPQLQuery<Room> jpqlQuery = getQuerydsl().applyPagination(pageable, query);
         QueryResults<Room> fetchResults = jpqlQuery.fetchResults();

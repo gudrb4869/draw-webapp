@@ -16,18 +16,18 @@
                       th:action="@{'/rooms/' + ${room.id} + '/competitions/' + ${competition.id} + '/settings/competition/title'}" method="post" novalidate>
                     <div class="alert alert-warning" role="alert">
                         <svg th:replace="fragments.html::symbol-warning"/>
-                        대회명을 수정합니다.<br/>
+                        대회 이름을 수정합니다.<br/>
                     </div>
                     <div class="form-group">
-                        <label th:for="title">대회명</label>
+                        <label th:for="title">대회 이름</label>
                         <input type="text" name="newTitle" th:value="${competition.title}" class="form-control"
-                               placeholder="대회명" aria-describedby="titleHelp" required maxlength="50">
+                               placeholder="대회 이름을 입력하세요" aria-describedby="titleHelp" required maxlength="50">
                         <small id="titleHelp" class="form-text text-muted">
-                            대회명을 50자 이내로 입력하세요.
+                            대회 이름을 50자 이내로 입력하세요.
                         </small>
                         <small class="invalid-feedback">대회명을 입력하세요.</small>
-                        <small class="form-text text-danger" th:if="${studyTitleError}"
-                               th:text="${studyTitleError}">Title Error</small>
+                        <small class="form-text text-danger" th:if="${competitionTitleError}"
+                               th:text="${competitionTitleError}">Title Error</small>
                     </div>
                     <div class="form-group mt-3">
                         <button class="btn btn-outline-warning" type="submit" aria-describedby="submitHelp">대회명

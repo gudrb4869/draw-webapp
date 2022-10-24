@@ -1,6 +1,5 @@
 <!DOCTYPE html>
-<html lang="en"
-      xmlns:th="http://www.thymeleaf.org"
+<html xmlns:th="http://www.thymeleaf.org"
       xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 <head th:fragment="head">
     <!-- Required meta tags -->
@@ -13,6 +12,7 @@
     <link rel="stylesheet" href="/node_modules/bootstrap/dist/css/bootstrap.min.css"/>
     <link rel="stylesheet" href="/node_modules/font-awesome/css/font-awesome.min.css"/>
     <link rel="stylesheet" href="/node_modules/@yaireo/tagify/dist/tagify.css"/>
+    <link rel="stylesheet" href="/node_modules/jquery-bracket/dist/jquery.bracket.min.css"/>
     <link rel="stylesheet" href="/tournament.css"/>
     <script defer src="/node_modules/jdenticon/dist/jdenticon.min.js"></script>
     <script src="/node_modules/jquery/dist/jquery.min.js"></script>
@@ -62,7 +62,7 @@
         <ul class="navbar-nav me-auto">
             <li class="nav-item">
                 <form th:action="@{/search/room}" class="form-inline d-flex" method="get">
-                    <input class="form-control me-sm-2" name="keyword" type="search" placeholder="" required
+                    <input class="form-control me-sm-2" name="keyword" type="search" placeholder="모임 찾기" required
                            aria-label="Search"/>
                     <button class="btn btn-warning" type="submit" aria-describedby="submitHelp">
                         <i class="fa fa-search"></i>
@@ -208,42 +208,42 @@
 
 <div th:fragment="room-info">
     <div class="row pt-4 text-left justify-content-center bg-light">
-        <!--방 이름 표시-->
+        <!--모임 이름 표시-->
         <div class="col-6">
             <a href="#" class="text-decoration-none" th:href="@{'/rooms/' + ${room.id}}">
-                <span class="h2" th:text="${room.title}">방 이름</span>
+                <span class="h2" th:text="${room.title}">모임 이름</span>
             </a>
         </div>
         <div class="col-4 text-end justify-content-end">
-            <!--방을 공개하지 않았을 경우-->
+            <!--모임을 공개하지 않았을 경우-->
             <!--<span th:if="${!room.access}" class="d-inline-block" tabindex="0" data-bs-toggle="tooltip"
                   data-placement="bottom" title="공개 준비중입니다.">
                 <button class="btn btn-primary btn-sm" style="pointer-events: none;" type="button"
                         disabled>DRAFT</button>
             </span>-->
-            <!--인증된 사용자이고 방 가입 가능한 경우-->
+            <!--인증된 사용자이고 모임 가입 가능한 경우-->
             <span sec:authorize="isAuthenticated()" th:if="${!room.isMember(#authentication.principal) && room.isPublic()}"
                   class="btn-group" role="group" aria-label="Basic example">
-                <!--방 가입 링크-->
+                <!--모임 가입 링크-->
                 <a class="btn btn-primary" th:href="@{'/rooms/' + ${room.id} + '/join'}">
-                    방 들어가기
+                    모임 들어가기
                 </a>
-                <!--방 멤버 수-->
+                <!--모임 멤버 수-->
                 <a class="btn btn-primary" th:href="@{'/rooms/' + ${room.id} + '/members'}"
                    th:text="${room.joins.size()}">1</a>
             </span>
-            <!--인증된 사용자이고 방 멤버인 경우-->
+            <!--인증된 사용자이고 모임 멤버인 경우-->
             <span sec:authorize="isAuthenticated()" th:if="${room.isMember(#authentication.principal) and !room.isAdmin(#authentication.principal)}"
                   class="btn-group" role="group">
-                <!--방 가입 링크-->
+                <!--모임 가입 링크-->
                 <a class="btn btn-outline-danger" th:href="@{'/rooms/' + ${room.id} + '/leave'}">
-                    방 나가기
+                    모임 나가기
                 </a>
-                <!--방 멤버 수-->
+                <!--모임 멤버 수-->
                 <a class="btn btn-primary" th:href="@{'/rooms/' + ${room.id} + '/members'}"
                    th:text="${room.joins.size()}">1</a>
             </span>
-            <!--인증된 사용자이고 방 관리자인 경우-->
+            <!--인증된 사용자이고 모임 관리자인 경우-->
             <span sec:authorize="isAuthenticated()" th:if="${room.isAdmin(#authentication.principal)}">
                 <!--친구 초대 링크-->
                 <a class="btn btn-outline-primary" th:href="@{'/rooms/' + ${room.id} + '/invite'}">
@@ -320,7 +320,7 @@
     <div class="col-10">
         <span class="h2">
         <a href="#" class="text-decoration-none" th:href="@{'/rooms/' + ${room.id} + '/competitions'}">
-            <span th:text="${room.title}">방 이름</span>
+            <span th:text="${room.title}">모임 이름</span>
         </a> / <a href="#" class="text-decoration-none" th:href="@{'/rooms/' + ${room.id} + '/competitions/' + ${competition.id}}">
             <span th:text="${competition.title}">대회 이름</span>
         </a>
@@ -404,7 +404,7 @@
         <td style="padding: 0; font-size: 14px; line-height: 20px; color: #202124;">
             <div style="padding-left: 8px; text-align: right; float: right;">
                 <div style="line-height: 20px;">
-                    <span th:text="${match?.homeScore}">4</span>
+                    <span th:text="${match?.homeScore}">1</span>
                 </div>
             </div>
             <div style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
@@ -489,7 +489,7 @@
                     <a th:href="@{'/rooms/' + ${room.id}}" class="text-decoration-none">
                         <div class="card-body">
                             <h5 class="card-title context" th:text="${room.title}"></h5>
-                            <p class="card-text" th:text="${room.title}">Short description</p>
+<!--                            <p class="card-text" th:text="${room.shortDescription}">Short description</p>-->
                             <div class="d-flex justify-content-between align-items-center">
                                 <small class="text-muted">
                                     <i class="fa fa-user-circle"></i>
@@ -499,7 +499,6 @@
                             </div>
                         </div>
                     </a>
-
                 </div>
             </div>
         </div>

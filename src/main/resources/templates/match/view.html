@@ -13,13 +13,13 @@
             <div class="mb-3">
                 <div class="card">
                     <div class="card-header d-flex justify-content-between align-items-center">
-                        <span th:if="${competition.type.name() == 'LEAGUE'}" th:text="${match.round + 1} + '라운드 / ' + ${match.number + 1} + '경기'">경기 정보</span>
-                        <span th:if="${competition.type.name() == 'TOURNAMENT' and match.round == 0}" th:text="'결승'">경기 정보</span>
-                        <span th:if="${competition.type.name() == 'TOURNAMENT' and match.round == 1}" th:text="'준결승 / ' + ${match.number + 1} + '경기'">경기 정보</span>
-                        <span th:if="${competition.type.name() == 'TOURNAMENT' and match.round == 2}" th:text="'8강 / ' + ${match.number + 1} + '경기'">경기 정보</span>
-                        <span th:if="${competition.type.name() == 'TOURNAMENT' and match.round == 3}" th:text="'16강 / ' + ${match.number + 1} + '경기'">경기 정보</span>
-                        <span th:if="${competition.type.name() == 'TOURNAMENT' and match.round == 4}" th:text="'32강 / ' + ${match.number + 1} + '경기'">경기 정보</span>
-                        <span th:if="${competition.type.name() == 'TOURNAMENT' and match.round == 5}" th:text="'64강 / ' + ${match.number + 1} + '경기'">경기 정보</span>
+                        <span th:if="${competition.isLeague()}" th:text="${match.round + 1} + '라운드 / ' + ${match.number + 1} + '경기'">경기 정보</span>
+                        <span th:if="${competition.isTournament() and match.round == 0}" th:text="'결승'">경기 정보</span>
+                        <span th:if="${competition.isTournament() and match.round == 1}" th:text="'준결승 / ' + ${match.number + 1} + '경기'">경기 정보</span>
+                        <span th:if="${competition.isTournament() and match.round == 2}" th:text="'8강 / ' + ${match.number + 1} + '경기'">경기 정보</span>
+                        <span th:if="${competition.isTournament() and match.round == 3}" th:text="'16강 / ' + ${match.number + 1} + '경기'">경기 정보</span>
+                        <span th:if="${competition.isTournament() and match.round == 4}" th:text="'32강 / ' + ${match.number + 1} + '경기'">경기 정보</span>
+                        <span th:if="${competition.isTournament() and match.round == 5}" th:text="'64강 / ' + ${match.number + 1} + '경기'">경기 정보</span>
                         <small th:if="${match.startDateTime == null}" class="text-warning">시간 미정</small>
                         <small th:if="${match.startDateTime != null}" class="date-time text-dark" th:text="${match.startDateTime}">경기 시간</small>
                     </div>
@@ -45,7 +45,7 @@
             <div class="mb-4"></div>
             <div class="row">
                 <div class="col">
-                    <button sec:authorize="isAuthenticated()" th:if="${room.isAdmin(#authentication.principal)}" class="btn btn-outline-dark" type="button" th:onclick="|location.href='@{|/rooms/${roomId}/competitions/${competitionId}/matches/${matchId}/update|}'|">경기결과 수정</button>
+                    <button sec:authorize="isAuthenticated()" th:if="${room.isAdmin(#authentication.principal)}" class="btn btn-outline-dark" type="button" th:onclick="|location.href='@{|/rooms/${roomId}/competitions/${competitionId}/matches/${matchId}/update|}'|">경기 수정</button>
                     <button class="btn btn-outline-dark" type="button" th:onclick="|location.href='@{|/rooms/${roomId}/competitions/${competitionId}|}'|" >돌아가기</button>
                 </div>
             </div>

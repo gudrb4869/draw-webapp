@@ -25,19 +25,19 @@ public class Participate extends BaseTimeEntity {
     private Competition competition;
 
     @Column(nullable = false)
-    private Integer win;
+    private Integer win = 0;
 
     @Column(nullable = false)
-    private Integer draw;
+    private Integer draw = 0;
 
     @Column(nullable = false)
-    private Integer lose;
+    private Integer lose = 0;
 
     @Column(nullable = false)
-    private Integer goalFor;
+    private Integer goalFor = 0;
 
     @Column(nullable = false)
-    private Integer goalAgainst;
+    private Integer goalAgainst = 0;
 
     @Builder
     public Participate(Long id, Member member, Competition competition, Integer win, Integer draw, Integer lose, Integer goalFor, Integer goalAgainst) {
@@ -49,6 +49,13 @@ public class Participate extends BaseTimeEntity {
         this.lose = lose;
         this.goalFor = goalFor;
         this.goalAgainst = goalAgainst;
+    }
+
+    public static Participate from(Member member, Competition competition) {
+        Participate participate = new Participate();
+        participate.member = member;
+        participate.competition = competition;
+        return participate;
     }
 
     public void updateMember(Member member) {

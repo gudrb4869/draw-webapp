@@ -39,6 +39,7 @@ public class CompetitionSettingController {
             model.addAttribute(member);
             model.addAttribute(room);
             model.addAttribute(competition);
+            model.addAttribute("competitionTitleError", "대회 이름을 다시 입력하세요.");
             return "competition/settings/competition";
         }
         competitionService.updateCompetitionTitle(competition, newTitle);

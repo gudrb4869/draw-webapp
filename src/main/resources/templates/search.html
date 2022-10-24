@@ -6,11 +6,11 @@
 <div class="container">
     <div class="py-5 text-center">
         <p class="lead" th:if="${roomPage.getTotalElements() == 0}">
-            <strong th:text="${keyword}" id="keyword" class="context"></strong>에 해당하는 스터디가 없습니다.
+            <strong th:text="${keyword}" id="keyword" class="context"></strong>에 대한 검색결과가 없습니다.
         </p>
         <p class="lead" th:if="${roomPage.getTotalElements() > 0}">
-            <strong th:text="${keyword}" id="keyword" class="context"></strong>에 해당하는 스터디를
-            <span th:text="${roomPage.getTotalElements()}"></span>개 찾았습니다.
+            <strong th:text="${keyword}" id="keyword" class="context"></strong>에 대한 모임이
+            <span th:text="${roomPage.getTotalElements()}"></span>개 있습니다.
         </p>
     </div>
 

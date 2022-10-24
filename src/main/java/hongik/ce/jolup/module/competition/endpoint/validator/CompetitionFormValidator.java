@@ -25,20 +25,13 @@ public class CompetitionFormValidator implements Validator {
         Set<Long> members = competitionForm.getMembers();
         CompetitionType type = competitionForm.getType();
         if (members.size() < 2) {
-            errors.rejectValue("members", "wrong.members", "적어도 2명은 참가해야합니다.");
+            errors.rejectValue("members", "wrong.members", "최소 2명 이상 참가해야합니다.");
         }
-        if (type.equals(CompetitionType.LEAGUE) && members.size() > 24) {
+        if (members.size() > 24 && (type.equals(CompetitionType.SINGLE_ROUND_ROBIN) || type.equals(CompetitionType.DOUBLE_ROUND_ROBIN))) {
             errors.rejectValue("type", "wrong.type", "리그는 최대 24명까지 참가가능합니다.");
         }
-        else if (type.equals(CompetitionType.TOURNAMENT) && members.size() > 64) {
+        else if (members.size() > 64 && (type.equals(CompetitionType.SINGLE_ELIMINATION_TOURNAMENT) || type.equals(CompetitionType.DOUBLE_ELIMINATION_TOURNAMENT))) {
             errors.rejectValue("type", "wrong.type", "토너먼트는 최대 64명까지 참가가능합니다.");
-        }
-    }
-
-    public void validateMembers(Set<Long> members, Errors errors, List<Member> members1) {
-        Set<Long> collect = members1.stream().map(Member::getId).collect(Collectors.toSet());
-        if (members.removeAll(collect)) {
-            errors.rejectValue("members", "wrong.members", "존재하지 않는 멤버가 포함되어 있습니다.");
         }
     }
 }

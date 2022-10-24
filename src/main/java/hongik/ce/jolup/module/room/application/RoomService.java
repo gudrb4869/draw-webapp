@@ -35,17 +35,17 @@ public class RoomService {
 
     public void inviteRoom(List<Member> members, Room room, InviteForm inviteForm) {
         List<Member> memberList = members.stream().filter(m -> inviteForm.getMembers().contains(m.getId())).collect(Collectors.toList());
-        eventPublisher.publishEvent(new RoomInvitedEvent(room, "방 '" + room.getTitle() + "'에서 회원님을 초대하였습니다.", memberList));
+        eventPublisher.publishEvent(new RoomInvitedEvent(room, "모임 '" + room.getTitle() + "'에서 회원님을 초대하였습니다.", memberList));
     }
 
     public Room findOne(Long id) {
         return roomRepository.findById(id)
-                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 방입니다."));
+                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 모임입니다."));
     }
 
     public Room getRoom(Long id) {
         return roomRepository.findRoomWithJoinsAndMembersById(id)
-                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 방입니다."));
+                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 모임입니다."));
     }
 
     public Room getRoom(Member member, Long id) {
@@ -59,7 +59,7 @@ public class RoomService {
                 .filter(j -> j.getMember().equals(member))
                 .findFirst().orElse(null);
         if (join == null && !room.isAccess()) {
-            throw new IllegalArgumentException("비공개 방입니다.");
+            throw new IllegalArgumentException("비공개 모임입니다.");
         }
     }
 
@@ -96,14 +96,14 @@ public class RoomService {
 
     public void remove(Room room) {
         if (!room.isRemovable()) {
-            throw new IllegalStateException("방을 삭제할 수 없습니다.");
+            throw new IllegalStateException("모임을 삭제할 수 없습니다.");
         }
         roomRepository.delete(room);
     }
 
     public void addMember(Room room, Member member) {
         if (joinRepository.existsByRoomAndMember(room, member)) {
-            throw new IllegalArgumentException("이미 방에 참여중입니다.");
+            throw new IllegalArgumentException("이미 모임에 참여중입니다.");
         }
         room.addCount();
         joinRepository.save(Join.builder().room(room).member(member).grade(Grade.USER).build());
@@ -111,9 +111,9 @@ public class RoomService {
 
     public void removeMember(Room room, Member member) {
         Join join = joinRepository.findByRoomAndMember(room, member)
-                .orElseThrow(() -> new IllegalArgumentException("방에 참여중인 회원이 아닙니다."));
+                .orElseThrow(() -> new IllegalArgumentException("모임에 참여중인 회원이 아닙니다."));
         if (join.getGrade().equals(Grade.ADMIN)) {
-            throw new IllegalArgumentException("관리자는 방을 나갈 수 없습니다. 설정에 들어가서 방을 삭제하세요.");
+            throw new IllegalArgumentException("관리자는 모임을 나갈 수 없습니다. 설정에 들어가서 모임을 삭제하세요.");
         }
         room.subCount();
         joinRepository.delete(join);

@@ -71,6 +71,14 @@ public class Competition extends BaseTimeEntity {
         this.title = title;
     }
 
+    public boolean isLeague() {
+        return this.type.equals(CompetitionType.SINGLE_ROUND_ROBIN) || this.type.equals(CompetitionType.DOUBLE_ROUND_ROBIN);
+    }
+
+    public boolean isTournament() {
+        return this.type.equals(CompetitionType.SINGLE_ELIMINATION_TOURNAMENT) || this.type.equals(CompetitionType.DOUBLE_ELIMINATION_TOURNAMENT);
+    }
+
     public boolean isRemovable() {
         return true;
     }

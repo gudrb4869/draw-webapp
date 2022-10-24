@@ -1,7 +1,6 @@
 package hongik.ce.jolup.module.competition.application;
 
 import hongik.ce.jolup.module.competition.domain.entity.Competition;
-import hongik.ce.jolup.module.competition.domain.entity.CompetitionOption;
 import hongik.ce.jolup.module.competition.domain.entity.CompetitionType;
 import hongik.ce.jolup.module.competition.domain.entity.Participate;
 import hongik.ce.jolup.module.competition.endpoint.form.CompetitionForm;
@@ -9,7 +8,6 @@ import hongik.ce.jolup.module.competition.event.CompetitionCreatedEvent;
 import hongik.ce.jolup.module.competition.infra.repository.CompetitionRepository;
 import hongik.ce.jolup.module.competition.infra.repository.ParticipateRepository;
 import hongik.ce.jolup.module.match.domain.entity.Match;
-import hongik.ce.jolup.module.match.domain.entity.Status;
 import hongik.ce.jolup.module.match.infra.repository.MatchRepository;
 import hongik.ce.jolup.module.member.domain.entity.Member;
 import hongik.ce.jolup.module.room.domain.entity.Room;
@@ -35,71 +33,70 @@ public class CompetitionService {
         Competition competition = competitionRepository.save(Competition.from(competitionForm, room));
 
         List<Member> memberList = members.stream().filter(m -> competitionForm.getMembers().contains(m.getId())).collect(Collectors.toList());
-        List<Participate> participates = memberList.stream().map(m -> Participate.builder().member(m).competition(competition)
-                .win(0).draw(0).lose(0).goalFor(0).goalAgainst(0).build()).collect(Collectors.toList());
+        List<Participate> participates = memberList.stream().map(member -> Participate.from(member, competition)).collect(Collectors.toList());
 
         Collections.shuffle(memberList);
         Set<Match> matches = new HashSet<>();
-        if (competition.getType().equals(CompetitionType.LEAGUE)) {
+        if (competition.isLeague()) {
             Random random = new Random();
             Member fixed = null;
             if (memberList.size() % 2 == 0) {
                 fixed = memberList.remove(random.nextInt(memberList.size()));
             }
-            int count = memberList.size();
-            for (int i = 0; i < count; i++) {
-                for (int j = 0; j < count/2; j++) {
-                    int first = (i + j) % count;
-                    int second = (i + count - j - 2) % count;
+            int n = memberList.size();
+            for (int i = 0; i < n; i++) {
+                for (int j = 0; j < n / 2; j++) {
+                    int first = (i + j) % n;
+                    int second = (i + n - j - 2) % n;
                     if (i % 2 == 0) {
                         matches.add(Match.from(competition, memberList.get(first), memberList.get(second), i, j));
-                        if (competitionForm.getOption().equals(CompetitionOption.DOUBLE_ROUND_ROBIN)) {
-                            matches.add(Match.from(competition, memberList.get(second), memberList.get(first), count + i, j));
+                        if (competition.getType().equals(CompetitionType.DOUBLE_ROUND_ROBIN)) {
+                            matches.add(Match.from(competition, memberList.get(second), memberList.get(first), n + i, j));
                         }
                     } else {
                         matches.add(Match.from(competition, memberList.get(second), memberList.get(first), i, j));
-                        if (competitionForm.getOption().equals(CompetitionOption.DOUBLE_ROUND_ROBIN)) {
-                            matches.add(Match.from(competition, memberList.get(first), memberList.get(second), count + i, j));
+                        if (competition.getType().equals(CompetitionType.DOUBLE_ROUND_ROBIN)) {
+                            matches.add(Match.from(competition, memberList.get(first), memberList.get(second), n + i, j));
                         }
                     }
                 }
                 if (fixed != null) {
-                    int j = count / 2;
-                    int last = (i + count - 1) % count;
+                    int j = n / 2;
+                    int last = (i + n - 1) % n;
                     if (i % 2 == 0) {
                         matches.add(Match.from(competition, memberList.get(last), fixed, i, j));
-                        if (competitionForm.getOption().equals(CompetitionOption.DOUBLE_ROUND_ROBIN)) {
-                            matches.add(Match.from(competition, fixed, memberList.get(last), count + i, j));
+                        if (competition.getType().equals(CompetitionType.DOUBLE_ROUND_ROBIN)) {
+                            matches.add(Match.from(competition, fixed, memberList.get(last), n + i, j));
                         }
                     } else {
                         matches.add(Match.from(competition, fixed, memberList.get(last), i, j));
-                        if (competitionForm.getOption().equals(CompetitionOption.DOUBLE_ROUND_ROBIN)) {
-                            matches.add(Match.from(competition, memberList.get(last), fixed, count + i, j));
+                        if (competition.getType().equals(CompetitionType.DOUBLE_ROUND_ROBIN)) {
+                            matches.add(Match.from(competition, memberList.get(last), fixed, n + i, j));
                         }
                     }
                 }
             }
         }
-        else if (competition.getType().equals(CompetitionType.TOURNAMENT)) {
-            int count = memberList.size();
-            int round = (int)Math.ceil(Math.log(count) / Math.log(2)); // 총 라운드
-            int number = 1;
-            int auto_win_num = (int)Math.pow(2, round) - count; // 부전승 인원 수
+        else if (competition.isTournament()) {
+            int n = memberList.size();
+            int round = (int)Math.ceil(Math.log(n) / Math.log(2)); // 총 라운드
+            int walkover = (int)Math.pow(2, round) - n; // 부전승 인원 수
 
             Set<Integer> set = new HashSet<>(); //
-            while (set.size() < auto_win_num) {
+            while (set.size() < walkover) {
                 double value = Math.random() * (int)Math.pow(2, round - 1);
                 set.add((int) value);
             }
             List<Integer> list = new ArrayList<>(set);
             Collections.sort(list);
 
+            int number = 1;
             for (int i = 0; i < round; i++) {
                 for (int j = 0; j < number; j++) {
-                    if (i == round - 1 && auto_win_num > 0 && list.contains(j)) {
+                    if (i == round - 1 && walkover > 0 && list.contains(j)) {
                         continue;
                     }
-                    if ((i == round - 1) || (i == round - 2 && auto_win_num > 0 && list.contains(j * 2))) {
+                    if ((i == round - 1) || (i == round - 2 && walkover > 0 && list.contains(j * 2))) {
                         matches.add(Match.from(competition, memberList.remove(0), memberList.remove(0), i, j));
                     } else {
                         matches.add(Match.from(competition, null, null, i, j));
@@ -111,7 +108,7 @@ public class CompetitionService {
         participateRepository.saveAll(participates);
         matchRepository.saveAll(matches);
         eventPublisher.publishEvent(new CompetitionCreatedEvent(competition,
-                "방 '" + competition.getRoom().getTitle() + "'에서 새로운 대회 '" + competition.getTitle() + "'가 생성되었습니다.", members));
+                "모임 '" + competition.getRoom().getTitle() + "'에서 새로운 대회 '" + competition.getTitle() + "'가 생성되었습니다.", members));
         return competition;
     }
 

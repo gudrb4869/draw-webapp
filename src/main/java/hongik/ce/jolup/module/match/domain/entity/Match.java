@@ -52,11 +52,9 @@ public class Match extends BaseTimeEntity {
     @Column(name = "match_number", nullable = false)
     private Integer number;
 
-    @Column
-    private Integer homeScore = 0;
+    private Integer homeScore;
 
-    @Column
-    private Integer awayScore = 0;
+    private Integer awayScore;
 
     private LocalDateTime startDateTime;
 
@@ -99,5 +97,19 @@ public class Match extends BaseTimeEntity {
         this.homeScore = matchForm.getHomeScore();
         this.awayScore = matchForm.getAwayScore();
         this.status = matchForm.getStatus();
+    }
+
+    public void reset() {
+        this.homeScore = null;
+        this.awayScore = null;
+        this.status = Status.BEFORE;
+    }
+
+    public void resetHome() {
+        this.home = null;
+    }
+
+    public void resetAway() {
+        this.away = null;
     }
 }

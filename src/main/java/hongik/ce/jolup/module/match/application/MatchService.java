@@ -30,20 +30,20 @@ public class MatchService {
         Participate away = competition.getParticipates().stream().filter(p -> p.getMember().equals(match.getAway())).findAny().orElseThrow(() -> new IllegalStateException("존재하지 않는 참가자입니다."));
 
         if (matchForm.getStatus().equals(Status.BEFORE)) {
-            matchForm.setHomeScore(0);
-            matchForm.setAwayScore(0);
+            matchForm.setHomeScore(null);
+            matchForm.setAwayScore(null);
         }
         if (match.getStatus().equals(Status.AFTER)) {
             if (match.getHomeScore() > match.getAwayScore()) {
                 home.subWin(1);
                 away.subLose(1);
-                if (competition.getType().equals(CompetitionType.TOURNAMENT) && matchForm.getHomeScore() <= matchForm.getAwayScore()) {
+                if (competition.isTournament() && matchForm.getHomeScore() <= matchForm.getAwayScore()) {
                     resetMatches(competition, match);
                 }
             } else if (match.getHomeScore() < match.getAwayScore()) {
                 home.subLose(1);
                 away.subWin(1);
-                if (competition.getType().equals(CompetitionType.TOURNAMENT) && matchForm.getHomeScore() >= matchForm.getAwayScore()) {
+                if (competition.isTournament() && matchForm.getHomeScore() >= matchForm.getAwayScore()) {
                     resetMatches(competition, match);
                 }
             } else {
@@ -60,13 +60,13 @@ public class MatchService {
             if (matchForm.getHomeScore() > matchForm.getAwayScore()) {
                 home.addWin(1);
                 away.addLose(1);
-                if (competition.getType().equals(CompetitionType.TOURNAMENT)) {
+                if (competition.isTournament()) {
                     setNextRoundMatch(competition, match, match.getHome());
                 }
             } else if (matchForm.getHomeScore() < matchForm.getAwayScore()) {
                 home.addLose(1);
                 away.addWin(1);
-                if (competition.getType().equals(CompetitionType.TOURNAMENT)) {
+                if (competition.isTournament()) {
                     setNextRoundMatch(competition, match, match.getAway());
                 }
             } else {
@@ -107,12 +107,11 @@ public class MatchService {
                 break;
             }
             if (cur.getNumber() % 2 == 0) {
-                next.updateHome(null);
+                next.resetHome();
             } else {
-                next.updateAway(null);
+                next.resetAway();
             }
-            next.updateStatus(Status.BEFORE);
-            next.updateScore(0, 0);
+            next.reset();
             cur = next;
         }
     }

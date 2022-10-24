@@ -2,7 +2,6 @@ package hongik.ce.jolup;
 
 import hongik.ce.jolup.module.competition.application.CompetitionService;
 import hongik.ce.jolup.module.competition.domain.entity.Competition;
-import hongik.ce.jolup.module.competition.domain.entity.CompetitionOption;
 import hongik.ce.jolup.module.competition.domain.entity.CompetitionType;
 import hongik.ce.jolup.module.competition.endpoint.form.CompetitionForm;
 import hongik.ce.jolup.module.member.application.MemberService;
@@ -113,17 +112,22 @@ public class InitDb {
              */
             List<Member> members = room.getJoins().stream().map(Join::getMember).collect(Collectors.toList());
             Competition competition1 = competitionService.createCompetition(members, room,
-                    createCompetitionForm(members, "zxcv", CompetitionType.LEAGUE, CompetitionOption.DOUBLE_ELIMINATION_TOURNAMENT, 0, 11));
+                    createCompetitionForm(members, "싱글 라운드 로빈(단판)", CompetitionType.SINGLE_ROUND_ROBIN, 0, 11));
 
             Competition competition2 = competitionService.createCompetition(members, room,
-                    createCompetitionForm(members, "asdf", CompetitionType.TOURNAMENT, CompetitionOption.SINGLE_ELIMINATION_TOURNAMENT, 20, 49));
+                    createCompetitionForm(members, "더블 라운드 로빈(홈 앤드 어웨이)", CompetitionType.DOUBLE_ROUND_ROBIN, 12, 23));
+
+            Competition competition3 = competitionService.createCompetition(members, room,
+                    createCompetitionForm(members, "싱글 엘리미네이션 토너먼트(패자부활전 X)", CompetitionType.SINGLE_ELIMINATION_TOURNAMENT, 24, 35));
+
+            Competition competition4 = competitionService.createCompetition(members, room,
+                    createCompetitionForm(members, "더블 엘리미네이션 토너먼트(패자부활전 O)", CompetitionType.DOUBLE_ELIMINATION_TOURNAMENT, 36, 47));
         }
 
-        private CompetitionForm createCompetitionForm(List<Member> members, String title, CompetitionType type, CompetitionOption option, int start, int end) {
+        private CompetitionForm createCompetitionForm(List<Member> members, String title, CompetitionType type, int start, int end) {
             CompetitionForm competitionForm = new CompetitionForm();
             competitionForm.setTitle(title);
             competitionForm.setType(type);
-            competitionForm.setOption(option);
             for (int i = start; i <= end; i++) {
                 competitionForm.getMembers().add(members.get(i).getId());
             }

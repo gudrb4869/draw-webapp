@@ -34,7 +34,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         web.ignoring()
                 .requestMatchers(PathRequest.toStaticResources().atCommonLocations())
                 .mvcMatchers("/node_modules/**", "/images/**", "/tournament.css")
-                .antMatchers("/h2-console/**");
+                .antMatchers("/h2-console/**", "/error");
     }
 
     @Override

@@ -58,7 +58,7 @@ public class RoomController {
             return "room/form";
         }
         Room room = roomService.createNewRoom(roomForm, member);
-        attributes.addFlashAttribute("message", "새로운 방을 만들었습니다.");
+        attributes.addFlashAttribute("message", "새로운 모임을 만들었습니다.");
         return "redirect:/rooms/" + room.getId();
     }
 
@@ -127,7 +127,7 @@ public class RoomController {
             return "room/invite-form";
         }
         roomService.inviteRoom(members, room, inviteForm);
-        attributes.addFlashAttribute("message", "친구들에게 방 초대 요청을 보냈습니다.");
+        attributes.addFlashAttribute("message", "친구들에게 모임 초대 요청을 보냈습니다.");
         return "redirect:/rooms/" + room.getId();
     }
 }

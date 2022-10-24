@@ -101,9 +101,10 @@ public class CompetitionController {
         model.addAttribute(room);
         model.addAttribute(member);
         model.addAttribute(competition);
-        String type = competition.getType().name();
-        model.addAttribute("type", type);
-        if (type.equals("LEAGUE")) {
+        List<Member> members = competition.getParticipates().stream().map(Participate::getMember).collect(Collectors.toList());
+        model.addAttribute("members", members);
+        log.info("members = {}", members);
+        if (competition.isLeague()) {
 //            LinkedHashMap<Integer, List<Match>> hashMap = new LinkedHashMap<>();
             Page<Match> matches = matchRepository.findMatchWithAllByCompetition(competition, pageable);
             log.info("총 element 수 : {}, 전체 page 수 : {}, 페이지에 표시할 element 수 : {}, 현재 페이지 index : {}, 현재 페이지의 element 수 : {}",
@@ -114,7 +115,7 @@ public class CompetitionController {
             }*/
 //            model.addAttribute("hashMap", hashMap);
             model.addAttribute("matches", matches);
-        } else if (type.equals("TOURNAMENT")) {
+        } else if (competition.isTournament()) {
             LinkedHashMap<Integer, LinkedHashMap<Integer, Match>> matches = new LinkedHashMap<>();
             matchRepository.findMatchWithAllByCompetition(competition)
                     .forEach(match -> matches.computeIfAbsent(match.getRound(), k -> new LinkedHashMap<>()).put(match.getNumber(), match));
@@ -128,6 +129,7 @@ public class CompetitionController {
 
         Room room = roomService.getRoom(roomId);
         Competition competition = competitionService.getCompetition(room, competitionId);
+        List<Participate> participates = competition.getParticipates();
         List<Participate> ranking = participateRepository.findLeagueRankingByCompetition(competition);
         model.addAttribute(room);
         model.addAttribute(member);

@@ -13,32 +13,25 @@
                 <p class="text-danger" th:each="err : ${#fields.globalErrors()}" th:text="${err}">전체 오류 메시지</p>
             </div>
             <div class="mb-3">
-                <label th:for="title">대회명</label>
-                <input type="text" th:field="*{title}" placeholder="대회명을 입력하세요"
+                <label th:for="title">대회 이름</label>
+                <input type="text" th:field="*{title}" placeholder="대회 이름을 입력하세요"
                        class="form-control" th:errorclass="is-invalid" autofocus="autofocus">
-                <p th:errors="*{title}" class="text-danger">대회명 오류</p>
+                <p th:errors="*{title}" class="text-danger">대회 이름 오류</p>
             </div>
 
             <div class="mb-3">
-                <div class="fw-bold mb-1">대회 방식</div>
-                <div th:each="type : ${T(hongik.ce.jolup.module.competition.domain.entity.CompetitionType).values()}" class="form-check form-check-inline">
-                    <input type="radio" th:field="*{type}" th:value="${type.name()}" class="form-check-input">
-                    <label th:for="${#ids.prev('type')}" th:text="${type.description}" class="form-check-label"></label>
-                </div>
-                <p th:errors="*{type}" class="text-danger">대회방식 오류</p>
+                <label th:for="type">대회 방식</label>
+                <select th:field="*{type}" class="form-select" th:errorclass="border-danger">
+                    <option th:value="SINGLE_ROUND_ROBIN">리그(단판)</option>
+                    <option th:value="DOUBLE_ROUND_ROBIN">리그(홈 & 어웨이)</option>
+                    <option th:value="SINGLE_ELIMINATION_TOURNAMENT">토너먼트</option>
+                </select>
+                <p th:errors="*{type}" class="text-danger">대회 방식 오류</p>
             </div>
 
-            <div class="mb-3">
-                <div class="fw-bold mb-1">옵션</div>
-                <div th:each="option : ${T(hongik.ce.jolup.module.competition.domain.entity.CompetitionOption).values()}" class="form-check form-check-inline">
-                    <input type="radio" th:field="*{option}" th:value="${option.name()}" class="form-check-input">
-                    <label th:for="${#ids.prev('option')}" th:text="${option.description}" class="form-check-label"></label>
-                </div>
-                <p th:errors="*{option}" class="text-danger">대회방식 오류</p>
-            </div>
 
             <div class="mb-3">
-                <div class="fw-bold mb-1">대회 참가자 선택</div>
+                <div class="fw-bold mb-1">참가자 선택</div>
                 <div th:each="member : ${members}" class="form-check form-check-inline">
                     <input type="checkbox" th:field="*{members}" th:value="${member.id}"
                            class="form-check-input">
@@ -48,7 +41,7 @@
                         <b th:text="${member.name}">이름</b>
                     </label>
                 </div>
-                <p th:errors="*{members}" class="text-danger">대회방식 오류</p>
+                <p th:errors="*{members}" class="text-danger">참가자 오류</p>
             </div>
             <div class="row">
                 <div class="col">
