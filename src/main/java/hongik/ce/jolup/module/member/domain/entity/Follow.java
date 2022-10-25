@@ -15,12 +15,10 @@ public class Follow extends BaseTimeEntity {
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne
-    @JoinColumn(name = "following")
+    @ManyToOne(fetch = FetchType.LAZY)
     private Member following;
 
-    @ManyToOne
-    @JoinColumn(name = "follower")
+    @ManyToOne(fetch = FetchType.LAZY)
     private Member follower;
 
     public static Follow from(Member following, Member follower) {

@@ -18,10 +18,10 @@ public class MatchForm {
     private String home;
     @Min(0)
     @Max(100)
-    private Integer homeScore;
+    private Integer homeScore = 0;
     @Min(0)
     @Max(100)
-    private Integer awayScore;
+    private Integer awayScore = 0;
     private String away;
     @NotNull
     private Status status;
@@ -34,8 +34,12 @@ public class MatchForm {
         if (match.getHome() != null) {
             matchForm.home = match.getHome().getName();
         }
-        matchForm.homeScore = match.getHomeScore();
-        matchForm.awayScore = match.getAwayScore();
+        if (match.getHomeScore() != null) {
+            matchForm.homeScore = match.getHomeScore();
+        }
+        if (match.getAwayScore() != null) {
+            matchForm.awayScore = match.getAwayScore();
+        }
         if (match.getAway() != null) {
             matchForm.away = match.getAway().getName();
         }

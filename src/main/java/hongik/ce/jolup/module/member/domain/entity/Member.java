@@ -21,7 +21,6 @@ import java.util.*;
 public class Member extends BaseTimeEntity {
 
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "member_id")
     private Long id;
 
     @Column(unique = true, nullable = false, updatable = false)

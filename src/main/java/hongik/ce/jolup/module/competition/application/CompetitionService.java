@@ -82,23 +82,40 @@ public class CompetitionService {
             int round = (int)Math.ceil(Math.log(n) / Math.log(2)); // 총 라운드
             int walkover = (int)Math.pow(2, round) - n; // 부전승 인원 수
 
-            Set<Integer> set = new HashSet<>(); //
-            while (set.size() < walkover) {
-                double value = Math.random() * (int)Math.pow(2, round - 1);
-                set.add((int) value);
+            List<Member> home = new ArrayList<>();
+            for (int i = 0; i < (int)Math.pow(2, round - 1); i++) {
+                home.add(memberList.remove(0));
             }
-            List<Integer> list = new ArrayList<>(set);
-            Collections.sort(list);
+            List<Member> away = new ArrayList<>();
+            for (int i = 0; i < n - (int)Math.pow(2, round - 1); i++) {
+                away.add(memberList.remove(0));
+            }
+            for (int i = 0; i < walkover; i++) {
+                away.add(null);
+            }
+            Collections.shuffle(home);
+            Collections.shuffle(away);
 
             int number = 1;
             for (int i = 0; i < round; i++) {
                 for (int j = 0; j < number; j++) {
-                    if (i == round - 1 && walkover > 0 && list.contains(j)) {
-                        continue;
+                    if (i == round - 1) {
+                        Match match = Match.from(competition, home.get(j), away.get(j), i, j);
+                        matches.add(match);
+                        if (away.get(j) == null) {
+                            match.close();
+                            Integer nextMatchRound = i - 1;
+                            Integer nextMatchNumber = j / 2;
+                            Match nextMatch = matches.stream().filter(m -> nextMatchRound.equals(m.getRound()) && nextMatchNumber.equals(m.getNumber()))
+                                    .findAny().orElseThrow(() -> new IllegalStateException("다음 라운드 경기를 찾을 수 없습니다."));
+                            if (j % 2 == 0) {
+                                nextMatch.updateHome(home.get(j));
+                            } else {
+                                nextMatch.updateAway(home.get(j));
+                            }
+                        }
                     }
-                    if ((i == round - 1) || (i == round - 2 && walkover > 0 && list.contains(j * 2))) {
-                        matches.add(Match.from(competition, memberList.remove(0), memberList.remove(0), i, j));
-                    } else {
+                    else {
                         matches.add(Match.from(competition, null, null, i, j));
                     }
                 }

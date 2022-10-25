@@ -16,12 +16,10 @@ public class Participate extends BaseTimeEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne
-    @JoinColumn(name = "member_id")
+    @ManyToOne(fetch = FetchType.LAZY)
     private Member member;
 
-    @ManyToOne
-    @JoinColumn(name = "competition_id")
+    @ManyToOne(fetch = FetchType.LAZY)
     private Competition competition;
 
     @Column(nullable = false)

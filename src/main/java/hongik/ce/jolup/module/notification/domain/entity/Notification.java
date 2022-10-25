@@ -21,7 +21,7 @@ public class Notification extends BaseTimeEntity {
 
     private boolean checked;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     private Member member;
 
     public static Notification from(String link, boolean checked, String message, Member member) {

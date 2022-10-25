@@ -103,7 +103,6 @@ public class CompetitionController {
         model.addAttribute(competition);
         List<Member> members = competition.getParticipates().stream().map(Participate::getMember).collect(Collectors.toList());
         model.addAttribute("members", members);
-        log.info("members = {}", members);
         if (competition.isLeague()) {
 //            LinkedHashMap<Integer, List<Match>> hashMap = new LinkedHashMap<>();
             Page<Match> matches = matchRepository.findMatchWithAllByCompetition(competition, pageable);
@@ -116,10 +115,15 @@ public class CompetitionController {
 //            model.addAttribute("hashMap", hashMap);
             model.addAttribute("matches", matches);
         } else if (competition.isTournament()) {
-            LinkedHashMap<Integer, LinkedHashMap<Integer, Match>> matches = new LinkedHashMap<>();
+            LinkedHashMap<Integer, List<Match>> matches = new LinkedHashMap<>();
             matchRepository.findMatchWithAllByCompetition(competition)
-                    .forEach(match -> matches.computeIfAbsent(match.getRound(), k -> new LinkedHashMap<>()).put(match.getNumber(), match));
+                    .forEach(match -> matches.computeIfAbsent(match.getRound(), k -> new ArrayList<>()).add(match));
+            for (Integer key : matches.keySet()) {
+                matches.get(key).sort(Comparator.comparing(Match::getNumber));
+            }
             model.addAttribute("matches", matches);
+            model.addAttribute("round", Collections.max(matches.keySet()));
+            log.info("matches = {}", matches);
         }
         return "competition/view";
     }

@@ -30,8 +30,8 @@ public class MatchService {
         Participate away = competition.getParticipates().stream().filter(p -> p.getMember().equals(match.getAway())).findAny().orElseThrow(() -> new IllegalStateException("존재하지 않는 참가자입니다."));
 
         if (matchForm.getStatus().equals(Status.BEFORE)) {
-            matchForm.setHomeScore(null);
-            matchForm.setAwayScore(null);
+            matchForm.setHomeScore(0);
+            matchForm.setAwayScore(0);
         }
         if (match.getStatus().equals(Status.AFTER)) {
             if (match.getHomeScore() > match.getAwayScore()) {
@@ -81,6 +81,10 @@ public class MatchService {
 
         List<Member> members = competition.getParticipates().stream().map(Participate::getMember).collect(Collectors.toList());
         publisher.publishEvent(new MatchUpdatedEvent(match, "대회 '" + match.getCompetition().getTitle() + "'에서 경기 결과가 수정되었습니다.", members));
+        if (matchForm.getStatus().equals(Status.BEFORE)) {
+            matchForm.setHomeScore(null);
+            matchForm.setAwayScore(null);
+        }
         match.update(matchForm);
     }
 
@@ -125,6 +129,9 @@ public class MatchService {
     private void check(Competition competition, Match match) {
         if (match == null || !match.getCompetition().equals(competition)) {
             throw new IllegalArgumentException("존재하지 않는 경기입니다.");
+        }
+        if (match.isClosed()) {
+            throw new IllegalArgumentException("접근할수 없는 경기입니다.");
         }
     }
 }

@@ -217,7 +217,7 @@
         <div class="col-4 text-end justify-content-end">
             <!--모임을 공개하지 않았을 경우-->
             <!--<span th:if="${!room.access}" class="d-inline-block" tabindex="0" data-bs-toggle="tooltip"
-                  data-placement="bottom" title="공개 준비중입니다.">
+                  data-bs-placement="bottom" title="공개 준비중입니다.">
                 <button class="btn btn-primary btn-sm" style="pointer-events: none;" type="button"
                         disabled>DRAFT</button>
             </span>-->
@@ -381,12 +381,12 @@
             <div style="line-height: 1.4";>
                 <div style="font-weight: normal;">
                     <div style="font-size: 14px; color: #70757a; white-space: nowrap; vertical-align: middle;">
-                        <span th:if="${match == null}" class="text-dark">부전승</span>
-                        <span th:if="${match != null and match.startDateTime == null}" class="text-warning">시간 미정</span>
+                        <span th:if="${match.closed}" class="text-dark">부전승</span>
+                        <span th:if="${match?.startDateTime == null}" class="text-warning">시간 미정</span>
                         <span th:if="${match?.startDateTime != null}" class="day text-dark" th:text="${match?.startDateTime}">경기 날짜</span>
                     </div>
-                    <div style="font-size: 14px; color: #70757a; white-space: nowrap; vertical-align: middle;">
-                        <span th:if="${match?.startDateTime != null}" class="time text-dark" th:text="${match?.startDateTime}">경기 시간</span>
+                    <div style="font-size: 14px; color: #70757a; white-space: nowrap; vertical-align: middle;" th:if="${match?.startDateTime != null}">
+                        <span class="time text-dark" th:text="${match?.startDateTime}">경기 시간</span>
                     </div>
                 </div>
             </div>
@@ -408,7 +408,7 @@
                 </div>
             </div>
             <div style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
-                <span tabindex="0" data-bs-toggle="tooltip" data-placement="bottom"
+                <span tabindex="0" data-bs-toggle="tooltip" data-bs-placement="bottom"
                       th:title="${match?.home?.name}" th:text="${match?.home?.name}"></span>
                 <span></span>
             </div>
@@ -426,7 +426,7 @@
                 </div>
             </div>
             <div style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
-                <span tabindex="0" data-bs-toggle="tooltip" data-placement="bottom"
+                <span tabindex="0" data-bs-toggle="tooltip" data-bs-placement="bottom"
                       th:title="${match?.away?.name}" th:text="${match?.away?.name}"></span>
                 <span></span>
             </div>

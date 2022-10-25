@@ -30,16 +30,13 @@ public class Match extends BaseTimeEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne
-    @JoinColumn(name = "competition_id")
+    @ManyToOne(fetch = FetchType.LAZY)
     private Competition competition;
 
-    @ManyToOne
-    @JoinColumn(name = "home_id")
+    @ManyToOne(fetch = FetchType.LAZY)
     private Member home;
 
-    @ManyToOne
-    @JoinColumn(name = "away_id")
+    @ManyToOne(fetch = FetchType.LAZY)
     private Member away;
 
     @Enumerated(EnumType.STRING)
@@ -58,6 +55,8 @@ public class Match extends BaseTimeEntity {
 
     private LocalDateTime startDateTime;
 
+    private boolean closed;
+
     public static Match from(Competition competition, Member home, Member away, int round, int number) {
         Match match = new Match();
         match.competition = competition;
@@ -74,23 +73,6 @@ public class Match extends BaseTimeEntity {
 
     public void updateAway(Member away) {
         this.away = away;
-    }
-
-    public void updateStatus(Status status) {
-        this.status = status;
-    }
-
-    public void updateRound(Integer round) {
-        this.round = round;
-    }
-
-    public void updateNumber(Integer number) {
-        this.number = number;
-    }
-
-    public void updateScore(Integer homeScore, Integer awayScore) {
-        this.homeScore = homeScore;
-        this.awayScore = awayScore;
     }
 
     public void update(MatchForm matchForm) {
@@ -111,5 +93,9 @@ public class Match extends BaseTimeEntity {
 
     public void resetAway() {
         this.away = null;
+    }
+
+    public void close() {
+        this.closed = true;
     }
 }
