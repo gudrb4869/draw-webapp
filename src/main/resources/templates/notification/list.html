@@ -19,6 +19,11 @@
                     <a href="#" th:if="${hasNotification}" th:href="@{/notifications/all-read}" class="text-decoration-none">
                         <small class="text-dark">모두 읽음 처리</small>
                     </a>
+                    <!--<form class="row" th:action="@{/notifications}" th:method="delete">
+                        <button type="submit" class="" aria-describedby="deleteHelp">
+                            읽은 알림 삭제
+                        </button>
+                    </form>-->
                 </div>
                 <div th:replace="fragments.html :: notification-list (notifications=${notificationList})"></div>
             </div>

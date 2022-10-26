@@ -2,7 +2,7 @@ package hongik.ce.jolup.module.match.domain.entity;
 
 import hongik.ce.jolup.BaseTimeEntity;
 import hongik.ce.jolup.module.competition.domain.entity.Competition;
-import hongik.ce.jolup.module.match.endpoint.form.MatchForm;
+import hongik.ce.jolup.module.match.endpoint.form.ScoreForm;
 import hongik.ce.jolup.module.member.domain.entity.Member;
 import lombok.*;
 
@@ -39,9 +39,7 @@ public class Match extends BaseTimeEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     private Member away;
 
-    @Enumerated(EnumType.STRING)
-    @Column(nullable = false)
-    private Status status = Status.BEFORE;
+    private boolean status;
 
     @Column(name = "match_round", nullable = false)
     private Integer round;
@@ -49,9 +47,9 @@ public class Match extends BaseTimeEntity {
     @Column(name = "match_number", nullable = false)
     private Integer number;
 
-    private Integer homeScore;
+    private Integer homeScore = 0;
 
-    private Integer awayScore;
+    private Integer awayScore = 0;
 
     private LocalDateTime startDateTime;
 
@@ -75,24 +73,20 @@ public class Match extends BaseTimeEntity {
         this.away = away;
     }
 
-    public void update(MatchForm matchForm) {
-        this.homeScore = matchForm.getHomeScore();
-        this.awayScore = matchForm.getAwayScore();
-        this.status = matchForm.getStatus();
+    public void updateScoreFrom(ScoreForm scoreForm) {
+        this.homeScore = scoreForm.getHomeScore();
+        this.awayScore = scoreForm.getAwayScore();
+        this.status = scoreForm.isStatus();
     }
 
     public void reset() {
-        this.homeScore = null;
-        this.awayScore = null;
-        this.status = Status.BEFORE;
+        this.homeScore = 0;
+        this.awayScore = 0;
+        this.status = false;
     }
 
-    public void resetHome() {
-        this.home = null;
-    }
-
-    public void resetAway() {
-        this.away = null;
+    public void open() {
+        this.closed = false;
     }
 
     public void close() {

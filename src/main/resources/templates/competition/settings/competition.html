@@ -18,7 +18,7 @@
                         <svg th:replace="fragments.html::symbol-warning"/>
                         대회 이름을 수정합니다.<br/>
                     </div>
-                    <div class="form-group">
+                    <div class="mb-3">
                         <label th:for="title">대회 이름</label>
                         <input type="text" name="newTitle" th:value="${competition.title}" class="form-control"
                                placeholder="대회 이름을 입력하세요" aria-describedby="titleHelp" required maxlength="50">
@@ -29,7 +29,7 @@
                         <small class="form-text text-danger" th:if="${competitionTitleError}"
                                th:text="${competitionTitleError}">Title Error</small>
                     </div>
-                    <div class="form-group mt-3">
+                    <div class="mb-3">
                         <button class="btn btn-outline-warning" type="submit" aria-describedby="submitHelp">대회명
                             수정
                         </button>

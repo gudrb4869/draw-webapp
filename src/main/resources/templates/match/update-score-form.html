@@ -1,0 +1,63 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="fragments.html :: head"></head>
+<body class="d-flex flex-column min-vh-100 bg-light">
+<div th:replace="fragments.html :: navigation-bar"></div>
+<div class="container">
+    <div class="py-5 text-center">
+        <h1>경기 결과 수정</h1>
+    </div>
+    <div class="row justify-content-center">
+        <form class="need-validation col-sm-10" th:object="${scoreForm}"
+              th:action method="post" novalidate>
+            <div class="row">
+                <div class="col-6 col-sm-3 mb-3">
+                    <label th:for="home">홈</label>
+                    <input type="text" th:field="*{home}" readonly
+                           class="form-control" th:errorclass="is-invalid">
+                    <p th:errors="*{home}" class="text-danger">홈 오류</p>
+                </div>
+                <div class="col-6 col-sm-3 mb-3">
+                    <label th:for="homeScore">홈팀 스코어</label>
+                    <input type="number" th:field="*{homeScore}" class="form-control"
+                           th:errorclass="is-invalid" aria-describedby="homeScoreHelp">
+                    <small id="homeScoreHelp" class="form-text text-muted">
+                        홈팀 스코어를 입력하세요. 0이상 100이하의 값이어야 합니다.
+                    </small>
+                    <small class="invalid-feedback">홈팀 스코어를 입력하세요.</small>
+                    <small class="form-text text-danger" th:errors="*{homeScore}">Error</small>
+                </div>
+                <div class="col-6 col-sm-3 mb-3">
+                    <label th:for="awayScore">어웨이팀 스코어</label>
+                    <input type="number" th:field="*{awayScore}" class="form-control"
+                           th:errorclass="is-invalid" aria-describedby="awayScoreHelp">
+                    <small id="awayScoreHelp" class="form-text text-muted">
+                        어웨이팀 스코어를 입력하세요. 0이상 100이하의 값이어야 합니다.
+                    </small>
+                    <small class="invalid-feedback">어웨이팀 스코어를 입력하세요.</small>
+                    <small class="form-text text-danger" th:errors="*{awayScore}">Error</small>
+                </div>
+                <div class="col-6 col-sm-3 mb-3">
+                    <label th:for="away">어웨이</label>
+                    <input type="text" th:field="*{away}" readonly
+                           class="form-control" th:errorclass="is-invalid">
+                    <p th:errors="*{away}" class="text-danger">어웨이 오류</p>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col">
+                    <button class="btn btn-outline-dark" type="submit" name="status" value="false">경기 결과 초기화</button>
+                    <button class="btn btn-outline-dark" type="submit" name="status" value="true">경기 결과 수정</button>
+                    <a class="btn btn-outline-dark" th:href="@{|/rooms/${roomId}/competitions/${competitionId}/matches/${matchId}|}">
+                        취소
+                    </a>
+                </div>
+            </div>
+        </form>
+    </div>
+</div> <!-- /container -->
+<div th:replace="fragments.html :: footer"></div>
+<div th:replace="fragments.html :: date-time"></div>
+<script th:replace="fragments.html :: form-validation"></script>
+</body>
+</html>

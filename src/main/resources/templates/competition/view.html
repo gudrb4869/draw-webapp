@@ -90,7 +90,7 @@
                                         <span th:text="${match?.home?.name}"></span>
                                     </td>
                                     <td class="tournament-bracket__score">
-                                        <span class="tournament-bracket__number" th:text="${match?.homeScore} ?: '-'">4</span>
+                                        <span class="tournament-bracket__number" th:text="${match.status} ? ${match?.homeScore} : '-'">4</span>
                                     </td>
                                 </tr>
                                 <tr class="tournament-bracket__team" th:classappend="${match.homeScore < match.awayScore} ? 'tournament-bracket__team--winner'"
@@ -103,7 +103,7 @@
                                         <span th:text="${match?.away?.name}"></span>
                                     </td>
                                     <td class="tournament-bracket__score">
-                                        <span class="tournament-bracket__number" th:text="${match?.awayScore} ?: '-'">1</span>
+                                        <span class="tournament-bracket__number" th:text="${match.status} ? ${match?.awayScore} : '-'">1</span>
                                     </td>
                                 </tr>
                                 </tbody>

@@ -3,7 +3,8 @@
       xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 <head th:fragment="head">
     <!-- Required meta tags -->
-    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<!--    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />-->
+    <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Project</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -361,81 +362,46 @@
     });
 </script>
 
-<table th:fragment="match" style="width: 100%; table-layout: fixed; border-spacing: 0;">
-    <tbody>
+<table th:fragment="match" class="tournament-bracket__table">
+    <caption class="tournament-bracket__caption">
+        <span th:if="${match.closed}">부전승</span>
+        <span th:if="${!match.closed and match.startDateTime == null}" class="text-warning">시간 미정</span>
+        <span th:if="${!match.closed and match.startDateTime != null}" class="date-time text-dark" th:text="${match.startDateTime}">경기 시간</span>
+    </caption>
+    <thead class="sr-only">
     <tr>
-        <td style="width: 64px; padding-left:24px;"></td>
-        <td style="width: 64px;"></td>
-        <td style="padding-left: 6px; width: 6px;"></td>
-        <td style="width: 1px; padding: 0"></td>
-        <td style="width: 104px;"></td>
-<!--        <td style="padding: 0"></td>-->
+        <th>Image</th>
+        <th>Team</th>
+        <th>Score</th>
     </tr>
-    <tr>
-        <td style="color: #70757a;" colspan="5"></td>
-    </tr>
-    <tr>
-        <td colspan="3"></td>
-        <td style="background-color: #ecedef" rowspan="5"></td>
-        <td rowspan="5" style="font-size: 14px; color: #202124; text-align: center; padding: 0; position: relative;">
-            <div style="line-height: 1.4";>
-                <div style="font-weight: normal;">
-                    <div style="font-size: 14px; color: #70757a; white-space: nowrap; vertical-align: middle;">
-                        <span th:if="${match.closed}" class="text-dark">부전승</span>
-                        <span th:if="${match?.startDateTime == null}" class="text-warning">시간 미정</span>
-                        <span th:if="${match?.startDateTime != null}" class="day text-dark" th:text="${match?.startDateTime}">경기 날짜</span>
-                    </div>
-                    <div style="font-size: 14px; color: #70757a; white-space: nowrap; vertical-align: middle;" th:if="${match?.startDateTime != null}">
-                        <span class="time text-dark" th:text="${match?.startDateTime}">경기 시간</span>
-                    </div>
-                </div>
-            </div>
-        </td>
-        <td></td>
-    </tr>
-    <tr>
-        <td></td>
-    </tr>
-    <tr style="height: 32px;">
-        <td style="width: 64px; padding-left: 24px;">
+    </thead>
+    <tbody class="tournament-bracket__content">
+    <tr class="tournament-bracket__team" th:classappend="${match.homeScore > match.awayScore} ? 'tournament-bracket__team--winner'"
+        tabindex="0" data-bs-toggle="tooltip" data-bs-placement="top" th:title="${match?.home?.name}">
+        <td class="tournament-bracket__country">
             <svg th:if="${#strings.isEmpty(match?.home?.image)}" th:data-jdenticon-value="${match?.home?.name}" width="24" height="24" class="rounded border bg-light"></svg>
             <img th:if="${!#strings.isEmpty(match?.home?.image)}" th:src="${match?.home?.image}" width="24" height="24" class="rounded border"/>
         </td>
-        <td style="padding: 0; font-size: 14px; line-height: 20px; color: #202124;">
-            <div style="padding-left: 8px; text-align: right; float: right;">
-                <div style="line-height: 20px;">
-                    <span th:text="${match?.homeScore}">1</span>
-                </div>
-            </div>
-            <div style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
-                <span tabindex="0" data-bs-toggle="tooltip" data-bs-placement="bottom"
-                      th:title="${match?.home?.name}" th:text="${match?.home?.name}"></span>
-                <span></span>
-            </div>
+        <td class="tournament-bracket__code">
+            <span th:text="${match?.home?.name}"></span>
+        </td>
+        <td class="tournament-bracket__score">
+            <span class="tournament-bracket__number" th:text="${match?.homeScore} ?: '-'">4</span>
         </td>
     </tr>
-    <tr style="height: 32px;">
-        <td style="width: 64px; padding-left: 24px;">
+    <tr class="tournament-bracket__team" th:classappend="${match.homeScore < match.awayScore} ? 'tournament-bracket__team--winner'"
+        tabindex="0" data-bs-toggle="tooltip" data-bs-placement="bottom" th:title="${match?.away?.name}">
+        <td class="tournament-bracket__country">
             <svg th:if="${#strings.isEmpty(match?.away?.image)}" th:data-jdenticon-value="${match?.away?.name}" width="24" height="24" class="rounded border bg-light"></svg>
             <img th:if="${!#strings.isEmpty(match?.away?.image)}" th:src="${match?.away?.image}" width="24" height="24" class="rounded border"/>
         </td>
-        <td style="padding: 0; font-size: 14px; line-height: 20px; color: #202124;">
-            <div style="padding-left: 8px; text-align: right; float: right;">
-                <div style="line-height: 20px;">
-                    <span th:text="${match?.awayScore}">1</span>
-                </div>
-            </div>
-            <div style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
-                <span tabindex="0" data-bs-toggle="tooltip" data-bs-placement="bottom"
-                      th:title="${match?.away?.name}" th:text="${match?.away?.name}"></span>
-                <span></span>
-            </div>
+        <td class="tournament-bracket__code">
+            <span th:text="${match?.away?.name}"></span>
+        </td>
+        <td class="tournament-bracket__score">
+            <span class="tournament-bracket__number" th:text="${match?.awayScore} ?: '-'">1</span>
         </td>
     </tr>
-    <tr>
-        <td></td>
-    </tr>
-    <tr></tr>
     </tbody>
 </table>
 

@@ -24,6 +24,7 @@ public class NotificationController {
     public String getNotifications(@CurrentMember Member member, Model model) {
         List<Notification> notificationList = notificationRepository.findByMemberOrderByCreatedDateDesc(member);
         long numberOfNotChecked = notificationRepository.countByMemberAndChecked(member, false);
+        model.addAttribute(member);
         model.addAttribute("notificationList", notificationList);
         model.addAttribute("numberOfNotChecked", numberOfNotChecked);
         return "notification/list";
@@ -44,10 +45,10 @@ public class NotificationController {
         return "redirect:/notifications";
     }
 
-    @DeleteMapping("/notifications/{id}")
-    public String deleteNotifications(@CurrentMember Member member, @PathVariable Long id, RedirectAttributes attributes) {
+    @DeleteMapping("/notifications")
+    public String deleteNotifications(@CurrentMember Member member, RedirectAttributes attributes) {
         notificationService.deleteByMemberAndChecked(member, true);
-        attributes.addFlashAttribute("message", "알림을 삭제했습니다.");
+        attributes.addFlashAttribute("message", "읽은 알림을 모두 삭제했습니다.");
         return "redirect:/notifications";
     }
 

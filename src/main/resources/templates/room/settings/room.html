@@ -23,7 +23,7 @@
                         모임을 공개하시려면 버튼을 클릭하세요.<br/>
                         모임을 공개하시면 외부 사용자들이 모임에 조회할 수 있습니다.
                     </div>
-                    <div class="form-group">
+                    <div class="mb-3">
                         <button class="btn btn-outline-primary" type="submit" aria-describedby="submitHelp">모임 공개
                         </button>
                     </div>
@@ -36,7 +36,7 @@
                         모임을 비공개하시려면 버튼을 클릭하세요.<br/>
                         모임을 비공개하시면 외부 사용자들이 조회할 수 없습니다.
                     </div>
-                    <div class="form-group">
+                    <div class="mb-3">
                         <button class="btn btn-outline-primary" type="submit" aria-describedby="submitHelp">모임 비공개
                         </button>
                     </div>
@@ -137,7 +137,7 @@
                         <svg th:replace="fragments.html::symbol-warning"/>
                         모임 이름을 수정합니다.<br/>
                     </div>
-                    <div class="form-group">
+                    <div class="mb-3">
                         <label th:for="title">모임 이름</label>
                         <input type="text" name="newTitle" th:value="${room.title}" class="form-control"
                                placeholder="모임 이름" aria-describedby="titleHelp" required maxlength="50">
@@ -148,7 +148,7 @@
                         <small class="form-text text-danger" th:if="${roomTitleError}"
                                th:text="${roomTitleError}">Title Error</small>
                     </div>
-                    <div class="form-group mt-3">
+                    <div class="mb-3 mt-3">
                         <button class="btn btn-outline-warning" type="submit" aria-describedby="submitHelp">모임 이름 수정
                         </button>
                     </div>

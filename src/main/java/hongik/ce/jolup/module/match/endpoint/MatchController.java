@@ -3,8 +3,7 @@ package hongik.ce.jolup.module.match.endpoint;
 import hongik.ce.jolup.module.competition.domain.entity.Competition;
 import hongik.ce.jolup.module.match.application.MatchService;
 import hongik.ce.jolup.module.competition.application.CompetitionService;
-import hongik.ce.jolup.module.match.domain.entity.Status;
-import hongik.ce.jolup.module.match.endpoint.form.MatchForm;
+import hongik.ce.jolup.module.match.endpoint.form.ScoreForm;
 import hongik.ce.jolup.module.member.support.CurrentMember;
 import hongik.ce.jolup.module.room.application.RoomService;
 import hongik.ce.jolup.module.match.domain.entity.Match;
@@ -43,8 +42,8 @@ public class MatchController {
         return "match/view";
     }
 
-    @GetMapping("/{matchId}/update")
-    public String updateForm(@PathVariable Long roomId, @PathVariable Long competitionId, @PathVariable Long matchId,
+    @GetMapping("/{matchId}/update-score")
+    public String updateScoreForm(@PathVariable Long roomId, @PathVariable Long competitionId, @PathVariable Long matchId,
                              @CurrentMember Member member, Model model) {
         Room room = roomService.getRoomToUpdate(member, roomId);
         Competition competition = competitionService.getCompetition(room, competitionId);
@@ -53,27 +52,26 @@ public class MatchController {
         model.addAttribute(room);
         model.addAttribute(competition);
         model.addAttribute(match);
-        model.addAttribute(MatchForm.from(match));
-        return "match/update-form";
+        model.addAttribute(ScoreForm.from(match));
+        return "match/update-score-form";
     }
 
-    @PostMapping("/{matchId}/update")
-    public String update(@PathVariable Long roomId, @PathVariable Long competitionId, @PathVariable Long matchId, @CurrentMember Member member,
-                         @Valid MatchForm matchForm, BindingResult bindingResult, Model model, RedirectAttributes attributes) {
+    @PostMapping("/{matchId}/update-score")
+    public String updateScore(@PathVariable Long roomId, @PathVariable Long competitionId, @PathVariable Long matchId, @CurrentMember Member member,
+                              @Valid ScoreForm scoreForm, BindingResult bindingResult, Model model, RedirectAttributes attributes) {
 
         Room room = roomService.getRoomToUpdate(member, roomId);
         Competition competition = competitionService.getCompetition(room, competitionId);
         Match match = matchService.getMatch(competition, matchId);
-
-        log.info("matchForm = {}", matchForm);
+        log.info("matchForm = {}", scoreForm);
         if (bindingResult.hasErrors()) {
             model.addAttribute(member);
             model.addAttribute(room);
             model.addAttribute(competition);
             model.addAttribute(match);
-            return "match/update-form";
+            return "match/update-score-form";
         }
-        matchService.updateMatch(competition, match, matchForm);
+        matchService.updateScore(competition, match, scoreForm);
         attributes.addFlashAttribute("message", "경기 결과를 수정했습니다.");
         return "redirect:/rooms/" + room.getId() + "/competitions/" + competition.getId() + "/matches/" + match.getId();
     }
