@@ -68,11 +68,13 @@
                         <div class="tournament-bracket__match" tabindex="0">
                             <table class="tournament-bracket__table">
                                 <caption class="tournament-bracket__caption">
-                                    <span th:if="${match.startDateTime == null}" class="text-warning">시간 미정</span>
-                                    <span th:if="${match.startDateTime != null}" class="date-time text-dark" th:text="${match.startDateTime}">경기 시간</span>
+                                    <span th:if="${match.closed}">부전승</span>
+                                    <span th:if="${!match.closed and match.startDateTime == null}" class="text-warning">시간 미정</span>
+                                    <span th:if="${!match.closed and match.startDateTime != null}" class="date-time text-dark" th:text="${match.startDateTime}">경기 시간</span>
                                 </caption>
                                 <thead class="sr-only">
                                 <tr>
+                                    <th>Image</th>
                                     <th>Team</th>
                                     <th>Score</th>
                                 </tr>
@@ -83,10 +85,12 @@
                                     <td class="tournament-bracket__country">
                                         <svg th:if="${#strings.isEmpty(match?.home?.image)}" th:data-jdenticon-value="${match?.home?.name}" width="24" height="24" class="rounded border bg-light"></svg>
                                         <img th:if="${!#strings.isEmpty(match?.home?.image)}" th:src="${match?.home?.image}" width="24" height="24" class="rounded border"/>
-                                        <span class="tournament-bracket__code" th:text="${match?.home?.name}"></span>
+                                    </td>
+                                    <td class="tournament-bracket__code">
+                                        <span th:text="${match?.home?.name}"></span>
                                     </td>
                                     <td class="tournament-bracket__score">
-                                        <span class="tournament-bracket__number" th:text="${match?.homeScore}">4</span>
+                                        <span class="tournament-bracket__number" th:text="${match?.homeScore} ?: '-'">4</span>
                                     </td>
                                 </tr>
                                 <tr class="tournament-bracket__team" th:classappend="${match.homeScore < match.awayScore} ? 'tournament-bracket__team--winner'"
@@ -94,14 +98,17 @@
                                     <td class="tournament-bracket__country">
                                         <svg th:if="${#strings.isEmpty(match?.away?.image)}" th:data-jdenticon-value="${match?.away?.name}" width="24" height="24" class="rounded border bg-light"></svg>
                                         <img th:if="${!#strings.isEmpty(match?.away?.image)}" th:src="${match?.away?.image}" width="24" height="24" class="rounded border"/>
-                                        <span class="tournament-bracket__code" th:text="${match?.away?.name}"></span>
+                                    </td>
+                                    <td class="tournament-bracket__code">
+                                        <span th:text="${match?.away?.name}"></span>
                                     </td>
                                     <td class="tournament-bracket__score">
-                                        <span class="tournament-bracket__number" th:text="${match?.awayScore}">1</span>
+                                        <span class="tournament-bracket__number" th:text="${match?.awayScore} ?: '-'">1</span>
                                     </td>
                                 </tr>
                                 </tbody>
                             </table>
+<!--                            <div th:replace="fragments.html :: match"></div>-->
                         </div>
                     </li>
                 </ul>
@@ -112,6 +119,14 @@
 <div th:replace="fragments.html :: footer"></div>
 <script th:replace="fragments.html :: date-time"></script>
 <script th:replace="fragments.html :: tooltip"></script>
+<script type="application/javascript">
+    $(function () {
+        let $tournament = $('.tournament-bracket__country');
+        console.log($tournament);
+        let $name = $('.tournament-bracket__code');
+        console.log($name);
+    })
+</script>
 <!--<script type="text/javascript" src="/node_modules/jquery-bracket/dist/jquery.bracket.min.js"></script>
 <script type="application/javascript" th:inline="javascript">
     /*[# th:each="member : ${members}"]
