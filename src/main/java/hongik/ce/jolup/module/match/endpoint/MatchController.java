@@ -11,6 +11,7 @@ import hongik.ce.jolup.module.member.domain.entity.Member;
 import hongik.ce.jolup.module.room.domain.entity.Room;
 import lombok.*;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -18,6 +19,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.validation.Valid;
+import java.time.LocalDateTime;
 
 @Slf4j
 @Controller
@@ -73,6 +75,31 @@ public class MatchController {
         }
         matchService.updateScore(competition, match, scoreForm);
         attributes.addFlashAttribute("message", "경기 결과를 수정했습니다.");
+        return "redirect:/rooms/" + room.getId() + "/competitions/" + competition.getId() + "/matches/" + match.getId();
+    }
+
+    @GetMapping("/{matchId}/update-date")
+    public String updateMatchDateForm(@PathVariable Long roomId, @PathVariable Long competitionId, @PathVariable Long matchId,
+                                      @CurrentMember Member member, Model model) {
+        Room room = roomService.getRoomToUpdate(member, roomId);
+        Competition competition = competitionService.getCompetition(room, competitionId);
+        Match match = matchService.getMatch(competition, matchId);
+        model.addAttribute(member);
+        model.addAttribute(room);
+        model.addAttribute(competition);
+        model.addAttribute(match);
+        return "match/update-date-form";
+    }
+
+    @PostMapping("/{matchId}/update-date")
+    public String updateDate(@PathVariable Long roomId, @PathVariable Long competitionId, @PathVariable Long matchId, @CurrentMember Member member,
+                             Model model, @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime newStartDateTime, RedirectAttributes attributes) {
+
+        Room room = roomService.getRoomToUpdate(member, roomId);
+        Competition competition = competitionService.getCompetition(room, competitionId);
+        Match match = matchService.getMatch(competition, matchId);
+        matchService.updateStartDateTime(match, newStartDateTime);
+        attributes.addFlashAttribute("message", "경기 시작 일시를 수정했습니다.");
         return "redirect:/rooms/" + room.getId() + "/competitions/" + competition.getId() + "/matches/" + match.getId();
     }
 }

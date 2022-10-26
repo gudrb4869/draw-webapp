@@ -12,6 +12,7 @@ import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -154,5 +155,9 @@ public class MatchService {
         if (match.isClosed()) {
             throw new IllegalArgumentException("접근할수 없는 경기입니다.");
         }
+    }
+
+    public void updateStartDateTime(Match match, LocalDateTime newStartDateTime) {
+        match.updateStartDateTime(newStartDateTime);
     }
 }

@@ -45,6 +45,9 @@
             <div class="mb-4"></div>
             <div class="row">
                 <div class="col">
+                    <a sec:authorize="isAuthenticated()" th:if="${room.isAdmin(#authentication.principal)}" class="btn btn-outline-dark" th:href="@{|/rooms/${roomId}/competitions/${competitionId}/matches/${matchId}/update-date|}">
+                        경기 시간 수정
+                    </a>
                     <a sec:authorize="isAuthenticated()" th:if="${room.isAdmin(#authentication.principal)}" class="btn btn-outline-dark" th:href="@{|/rooms/${roomId}/competitions/${competitionId}/matches/${matchId}/update-score|}">
                         경기 결과 수정
                     </a>

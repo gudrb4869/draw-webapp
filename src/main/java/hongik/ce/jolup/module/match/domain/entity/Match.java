@@ -92,4 +92,8 @@ public class Match extends BaseTimeEntity {
     public void close() {
         this.closed = true;
     }
+
+    public void updateStartDateTime(LocalDateTime newStartDateTime) {
+        this.startDateTime = newStartDateTime;
+    }
 }
