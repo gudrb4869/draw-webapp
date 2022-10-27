@@ -18,6 +18,11 @@ import java.util.*;
 @AllArgsConstructor(access = AccessLevel.PROTECTED)
 @ToString(of = {"id", "email", "name"})
 @EqualsAndHashCode(of = {"id"}, callSuper = false)
+@NamedEntityGraph(
+        name = "Member.withJoinsAndRoom",
+        attributeNodes = @NamedAttributeNode(value = "joins", subgraph = "room"),
+        subgraphs = @NamedSubgraph(name = "room", attributeNodes = @NamedAttributeNode("room"))
+)
 public class Member extends BaseTimeEntity {
 
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -49,15 +54,6 @@ public class Member extends BaseTimeEntity {
 
     @OneToMany(mappedBy = "member", cascade = CascadeType.ALL)
     private List<Join> joins = new ArrayList<>();
-
-    @OneToMany(mappedBy = "member", cascade = CascadeType.ALL)
-    private List<Participate> participates = new ArrayList<>();
-
-    @OneToMany(mappedBy = "home", cascade = CascadeType.ALL)
-    private List<Match> homeMatches = new ArrayList<>();
-
-    @OneToMany(mappedBy = "away", cascade = CascadeType.ALL)
-    private List<Match> awayMatches = new ArrayList<>();
 
     private boolean competitionCreatedByWeb = true;
     private boolean matchUpdatedByWeb = true;

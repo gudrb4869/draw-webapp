@@ -26,4 +26,7 @@ public interface JoinRepository extends JpaRepository<Join, Long> {
     boolean existsByRoomAndMember(Room room, Member member);
 
     Optional<Join> findByRoomAndMember(Room room, Member member);
+
+    @EntityGraph(attributePaths = {"room"})
+    List<Join> findWithRoomByMember(Member member);
 }

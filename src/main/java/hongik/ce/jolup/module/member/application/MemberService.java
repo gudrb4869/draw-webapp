@@ -1,11 +1,16 @@
 package hongik.ce.jolup.module.member.application;
 
+import hongik.ce.jolup.module.competition.domain.entity.Participate;
+import hongik.ce.jolup.module.competition.infra.repository.ParticipateRepository;
+import hongik.ce.jolup.module.match.domain.entity.Match;
+import hongik.ce.jolup.module.match.infra.repository.MatchRepository;
 import hongik.ce.jolup.module.member.domain.UserMember;
 import hongik.ce.jolup.module.member.domain.entity.Member;
 import hongik.ce.jolup.module.member.endpoint.form.NotificationForm;
 import hongik.ce.jolup.module.member.endpoint.form.Profile;
 import hongik.ce.jolup.module.member.endpoint.form.SignupForm;
 import hongik.ce.jolup.module.member.infra.repository.MemberRepository;
+import hongik.ce.jolup.module.room.domain.entity.Join;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -19,7 +24,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Collections;
 import java.util.List;
-import java.util.Set;
 
 @Service
 @RequiredArgsConstructor
@@ -27,6 +31,8 @@ import java.util.Set;
 public class MemberService implements UserDetailsService {
 
     private final MemberRepository memberRepository;
+    private final ParticipateRepository participateRepository;
+    private final MatchRepository matchRepository;
     private final PasswordEncoder passwordEncoder;
 
     public Member signup(SignupForm signupForm) {
@@ -81,6 +87,22 @@ public class MemberService implements UserDetailsService {
     }
 
     public void remove(Member member) {
+        Member m = memberRepository.findWithJoinsAndRoomById(member.getId()).orElseThrow(() -> new IllegalArgumentException("존재하지 않는 사용자입니다."));
+        for (Join join : m.getJoins()) {
+            join.getRoom().subCount();
+        }
+        List<Participate> participates = participateRepository.findByMember(member);
+        for (Participate participate : participates) {
+            participate.updateMember(null);
+        }
+        List<Match> homeMatches = matchRepository.findMatchByHome(member);
+        for (Match homeMatch : homeMatches) {
+            homeMatch.updateHome(null);
+        }
+        List<Match> awayMatches = matchRepository.findMatchByAway(member);
+        for (Match awayMatch : awayMatches) {
+            awayMatch.updateAway(null);
+        }
         memberRepository.delete(member);
         SecurityContextHolder.getContext().setAuthentication(null);
     }

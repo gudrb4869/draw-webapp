@@ -2,6 +2,7 @@ package hongik.ce.jolup.module.match.infra.repository;
 
 import hongik.ce.jolup.module.competition.domain.entity.Competition;
 import hongik.ce.jolup.module.match.domain.entity.Match;
+import hongik.ce.jolup.module.member.domain.entity.Member;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.EntityGraph;
@@ -24,4 +25,8 @@ public interface MatchRepository extends JpaRepository<Match, Long> {
 
     @EntityGraph(value = "Match.withCompetitionAndRoomAndHomeAndAway")
     Optional<Match> findMatchById(Long matchId);
+
+    List<Match> findMatchByHome(Member member);
+
+    List<Match> findMatchByAway(Member member);
 }

@@ -4,6 +4,7 @@ import hongik.ce.jolup.module.competition.application.CompetitionService;
 import hongik.ce.jolup.module.competition.domain.entity.Competition;
 import hongik.ce.jolup.module.competition.domain.entity.CompetitionType;
 import hongik.ce.jolup.module.competition.endpoint.form.CompetitionForm;
+import hongik.ce.jolup.module.member.application.FollowService;
 import hongik.ce.jolup.module.member.application.MemberService;
 import hongik.ce.jolup.module.member.domain.entity.Member;
 import hongik.ce.jolup.module.member.endpoint.form.SignupForm;
@@ -77,6 +78,7 @@ public class InitDb {
 //                em.persist(belong);
 //            }
         private final MemberService memberService;
+        private final FollowService followService;
         private final RoomService roomService;
         private final CompetitionService competitionService;
 
@@ -91,6 +93,9 @@ public class InitDb {
                 members.add(memberService.signup(createMemberForm(i)));
             }
             Member member = members.get(1);
+            for (int i = 2; i <= 50; i++) {
+                followService.createFollow(member, members.get(i));
+            }
 
             RoomForm roomForm1 = createRoomForm("1", true);
             Room room = roomService.createNewRoom(roomForm1, member);
@@ -118,10 +123,7 @@ public class InitDb {
                     createCompetitionForm(members, "더블 라운드 로빈(홈 앤드 어웨이)", CompetitionType.DOUBLE_ROUND_ROBIN, 12, 23));
 
             Competition competition3 = competitionService.createCompetition(members, room,
-                    createCompetitionForm(members, "싱글 엘리미네이션 토너먼트(패자부활전 X)", CompetitionType.SINGLE_ELIMINATION_TOURNAMENT, 24, 35));
-
-            Competition competition4 = competitionService.createCompetition(members, room,
-                    createCompetitionForm(members, "더블 엘리미네이션 토너먼트(패자부활전 O)", CompetitionType.DOUBLE_ELIMINATION_TOURNAMENT, 36, 47));
+                    createCompetitionForm(members, "토너먼트", CompetitionType.SINGLE_ELIMINATION_TOURNAMENT, 24, 49));
         }
 
         private CompetitionForm createCompetitionForm(List<Member> members, String title, CompetitionType type, int start, int end) {

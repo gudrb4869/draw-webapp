@@ -237,7 +237,7 @@
                 </a>
                 <!--모임 멤버 수-->
                 <a class="btn btn-primary" th:href="@{'/rooms/' + ${room.id} + '/members'}"
-                   th:text="${room.joins.size()}">1</a>
+                   th:text="${room.count}">1</a>
             </span>
             <!--인증된 사용자이고 모임 멤버인 경우-->
             <span sec:authorize="isAuthenticated()" th:if="${room.isMember(#authentication.principal) and !room.isAdmin(#authentication.principal)}"
@@ -248,7 +248,7 @@
                 </a>
                 <!--모임 멤버 수-->
                 <a class="btn btn-primary" th:href="@{'/rooms/' + ${room.id} + '/members'}"
-                   th:text="${room.joins.size()}">1</a>
+                   th:text="${room.count}">1</a>
             </span>
             <!--인증된 사용자이고 모임 관리자인 경우-->
             <span sec:authorize="isAuthenticated()" th:if="${room.isAdmin(#authentication.principal)}">
