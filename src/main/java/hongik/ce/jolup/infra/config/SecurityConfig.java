@@ -41,7 +41,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     // http 관련 인증 설정 기능
     protected void configure(HttpSecurity http) throws Exception {
         http.authorizeRequests()
-                .mvcMatchers("/", "/login", "/signup", "/search/room").permitAll() // 누구나 접근 가능
+                .mvcMatchers("/", "/login", "/signup", "/search/room", "/search").permitAll() // 누구나 접근 가능
                 .mvcMatchers(HttpMethod.GET, "/profile/*").permitAll()
                 .anyRequest().authenticated(); // 나머지는 권한이 있기만 하면 접근 가능
         http.formLogin() // 로그인에 대한 설정

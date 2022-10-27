@@ -8,30 +8,30 @@
     <div class="row mt-5 justify-content-center">
         <div class="col-sm-4 col-md-2 justify-content-center d-flex align-items-baseline">
             <!-- avatar -->
-            <svg th:if="${#strings.isEmpty(member.image)}" class="img-fluid float-left rounded img-thumbnail"
-                 th:data-jdenticon-value="${member.name}" width="125" height="125"></svg>
-            <img th:if="${!#strings.isEmpty(member.image)}" class="img-fluid float-left rounded img-thumbnail"
-                 th:src="${member.image}" width="125" height="125"/>
+            <svg th:if="${#strings.isEmpty(profileMember.image)}" class="img-fluid float-left rounded img-thumbnail"
+                 th:data-jdenticon-value="${profileMember.name}" width="125" height="125"></svg>
+            <img th:if="${!#strings.isEmpty(profileMember.image)}" class="img-fluid float-left rounded img-thumbnail"
+                 th:src="${profileMember.image}" width="125" height="125"/>
         </div>
         <div class="col-sm-6 col-md-8">
             <!-- nickname-->
-            <h1 tabindex="0" data-bs-toggle="tooltip" data-bs-placement="bottom" class="display-4 text-truncate"
-                th:title="${member.name}" th:text="${member.name}"></h1>
+            <h1 tabindex="0" data-bs-toggle="tooltip" data-bs-placement="top" class="display-4 text-truncate"
+                th:title="${profileMember.name}" th:text="${profileMember.name}"></h1>
             <!--                    <h1 class="display-4 text-truncate" th:text="${member.name}">name</h1>-->
             <!-- bio -->
-            <p class="lead" th:if="${!#strings.isEmpty(member.bio)}" th:text="${member.bio}">bio</p>
-            <p class="lead" th:if="${#strings.isEmpty(member.bio) && isOwner}">소개를 추가해주세요.</p>
+            <p class="lead" th:if="${!#strings.isEmpty(profileMember.bio)}" th:text="${profileMember.bio}">bio</p>
+            <p class="lead" th:if="${#strings.isEmpty(profileMember.bio) && isOwner}">소개를 추가해주세요.</p>
             <div class="row">
                 <div class="col">
                     <div sec:authorize="isAuthenticated()" th:if="${!isOwner and !isFollowing}">
-                        <form class="needs-validation" th:action="@{'/profile/' + ${member.id} + '/follow'}" method="post" novalidate>
+                        <form class="needs-validation" th:action="@{'/profile/' + ${profileMember.id} + '/follow'}" method="post" novalidate>
                             <div class="mb-3">
                                 <button class="btn btn-outline-primary" type="submit">팔로우</button>
                             </div>
                         </form>
                     </div>
                     <div sec:authorize="isAuthenticated()" th:if="${!isOwner and isFollowing}">
-                        <form class="needs-validation" th:action="@{'/profile/' + ${member.id} + '/unfollow'}" method="post" novalidate>
+                        <form class="needs-validation" th:action="@{'/profile/' + ${profileMember.id} + '/unfollow'}" method="post" novalidate>
                             <div class="mb-3">
                                 <button class="btn btn-outline-primary" type="submit">언팔로우</button>
                             </div>
@@ -132,43 +132,5 @@
 <div th:replace="fragments.html :: footer"></div>
 <div th:replace="fragments.html :: date-time"></div>
 <script th:replace="fragments.html :: tooltip"></script>
-<!--<script th:replace="fragments.html :: ajax-csrf-header"></script>-->
-<!--<script type="application/javascript" th:inline="javascript">
-    $(function () {
-        function followRequest() {
-            $.ajax({
-                dataType: "json",
-                contentType: "application/json; charset=utf-8",
-                method: "POST",
-                url: "[('/profile/' + ${member.id})]" + "/follow",
-            }).done(function (status) {
-                console.log("status is ${status}");
-            });
-        }
-        function unfollowRequest() {
-            $.ajax({
-                dataType: "json",
-                contentType: "application/json; charset=utf-8",
-                method: "POST",
-                url: "[('/profile/' + ${member.id})]" + "/unfollow",
-            }).done(function (status) {
-                console.log("status is ${status}");
-            });
-        }
-
-        var followbtn = document.querySelector("#follow");
-        if (followbtn != null) {
-            followbtn.addEventListener("click", function (){
-                followRequest();
-            })
-        }
-        var unfollowbtn = document.querySelector("#unfollow");
-        if (unfollowbtn != null) {
-            unfollowbtn.addEventListener("click", function (){
-                unfollowRequest();
-            })
-        }
-    });
-</script>-->
 </body>
 </html>

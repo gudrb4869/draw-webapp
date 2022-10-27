@@ -9,9 +9,9 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.support.QuerydslRepositorySupport;
 
-public class RoomRepositoryImpl extends QuerydslRepositorySupport implements RoomRepositoryExtension {
+public class RoomRepositoryExtensionImpl extends QuerydslRepositorySupport implements RoomRepositoryExtension {
 
-    public RoomRepositoryImpl() {
+    public RoomRepositoryExtensionImpl() {
         super(Room.class);
     }
 

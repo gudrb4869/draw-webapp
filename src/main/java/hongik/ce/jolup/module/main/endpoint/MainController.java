@@ -1,5 +1,6 @@
 package hongik.ce.jolup.module.main.endpoint;
 
+import hongik.ce.jolup.module.member.infra.repository.MemberRepository;
 import hongik.ce.jolup.module.member.support.CurrentMember;
 import hongik.ce.jolup.module.room.domain.entity.Join;
 import hongik.ce.jolup.module.member.domain.entity.Member;
@@ -24,6 +25,7 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class MainController {
 
+    private final MemberRepository memberRepository;
     private final JoinRepository joinRepository;
     private final RoomRepository roomRepository;
 
@@ -54,7 +56,7 @@ public class MainController {
 
     @GetMapping("/search/room")
     public String searchRoom(String keyword, Model model,
-                              @PageableDefault(size = 8, sort = "createdDate", direction = Sort.Direction.ASC) Pageable pageable) {
+                             @PageableDefault(size = 8, sort = "createdDate", direction = Sort.Direction.ASC) Pageable pageable) {
         Page<Room> roomPage = roomRepository.findByKeyword(keyword, pageable);
         model.addAttribute("roomPage", roomPage);
         model.addAttribute("keyword", keyword);
@@ -62,5 +64,36 @@ public class MainController {
                 ? "publishedDateTime"
                 : "memberCount");*/
         return "search";
+    }
+
+    @GetMapping("/search/member")
+    public String searchMember(String keyword, Model model,
+                             @PageableDefault(size = 8, sort = "createdDate", direction = Sort.Direction.ASC) Pageable pageable) {
+        log.info("keyword = {}", keyword);
+        Page<Member> memberPage = memberRepository.findByNameContainingIgnoreCase(keyword, pageable);
+        model.addAttribute("memberPage", memberPage);
+        model.addAttribute("keyword", keyword);
+        /*model.addAttribute("sortProperty", pageable.getSort().toString().contains("publishedDateTime")
+                ? "publishedDateTime"
+                : "memberCount");*/
+        return "member-search";
+    }
+
+    @GetMapping("/search")
+    public String search(String category, String keyword, Model model,
+                             @PageableDefault(size = 8, sort = "createdDate", direction = Sort.Direction.ASC) Pageable pageable) {
+        model.addAttribute("category", category);
+        model.addAttribute("keyword", keyword);
+        if (category.equals("room")) {
+            Page<Room> roomPage = roomRepository.findByKeyword(keyword, pageable);
+            model.addAttribute("roomPage", roomPage);
+        } else if (category.equals("member")) {
+            Page<Member> memberPage = memberRepository.findByNameContainingIgnoreCase(keyword, pageable);
+            model.addAttribute("memberPage", memberPage);
+        }
+        return "search";
+        /*model.addAttribute("sortProperty", pageable.getSort().toString().contains("publishedDateTime")
+                ? "publishedDateTime"
+                : "memberCount");*/
     }
 }

@@ -8,7 +8,7 @@ import javax.validation.constraints.Pattern;
 @Data
 public class SignupForm {
 //        @Pattern(regexp = "^(?:\\w+\\.?)*\\w+@(?:\\w+\\.)+\\w+$", message = "이메일 형식이 올바르지 않습니다.")
-    @Pattern(regexp = "^[a-zA-Z0-9_-]{4,20}$", message = "아이디는 4~20자 영문 대소문자, 숫자를 사용하세요.")
+    @Pattern(regexp = "^[a-z0-9]{4,20}$", message = "아이디는 4~20자 영문 소문자, 숫자를 사용하세요.")
     private String email;
 
 //    @Pattern(regexp = "(?=.*[0-9])(?=.*[a-zA-Z])(?=.*\\W)(?=\\S+$).{8,30}", message = "비밀번호는 8~30자 영문 대소문자, 숫자, 특수문자를 사용하세요.")

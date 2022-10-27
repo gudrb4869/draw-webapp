@@ -59,16 +59,18 @@ public class MemberController {
 
     @GetMapping("/profile/{id}")
     public String profile(@CurrentMember Member member, @PathVariable Long id, Model model) {
-        Member byId = memberService.getMember(id);
-        List<Member> followings = followRepository.findByFollowing(byId)
+        Member profileMember = memberService.getMember(id);
+        log.info("profileMember = {}", profileMember);
+        List<Member> followings = followRepository.findByFollowing(profileMember)
                 .stream().map(Follow::getFollower)
                 .collect(Collectors.toList());
-        List<Member> followers = followRepository.findByFollower(byId)
+        List<Member> followers = followRepository.findByFollower(profileMember)
                 .stream().map(Follow::getFollowing)
                 .collect(Collectors.toList());
-        model.addAttribute("member", byId);
-        model.addAttribute("isOwner", byId.equals(member));
-        model.addAttribute("isFollowing", followService.isFollow(member, byId));
+        model.addAttribute("member", member);
+        model.addAttribute("profileMember", profileMember);
+        model.addAttribute("isOwner", profileMember.equals(member));
+        model.addAttribute("isFollowing", followService.isFollow(member, profileMember));
         model.addAttribute("followings", followings);
         model.addAttribute("followers", followers);
         return "member/profile";

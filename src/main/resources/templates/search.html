@@ -3,7 +3,7 @@
 <head th:replace="fragments.html :: head"></head>
 <body class="d-flex flex-column min-vh-100 bg-light">
 <div th:replace="fragments.html::navigation-bar"></div>
-<div class="container">
+<div class="container" th:if="${#strings.equals(category, 'room')}">
     <div class="py-5 text-center">
         <p class="lead" th:if="${roomPage.getTotalElements() == 0}">
             <strong th:text="${keyword}" id="keyword" class="context"></strong>에 대한 검색결과가 없습니다.
@@ -16,9 +16,25 @@
 
     <div th:replace="fragments.html::room-list (roomList=${roomPage.getContent()})"></div>
 
-    <div th:replace="fragments.html :: page (pages=${roomPage}, url='/search/room?keyword=' + ${keyword})"></div>
+    <div th:replace="fragments.html :: page (pages=${roomPage}, url='/search?category=' + ${category} + '&keyword=' + ${keyword})"></div>
+</div>
+<div class="container" th:if="${#strings.equals(category, 'member')}">
+    <div class="py-5 text-center">
+        <p class="lead" th:if="${memberPage.getTotalElements() == 0}">
+            <strong th:text="${keyword}" id="keyword" class="context"></strong>에 대한 검색결과가 없습니다.
+        </p>
+        <p class="lead" th:if="${memberPage.getTotalElements() > 0}">
+            <strong th:text="${keyword}" id="keyword" class="context"></strong>에 대한 회원이
+            <span th:text="${memberPage.getTotalElements()}"></span>명 있습니다.
+        </p>
+    </div>
+
+    <div th:replace="fragments.html::member-list (memberList=${memberPage.getContent()})"></div>
+
+    <div th:replace="fragments.html :: page (pages=${memberPage}, url='/search?category=' + ${category} + '&keyword=' + ${keyword})"></div>
 </div>
 <div th:replace="fragments.html :: footer"></div>
 <script th:replace="fragments.html :: date-time"></script>
+<script th:replace="fragments::form-validation"></script>
 </body>
 </html>
