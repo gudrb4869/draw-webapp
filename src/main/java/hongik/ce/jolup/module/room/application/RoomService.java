@@ -38,6 +38,7 @@ public class RoomService {
         Set<Member> inviteList = friends.stream().filter(f -> members.contains(f.getId())).collect(Collectors.toSet());
         for (Member member : inviteList) {
             joinRepository.save(Join.from(room, member, Grade.USER));
+            room.addCount();
         }
         eventPublisher.publishEvent(new RoomInvitedEvent(room, "모임 '" + room.getTitle() + "'에서 회원님을 초대했습니다.", inviteList));
     }

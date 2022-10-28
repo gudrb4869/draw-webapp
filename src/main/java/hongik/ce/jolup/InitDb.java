@@ -116,23 +116,23 @@ public class InitDb {
              * 대회, 경기 테스트 DB 생성
              */
             List<Member> members = room.getJoins().stream().map(Join::getMember).collect(Collectors.toList());
-            Competition competition1 = competitionService.createCompetition(members, room,
+            /*Competition competition1 = competitionService.createCompetition(members, room,
                     createCompetitionForm(members, "싱글 라운드 로빈(단판)", CompetitionType.SINGLE_ROUND_ROBIN, 0, 11));
 
             Competition competition2 = competitionService.createCompetition(members, room,
                     createCompetitionForm(members, "더블 라운드 로빈(홈 앤드 어웨이)", CompetitionType.DOUBLE_ROUND_ROBIN, 12, 23));
 
             Competition competition3 = competitionService.createCompetition(members, room,
-                    createCompetitionForm(members, "토너먼트", CompetitionType.SINGLE_ELIMINATION_TOURNAMENT, 24, 49));
+                    createCompetitionForm(members, "토너먼트", CompetitionType.SINGLE_ELIMINATION_TOURNAMENT, 24, 49));*/
         }
 
         private CompetitionForm createCompetitionForm(List<Member> members, String title, CompetitionType type, int start, int end) {
             CompetitionForm competitionForm = new CompetitionForm();
             competitionForm.setTitle(title);
             competitionForm.setType(type);
-            for (int i = start; i <= end; i++) {
+            /*for (int i = start; i <= end; i++) {
                 competitionForm.getMembers().add(members.get(i).getId());
-            }
+            }*/
             return competitionForm;
         }
 

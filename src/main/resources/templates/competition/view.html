@@ -28,9 +28,9 @@
                                         <span th:text="${match.home?.name}"></span>
                                     </div>
                                     <div class="col-4">
-                                        <span th:text="${match?.homeScore}">3</span>
+                                        <span th:text="${match.status} ? ${match?.homeScore} : '-'">3</span>
                                         <span th:if="${match?.homeScore != null and match?.awayScore != null}"> : </span>
-                                        <span th:text="${match?.awayScore}">2</span>
+                                        <span th:text="${match.status} ? ${match?.awayScore} : '-'">2</span>
                                     </div>
                                     <div class="col-4">
                                         <svg th:if="${#strings.isEmpty(match.away?.image)}" th:data-jdenticon-value="${match.away?.name}" width="24" height="24" class="rounded border bg-light me-3"></svg>

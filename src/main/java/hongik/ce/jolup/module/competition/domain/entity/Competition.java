@@ -53,7 +53,6 @@ public class Competition extends BaseTimeEntity {
         competition.title = competitionForm.getTitle();
         competition.type = competitionForm.getType();
         competition.room = room;
-        competition.count = competitionForm.getMembers().size();
         return competition;
     }
 
@@ -62,11 +61,11 @@ public class Competition extends BaseTimeEntity {
     }
 
     public boolean isLeague() {
-        return this.type.equals(CompetitionType.SINGLE_ROUND_ROBIN) || this.type.equals(CompetitionType.DOUBLE_ROUND_ROBIN);
+        return this.type.equals(CompetitionType.LEAGUE);
     }
 
     public boolean isTournament() {
-        return this.type.equals(CompetitionType.SINGLE_ELIMINATION_TOURNAMENT) || this.type.equals(CompetitionType.DOUBLE_ELIMINATION_TOURNAMENT);
+        return this.type.equals(CompetitionType.TOURNAMENT);
     }
 
     public boolean isRemovable() {
