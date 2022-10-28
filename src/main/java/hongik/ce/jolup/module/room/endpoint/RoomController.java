@@ -104,8 +104,9 @@ public class RoomController {
         Room room = roomService.getRoomToUpdate(member, id);
         List<Member> members = room.getJoins().stream().map(Join::getMember)
                 .collect(Collectors.toList());
-        List<Member> followers = followRepository.findByFollowing(member).stream().map(Follow::getFollower).collect(Collectors.toList());
-        List<Member> friends = followers.stream().filter(f -> !members.contains(f)).collect(Collectors.toList());
+        List<Member> friends = followRepository.findByFollowing(member)
+                .stream().map(Follow::getFollower).collect(Collectors.toList())
+                .stream().filter(f -> !members.contains(f)).collect(Collectors.toList());
         model.addAttribute(member);
         model.addAttribute(room);
         model.addAttribute("members", friends);
@@ -118,15 +119,16 @@ public class RoomController {
                          @Valid InviteForm inviteForm, BindingResult result, RedirectAttributes attributes) {
         Room room = roomService.getRoomToUpdate(member, id);
         List<Member> members = room.getJoins().stream().map(Join::getMember).collect(Collectors.toList());
-        List<Member> followers = followRepository.findByFollowing(member).stream().map(Follow::getFollower).collect(Collectors.toList());
-        List<Member> friends = followers.stream().filter(f -> !members.contains(f)).collect(Collectors.toList());
+        List<Member> friends = followRepository.findByFollowing(member)
+                .stream().map(Follow::getFollower).collect(Collectors.toList())
+                .stream().filter(f -> !members.contains(f)).collect(Collectors.toList());
         if (result.hasErrors()) {
             model.addAttribute(member);
             model.addAttribute(room);
             model.addAttribute("members", friends);
             return "room/invite-form";
         }
-        roomService.inviteRoom(members, room, inviteForm);
+        roomService.inviteRoom(friends, room, inviteForm.getMembers());
         attributes.addFlashAttribute("message", "친구들에게 모임 초대 요청을 보냈습니다.");
         return "redirect:/rooms/" + room.getId();
     }

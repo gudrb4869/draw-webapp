@@ -4,12 +4,12 @@ import hongik.ce.jolup.module.member.domain.entity.Member;
 import hongik.ce.jolup.module.room.domain.entity.Grade;
 import hongik.ce.jolup.module.room.domain.entity.Join;
 import hongik.ce.jolup.module.room.domain.entity.Room;
-import hongik.ce.jolup.module.room.endpoint.form.InviteForm;
 import hongik.ce.jolup.module.room.endpoint.form.RoomForm;
 import hongik.ce.jolup.module.room.event.RoomInvitedEvent;
 import hongik.ce.jolup.module.room.infra.repository.JoinRepository;
 import hongik.ce.jolup.module.room.infra.repository.RoomRepository;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -18,6 +18,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 @Transactional
@@ -29,13 +30,16 @@ public class RoomService {
 
     public Room createNewRoom(RoomForm roomForm, Member member) {
         Room room = roomRepository.save(Room.from(roomForm));
-        joinRepository.save(Join.builder().room(room).member(member).grade(Grade.ADMIN).build());
+        joinRepository.save(Join.from(room, member, Grade.ADMIN));
         return room;
     }
 
-    public void inviteRoom(List<Member> members, Room room, InviteForm inviteForm) {
-        List<Member> memberList = members.stream().filter(m -> inviteForm.getMembers().contains(m.getId())).collect(Collectors.toList());
-        eventPublisher.publishEvent(new RoomInvitedEvent(room, "모임 '" + room.getTitle() + "'에서 회원님을 초대하였습니다.", memberList));
+    public void inviteRoom(List<Member> friends, Room room, Set<Long> members) {
+        Set<Member> inviteList = friends.stream().filter(f -> members.contains(f.getId())).collect(Collectors.toSet());
+        for (Member member : inviteList) {
+            joinRepository.save(Join.from(room, member, Grade.USER));
+        }
+        eventPublisher.publishEvent(new RoomInvitedEvent(room, "모임 '" + room.getTitle() + "'에서 회원님을 초대했습니다.", inviteList));
     }
 
     public Room findOne(Long id) {
@@ -106,7 +110,7 @@ public class RoomService {
             throw new IllegalArgumentException("이미 모임에 참여중입니다.");
         }
         room.addCount();
-        joinRepository.save(Join.builder().room(room).member(member).grade(Grade.USER).build());
+        joinRepository.save(Join.from(room, member, Grade.USER));
     }
 
     public void removeMember(Room room, Member member) {

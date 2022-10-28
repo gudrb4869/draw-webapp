@@ -1,6 +1,5 @@
 package hongik.ce.jolup.module.match.event;
 
-import hongik.ce.jolup.module.competition.domain.entity.Participate;
 import hongik.ce.jolup.module.match.domain.entity.Match;
 import hongik.ce.jolup.module.member.domain.entity.Member;
 import hongik.ce.jolup.module.notification.domain.entity.Notification;
@@ -12,7 +11,6 @@ import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Async
 @Transactional

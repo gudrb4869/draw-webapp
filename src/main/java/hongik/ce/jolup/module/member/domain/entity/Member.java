@@ -1,8 +1,6 @@
 package hongik.ce.jolup.module.member.domain.entity;
 
 import hongik.ce.jolup.BaseTimeEntity;
-import hongik.ce.jolup.module.competition.domain.entity.Participate;
-import hongik.ce.jolup.module.match.domain.entity.Match;
 import hongik.ce.jolup.module.member.endpoint.form.NotificationForm;
 import hongik.ce.jolup.module.member.endpoint.form.Profile;
 import hongik.ce.jolup.module.room.domain.entity.Join;
@@ -15,7 +13,6 @@ import java.util.*;
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@AllArgsConstructor(access = AccessLevel.PROTECTED)
 @ToString(of = {"id", "email", "name"})
 @EqualsAndHashCode(of = {"id"}, callSuper = false)
 @NamedEntityGraph(
@@ -57,15 +54,6 @@ public class Member extends BaseTimeEntity {
 
     private boolean competitionCreatedByWeb = true;
     private boolean matchUpdatedByWeb = true;
-
-    @Builder
-    public Member(Long id, String email, String password, String name, String image) {
-        this.id = id;
-        this.email = email;
-        this.password = password;
-        this.name = name;
-        this.image = image;
-    }
 
     public static Member with(String email, String name, String password) {
         Member member = new Member();

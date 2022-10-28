@@ -3,10 +3,8 @@ package hongik.ce.jolup.module.room.domain.entity;
 import hongik.ce.jolup.BaseTimeEntity;
 import hongik.ce.jolup.module.competition.domain.entity.Competition;
 import hongik.ce.jolup.module.member.domain.UserMember;
-import hongik.ce.jolup.module.member.domain.entity.Member;
 import hongik.ce.jolup.module.room.endpoint.form.RoomForm;
 import lombok.*;
-import org.hibernate.annotations.ColumnDefault;
 
 import javax.persistence.*;
 import java.util.ArrayList;
@@ -36,9 +34,10 @@ public class Room extends BaseTimeEntity {
     @Column(nullable = false)
     private String title;
 
+    private String shortDescription;
+
     private boolean access;
 
-    @ColumnDefault(value = "0")
     private Integer count = 0;
 
     @OneToMany(mappedBy = "room", cascade = CascadeType.ALL)
@@ -51,6 +50,7 @@ public class Room extends BaseTimeEntity {
         Room room = new Room();
         room.title = roomForm.getTitle();
         room.access = roomForm.getAccess();
+        room.shortDescription = roomForm.getShortDescription();
         room.count = 1;
         return room;
     }

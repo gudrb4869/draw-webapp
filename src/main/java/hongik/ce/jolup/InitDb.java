@@ -140,6 +140,7 @@ public class InitDb {
             RoomForm roomForm = new RoomForm();
             roomForm.setTitle(title);
             roomForm.setAccess(access);
+            roomForm.setShortDescription(title + "소개");
             return roomForm;
         }
 

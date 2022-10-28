@@ -41,10 +41,10 @@ public class Match extends BaseTimeEntity {
 
     private boolean status;
 
-    @Column(name = "match_round", nullable = false)
+    @Column(name = "match_round")
     private Integer round;
 
-    @Column(name = "match_number", nullable = false)
+    @Column(name = "match_number")
     private Integer number;
 
     private Integer homeScore = 0;

@@ -10,7 +10,7 @@ import javax.persistence.*;
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @ToString(of = {"id", "member", "room", "grade"})
-@Table(name = "joins")
+@Table(name = "joins", uniqueConstraints = {@UniqueConstraint(columnNames = {"member_id", "room_id"})})
 @NamedEntityGraph(
         name = "Join.withAll",
         attributeNodes = {
@@ -33,12 +33,12 @@ public class Join extends BaseTimeEntity {
     @Enumerated(EnumType.STRING)
     private Grade grade;
 
-    @Builder
-    public Join(Long id, Member member, Room room, Grade grade) {
-        this.id = id;
-        this.member = member;
-        this.room = room;
-        this.grade = grade;
+    public static Join from(Room room, Member member, Grade grade) {
+        Join join = new Join();
+        join.room = room;
+        join.member = member;
+        join.grade = grade;
+        return join;
     }
 
     public void updateMember(Member member) {

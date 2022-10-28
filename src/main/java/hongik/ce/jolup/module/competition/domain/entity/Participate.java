@@ -22,32 +22,15 @@ public class Participate extends BaseTimeEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     private Competition competition;
 
-    @Column(nullable = false)
-    private Integer win = 0;
+    private int win = 0;
 
-    @Column(nullable = false)
-    private Integer draw = 0;
+    private int draw = 0;
 
-    @Column(nullable = false)
-    private Integer lose = 0;
+    private int lose = 0;
 
-    @Column(nullable = false)
-    private Integer goalFor = 0;
+    private int goalFor = 0;
 
-    @Column(nullable = false)
-    private Integer goalAgainst = 0;
-
-    @Builder
-    public Participate(Long id, Member member, Competition competition, Integer win, Integer draw, Integer lose, Integer goalFor, Integer goalAgainst) {
-        this.id = id;
-        this.member = member;
-        this.competition = competition;
-        this.win = win;
-        this.draw = draw;
-        this.lose = lose;
-        this.goalFor = goalFor;
-        this.goalAgainst = goalAgainst;
-    }
+    private int goalAgainst = 0;
 
     public static Participate from(Member member, Competition competition) {
         Participate participate = new Participate();
@@ -61,43 +44,43 @@ public class Participate extends BaseTimeEntity {
     }
 
     // 편의 메서드
-    public void addWin(Integer win) {
+    public void addWin(int win) {
         this.win += win;
     }
 
-    public void subWin(Integer win) {
+    public void subWin(int win) {
         this.win -= win;
     }
 
-    public void addDraw(Integer draw) {
+    public void addDraw(int draw) {
         this.draw += draw;
     }
 
-    public void subDraw(Integer draw) {
+    public void subDraw(int draw) {
         this.draw -= draw;
     }
 
-    public void addLose(Integer lose) {
+    public void addLose(int lose) {
         this.lose += lose;
     }
 
-    public void subLose(Integer lose) {
+    public void subLose(int lose) {
         this.lose -= lose;
     }
 
-    public void addGoalFor(Integer goalFor) {
+    public void addGoalFor(int goalFor) {
         this.goalFor += goalFor;
     }
 
-    public void subGoalFor(Integer goalFor) {
+    public void subGoalFor(int goalFor) {
         this.goalFor -= goalFor;
     }
 
-    public void addGoalAgainst(Integer goalAgainst) {
+    public void addGoalAgainst(int goalAgainst) {
         this.goalAgainst += goalAgainst;
     }
 
-    public void subGoalAgainst(Integer goalAgainst) {
+    public void subGoalAgainst(int goalAgainst) {
         this.goalAgainst -= goalAgainst;
     }
 }

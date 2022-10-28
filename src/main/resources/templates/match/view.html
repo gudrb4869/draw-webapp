@@ -26,15 +26,15 @@
                     <div class="card-body text-center">
                         <div class="row">
                             <div class="col-4">
-                                <svg th:if="${#strings.isEmpty(match.home?.image)}" th:data-jdenticon-value="${match.home != null ? match.home.name:_}" width="24" height="24" class="rounded border bg-light me-3"></svg>
-                                <img th:if="${!#strings.isEmpty(match.home?.image)}" th:src="${match.home.image}" width="24" height="24" class="rounded border me-3"/>
+                                <svg th:if="${#strings.isEmpty(match.home?.image)}" th:data-jdenticon-value="${match.home?.name}" width="24" height="24" class="rounded border bg-light me-3"></svg>
+                                <img th:if="${!#strings.isEmpty(match.home?.image)}" th:src="${match.home?.image}" width="24" height="24" class="rounded border me-3"/>
                                 <span th:text="${match.home?.name}"></span>
                             </div>
                             <div class="col-4">
                                 <span th:text="${match.homeScore} + ' : ' + ${match.awayScore}"></span>
                             </div>
                             <div class="col-4">
-                                <svg th:if="${#strings.isEmpty(match.away?.image)}" th:data-jdenticon-value="${match.away != null ? match.away.name:_}" width="24" height="24" class="rounded border bg-light me-3"></svg>
+                                <svg th:if="${#strings.isEmpty(match.away?.image)}" th:data-jdenticon-value="${match.away?.name}" width="24" height="24" class="rounded border bg-light me-3"></svg>
                                 <img th:if="${!#strings.isEmpty(match.away?.image)}" th:src="${match.away.image}" width="24" height="24" class="rounded border me-3"/>
                                 <span th:text="${match.away?.name}"></span>
                             </div>

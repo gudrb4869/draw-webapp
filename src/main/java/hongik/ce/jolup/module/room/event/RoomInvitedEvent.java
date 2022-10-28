@@ -5,12 +5,12 @@ import hongik.ce.jolup.module.room.domain.entity.Room;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
-import java.util.List;
+import java.util.Set;
 
 @Getter
 @RequiredArgsConstructor
 public class RoomInvitedEvent {
     private final Room room;
     private final String message;
-    private final List<Member> members;
+    private final Set<Member> members;
 }

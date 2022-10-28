@@ -7,24 +7,41 @@
     <div class="py-5 text-center">
         <h2>모임 만들기</h2>
     </div>
-    <div class="row mx-auto justify-content-center">
-        <form class="col-md-6 col-lg-4 mx-auto" th:action th:object="${roomForm}" method="post">
+    <div class="row justify-content-center">
+        <form class="col-sm-10 needs-validation" th:action th:object="${roomForm}" method="post" novalidate>
             <div class="mb-3">
                 <label th:for="title">모임 이름</label>
-                <input type="text" th:field="*{title}" placeholder="모임 이름을 입력하세요"
-                       class="form-control" th:errorclass="is-invalid" autofocus="autofocus">
-                <p th:errors="*{title}" class="text-danger">모임 이름 오류</p>
+                <input type="text" th:field="*{title}" placeholder="모임 이름" required max="50"
+                       class="form-control" th:errorclass="is-invalid" aria-describedby="titleHelp" autofocus>
+                <small id="titleHelp" class="form-text text-muted">
+                    모임 이름을 50자 이하로 입력하세요.
+                </small>
+                <small class="invalid-feedback">모임 이름을 입력하세요.</small>
+                <small th:errors="*{title}" class="text-danger">모임 이름 오류</small>
             </div>
 
             <div class="mb-3">
                 <label th:for="access">모임 공개 여부</label>
-                <select th:field="*{access}" class="form-select" th:errorclass="border-danger">
+                <select th:field="*{access}" class="form-select" th:errorclass="border-danger" aria-describedby="roomTypeHelp">
                     <option value="true">공개</option>
                     <option value="false">비공개</option>
                 </select>
-                <p th:errors="*{access}" class="text-danger">모임 공개 여부 오류</p>
+                <small id="roomTypeHelp" class="form-text text-muted">
+                    모임을 <strong>공개</strong>할 경우, 모든 사용자들이 해당 모임을 자유롭게 참여할 수 있습니다.<br/>
+                    모임을 <strong>비공개</strong>할 경우, 관리자가 사용자를 초대해야만 가입할 수 있습니다.
+                </small>
+                <small th:errors="*{access}" class="text-danger">모임 공개 여부 오류</small>
             </div>
-            <div class="mb-4"></div>
+            <div class="mb-3">
+                <label th:for="shortDescription">모임 소개</label>
+                <textarea type="text" th:field="*{shortDescription}" class="form-control"
+                          placeholder="모임 소개" aria-describedby="shortDescriptionHelp" required maxlength="100"></textarea>
+                <small id="shortDescriptionHelp" class="form-text text-muted">
+                    100자 이하로 모임 소개를 입력하세요.
+                </small>
+                <small class="invalid-feedback">모임 소개를 입력하세요.</small>
+                <small class="form-text text-danger" th:errors="*{shortDescription}">ShortDescription Error</small>
+            </div>
             <div class="row">
                 <div class="col">
                     <button type="submit" class="btn btn-outline-dark">모임 만들기</button>

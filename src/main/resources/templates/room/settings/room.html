@@ -14,8 +14,8 @@
         <div class="col-9">
             <div th:replace="fragments.html :: message"></div>
             <div class="row">
-                <h5 class="col-sm-12" th:text="'모임 공개 여부(현재 상태: ' + (${room.access}? 공개: 비공개) + ')'">모임 공개 여부</h5>
-                <form th:if="${!room.access}" class="col-sm-12" action="#"
+                <h5 class="col-sm-12" th:text="'모임 공개 여부(현재 상태: ' + (${room.isPublic()}? 공개: 비공개) + ')'">모임 공개 여부</h5>
+                <form th:if="${!room.isPublic()}" class="col-sm-12" action="#"
                       th:action="@{'/rooms/' + ${room.id} + '/settings/room/reveal'}" method="post"
                       novalidate>
                     <div class="alert alert-info" role="alert">
@@ -28,7 +28,7 @@
                         </button>
                     </div>
                 </form>
-                <form th:if="${room.access}" class="col-sm-12" action="#"
+                <form th:if="${room.isPublic()}" class="col-sm-12" action="#"
                       th:action="@{'/rooms/' + ${room.id} + '/settings/room/conceal'}" method="post"
                       novalidate>
                     <div class="alert alert-info" role="alert">

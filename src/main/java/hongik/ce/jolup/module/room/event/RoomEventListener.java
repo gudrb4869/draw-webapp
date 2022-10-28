@@ -11,6 +11,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Set;
 
 @Async
 @Transactional
@@ -29,7 +30,7 @@ public class RoomEventListener {
     public void handleRoomInvitedEvent(RoomInvitedEvent roomInvitedEvent) {
         Room room = roomInvitedEvent.getRoom();
         String message = roomInvitedEvent.getMessage();
-        List<Member> members = roomInvitedEvent.getMembers();
+        Set<Member> members = roomInvitedEvent.getMembers();
         members.forEach(member -> {
             saveNotification(room, message, member);
         });
