@@ -1,8 +1,6 @@
 package hongik.ce.jolup.module.competition.endpoint.form;
 
 import hongik.ce.jolup.module.competition.domain.entity.CompetitionType;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.hibernate.validator.constraints.Length;

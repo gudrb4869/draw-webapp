@@ -9,13 +9,11 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "@yaireo/tagify": "^4.16.4",
     "bootstrap": "^5.2.1",
     "cropper": "^4.1.0",
     "font-awesome": "^4.7.0",
     "jdenticon": "^3.2.0",
     "jquery": "^3.6.1",
-    "jquery-bracket": "^0.11.1",
     "jquery-cropper": "^1.0.1",
     "moment": "^2.29.4"
   }

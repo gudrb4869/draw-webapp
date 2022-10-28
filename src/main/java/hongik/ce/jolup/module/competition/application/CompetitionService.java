@@ -43,22 +43,21 @@ public class CompetitionService {
             if (memberList.size() % 2 == 0) {
                 fixed = memberList.remove(random.nextInt(memberList.size()));
             }
+            /*
+            참가자 수 : n
+            참가자 수가 홀수 일 경우 -> 전체 라운드 수 : n - 1, 라운드당 게임 수 : n / 2
+            참가자 수가 짝수 일 경우 -> 전체 라운드 수 : n, 라운드당 게임 수 (n - 1) / 2
+             */
             int n = memberList.size();
-            for (int i = 0; i < n; i++) {
-                for (int j = 0; j < n / 2; j++) {
+            for (int i = 0; i < n; i++) { // n은 홀수 전체 라운드 수 : n
+                for (int j = 0; j < n / 2; j++) { // n은 홀수, 라운드당 게임 수 : ceil((n - 1) / 2) -> n / 2
                     int first = (i + j) % n;
                     int second = (i + n - j - 2) % n;
-                    if (i % 2 == 0) {
-                        matches.add(Match.from(competition, memberList.get(first), memberList.get(second), i, j));
-                        if (competition.getType().equals(CompetitionType.DOUBLE_ROUND_ROBIN)) {
-                            matches.add(Match.from(competition, memberList.get(second), memberList.get(first), n + i, j));
-                        }
-                    } else {
-                        matches.add(Match.from(competition, memberList.get(second), memberList.get(first), i, j));
-                        if (competition.getType().equals(CompetitionType.DOUBLE_ROUND_ROBIN)) {
-                            matches.add(Match.from(competition, memberList.get(first), memberList.get(second), n + i, j));
-                        }
+                    matches.add(Match.from(competition, memberList.get(first), memberList.get(second), i, j));
+                    if (competition.getType().equals(CompetitionType.DOUBLE_ROUND_ROBIN)) {
+                        matches.add(Match.from(competition, memberList.get(second), memberList.get(first), n + i, j));
                     }
+
                 }
                 if (fixed != null) {
                     int j = n / 2;
@@ -82,36 +81,36 @@ public class CompetitionService {
             int round = (int)Math.ceil(Math.log(n) / Math.log(2)); // 총 라운드
             int walkover = (int)Math.pow(2, round) - n; // 부전승 인원 수
 
-            List<Member> home = new ArrayList<>();
+            List<Member> seed1 = new ArrayList<>();
             for (int i = 0; i < (int)Math.pow(2, round - 1); i++) {
-                home.add(memberList.remove(0));
+                seed1.add(memberList.remove(0));
             }
-            List<Member> away = new ArrayList<>();
+            List<Member> seed2 = new ArrayList<>();
             for (int i = 0; i < n - (int)Math.pow(2, round - 1); i++) {
-                away.add(memberList.remove(0));
+                seed2.add(memberList.remove(0));
             }
             for (int i = 0; i < walkover; i++) {
-                away.add(null);
+                seed2.add(null);
             }
-            Collections.shuffle(home);
-            Collections.shuffle(away);
+            Collections.shuffle(seed1);
+            Collections.shuffle(seed2);
 
             int number = 1;
             for (int i = 0; i < round; i++) {
                 for (int j = 0; j < number; j++) {
                     if (i == round - 1) {
-                        Match match = Match.from(competition, home.get(j), away.get(j), i, j);
+                        Match match = Match.from(competition, seed1.get(j), seed2.get(j), i, j);
                         matches.add(match);
-                        if (away.get(j) == null) {
+                        if (seed2.get(j) == null) {
                             match.close();
                             Integer nextMatchRound = i - 1;
                             Integer nextMatchNumber = j / 2;
                             Match nextMatch = matches.stream().filter(m -> nextMatchRound.equals(m.getRound()) && nextMatchNumber.equals(m.getNumber()))
                                     .findAny().orElseThrow(() -> new IllegalStateException("다음 라운드 경기를 찾을 수 없습니다."));
                             if (j % 2 == 0) {
-                                nextMatch.updateHome(home.get(j));
+                                nextMatch.updateHome(seed1.get(j));
                             } else {
-                                nextMatch.updateAway(home.get(j));
+                                nextMatch.updateAway(seed1.get(j));
                             }
                         }
                     }

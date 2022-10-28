@@ -2,14 +2,11 @@ package hongik.ce.jolup.module.competition.endpoint.validator;
 
 import hongik.ce.jolup.module.competition.domain.entity.CompetitionType;
 import hongik.ce.jolup.module.competition.endpoint.form.CompetitionForm;
-import hongik.ce.jolup.module.member.domain.entity.Member;
 import org.springframework.stereotype.Component;
 import org.springframework.validation.Errors;
 import org.springframework.validation.Validator;
 
-import java.util.List;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 @Component
 public class CompetitionFormValidator implements Validator {

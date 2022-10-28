@@ -101,30 +101,21 @@ public class CompetitionController {
         model.addAttribute(room);
         model.addAttribute(member);
         model.addAttribute(competition);
-        List<Member> members = competition.getParticipates().stream().map(Participate::getMember).collect(Collectors.toList());
-        model.addAttribute("members", members);
+        LinkedHashMap<Integer, List<Match>> matches = new LinkedHashMap<>();
         if (competition.isLeague()) {
-//            LinkedHashMap<Integer, List<Match>> hashMap = new LinkedHashMap<>();
-            Page<Match> matches = matchRepository.findMatchWithAllByCompetition(competition, pageable);
-            log.info("총 element 수 : {}, 전체 page 수 : {}, 페이지에 표시할 element 수 : {}, 현재 페이지 index : {}, 현재 페이지의 element 수 : {}",
-                    matches.getTotalElements(), matches.getTotalPages(), matches.getSize(),
-                    matches.getNumber(), matches.getNumberOfElements());
-            /*for (Match leagueGame : matches) {
-                hashMap.computeIfAbsent(leagueGame.getRound(), k -> new ArrayList<>()).add(leagueGame);
-            }*/
-//            model.addAttribute("hashMap", hashMap);
-            model.addAttribute("matches", matches);
+            Page<Match> matchPage = matchRepository.findMatchWithAllByCompetition(competition, pageable);
+            matchPage.forEach(match -> matches.computeIfAbsent(match.getRound(), k -> new ArrayList<>()).add(match));
+            model.addAttribute("matchPage", matchPage);
         } else if (competition.isTournament()) {
-            LinkedHashMap<Integer, List<Match>> matches = new LinkedHashMap<>();
             matchRepository.findMatchWithAllByCompetition(competition)
                     .forEach(match -> matches.computeIfAbsent(match.getRound(), k -> new ArrayList<>()).add(match));
             for (Integer key : matches.keySet()) {
                 matches.get(key).sort(Comparator.comparing(Match::getNumber));
             }
-            model.addAttribute("matches", matches);
-            model.addAttribute("round", Collections.max(matches.keySet()));
-            log.info("matches = {}", matches);
         }
+        model.addAttribute("matches", matches);
+        model.addAttribute("first_round", Collections.min(matches.keySet()));
+        model.addAttribute("last_round", Collections.max(matches.keySet()));
         return "competition/view";
     }
 
