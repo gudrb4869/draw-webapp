@@ -1,13 +1,13 @@
 <!DOCTYPE HTML>
 <html xmlns:th="http://www.thymeleaf.org">
 <head th:replace="fragments.html :: head"></head>
-<body class="d-flex flex-column min-vh-100 bg-light">
+<body class="bg-light">
 <div th:replace="fragments.html :: navigation-bar"></div>
 <div class="container">
     <div th:replace="fragments.html :: competition-info"></div>
     <div th:replace="fragments.html :: competition-menu (currentMenu='matches')"></div>
     <div class="row mt-3 justify-content-center">
-        <div class="col-lg-10 py-3 round-robin round-robin--rounded" th:if="${competition.isLeague()}">
+        <div class="col-sm-10 py-3 round-robin round-robin--rounded" th:if="${competition.isLeague()}">
             <div th:if="${matchPage.getTotalElements() == 0}" class="col">
                 경기가 없습니다.
             </div>
@@ -59,48 +59,14 @@
                                 </tr>
                                 </tbody>
                             </table>
-                            <!--                            <div th:replace="fragments.html :: match"></div>-->
                         </div>
                     </li>
                 </ul>
             </div>
-            <!--<div class="row row-cols-1 row-cols-md-2 row-cols-lg-3" th:if="${matchPage.getTotalElements() > 0}">
-
-                <div class="col mb-4" th:each="match: ${matches.getContent()}">
-                    <a th:href="@{'/rooms/' + ${room.id} + '/competitions/' + ${competition.id} + '/matches/' + ${match.id}}" class="text-decoration-none">
-                        <div class="card">
-                            <div class="card-header d-flex justify-content-between align-items-center">
-                                <small th:text="${match.round + 1} + '라운드 / ' + ${match.number + 1} + '경기'">경기 정보</small>
-                                <small th:if="${match.startDateTime == null}" class="text-warning">시간 미정</small>
-                                <small th:if="${match.startDateTime != null}" class="date-time text-dark" th:text="${match.startDateTime}">경기 시간</small>
-                            </div>
-                            <div class="card-body text-center">
-                                <div class="row">
-                                    <div class="col-4">
-                                        <svg th:if="${#strings.isEmpty(match.home?.image)}" th:data-jdenticon-value="${match.home?.name}" width="24" height="24" class="rounded border bg-light me-3"></svg>
-                                        <img th:if="${!#strings.isEmpty(match.home?.image)}" th:src="${match.home?.image}" width="24" height="24" class="rounded border me-3"/>
-                                        <span th:text="${match.home?.name}"></span>
-                                    </div>
-                                    <div class="col-4">
-                                        <span th:text="${match.status} ? ${match?.homeScore} : '-'">3</span>
-                                        <span th:if="${match?.homeScore != null and match?.awayScore != null}"> : </span>
-                                        <span th:text="${match.status} ? ${match?.awayScore} : '-'">2</span>
-                                    </div>
-                                    <div class="col-4">
-                                        <svg th:if="${#strings.isEmpty(match.away?.image)}" th:data-jdenticon-value="${match.away?.name}" width="24" height="24" class="rounded border bg-light me-3"></svg>
-                                        <img th:if="${!#strings.isEmpty(match.away?.image)}" th:src="${match.away?.image}" width="24" height="24" class="rounded border me-3"/>
-                                        <span th:text="${match.away?.name}"></span>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </a>
-                </div>
-            </div>-->
             <div th:replace="fragments.html :: page (pages=${matchPage}, url='/rooms/' + ${room.id} + '/competitions/' + ${competition.id})"></div>
         </div>
 
-        <div class="col-lg-10 py-3 tournament-bracket tournament-bracket--rounded" th:if="${competition.isTournament()}">
+        <div class="col-sm-10 py-3 tournament-bracket tournament-bracket--rounded" th:if="${competition.isTournament()}">
             <div class="tournament-bracket__round" th:classappend="'tournament-bracket__round--' + ${last_round - key}" th:each="key : ${#numbers.sequence(last_round, first_round, -1)}">
                 <h3 class="tournament-bracket__round-title" th:text="${key == 0} ? '결승' : (${key == 1} ? '준결승' : (${key == 2} ? '8강' : (${key == 3} ? '16강' : (${key == 4} ? '32강' : (${key == 5} ? '64강' : _)))))"></h3>
                 <ul class="tournament-bracket__list">
@@ -149,7 +115,6 @@
                                 </tr>
                                 </tbody>
                             </table>
-<!--                            <div th:replace="fragments.html :: match"></div>-->
                         </div>
                     </li>
                 </ul>

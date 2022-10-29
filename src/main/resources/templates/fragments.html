@@ -3,7 +3,6 @@
       xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 <head th:fragment="head">
     <!-- Required meta tags -->
-<!--    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />-->
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Project</title>
@@ -14,8 +13,8 @@
     <link rel="stylesheet" href="/node_modules/font-awesome/css/font-awesome.min.css"/>
     <link rel="stylesheet" href="/tournament.css"/>
     <script defer src="/node_modules/jdenticon/dist/jdenticon.min.js"></script>
-    <script defer src="/node_modules/jquery/dist/jquery.min.js"></script>
-    <script defer src="/node_modules/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="/node_modules/jquery/dist/jquery.min.js"></script>
+    <script src="/node_modules/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <style>
         .container {
             max-width: 100%;
@@ -34,8 +33,10 @@
     </style>
 </head>
 
-<footer th:fragment="footer" class="d-flex flex-wrap justify-content-center pt-3 my-4 border-top mt-auto">
-    <span class="text-muted">© 2022 Hongik University Computer Engineering</span>
+<footer th:fragment="footer">
+    <div class="row justify-content-center">
+        <small class="d-flex my-3 text-muted justify-content-center">© 2022 Hongik University Computer Engineering</small>
+    </div>
 </footer>
 
 <div th:fragment="settings-menu (currentMenu)" class="list-group">

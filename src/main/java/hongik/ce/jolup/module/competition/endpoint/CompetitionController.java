@@ -94,7 +94,7 @@ public class CompetitionController {
 
     @GetMapping("/{competitionId}")
     public String viewCompetition(@CurrentMember Member member, @PathVariable Long roomId, @PathVariable Long competitionId,
-                                  @PageableDefault(size = 9, sort = {"round", "number"}, direction = Sort.Direction.ASC) Pageable pageable, Model model) {
+                                  @PageableDefault(size = 10, sort = "round", direction = Sort.Direction.ASC) Pageable pageable, Model model) {
 
         Room room = roomService.getRoom(roomId);
         Competition competition = competitionService.getCompetition(room, competitionId);

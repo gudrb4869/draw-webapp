@@ -1,9 +1,8 @@
 <!DOCTYPE HTML>
-<html xmlns="http://www.w3.org/1999/xhtml"
-      xmlns:th="http://www.thymeleaf.org">
-<head th:replace="fragments/header :: header" />
-<body class="d-flex flex-column min-vh-100 bg-light">
-<div th:replace="fragments/bodyheader" :: bodyheader />
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="fragments.html :: head"></head>
+<body class="bg-light">
+<div th:replace="fragments.html :: navigation-bar"></div>
 <div class="container">
     <div class="py-5 text-center">
         <h2>멤버 등급 수정</h2>
@@ -35,6 +34,6 @@
         </form>
     </div>
 </div> <!-- /container -->
-<div th:replace="fragments/footer" :: footer />
+<div th:replace="fragments.html :: footer"></div>
 </body>
 </html>
