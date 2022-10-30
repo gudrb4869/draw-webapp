@@ -124,7 +124,6 @@ public class CompetitionController {
 
         Room room = roomService.getRoom(roomId);
         Competition competition = competitionService.getCompetition(room, competitionId);
-        List<Participate> participates = competition.getParticipates();
         List<Participate> ranking = participateRepository.findLeagueRankingByCompetition(competition);
         model.addAttribute(room);
         model.addAttribute(member);
