@@ -3,14 +3,15 @@ package hongik.ce.jolup.module.room.event;
 import hongik.ce.jolup.module.member.domain.entity.Member;
 import hongik.ce.jolup.module.room.domain.entity.Room;
 import lombok.Getter;
-import lombok.RequiredArgsConstructor;
 
 import java.util.Set;
 
 @Getter
-@RequiredArgsConstructor
-public class RoomInviteEvent {
-    private final Room room;
-    private final String message;
+public class RoomInviteEvent extends RoomEvent {
     private final Set<Member> members;
+
+    public RoomInviteEvent(Room room, String message, Set<Member> members) {
+        super(room, message);
+        this.members = members;
+    }
 }

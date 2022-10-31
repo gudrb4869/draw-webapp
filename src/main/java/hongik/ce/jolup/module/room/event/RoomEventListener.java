@@ -21,11 +21,6 @@ public class RoomEventListener {
     private final NotificationRepository notificationRepository;
 
     @EventListener
-    public void handleRoomCreatedEvent(RoomCreateEvent roomCreateEvent) {
-
-    }
-
-    @EventListener
     public void handleRoomInvitedEvent(RoomInviteEvent roomInviteEvent) {
         Room room = roomInviteEvent.getRoom();
         String message = roomInviteEvent.getMessage();

@@ -210,12 +210,12 @@
 <div th:fragment="room-info">
     <div class="row pt-4 text-left justify-content-center bg-light">
         <!--방 이름 표시-->
-        <div class="col-10 col-sm-6">
+        <div class="col-10 col-md-6">
             <a href="#" class="text-decoration-none" th:href="@{'/rooms/' + ${room.id}}">
                 <span class="h2" th:text="${room.title}">방 이름</span>
             </a>
         </div>
-        <div class="col-10 col-sm-4 text-end justify-content-end">
+        <div class="col-10 col-md-4 text-end justify-content-md-end">
             <!--방을 공개하지 않았을 경우-->
             <!--<span th:if="${!room.access}" class="d-inline-block" tabindex="0" data-bs-toggle="tooltip"
                   data-bs-placement="bottom" title="공개 준비중입니다.">
@@ -246,16 +246,16 @@
             </span>
             <!--인증된 사용자이고 방 관리자인 경우-->
             <span sec:authorize="isAuthenticated()" th:if="${room.isAdmin(#authentication.principal)}">
-                <button class="btn btn-outline-danger" data-bs-toggle="modal" data-bs-target="#remove">방 삭제</button>
-                <a class="btn btn-outline-primary" th:href="@{'/rooms/' + ${room.id} + '/update'}">
+                <button class="btn btn-sm btn-outline-danger" data-bs-toggle="modal" data-bs-target="#remove">방 삭제</button>
+                <a class="btn btn-sm btn-outline-primary" th:href="@{'/rooms/' + ${room.id} + '/update'}">
                     방 수정
                 </a>
                 <!--친구 초대 링크-->
-                <a class="btn btn-outline-primary" th:href="@{'/rooms/' + ${room.id} + '/invite'}">
+                <a class="btn btn-sm btn-outline-primary" th:href="@{'/rooms/' + ${room.id} + '/invite'}">
                     친구 초대
                 </a>
                 <!--대회 만들기 링크-->
-                <a class="btn btn-outline-primary" th:href="@{'/rooms/' + ${room.id} + '/competitions/create'}">
+                <a class="btn btn-sm btn-outline-primary" th:href="@{'/rooms/' + ${room.id} + '/competitions/create'}">
                     <i class="fa fa-plus"></i> 대회 만들기
                 </a>
             </span>
