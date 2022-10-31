@@ -17,8 +17,8 @@
     <div th:replace="fragments.html::member-list (memberList=${memberPage.getContent()})"></div>
 
     <div th:replace="fragments.html :: page (pages=${memberPage}, url='/search/member?keyword=' + ${keyword})"></div>
+    <div th:replace="fragments.html :: footer"></div>
 </div>
-<div th:replace="fragments.html :: footer"></div>
 <script th:replace="fragments.html :: date-time"></script>
 </body>
 </html>

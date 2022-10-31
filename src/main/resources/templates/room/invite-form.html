@@ -41,8 +41,8 @@
             <a th:href="@{'/rooms/' + ${id}}" class="btn btn-primary my-2">돌아가기</a>
         </p>
     </div>
+    <div th:replace="fragments.html :: footer"></div>
 </div> <!-- /container -->
-<div th:replace="fragments.html :: footer"></div>
 <div th:replace="fragments.html :: date-time"></div>
 </body>
 </html>

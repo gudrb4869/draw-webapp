@@ -11,10 +11,10 @@
         <form class="col-sm-10 needs-validation" th:action th:object="${roomForm}" method="post" novalidate>
             <div class="mb-3">
                 <label th:for="title">모임 이름</label>
-                <input type="text" th:field="*{title}" placeholder="모임 이름" required max="50"
+                <input type="text" th:field="*{title}" placeholder="모임 이름" required maxlength="50"
                        class="form-control" th:errorclass="is-invalid" aria-describedby="titleHelp" autofocus>
                 <small id="titleHelp" class="form-text text-muted">
-                    모임 이름을 50자 이하로 입력하세요.
+                    50자 이하로 모임 이름을 입력하세요.
                 </small>
                 <small class="invalid-feedback">모임 이름을 입력하세요.</small>
                 <small th:errors="*{title}" class="text-danger">모임 이름 오류</small>
@@ -35,9 +35,9 @@
             <div class="mb-3">
                 <label th:for="shortDescription">모임 소개</label>
                 <textarea type="text" th:field="*{shortDescription}" class="form-control"
-                          placeholder="모임 소개" aria-describedby="shortDescriptionHelp" required maxlength="100"></textarea>
+                          placeholder="모임 소개" aria-describedby="shortDescriptionHelp" required maxlength="50"></textarea>
                 <small id="shortDescriptionHelp" class="form-text text-muted">
-                    100자 이하로 모임 소개를 입력하세요.
+                    50자 이하로 모임 소개를 입력하세요.
                 </small>
                 <small class="invalid-feedback">모임 소개를 입력하세요.</small>
                 <small class="form-text text-danger" th:errors="*{shortDescription}">ShortDescription Error</small>
@@ -50,8 +50,8 @@
             </div>
         </form>
     </div>
+    <div th:replace="fragments.html :: footer"></div>
 </div> <!-- /container -->
-<div th:replace="fragments.html :: footer"></div>
 <script th:replace="fragments.html :: form-validation"></script>
 <div th:replace="fragments.html :: date-time"></div>
 </body>

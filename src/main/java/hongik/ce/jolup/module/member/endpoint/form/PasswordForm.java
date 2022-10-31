@@ -1,9 +1,9 @@
 package hongik.ce.jolup.module.member.endpoint.form;
 
 import lombok.Data;
-import org.hibernate.validator.constraints.Length;
 
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.Size;
 
 @Data
 public class PasswordForm {
@@ -11,10 +11,10 @@ public class PasswordForm {
     private String currentPassword;
 
 //    @Pattern(regexp = "(?=.*[0-9])(?=.*[a-zA-Z])(?=.*\\W)(?=\\S+$).{8,30}", message = "신규 비밀번호는 8~30자 영문 대 소문자, 숫자, 특수문자를 사용하세요.")
-    @Length(min = 8, max = 30, message = "신규 비밀번호는 8~30자로 설정하세요.")
+    @Size(min = 8, max = 30, message = "신규 비밀번호는 8~30자로 설정하세요.")
     private String newPassword;
 
 //    @Pattern(regexp = "(?=.*[0-9])(?=.*[a-zA-Z])(?=.*\\W)(?=\\S+$).{8,30}", message = "비밀번호 확인을 입력하세요.")
-    @Length(min = 8, max = 30, message = "비밀번호 확인은 8~30자로 설정하세요.")
+    @Size(min = 8, max = 30, message = "비밀번호 확인은 8~30자로 설정하세요.")
     private String newPasswordConfirm;
 }

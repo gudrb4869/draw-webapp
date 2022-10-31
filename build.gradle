@@ -32,13 +32,13 @@ dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-thymeleaf' // HTML 템플릿 엔진
 	implementation 'org.springframework.boot:spring-boot-starter-validation'
 	implementation 'org.springframework.boot:spring-boot-starter-web' // 웹 관련 개발하기위해 필요
-	implementation 'org.springframework.boot:spring-boot-starter-websocket'
+//	implementation 'org.springframework.boot:spring-boot-starter-websocket'
 	implementation 'org.springframework.boot:spring-boot-devtools'
 	implementation 'org.thymeleaf.extras:thymeleaf-extras-springsecurity5'
-	implementation 'org.springframework.boot:spring-boot-starter-actuator' //모니터링 기능 등을 손쉽게 추가가능
-	implementation 'org.springframework.boot:spring-boot-starter-mail' // 메일 전송하기위해 필요
+//	implementation 'org.springframework.boot:spring-boot-starter-actuator' //모니터링 기능 등을 손쉽게 추가가능
+//	implementation 'org.springframework.boot:spring-boot-starter-mail' // 메일 전송하기위해 필요
 	implementation 'nz.net.ultraq.thymeleaf:thymeleaf-layout-dialect'
-	implementation 'org.springframework.boot:spring-boot-starter-oauth2-client'
+//	implementation 'org.springframework.boot:spring-boot-starter-oauth2-client'
 	implementation "com.querydsl:querydsl-jpa:${queryDslVersion}"
 	implementation "com.querydsl:querydsl-apt:${queryDslVersion}"
 

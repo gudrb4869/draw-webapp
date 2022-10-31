@@ -32,8 +32,8 @@
     <div th:replace="fragments.html::member-list (memberList=${memberPage.getContent()})"></div>
 
     <div th:replace="fragments.html :: page (pages=${memberPage}, url='/search?category=' + ${category} + '&keyword=' + ${keyword})"></div>
+    <div th:replace="fragments.html :: footer"></div>
 </div>
-<div th:replace="fragments.html :: footer"></div>
 <script th:replace="fragments.html :: date-time"></script>
 <script th:replace="fragments::form-validation"></script>
 </body>

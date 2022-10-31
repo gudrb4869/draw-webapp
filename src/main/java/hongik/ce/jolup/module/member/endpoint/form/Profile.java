@@ -4,9 +4,9 @@ import hongik.ce.jolup.module.member.domain.entity.Member;
 import lombok.AccessLevel;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.hibernate.validator.constraints.Length;
 
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.Size;
 
 @Data
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -17,7 +17,7 @@ public class Profile {
 
     private String image;
 
-    @Length(max = 30, message = "30자를 초과하였습니다.")
+    @Size(max = 30, message = "30자를 초과하였습니다.")
     private String bio;
 
     public static Profile from(Member member) {

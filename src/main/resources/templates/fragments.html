@@ -20,7 +20,7 @@
             max-width: 100%;
         }
 
-        body,
+        /*body,
         input,
         button,
         select,
@@ -29,14 +29,12 @@
         .tooltip,
         .popover {
             font-family: -apple-system, BlinkMacSystemFont, "Noto Sans KR", "Segoe UI", "Roboto Light", serif, Arial, "Noto Sans";
-        }
+        }*/
     </style>
 </head>
 
-<footer th:fragment="footer">
-    <div class="row justify-content-center">
-        <small class="d-flex my-3 text-muted justify-content-center">© 2022 Hongik University Computer Engineering</small>
-    </div>
+<footer th:fragment="footer" class="row justify-content-center my-3">
+    <small class="text-muted text-center">© 2022 Hongik University Computer Engineering</small>
 </footer>
 
 <div th:fragment="settings-menu (currentMenu)" class="list-group">
@@ -59,17 +57,14 @@
     </button>
 
     <div class="collapse navbar-collapse" id="navbarSupportedContent">
-        <ul class="navbar-nav me-auto">
+        <ul class="navbar-nav justify-content-center me-auto">
             <li class="nav-item">
-                <form th:action="@{/search}" class="form-inline d-flex needs-validation" method="get" novalidate>
-                    <div class="input-group">
-                        <select name="category" class="form-select">
-                            <option value="member">회원</option>
-                            <option value="room">모임</option>
-                        </select>
-                        <input class="form-control me-2" name="keyword" type="search" placeholder="" required aria-label="Search"/>
-                    </div>
-<!--                    <input class="form-control me-2" name="keyword" type="search" placeholder="" required aria-label="Search"/>-->
+                <form th:action="@{/search}" class="form-inline d-flex" method="get">
+                    <select name="category" class="form-select me-2">
+                        <option value="member">회원</option>
+                        <option value="room">모임</option>
+                    </select>
+                    <input class="form-control me-2" name="keyword" type="search" placeholder="" required aria-label="Search"/>
                     <button class="btn btn-warning" type="submit" aria-describedby="submitHelp">
                         <i class="fa fa-search"></i>
                     </button>
@@ -470,7 +465,7 @@
                             <p class="card-text" th:text="${room.shortDescription}">Short description</p>
                             <div class="d-flex justify-content-between align-items-center">
                                 <small class="text-muted">
-                                    <i class="fa fa-user-circle"></i>
+                                    <i class="fa fa-user"></i>
                                     <span th:text="${room.count}"></span>명
                                 </small>
                                 <small class="text-muted date-time" th:text="${room.createdDate}">9 mins</small>

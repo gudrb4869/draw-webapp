@@ -22,12 +22,13 @@ public class SignupFormValidator implements Validator {
     public void validate(Object target, Errors errors) {
         SignupForm signupForm = (SignupForm) target;
         if (memberRepository.existsByEmail(signupForm.getEmail())) {
-            errors.rejectValue("email", "invalid.email", new Object[]{signupForm.getEmail()},
-                    "이미 사용중인 이메일입니다.");
+            errors.rejectValue("email", "invalid.email", "이미 사용중인 이메일입니다.");
+        }
+        if (!signupForm.getPassword().equals(signupForm.getPassword_confirm())) {
+            errors.rejectValue("password_confirm", "wrong.password", "비밀번호가 일치하지 않습니다.");
         }
         if (memberRepository.existsByName(signupForm.getName())) {
-            errors.rejectValue("name", "invalid.name", new Object[]{signupForm.getName()},
-                    "이미 사용중인 이름입니다.");
+            errors.rejectValue("name", "invalid.name", "이미 사용중인 이름입니다.");
         }
 
     }
