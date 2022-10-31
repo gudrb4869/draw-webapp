@@ -49,9 +49,9 @@ public class Room extends BaseTimeEntity {
     public static Room from(RoomForm roomForm) {
         Room room = new Room();
         room.title = roomForm.getTitle();
-        room.access = roomForm.getAccess();
+        room.access = roomForm.isAccess();
         room.shortDescription = roomForm.getShortDescription();
-        room.count = 1;
+        room.addCount();
         return room;
     }
 
@@ -105,5 +105,11 @@ public class Room extends BaseTimeEntity {
 
     public boolean isRemovable() {
         return true;
+    }
+
+    public void updateFrom(RoomForm roomForm) {
+        this.title = roomForm.getTitle();
+        this.access = roomForm.isAccess();
+        this.shortDescription = roomForm.getShortDescription();
     }
 }

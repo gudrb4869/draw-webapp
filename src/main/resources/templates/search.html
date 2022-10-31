@@ -9,7 +9,7 @@
             <strong th:text="${keyword}" id="keyword" class="context"></strong>에 대한 검색결과가 없습니다.
         </p>
         <p class="lead" th:if="${roomPage.getTotalElements() > 0}">
-            <strong th:text="${keyword}" id="keyword" class="context"></strong>에 대한 모임이
+            <strong th:text="${keyword}" id="keyword" class="context"></strong>에 대한 방이
             <span th:text="${roomPage.getTotalElements()}"></span>개 있습니다.
         </p>
     </div>

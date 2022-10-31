@@ -61,14 +61,14 @@ public class NotificationController {
                             .orElseThrow(() -> new RuntimeException("예외가 발생했습니다.")),
                     Long.valueOf(notification.getLink()), Grade.USER);
         }
-        attributes.addFlashAttribute("message", "모임 참여 요청을 수락했습니다.");
+        attributes.addFlashAttribute("message", "방 참여 요청을 수락했습니다.");
         return "redirect:/notifications";
     }
 
     @PostMapping("/{id}/reject")
     public String reject(@CurrentMember Member member, @PathVariable Long id, RedirectAttributes attributes) {
         Notification notification = notificationService.findOne(id);
-        attributes.addFlashAttribute("message", "모임 참여 요청을 거절했습니다.");
+        attributes.addFlashAttribute("message", "방 참여 요청을 거절했습니다.");
         return "redirect:/notifications";
     }*/
 }

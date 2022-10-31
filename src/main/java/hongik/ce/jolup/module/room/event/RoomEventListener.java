@@ -10,7 +10,6 @@ import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
 import java.util.Set;
 
 @Async
@@ -22,15 +21,15 @@ public class RoomEventListener {
     private final NotificationRepository notificationRepository;
 
     @EventListener
-    public void handleRoomCreatedEvent(RoomCreatedEvent roomCreatedEvent) {
+    public void handleRoomCreatedEvent(RoomCreateEvent roomCreateEvent) {
 
     }
 
     @EventListener
-    public void handleRoomInvitedEvent(RoomInvitedEvent roomInvitedEvent) {
-        Room room = roomInvitedEvent.getRoom();
-        String message = roomInvitedEvent.getMessage();
-        Set<Member> members = roomInvitedEvent.getMembers();
+    public void handleRoomInvitedEvent(RoomInviteEvent roomInviteEvent) {
+        Room room = roomInviteEvent.getRoom();
+        String message = roomInviteEvent.getMessage();
+        Set<Member> members = roomInviteEvent.getMembers();
         members.forEach(member -> {
             saveNotification(room, message, member);
         });

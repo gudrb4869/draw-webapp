@@ -18,7 +18,7 @@
                 <div class="flex-grow-1 ms-3">
                     <h5 class="mt-0 mb-1">
                         <span th:text="${join.member?.name ?: '(알수없음)'}"></span>
-                        <span th:if="${join.grade?.name() == 'ADMIN'}" class="badge bg-primary">관리자</span>
+                        <span th:if="${join.grade?.name() == 'ADMIN'}" class="badge bg-primary">방장</span>
                     </h5>
                     <span th:text="${join.member?.bio}"></span>
                 </div>

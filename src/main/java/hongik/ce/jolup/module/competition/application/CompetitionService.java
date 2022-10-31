@@ -124,7 +124,7 @@ public class CompetitionService {
         participateRepository.saveAll(participates);
         matchRepository.saveAll(matches);
         eventPublisher.publishEvent(new CompetitionCreatedEvent(competition,
-                "모임 '" + competition.getRoom().getTitle() + "'에서 새로운 대회 '" + competition.getTitle() + "'가 생성되었습니다.", members));
+                "방 '" + competition.getRoom().getTitle() + "'에서 새로운 대회 '" + competition.getTitle() + "'가 생성되었습니다.", members));
         return competition;
     }
 

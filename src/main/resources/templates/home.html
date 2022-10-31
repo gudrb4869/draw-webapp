@@ -7,10 +7,10 @@
     <div th:replace="fragments.html :: message"></div>
     <div class="py-5 text-center">
         <p class="lead" th:if="${joins.getTotalElements() == 0}">
-            참여중인 모임이 없습니다.
+            참여중인 방이 없습니다.
         </p>
         <p class="lead" th:if="${joins.getTotalElements() > 0}">
-            현재 <span th:text="${joins.getTotalElements()}"></span>개의 모임에 참여중입니다.
+            현재 <span th:text="${joins.getTotalElements()}"></span>개의 방에 참여중입니다.
         </p>
     </div>
 
@@ -20,7 +20,7 @@
         <div class="col-sm-10 text-end justify-content-end">
             <span class="btn-group" role="group">
                 <a class="btn btn-outline-dark" th:href="@{'/rooms/create'}">
-                    모임 만들기
+                    방 만들기
                 </a>
             </span>
         </div>

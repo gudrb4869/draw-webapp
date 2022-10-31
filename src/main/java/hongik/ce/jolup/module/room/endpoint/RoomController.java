@@ -58,16 +58,37 @@ public class RoomController {
             return "room/form";
         }
         Room room = roomService.createNewRoom(roomForm, member);
-        attributes.addFlashAttribute("message", "새로운 모임을 만들었습니다.");
+        attributes.addFlashAttribute("message", "새로운 방을 만들었습니다.");
         return "redirect:/rooms/" + room.getId();
     }
 
     @GetMapping("/{id}")
     public String viewRoom(@CurrentMember Member member, @PathVariable Long id, Model model) {
-        Room room = roomService.getRoom(id);
+        Room room = roomService.getRoom(member, id);
         model.addAttribute(member);
         model.addAttribute(room);
         return "room/view";
+    }
+
+    @GetMapping("/{id}/update")
+    public String updateRoomForm(@CurrentMember Member member, @PathVariable Long id, Model model) {
+        Room room = roomService.getRoomToUpdate(member, id);
+        model.addAttribute(member);
+        model.addAttribute(RoomForm.from(room));
+        return "room/update-form";
+    }
+
+    @PostMapping("/{id}/update")
+    public String updateRoom(@CurrentMember Member member, @PathVariable Long id, Model model,
+                             @Valid RoomForm roomForm, BindingResult result, RedirectAttributes attributes) {
+        Room room = roomService.getRoomToUpdate(member, id);
+        if (result.hasErrors()) {
+            model.addAttribute(member);
+            return "room/update-form";
+        }
+        roomService.updateRoom(room, roomForm);
+        attributes.addFlashAttribute("message", "방을 수정했습니다.");
+        return "redirect:/rooms/" + room.getId();
     }
 
     @GetMapping("/{id}/members")
@@ -129,7 +150,7 @@ public class RoomController {
             return "room/invite-form";
         }
         roomService.inviteRoom(friends, room, inviteForm.getMembers());
-        attributes.addFlashAttribute("message", "친구들에게 모임 초대 요청을 보냈습니다.");
+        attributes.addFlashAttribute("message", "친구들에게 방 초대 요청을 보냈습니다.");
         return "redirect:/rooms/" + room.getId();
     }
 }

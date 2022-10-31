@@ -9,7 +9,7 @@ import java.util.Set;
 
 @Getter
 @RequiredArgsConstructor
-public class RoomInvitedEvent {
+public class RoomInviteEvent {
     private final Room room;
     private final String message;
     private final Set<Member> members;

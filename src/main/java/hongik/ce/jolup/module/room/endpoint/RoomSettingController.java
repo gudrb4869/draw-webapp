@@ -31,7 +31,7 @@ public class RoomSettingController {
     public String revealRoom(@CurrentMember Member member, @PathVariable Long id, RedirectAttributes attributes) {
         Room room = roomService.getRoomToUpdate(member, id);
         roomService.reveal(room);
-        attributes.addFlashAttribute("message", "모임을 공개했습니다.");
+        attributes.addFlashAttribute("message", "방을 공개했습니다.");
         return "redirect:/rooms/" + room.getId() + "/settings";
     }
 
@@ -39,7 +39,7 @@ public class RoomSettingController {
     public String concealRoom(@CurrentMember Member member, @PathVariable Long id, RedirectAttributes attributes) {
         Room room = roomService.getRoomToUpdate(member, id);
         roomService.conceal(room);
-        attributes.addFlashAttribute("message", "모임을 비공개했습니다.");
+        attributes.addFlashAttribute("message", "방을 비공개했습니다.");
         return "redirect:/rooms/" + room.getId() + "/settings";
     }
 
@@ -50,11 +50,26 @@ public class RoomSettingController {
         if (!roomService.isValidTitle(newTitle)) {
             model.addAttribute(member);
             model.addAttribute(room);
-            model.addAttribute("roomTitleError", "모임 이름을 다시 입력하세요.");
+            model.addAttribute("roomTitleError", "방 이름을 다시 입력하세요.");
             return "room/settings/room";
         }
         roomService.updateRoomTitle(room, newTitle);
-        attributes.addFlashAttribute("message", "모임 이름을 수정하였습니다.");
+        attributes.addFlashAttribute("message", "방 이름을 수정하였습니다.");
+        return "redirect:/rooms/" + room.getId() + "/settings";
+    }
+
+    @PostMapping("/room/description")
+    public String updateRoomDescription(@CurrentMember Member member, @PathVariable Long id, String newTitle,
+                                  Model model, RedirectAttributes attributes) {
+        Room room = roomService.getRoomToUpdate(member, id);
+        if (!roomService.isValidTitle(newTitle)) {
+            model.addAttribute(member);
+            model.addAttribute(room);
+            model.addAttribute("roomTitleError", "방 이름을 다시 입력하세요.");
+            return "room/settings/room";
+        }
+        roomService.updateRoomTitle(room, newTitle);
+        attributes.addFlashAttribute("message", "방 이름을 수정하였습니다.");
         return "redirect:/rooms/" + room.getId() + "/settings";
     }
 

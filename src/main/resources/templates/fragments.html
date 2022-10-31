@@ -58,11 +58,11 @@
 
     <div class="collapse navbar-collapse" id="navbarSupportedContent">
         <ul class="navbar-nav justify-content-center me-auto">
-            <li class="nav-item">
+            <li class="nav-item p-1">
                 <form th:action="@{/search}" class="form-inline d-flex" method="get">
                     <select name="category" class="form-select me-2">
                         <option value="member">회원</option>
-                        <option value="room">모임</option>
+                        <option value="room">방</option>
                     </select>
                     <input class="form-control me-2" name="keyword" type="search" placeholder="" required aria-label="Search"/>
                     <button class="btn btn-warning" type="submit" aria-describedby="submitHelp">
@@ -73,11 +73,11 @@
         </ul>
 
         <ul class="navbar-nav justify-content-end">
-            <li class="nav-item" sec:authorize="!isAuthenticated()">
-                <a class="nav-link" th:href="@{/login}">로그인</a>
+            <li class="nav-item p-1" sec:authorize="!isAuthenticated()">
+                <a class="nav-link btn btn-outline-light" th:href="@{/login}">로그인</a>
             </li>
-            <li class="nav-item" sec:authorize="!isAuthenticated()">
-                <a class="nav-link" th:href="@{/signup}">회원가입</a>
+            <li class="nav-item p-1" sec:authorize="!isAuthenticated()">
+                <a class="nav-link btn btn-outline-light" th:href="@{/signup}">회원가입</a>
             </li>
             <!--<li class="nav-item" sec:authorize="isAuthenticated()">
                 <a class="nav-link" th:href="@{/notifications}">
@@ -209,43 +209,47 @@
 
 <div th:fragment="room-info">
     <div class="row pt-4 text-left justify-content-center bg-light">
-        <!--모임 이름 표시-->
+        <!--방 이름 표시-->
         <div class="col-10 col-sm-6">
             <a href="#" class="text-decoration-none" th:href="@{'/rooms/' + ${room.id}}">
-                <span class="h2" th:text="${room.title}">모임 이름</span>
+                <span class="h2" th:text="${room.title}">방 이름</span>
             </a>
         </div>
         <div class="col-10 col-sm-4 text-end justify-content-end">
-            <!--모임을 공개하지 않았을 경우-->
+            <!--방을 공개하지 않았을 경우-->
             <!--<span th:if="${!room.access}" class="d-inline-block" tabindex="0" data-bs-toggle="tooltip"
                   data-bs-placement="bottom" title="공개 준비중입니다.">
                 <button class="btn btn-primary btn-sm" style="pointer-events: none;" type="button"
                         disabled>DRAFT</button>
             </span>-->
-            <!--인증된 사용자이고 모임 가입 가능한 경우-->
-            <span sec:authorize="isAuthenticated()" th:if="${!room.isMember(#authentication.principal) && room.isPublic()}"
+            <!--인증된 사용자이고 방 가입 가능한 경우-->
+            <span sec:authorize="isAuthenticated()" th:if="${!room.isMember(#authentication.principal)}"
                   class="btn-group" role="group" aria-label="Basic example">
-                <!--모임 가입 링크-->
+                <!--방 가입 링크-->
                 <a class="btn btn-primary" th:href="@{'/rooms/' + ${room.id} + '/join'}">
-                    모임 들어가기
+                    방 들어가기
                 </a>
-                <!--모임 멤버 수-->
-                <a class="btn btn-primary" th:href="@{'/rooms/' + ${room.id} + '/members'}"
-                   th:text="${room.count}">1</a>
+                <!--방 멤버 수-->
+                <!--<a class="btn btn-primary" th:href="@{'/rooms/' + ${room.id} + '/members'}"
+                   th:text="${room.count}">1</a>-->
             </span>
-            <!--인증된 사용자이고 모임 멤버인 경우-->
+            <!--인증된 사용자이고 방 멤버인 경우-->
             <span sec:authorize="isAuthenticated()" th:if="${room.isMember(#authentication.principal) and !room.isAdmin(#authentication.principal)}"
                   class="btn-group" role="group">
-                <!--모임 가입 링크-->
+                <!--방 가입 링크-->
                 <a class="btn btn-outline-danger" th:href="@{'/rooms/' + ${room.id} + '/leave'}">
-                    모임 나가기
+                    방 나가기
                 </a>
-                <!--모임 멤버 수-->
-                <a class="btn btn-primary" th:href="@{'/rooms/' + ${room.id} + '/members'}"
-                   th:text="${room.count}">1</a>
+                <!--방 멤버 수-->
+                <!--<a class="btn btn-primary" th:href="@{'/rooms/' + ${room.id} + '/members'}"
+                   th:text="${room.count}">1</a>-->
             </span>
-            <!--인증된 사용자이고 모임 관리자인 경우-->
+            <!--인증된 사용자이고 방 관리자인 경우-->
             <span sec:authorize="isAuthenticated()" th:if="${room.isAdmin(#authentication.principal)}">
+                <button class="btn btn-outline-danger" data-bs-toggle="modal" data-bs-target="#remove">방 삭제</button>
+                <a class="btn btn-outline-primary" th:href="@{'/rooms/' + ${room.id} + '/update'}">
+                    방 수정
+                </a>
                 <!--친구 초대 링크-->
                 <a class="btn btn-outline-primary" th:href="@{'/rooms/' + ${room.id} + '/invite'}">
                     친구 초대
@@ -258,7 +262,28 @@
         </div>
     </div>
 
-    <!--모임 소개-->
+    <div class="modal fade" id="remove" tabindex="-1" role="dialog" aria-labelledby="removeTitle" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content">
+                <!--<div class="modal-header">
+                    <h5 class="modal-title" id="removeTitle" th:text="${room.title}"></h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>-->
+                <div class="modal-body">
+                    <p>방을 정말로 삭제하시겠습니까?</p>
+                    <p><strong>삭제</strong>버튼을 누르시면 방, 대회 및 경기 관련 데이터를 삭제하며, 이후 복구할 수 없습니다.</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">닫기</button>
+                    <form th:action="@{'/rooms/' + ${room.id} + '/settings/room/remove'}" th:method="delete">
+                        <button class="btn btn-danger" type="submit" aria-describedby="submitHelp">삭제</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!--방 소개-->
     <div class="row justify-content-center bg-light">
         <div class="col-10">
             <p class="lead" th:text="${room.shortDescription}"></p>
@@ -277,10 +302,10 @@
         <a class="nav-item nav-link" th:classappend="${roomMenu == 'competitions'}? active" href="#" th:href="@{'/rooms/' + ${room.id} + '/competitions'}">
             <i class="fa fa-soccer-ball-o"></i> 대회
         </a>
-        <a sec:authorize="isAuthenticated()" th:if="${room.isAdmin(#authentication.principal)}"
+        <!--<a sec:authorize="isAuthenticated()" th:if="${room.isAdmin(#authentication.principal)}"
            class="nav-item nav-link" th:classappend="${roomMenu == 'settings'}? active" href="#" th:href="@{'/rooms/' + ${room.id} + '/settings'}">
             <i class="fa fa-cog"></i> 설정
-        </a>
+        </a>-->
     </nav>
 </div>
 
@@ -328,7 +353,7 @@
     <div class="col-10">
         <span class="h2">
         <a href="#" class="text-decoration-none" th:href="@{'/rooms/' + ${room.id} + '/competitions'}">
-            <span th:text="${room.title}">모임 이름</span>
+            <span th:text="${room.title}">방 이름</span>
         </a> / <a href="#" class="text-decoration-none" th:href="@{'/rooms/' + ${room.id} + '/competitions/' + ${competition.id}}">
             <span th:text="${competition.title}">대회 이름</span>
         </a>
@@ -458,11 +483,13 @@
     <div class="col-sm-10">
         <div class="row">
             <div class="col-sm-6 col-lg-3" th:each="room: ${roomList}">
-                <div class="card mb-4 shadow-sm">
+                <div class="card text-center mb-4 shadow-sm">
                     <a th:href="@{'/rooms/' + ${room.id}}" class="text-decoration-none">
                         <div class="card-body">
                             <h5 class="card-title context" th:text="${room.title}"></h5>
                             <p class="card-text" th:text="${room.shortDescription}">Short description</p>
+                        </div>
+                        <div class="card-footer">
                             <div class="d-flex justify-content-between align-items-center">
                                 <small class="text-muted">
                                     <i class="fa fa-user"></i>
@@ -495,6 +522,61 @@
             </li>
         </a>
     </ul>
+</div>
+
+<div th:fragment="room-form (mode)">
+    <div class="py-5 text-center">
+        <h2>
+            <span th:if="${mode == 'update'}">방 수정</span>
+            <span th:if="${mode == 'new'}">방 만들기</span>
+        </h2>
+    </div>
+    <div class="row justify-content-center">
+        <form class="col-sm-10 needs-validation" th:action
+              th:object="${roomForm}" method="post" novalidate>
+            <div class="mb-3">
+                <label th:for="title">방 이름</label>
+                <input type="text" th:field="*{title}" placeholder="방 이름" required maxlength="50"
+                       class="form-control" th:errorclass="is-invalid" aria-describedby="titleHelp" autofocus>
+                <small id="titleHelp" class="form-text text-muted">
+                    50자 이하로 방 이름을 입력하세요.
+                </small>
+                <small class="invalid-feedback">방 이름을 입력하세요.</small>
+                <small th:errors="*{title}" class="text-danger">방 이름 오류</small>
+            </div>
+
+            <div class="mb-3">
+                <label th:for="access">방 공개 여부</label>
+                <select th:field="*{access}" class="form-select" th:errorclass="border-danger" aria-describedby="roomTypeHelp">
+                    <option value="true">공개</option>
+                    <option value="false">비공개</option>
+                </select>
+                <small id="roomTypeHelp" class="form-text text-muted">
+                    방을 <strong>공개</strong>할 경우, 모든 사용자들이 해당 방을 자유롭게 참여할 수 있습니다.<br/>
+                    방을 <strong>비공개</strong>할 경우, 관리자가 사용자를 초대해야만 가입할 수 있습니다.
+                </small>
+                <small th:errors="*{access}" class="text-danger">방 공개 여부 오류</small>
+            </div>
+            <div class="mb-3">
+                <label th:for="shortDescription">방 소개</label>
+                <textarea type="text" th:field="*{shortDescription}" class="form-control"
+                          placeholder="방 소개" aria-describedby="shortDescriptionHelp" required maxlength="50"></textarea>
+                <small id="shortDescriptionHelp" class="form-text text-muted">
+                    50자 이하로 방 소개를 입력하세요.
+                </small>
+                <small class="invalid-feedback">방 소개를 입력하세요.</small>
+                <small class="form-text text-danger" th:errors="*{shortDescription}">ShortDescription Error</small>
+            </div>
+            <div class="row">
+                <div class="col">
+                    <button type="submit" class="btn btn-outline-dark" th:text="${mode == 'update' ? '방 수정' : '방 만들기'}">방 만들기</button>
+                    <a class="btn btn-outline-dark" href="#" th:href="${mode == 'update'} ? @{'/rooms/' + ${id}} : @{/}">
+                        취소
+                    </a>
+                </div>
+            </div>
+        </form>
+    </div>
 </div>
 
 </html>

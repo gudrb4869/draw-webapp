@@ -11,20 +11,20 @@
         <!--<div class="col-2">
             <div th:replace="fragments.html :: room-settings-menu (currentMenu='room')"></div>
         </div>-->
-        <div class="col-9">
+        <div class="col-10">
             <div th:replace="fragments.html :: message"></div>
             <div class="row">
-                <h5 class="col-sm-12" th:text="'모임 공개 여부(현재 상태: ' + (${room.isPublic()}? 공개: 비공개) + ')'">모임 공개 여부</h5>
+                <h5 class="col-sm-12" th:text="'방 공개 여부(현재 상태: ' + (${room.isPublic()}? 공개: 비공개) + ')'">방 공개 여부</h5>
                 <form th:if="${!room.isPublic()}" class="col-sm-12" action="#"
                       th:action="@{'/rooms/' + ${room.id} + '/settings/room/reveal'}" method="post"
                       novalidate>
                     <div class="alert alert-info" role="alert">
                         <svg th:replace="fragments.html::symbol-info"/>
-                        모임을 공개하시려면 버튼을 클릭하세요.<br/>
-                        모임을 공개하시면 외부 사용자들이 모임에 조회할 수 있습니다.
+                        방을 공개하시려면 버튼을 클릭하세요.<br/>
+                        방을 공개하시면 외부 사용자들이 방에 조회할 수 있습니다.
                     </div>
                     <div class="mb-3">
-                        <button class="btn btn-outline-primary" type="submit" aria-describedby="submitHelp">모임 공개
+                        <button class="btn btn-outline-primary" type="submit" aria-describedby="submitHelp">방 공개
                         </button>
                     </div>
                 </form>
@@ -33,11 +33,11 @@
                       novalidate>
                     <div class="alert alert-info" role="alert">
                         <svg th:replace="fragments.html::symbol-info"/>
-                        모임을 비공개하시려면 버튼을 클릭하세요.<br/>
-                        모임을 비공개하시면 외부 사용자들이 조회할 수 없습니다.
+                        방을 비공개하시려면 버튼을 클릭하세요.<br/>
+                        방을 비공개하시면 외부 사용자들이 조회할 수 없습니다.
                     </div>
                     <div class="mb-3">
-                        <button class="btn btn-outline-primary" type="submit" aria-describedby="submitHelp">모임 비공개
+                        <button class="btn btn-outline-primary" type="submit" aria-describedby="submitHelp">방 비공개
                         </button>
                     </div>
                 </form>
@@ -47,8 +47,8 @@
                     <div class="alert alert-warning" role="alert">
                         <svg th:replace="fragments.html::symbol-warning"/>
                         스터디 활동을 마쳤다면 스터디를 종료하세요.<br/>
-                        스터디를 종료하면 더이상 팀원을 모집하거나 모임을 만들 수 없으며, 스터디 경로와 이름을 수정할 수 없습니다.<br/>
-                        스터디 모임과 참여한 팀원의 기록은 그대로 보관합니다.
+                        스터디를 종료하면 더이상 팀원을 모집하거나 방을 만들 수 없으며, 스터디 경로와 이름을 수정할 수 없습니다.<br/>
+                        스터디 방과 참여한 팀원의 기록은 그대로 보관합니다.
                     </div>
                     <div class="form-group">
                         <button class="btn btn-outline-warning" type="submit" aria-describedby="submitHelp">스터디 종료
@@ -130,26 +130,26 @@
 
             <hr/>
             <div class="row">
-                <h5 class="col-sm-12">모임 이름</h5>
+                <h5 class="col-sm-12">방 이름</h5>
                 <form class="needs-validation col-12" action="#"
                       th:action="@{'/rooms/' + ${room.id} + '/settings/room/title'}" method="post" novalidate>
                     <div class="alert alert-warning" role="alert">
                         <svg th:replace="fragments.html::symbol-warning"/>
-                        모임 이름을 수정합니다.<br/>
+                        방 이름을 수정합니다.<br/>
                     </div>
                     <div class="mb-3">
-                        <label th:for="title">모임 이름</label>
+                        <label th:for="title">방 이름</label>
                         <input type="text" name="newTitle" th:value="${room.title}" class="form-control"
-                               placeholder="모임 이름" aria-describedby="titleHelp" required maxlength="50">
+                               placeholder="방 이름" aria-describedby="titleHelp" required maxlength="50">
                         <small id="titleHelp" class="form-text text-muted">
-                            모임 이름을 50자 이내로 입력하세요.
+                            방 이름을 50자 이내로 입력하세요.
                         </small>
-                        <small class="invalid-feedback">모임 이름을 입력하세요.</small>
+                        <small class="invalid-feedback">방 이름을 입력하세요.</small>
                         <small class="form-text text-danger" th:if="${roomTitleError}"
                                th:text="${roomTitleError}">Title Error</small>
                     </div>
-                    <div class="mb-3 mt-3">
-                        <button class="btn btn-outline-warning" type="submit" aria-describedby="submitHelp">모임 이름 수정
+                    <div class="my-3">
+                        <button class="btn btn-outline-warning" type="submit" aria-describedby="submitHelp">방 이름 수정
                         </button>
                     </div>
                 </form>
@@ -157,14 +157,36 @@
 
             <hr/>
             <div class="row">
-                <h5 class="col-sm-12 text-danger">모임 삭제</h5>
+                <h5 class="col-sm-12">방 소개</h5>
+                <form class="needs-validation col-sm-12"
+                      th:action="@{'/rooms/' + ${room.id} + '/settings/room/description'}" method="post" novalidate>
+                    <div class="mb-3">
+                        <label th:for="shortDescription">방 소개</label>
+                        <textarea type="text" name="newShortDescription" th:value="${room.shortDescription}" class="form-control"
+                                  placeholder="짧은 소개" aria-describedby="shortDescriptionHelp" required maxlength="50"></textarea>
+                        <small id="shortDescriptionHelp" class="form-text text-muted">
+                            50자 이하로 방 소개를 입력하세요.
+                        </small>
+                        <small class="invalid-feedback">방 소개를 입력하세요.</small>
+                        <small class="form-text text-danger" th:if="${roomShortDescriptionError}"
+                               th:text="${romShortDescriptionError}">ShortDescription Error</small>
+                    </div>
+                    <div class="my-3">
+                        <button class="btn btn-primary btn-block" type="submit"
+                                aria-describedby="submitHelp">방 소개 수정</button>
+                    </div>
+                </form>
+            </div>
+            <hr/>
+            <div class="row">
+                <h5 class="col-sm-12 text-danger">방 삭제</h5>
                 <div class="col-12">
                     <div class="alert alert-danger" role="alert">
                         <svg th:replace="fragments.html::symbol-danger"/>
-                        모임을 삭제하시면 모임 관련 모든 기록을 삭제하며 복구하실 수 없습니다. <br/>
+                        방을 삭제하시면 방 관련 모든 기록을 삭제하며 복구하실 수 없습니다. <br/>
                     </div>
-                    <div class="form-group">
-                        <button class="btn btn-outline-danger" data-bs-toggle="modal" data-bs-target="#remove">모임 삭제</button>
+                    <div class="my-3">
+                        <button class="btn btn-outline-danger" data-bs-toggle="modal" data-bs-target="#remove">방 삭제</button>
                     </div>
                 </div>
             </div>
@@ -177,8 +199,8 @@
                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>-->
                     <div class="modal-body">
-                        <p>모임을 정말로 삭제하시겠습니까?</p>
-                        <p><strong>삭제</strong>버튼을 누르시면 모임, 대회 및 경기 관련 데이터를 삭제하며, 이후 복구할 수 없습니다.</p>
+                        <p>방을 정말로 삭제하시겠습니까?</p>
+                        <p><strong>삭제</strong>버튼을 누르시면 방, 대회 및 경기 관련 데이터를 삭제하며, 이후 복구할 수 없습니다.</p>
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">닫기</button>
