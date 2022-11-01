@@ -4,7 +4,6 @@ import hongik.ce.jolup.module.room.domain.entity.Room;
 import lombok.*;
 
 import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
 @Data
@@ -15,8 +14,7 @@ public class RoomForm {
     @Size(max = 50)
     private String title;
 
-    @NotNull
-    private boolean access;
+    private boolean revealed = true;
 
     @NotBlank
     @Size(max = 50)
@@ -25,7 +23,7 @@ public class RoomForm {
     public static RoomForm from(Room room) {
         RoomForm roomForm = new RoomForm();
         roomForm.title = room.getTitle();
-        roomForm.access = room.isAccess();
+        roomForm.revealed = room.isRevealed();
         roomForm.shortDescription = room.getShortDescription();
         return roomForm;
     }

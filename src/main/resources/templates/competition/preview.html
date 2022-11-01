@@ -1,0 +1,129 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="fragments.html :: head"></head>
+<body class="bg-light">
+<div th:replace="fragments.html :: navigation-bar"></div>
+<div class="container">
+    <div th:replace="fragments.html :: competition-info"></div>
+    <div th:replace="fragments.html :: competition-menu (currentMenu='matches')"></div>
+    <div class="row mt-3 justify-content-center">
+        <div class="col-sm-10 py-3 round-robin round-robin--rounded" th:if="${competition.isLeague()}">
+            <div th:if="${matchPage.getTotalElements() == 0}" class="col">
+                경기가 없습니다.
+            </div>
+            <div class="round-robin__round" th:classappend="'round-robin__round--' + ${key}" th:each="key : ${#numbers.sequence(first_round, last_round)}">
+                <h3 class="round-robin__round-title" th:text="${key + 1} + '라운드'"></h3>
+                <ul class="round-robin__list">
+                    <li class="round-robin__item" th:each="match : ${matches.get(key)}"
+                        th:onclick="${!match.closed} ? |location.href='@{|/rooms/${room.id}/competitions/${competition.id}/matches/${match.id}|}'|">
+                        <div class="round-robin__match" tabindex="0">
+                            <table class="round-robin__table">
+                                <caption class="round-robin__caption">
+                                    <span th:if="${match.closed}">부전승</span>
+                                    <span th:if="${!match.closed and match.startDateTime == null}" class="text-warning">시간 미정</span>
+                                    <span th:if="${!match.closed and match.startDateTime != null}" class="date-time text-dark" th:text="${match.startDateTime}">경기 시간</span>
+                                </caption>
+                                <thead class="sr-only">
+                                <tr>
+                                    <th>Image</th>
+                                    <th>Team</th>
+                                    <th>Score</th>
+                                </tr>
+                                </thead>
+                                <tbody class="round-robin__content">
+                                <tr class="round-robin__team" th:classappend="${match.homeScore > match.awayScore} ? 'round-robin__team--winner'"
+                                    tabindex="0" data-bs-toggle="tooltip" data-bs-placement="top" th:title="${match?.home?.name}">
+                                    <td class="round-robin__image">
+                                        <svg th:if="${#strings.isEmpty(match?.home?.image)}" th:data-jdenticon-value="${match?.home?.name}" width="24" height="24" class="rounded border bg-light"></svg>
+                                        <img th:if="${!#strings.isEmpty(match?.home?.image)}" th:src="${match?.home?.image}" width="24" height="24" class="rounded border"/>
+                                    </td>
+                                    <td class="round-robin__name">
+                                        <span th:text="${match?.home?.name}"></span>
+                                    </td>
+                                    <td class="round-robin__score">
+                                        <span class="tournament-bracket__number" th:text="${match.status} ? ${match?.homeScore} : '-'">4</span>
+                                    </td>
+                                </tr>
+                                <tr class="round-robin__team" th:classappend="${match.homeScore < match.awayScore} ? 'round-robin__team--winner'"
+                                    tabindex="0" data-bs-toggle="tooltip" data-bs-placement="bottom" th:title="${match?.away?.name}">
+                                    <td class="round-robin__image">
+                                        <svg th:if="${#strings.isEmpty(match?.away?.image)}" th:data-jdenticon-value="${match?.away?.name}" width="24" height="24" class="rounded border bg-light"></svg>
+                                        <img th:if="${!#strings.isEmpty(match?.away?.image)}" th:src="${match?.away?.image}" width="24" height="24" class="rounded border"/>
+                                    </td>
+                                    <td class="round-robin__name">
+                                        <span th:text="${match?.away?.name}"></span>
+                                    </td>
+                                    <td class="round-robin__score">
+                                        <span class="round-robin__number" th:text="${match.status} ? ${match?.awayScore} : '-'">1</span>
+                                    </td>
+                                </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </li>
+                </ul>
+            </div>
+            <div th:replace="fragments.html :: page (pages=${matchPage}, url='/rooms/' + ${room.id} + '/competitions/' + ${competition.id})"></div>
+        </div>
+
+        <div class="col-sm-10 py-3 tournament-bracket tournament-bracket--rounded" th:if="${competition.isTournament()}">
+            <div class="tournament-bracket__round" th:classappend="'tournament-bracket__round--' + ${last_round - key}" th:each="key : ${#numbers.sequence(last_round, first_round, -1)}">
+                <h3 class="tournament-bracket__round-title" th:text="${key == 0} ? '결승' : (${key == 1} ? '준결승' : (${key == 2} ? '8강' : (${key == 3} ? '16강' : (${key == 4} ? '32강' : (${key == 5} ? '64강' : _)))))"></h3>
+                <ul class="tournament-bracket__list">
+                    <li class="tournament-bracket__item" th:each="match : ${matches.get(key)}"
+                        th:onclick="${!match.closed} ? |location.href='@{|/rooms/${room.id}/competitions/${competition.id}/matches/${match.id}|}'|">
+                        <div class="tournament-bracket__match" tabindex="0">
+                            <table class="tournament-bracket__table">
+                                <caption class="tournament-bracket__caption">
+                                    <span th:if="${match.closed}">부전승</span>
+                                    <span th:if="${!match.closed and match.startDateTime == null}" class="text-warning">시간 미정</span>
+                                    <span th:if="${!match.closed and match.startDateTime != null}" class="date-time text-dark" th:text="${match.startDateTime}">경기 시간</span>
+                                </caption>
+                                <thead class="sr-only">
+                                <tr>
+                                    <th>Image</th>
+                                    <th>Team</th>
+                                    <th>Score</th>
+                                </tr>
+                                </thead>
+                                <tbody class="tournament-bracket__content">
+                                <tr class="tournament-bracket__team" th:classappend="${match.homeScore > match.awayScore} ? 'tournament-bracket__team--winner'"
+                                    tabindex="0" data-bs-toggle="tooltip" data-bs-placement="top" th:title="${match?.home?.name}">
+                                    <td class="tournament-bracket__image">
+                                        <svg th:if="${#strings.isEmpty(match?.home?.image)}" th:data-jdenticon-value="${match?.home?.name}" width="24" height="24" class="rounded border bg-light"></svg>
+                                        <img th:if="${!#strings.isEmpty(match?.home?.image)}" th:src="${match?.home?.image}" width="24" height="24" class="rounded border"/>
+                                    </td>
+                                    <td class="tournament-bracket__name">
+                                        <span th:text="${match?.home?.name}"></span>
+                                    </td>
+                                    <td class="tournament-bracket__score">
+                                        <span class="tournament-bracket__number" th:text="${match.status} ? ${match?.homeScore} : '-'">4</span>
+                                    </td>
+                                </tr>
+                                <tr class="tournament-bracket__team" th:classappend="${match.homeScore < match.awayScore} ? 'tournament-bracket__team--winner'"
+                                    tabindex="0" data-bs-toggle="tooltip" data-bs-placement="bottom" th:title="${match?.away?.name}">
+                                    <td class="tournament-bracket__image">
+                                        <svg th:if="${#strings.isEmpty(match?.away?.image)}" th:data-jdenticon-value="${match?.away?.name}" width="24" height="24" class="rounded border bg-light"></svg>
+                                        <img th:if="${!#strings.isEmpty(match?.away?.image)}" th:src="${match?.away?.image}" width="24" height="24" class="rounded border"/>
+                                    </td>
+                                    <td class="tournament-bracket__name">
+                                        <span th:text="${match?.away?.name}"></span>
+                                    </td>
+                                    <td class="tournament-bracket__score">
+                                        <span class="tournament-bracket__number" th:text="${match.status} ? ${match?.awayScore} : '-'">1</span>
+                                    </td>
+                                </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+    <div th:replace="fragments.html :: footer"></div>
+</div> <!-- /container -->
+<script th:replace="fragments.html :: date-time"></script>
+<script th:replace="fragments.html :: tooltip"></script>
+</body>
+</html>

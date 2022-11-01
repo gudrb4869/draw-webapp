@@ -20,16 +20,16 @@
             <div class="mb-3">
                 <label th:for="password">비밀번호</label>
                 <input type="password" th:field="*{password}"
-                       th:errorclass="is-invalid" class="form-control" required minlength="8" maxlength="30">
-                <small class="invalid-feedback">비밀번호는 8~30자로 입력하세요.</small>
+                       th:errorclass="is-invalid" class="form-control" required minlength="4" maxlength="30">
+                <small class="invalid-feedback">비밀번호는 4~30자로 입력하세요.</small>
                 <small th:errors="*{password}" class="form-text text-danger">비밀번호 오류</small>
             </div>
 
             <div class="mb-3">
                 <label th:for="password">비밀번호 확인</label>
                 <input type="password" th:field="*{password_confirm}"
-                       th:errorclass="is-invalid" class="form-control" required minlength="8" maxlength="30">
-                <small class="invalid-feedback">비밀번호는 8~30자로 입력하세요.</small>
+                       th:errorclass="is-invalid" class="form-control" required minlength="4" maxlength="30">
+                <small class="invalid-feedback">비밀번호는 4~30자로 입력하세요.</small>
                 <small th:errors="*{password_confirm}" class="form-text text-danger">비밀번호 오류</small>
             </div>
 

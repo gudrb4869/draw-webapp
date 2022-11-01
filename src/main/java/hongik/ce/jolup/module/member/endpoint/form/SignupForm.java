@@ -12,11 +12,11 @@ public class SignupForm {
     private String email;
 
 //    @Pattern(regexp = "(?=.*[0-9])(?=.*[a-zA-Z])(?=.*\\W)(?=\\S+$).{8,30}", message = "비밀번호는 8~30자 영문 대소문자, 숫자, 특수문자를 사용하세요.")
-    @Size(min = 8, max = 30)
+    @Size(min = 4, max = 30)
     private String password;
 
 //    @Pattern(regexp = "(?=.*[0-9])(?=.*[a-zA-Z])(?=.*\\W)(?=\\S+$).{8,30}", message = "비밀번호는 8~30자 영문 대소문자, 숫자, 특수문자를 사용하세요.")
-    @Size(min = 8, max = 30)
+    @Size(min = 4, max = 30)
     private String password_confirm;
 
     @Pattern(regexp = "^[가-힣a-zA-Z0-9_-]{2,12}$")

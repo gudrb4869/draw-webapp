@@ -20,7 +20,7 @@ public class RoomRepositoryExtensionImpl extends QuerydslRepositorySupport imple
         QRoom room = QRoom.room;
         JPQLQuery<Room> query = from(room)
                 .where(room.title.containsIgnoreCase(keyword)
-                        .and(room.access.isTrue()))
+                        .and(room.revealed.isTrue()))
                 .distinct();
         JPQLQuery<Room> jpqlQuery = getQuerydsl().applyPagination(pageable, query);
         QueryResults<Room> fetchResults = jpqlQuery.fetchResults();

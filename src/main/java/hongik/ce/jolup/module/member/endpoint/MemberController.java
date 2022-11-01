@@ -54,7 +54,7 @@ public class MemberController {
         }
         memberService.signup(signupForm);
         attributes.addFlashAttribute("message", "회원가입에 성공했습니다.");
-        return "redirect:/";
+        return "redirect:/login";
     }
 
     @GetMapping("/profile/{id}")

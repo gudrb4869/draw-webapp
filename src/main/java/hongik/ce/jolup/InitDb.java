@@ -117,10 +117,10 @@ public class InitDb {
              */
             List<Member> members = room.getJoins().stream().map(Join::getMember).collect(Collectors.toList());
             Competition competition1 = competitionService.createCompetition(members, room,
-                    createCompetitionForm(members, "싱글 라운드 로빈(단판)", CompetitionType.SINGLE_ROUND_ROBIN, 0, 11));
+                    createCompetitionForm(members, "단판", CompetitionType.SINGLE_ROUND_ROBIN, 0, 11));
 
             Competition competition2 = competitionService.createCompetition(members, room,
-                    createCompetitionForm(members, "더블 라운드 로빈(홈 앤드 어웨이)", CompetitionType.DOUBLE_ROUND_ROBIN, 12, 23));
+                    createCompetitionForm(members, "홈 앤드 어웨이", CompetitionType.DOUBLE_ROUND_ROBIN, 12, 23));
 
             Competition competition3 = competitionService.createCompetition(members, room,
                     createCompetitionForm(members, "토너먼트", CompetitionType.SINGLE_ELIMINATION_TOURNAMENT, 24, 49));
@@ -136,10 +136,10 @@ public class InitDb {
             return competitionForm;
         }
 
-        private RoomForm createRoomForm(String title, boolean access) {
+        private RoomForm createRoomForm(String title, boolean revealed) {
             RoomForm roomForm = new RoomForm();
             roomForm.setTitle(title);
-            roomForm.setAccess(access);
+            roomForm.setRevealed(revealed);
             roomForm.setShortDescription(title + "소개");
             return roomForm;
         }

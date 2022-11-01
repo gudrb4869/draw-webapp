@@ -26,7 +26,6 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.validation.Valid;
 import java.util.List;
-import java.util.Set;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -98,11 +97,8 @@ public class RoomController {
         Room room = roomService.getRoom(member, id);
         model.addAttribute(member);
         model.addAttribute(room);
-        Page<Join> joins = joinRepository.findByRoomId(id, pageable);
+        Page<Join> joins = joinRepository.findByRoom(room, pageable);
         model.addAttribute("joins", joins);
-        log.info("총 element 수 : {}, 전체 page 수 : {}, 페이지에 표시할 element 수 : {}, 현재 페이지 index : {}, 현재 페이지의 element 수 : {}",
-                joins.getTotalElements(), joins.getTotalPages(), joins.getSize(),
-                joins.getNumber(), joins.getNumberOfElements());
         return "room/members";
     }
 
@@ -152,5 +148,12 @@ public class RoomController {
         roomService.inviteRoom(friends, room, inviteForm.getMembers());
         attributes.addFlashAttribute("message", "친구들에게 방 초대 요청을 보냈습니다.");
         return "redirect:/rooms/" + room.getId();
+    }
+
+    @DeleteMapping("/{id}")
+    public String removeRoom(@CurrentMember Member member, @PathVariable Long id) {
+        Room room = roomService.getRoomToUpdate(member, id);
+        roomService.remove(room);
+        return "redirect:/";
     }
 }

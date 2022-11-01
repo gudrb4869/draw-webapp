@@ -63,7 +63,7 @@ public class RoomService {
         Join join = room.getJoins().stream()
                 .filter(j -> j.getMember().equals(member))
                 .findFirst().orElse(null);
-        if (join == null && !room.isAccess()) {
+        if (join == null && !room.isRevealed()) {
             throw new IllegalArgumentException("비공개 방입니다.");
         }
     }
@@ -81,22 +81,6 @@ public class RoomService {
         if (join == null || !join.getGrade().equals(Grade.ADMIN)) {
             throw new IllegalArgumentException("해당 기능을 사용할 수 없습니다.");
         }
-    }
-
-    public void reveal(Room room) {
-        room.reveal();
-    }
-
-    public void conceal(Room room) {
-        room.conceal();
-    }
-
-    public boolean isValidTitle(String newTitle) {
-        return newTitle.length() > 0 && newTitle.length() <= 50;
-    }
-
-    public void updateRoomTitle(Room room, String newTitle) {
-        room.updateTitle(newTitle);
     }
 
     public void remove(Room room) {

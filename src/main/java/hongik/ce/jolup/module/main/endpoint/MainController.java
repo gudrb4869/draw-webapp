@@ -31,18 +31,19 @@ public class MainController {
 
     @GetMapping("/")
     public String index(@CurrentMember Member member, Model model,
-                        @PageableDefault(size = 8, sort = "createdDate", direction = Sort.Direction.ASC) Pageable pageable) {
+                        @PageableDefault(size = 9, sort = "createdDate", direction = Sort.Direction.DESC) Pageable pageable) {
         if (member != null) {
-            model.addAttribute("member", member);
-            Page<Join> joins = joinRepository.findWithJoinByMemberId(member.getId(), pageable);
+            model.addAttribute(member);
+            Page<Join> joins = joinRepository.findWithJoinByMember(member, pageable);
             model.addAttribute("joins", joins);
-            log.info("총 element 수 : {}, 전체 page 수 : {}, 페이지에 표시할 element 수 : {}, 현재 페이지 index : {}, 현재 페이지의 element 수 : {}",
+            /*log.info("총 element 수 : {}, 전체 page 수 : {}, 페이지에 표시할 element 수 : {}, 현재 페이지 index : {}, 현재 페이지의 element 수 : {}",
             joins.getTotalElements(), joins.getTotalPages(), joins.getSize(),
-            joins.getNumber(), joins.getNumberOfElements());
+            joins.getNumber(), joins.getNumberOfElements());*/
             List<Room> rooms = joins.getContent().stream().map(Join::getRoom).collect(Collectors.toList());
             model.addAttribute("rooms", rooms);
             return "home";
         }
+        model.addAttribute("roomList", roomRepository.findFirst9ByRevealedOrderByCreatedDateDesc(true));
         return "index";
     }
 
@@ -54,34 +55,9 @@ public class MainController {
         return "login";
     }
 
-    @GetMapping("/search/room")
-    public String searchRoom(String keyword, Model model,
-                             @PageableDefault(size = 8, sort = "createdDate", direction = Sort.Direction.ASC) Pageable pageable) {
-        Page<Room> roomPage = roomRepository.findByKeyword(keyword, pageable);
-        model.addAttribute("roomPage", roomPage);
-        model.addAttribute("keyword", keyword);
-        /*model.addAttribute("sortProperty", pageable.getSort().toString().contains("publishedDateTime")
-                ? "publishedDateTime"
-                : "memberCount");*/
-        return "search";
-    }
-
-    @GetMapping("/search/member")
-    public String searchMember(String keyword, Model model,
-                             @PageableDefault(size = 8, sort = "createdDate", direction = Sort.Direction.ASC) Pageable pageable) {
-        log.info("keyword = {}", keyword);
-        Page<Member> memberPage = memberRepository.findByNameContainingIgnoreCase(keyword, pageable);
-        model.addAttribute("memberPage", memberPage);
-        model.addAttribute("keyword", keyword);
-        /*model.addAttribute("sortProperty", pageable.getSort().toString().contains("publishedDateTime")
-                ? "publishedDateTime"
-                : "memberCount");*/
-        return "member-search";
-    }
-
     @GetMapping("/search")
     public String search(String category, String keyword, Model model,
-                             @PageableDefault(size = 8, sort = "createdDate", direction = Sort.Direction.ASC) Pageable pageable) {
+                             @PageableDefault(size = 9, sort = "createdDate", direction = Sort.Direction.ASC) Pageable pageable) {
         model.addAttribute("category", category);
         model.addAttribute("keyword", keyword);
         if (category.equals("room")) {

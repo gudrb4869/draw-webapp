@@ -36,7 +36,7 @@ public class Room extends BaseTimeEntity {
 
     private String shortDescription;
 
-    private boolean access;
+    private boolean revealed;
 
     private Integer count = 0;
 
@@ -49,7 +49,7 @@ public class Room extends BaseTimeEntity {
     public static Room from(RoomForm roomForm) {
         Room room = new Room();
         room.title = roomForm.getTitle();
-        room.access = roomForm.isAccess();
+        room.revealed = roomForm.isRevealed();
         room.shortDescription = roomForm.getShortDescription();
         room.addCount();
         return room;
@@ -70,7 +70,7 @@ public class Room extends BaseTimeEntity {
     }
 
     public boolean isPublic() {
-        return this.access;
+        return this.revealed;
     }
 
     public void addCount() {
@@ -86,21 +86,21 @@ public class Room extends BaseTimeEntity {
     }
 
     public void updateAccess(boolean access) {
-        this.access = access;
+        this.revealed = access;
     }
 
     public void reveal() {
-        if (this.access) {
+        if (this.revealed) {
             throw new IllegalStateException("이미 공개된 방입니다.");
         }
-        this.access = true;
+        this.revealed = true;
     }
 
     public void conceal() {
-        if (!this.access) {
+        if (!this.revealed) {
             throw new IllegalStateException("이미 비공개된 방입니다.");
         }
-        this.access = false;
+        this.revealed = false;
     }
 
     public boolean isRemovable() {
@@ -109,7 +109,7 @@ public class Room extends BaseTimeEntity {
 
     public void updateFrom(RoomForm roomForm) {
         this.title = roomForm.getTitle();
-        this.access = roomForm.isAccess();
+        this.revealed = roomForm.isRevealed();
         this.shortDescription = roomForm.getShortDescription();
     }
 }
