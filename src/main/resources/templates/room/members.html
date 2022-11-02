@@ -12,8 +12,8 @@
             <li class="d-flex mt-3" th:each="join: ${joins}">
                 <div class="flex-shrink-0">
                     <a class="text-decoration-none" href="#" th:href="${join.member != null} ? @{'/profile/' + ${join.member?.id}}">
-                        <svg th:if="${#strings.isEmpty(join.member?.image)}" th:data-jdenticon-value="${join.member?.name}" width="64" height="64" class="rounded border bg-light me-3"></svg>
-                        <img th:if="${!#strings.isEmpty(join.member?.image)}" th:src="${join.member?.image}" width="64" height="64" class="rounded border me-3"/>
+                        <svg th:if="${#strings.isEmpty(join.member?.image)}" th:data-jdenticon-value="${join.member?.name}" width="64" height="64" class="rounded-circle border bg-light me-3"></svg>
+                        <img th:if="${!#strings.isEmpty(join.member?.image)}" th:src="${join.member?.image}" width="64" height="64" class="rounded-circle border me-3"/>
                     </a>
                 </div>
                 <div class="flex-grow-1 ms-3">

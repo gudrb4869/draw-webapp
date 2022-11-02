@@ -1,0 +1,184 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="fragments.html :: head"></head>
+<body class="bg-light">
+<div th:replace="fragments.html :: navigation-bar"></div>
+<div class="container">
+    <div class="py-5 text-center">
+        <h1>경기 장소 수정</h1>
+    </div>
+    <div class="row justify-content-center pt-3">
+        <div class="col-sm-10">
+            <div id="map" style="width: 100%; height: 600px;">
+                <div class="search" style="position: absolute; z-index: 1000; top: 20px; left: 20px;">
+                    <input id="address" type="text" placeholder="검색할 주소">
+                    <input id="submit" type="button" value="주소 검색">
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row justify-content-center">
+        <form class="need-validation col-sm-10" th:action method="post" th:object="${locationForm}"novalidate>
+            <div class="form-group">
+                <input id="longitude" type="hidden" th:field="*{longitude}" class="form-control"/>
+                <input id="latitude" type="hidden" th:field="*{latitude}" class="form-control"/>
+                <input id="jibunAddress" type="hidden" th:field="*{jibunAddress}" class="form-control"/>
+                <input id="roadAddress" type="hidden" th:field="*{roadAddress}" class="form-control"/>
+            </div>
+            <div class="row">
+                <div class="col">
+                    <button class="btn btn-outline-dark" type="submit">경기 장소 수정</button>
+                    <a class="btn btn-outline-dark" th:href="@{|/rooms/${roomId}/competitions/${competitionId}/matches/${matchId}|}">
+                        취소
+                    </a>
+                </div>
+            </div>
+        </form>
+    </div>
+    <div th:replace="fragments.html :: footer"></div>
+</div> <!-- /container -->
+<div th:replace="fragments.html :: date-time"></div>
+<script th:replace="fragments.html :: form-validation"></script>
+<script type="text/javascript" th:inline="javascript">
+    var longitude = document.getElementById("longitude");
+    var latitude = document.getElementById("latitude");
+    var jibunAddress = document.getElementById("jibunAddress");
+    var roadAddress = document.getElementById("roadAddress");
+
+    var current = new naver.maps.LatLng([[${locationForm.latitude}]], [[${locationForm.longitude}]]);
+    var map = new naver.maps.Map("map", {
+        center: current,
+        zoom: 15,
+        mapTypeControl: true
+    });
+
+    var infoWindow = new naver.maps.InfoWindow({
+        anchorSkew: true
+    });
+
+    map.setCursor('pointer');
+
+    function searchCoordinateToAddress(latlng) {
+
+        infoWindow.close();
+
+        naver.maps.Service.reverseGeocode({
+            coords: latlng,
+            orders: [
+                naver.maps.Service.OrderType.ADDR,
+                naver.maps.Service.OrderType.ROAD_ADDR
+            ].join(',')
+        }, function(status, response) {
+            if (status === naver.maps.Service.Status.ERROR) {
+                if (!latlng) {
+                    return alert('ReverseGeocode Error, Please check latlng');
+                }
+                if (latlng.toString) {
+                    return alert('ReverseGeocode Error, latlng:' + latlng.toString());
+                }
+                if (latlng.x && latlng.y) {
+                    return alert('ReverseGeocode Error, x:' + latlng.x + ', y:' + latlng.y);
+                }
+                return alert('ReverseGeocode Error, Please check latlng');
+            }
+
+            var address = response.v2.address,
+                htmlAddresses = [];
+
+            if (address.jibunAddress !== '') {
+                htmlAddresses.push('[지번 주소] ' + address.jibunAddress);
+            }
+
+            if (address.roadAddress !== '') {
+                htmlAddresses.push('[도로명 주소] ' + address.roadAddress);
+            }
+            htmlAddresses.push('[좌표] 위도 : ' + latlng.x + ', 경도 : ' + latlng.y);
+
+            infoWindow.setContent([
+                '<div style="padding:10px;min-width:200px;line-height:150%;">',
+                // '<h4 style="margin-top:5px;">검색 좌표</h4><br />',
+                htmlAddresses.join('<br />'),
+                '</div>'
+            ].join('\n'));
+            longitude.value = latlng.x;
+            latitude.value = latlng.y;
+            jibunAddress.value = address.jibunAddress;
+            roadAddress.value = address.roadAddress;
+            infoWindow.open(map, latlng);
+        });
+    }
+
+    function searchAddressToCoordinate(address) {
+        naver.maps.Service.geocode({
+            query: address
+        }, function(status, response) {
+            if (status === naver.maps.Service.Status.ERROR) {
+                if (!address) {
+                    return alert('Geocode Error, Please check address');
+                }
+                return alert('Geocode Error, address:' + address);
+            }
+
+            if (response.v2.meta.totalCount === 0) {
+                return alert('올바른 주소를 입력해주세요.');
+            }
+
+            var htmlAddresses = [],
+                item = response.v2.addresses[0],
+                point = new naver.maps.Point(item.x, item.y);
+
+            if (item.roadAddress) {
+                htmlAddresses.push('[도로명 주소] ' + item.roadAddress);
+            }
+
+            if (item.jibunAddress) {
+                htmlAddresses.push('[지번 주소] ' + item.jibunAddress);
+            }
+
+            if (item.englishAddress) {
+                htmlAddresses.push('[영문명 주소] ' + item.englishAddress);
+            }
+            htmlAddresses.push('[좌표] 위도 : ' + item.x + ', 경도 : ' + item.y);
+
+            infoWindow.setContent([
+                '<div style="padding:10px;min-width:200px;line-height:150%;">',
+                // '<h4 style="margin-top:5px;">검색 주소 : '+ address +'</h4><br />',
+                htmlAddresses.join('<br />'),
+                '</div>'
+            ].join('\n'));
+
+            map.setCenter(point);
+            longitude.value = point.x;
+            latitude.value = point.y;
+            jibunAddress.value = item.jibunAddress;
+            roadAddress.value = item.roadAddress;
+            infoWindow.open(map, point);
+        });
+    }
+
+    function initGeocoder() {
+        map.addListener('click', function(e) {
+            searchCoordinateToAddress(e.coord);
+        });
+
+        $('#address').on('keydown', function(e) {
+            var keyCode = e.which;
+
+            if (keyCode === 13) { // Enter Key
+                searchAddressToCoordinate($('#address').val());
+            }
+        });
+
+        $('#submit').on('click', function(e) {
+            e.preventDefault();
+
+            searchAddressToCoordinate($('#address').val());
+        });
+
+        searchAddressToCoordinate('[[${locationForm.jibunAddress}]]');
+    }
+
+    naver.maps.onJSContentLoaded = initGeocoder;
+</script>
+</body>
+</html>

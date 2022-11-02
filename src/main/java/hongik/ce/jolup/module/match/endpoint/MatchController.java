@@ -3,6 +3,7 @@ package hongik.ce.jolup.module.match.endpoint;
 import hongik.ce.jolup.module.competition.domain.entity.Competition;
 import hongik.ce.jolup.module.match.application.MatchService;
 import hongik.ce.jolup.module.competition.application.CompetitionService;
+import hongik.ce.jolup.module.match.endpoint.form.LocationForm;
 import hongik.ce.jolup.module.match.endpoint.form.ScoreForm;
 import hongik.ce.jolup.module.member.support.CurrentMember;
 import hongik.ce.jolup.module.room.application.RoomService;
@@ -41,6 +42,7 @@ public class MatchController {
         model.addAttribute(room);
         model.addAttribute(competition);
         model.addAttribute(match);
+        model.addAttribute(LocationForm.from(match));
         return "match/view";
     }
 
@@ -55,7 +57,7 @@ public class MatchController {
         model.addAttribute(competition);
         model.addAttribute(match);
         model.addAttribute(ScoreForm.from(match));
-        return "match/update-score-form";
+        return "match/score";
     }
 
     @PostMapping("/{matchId}/update-score")
@@ -71,7 +73,7 @@ public class MatchController {
             model.addAttribute(room);
             model.addAttribute(competition);
             model.addAttribute(match);
-            return "match/update-score-form";
+            return "match/score";
         }
         matchService.updateScore(competition, match, scoreForm);
         attributes.addFlashAttribute("message", "경기 결과를 수정했습니다.");
@@ -79,7 +81,7 @@ public class MatchController {
     }
 
     @GetMapping("/{matchId}/update-date")
-    public String updateMatchDateForm(@PathVariable Long roomId, @PathVariable Long competitionId, @PathVariable Long matchId,
+    public String updateDateForm(@PathVariable Long roomId, @PathVariable Long competitionId, @PathVariable Long matchId,
                                       @CurrentMember Member member, Model model) {
         Room room = roomService.getRoomToUpdate(member, roomId);
         Competition competition = competitionService.getCompetition(room, competitionId);
@@ -88,7 +90,7 @@ public class MatchController {
         model.addAttribute(room);
         model.addAttribute(competition);
         model.addAttribute(match);
-        return "match/update-date-form";
+        return "match/date";
     }
 
     @PostMapping("/{matchId}/update-date")
@@ -99,7 +101,34 @@ public class MatchController {
         Competition competition = competitionService.getCompetition(room, competitionId);
         Match match = matchService.getMatch(competition, matchId);
         matchService.updateStartDateTime(match, newStartDateTime);
-        attributes.addFlashAttribute("message", "경기 시작 일시를 수정했습니다.");
+        attributes.addFlashAttribute("message", "경기 시간을 수정했습니다.");
+        return "redirect:/rooms/" + room.getId() + "/competitions/" + competition.getId() + "/matches/" + match.getId();
+    }
+
+    @GetMapping("/{matchId}/update-location")
+    public String updateLocationForm(@PathVariable Long roomId, @PathVariable Long competitionId, @PathVariable Long matchId,
+                                      @CurrentMember Member member, Model model) {
+        Room room = roomService.getRoomToUpdate(member, roomId);
+        Competition competition = competitionService.getCompetition(room, competitionId);
+        Match match = matchService.getMatch(competition, matchId);
+        log.info("match = {}", match);
+        model.addAttribute(member);
+        model.addAttribute(room);
+        model.addAttribute(competition);
+        model.addAttribute(match);
+        model.addAttribute(LocationForm.from(match));
+        return "match/location";
+    }
+
+    @PostMapping("/{matchId}/update-location")
+    public String updateLocation(@PathVariable Long roomId, @PathVariable Long competitionId, @PathVariable Long matchId, @CurrentMember Member member,
+                                 LocationForm locationForm, RedirectAttributes attributes) {
+        log.info("locationForm = {}", locationForm);
+        Room room = roomService.getRoomToUpdate(member, roomId);
+        Competition competition = competitionService.getCompetition(room, competitionId);
+        Match match = matchService.getMatch(competition, matchId);
+        matchService.updateLocation(match, locationForm);
+        attributes.addFlashAttribute("message", "경기 장소를 수정했습니다.");
         return "redirect:/rooms/" + room.getId() + "/competitions/" + competition.getId() + "/matches/" + match.getId();
     }
 }

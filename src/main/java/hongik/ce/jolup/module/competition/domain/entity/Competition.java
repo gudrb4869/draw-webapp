@@ -42,6 +42,8 @@ public class Competition extends BaseTimeEntity {
     @ColumnDefault(value = "0")
     private Integer count = 0;
 
+    private boolean option;
+
     @OneToMany(mappedBy = "competition", cascade = CascadeType.ALL)
     private List<Participate> participates = new ArrayList<>();
 
@@ -62,7 +64,7 @@ public class Competition extends BaseTimeEntity {
     }
 
     public boolean isLeague() {
-        return this.type.equals(CompetitionType.SINGLE_ROUND_ROBIN) || this.type.equals(CompetitionType.DOUBLE_ROUND_ROBIN);
+        return this.type.equals(CompetitionType.ROUND_ROBIN);
     }
 
     public boolean isTournament() {
@@ -71,5 +73,13 @@ public class Competition extends BaseTimeEntity {
 
     public boolean isRemovable() {
         return true;
+    }
+
+    public void optionOn() {
+        this.option = true;
+    }
+
+    public void optionOff() {
+        this.option = false;
     }
 }

@@ -24,10 +24,10 @@ public class CompetitionFormValidator implements Validator {
         if (members.size() < 2) {
             errors.rejectValue("members", "wrong.members", "최소 2명 이상 참가해야합니다.");
         }
-        if (members.size() > 24 && (type.equals(CompetitionType.SINGLE_ROUND_ROBIN) || type.equals(CompetitionType.DOUBLE_ROUND_ROBIN))) {
+        if (members.size() > 24 && competitionForm.isLeague()) {
             errors.rejectValue("type", "wrong.type", "리그는 최대 24명까지 참가가능합니다.");
         }
-        else if (members.size() > 64 && (type.equals(CompetitionType.SINGLE_ELIMINATION_TOURNAMENT) || type.equals(CompetitionType.DOUBLE_ELIMINATION_TOURNAMENT))) {
+        else if (members.size() > 64 && competitionForm.isTournament()) {
             errors.rejectValue("type", "wrong.type", "토너먼트는 최대 64명까지 참가가능합니다.");
         }
     }

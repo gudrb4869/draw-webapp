@@ -30,9 +30,9 @@
                     <td>
                         <a th:href="@{'/profile/' + ${rank.member.id}}" class="text-decoration-none">
                             <svg th:if="${#strings.isEmpty(rank.member?.image)}" data-jdenticon-value="nickname"
-                                 th:data-jdenticon-value="${rank.member?.name}" width="24" height="24" class="rounded border bg-light"></svg>
+                                 th:data-jdenticon-value="${rank.member?.name}" width="24" height="24" class="rounded-circle border bg-light"></svg>
                             <img th:if="${!#strings.isEmpty(rank.member?.image)}"
-                                 th:src="${rank.member?.image}" width="24" height="24" class="rounded border"/>
+                                 th:src="${rank.member?.image}" width="24" height="24" class="rounded-circle border"/>
                             <span th:text="${rank.member.name}"></span>
                         </a>
                     </td>

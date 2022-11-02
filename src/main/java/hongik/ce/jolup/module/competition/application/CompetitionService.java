@@ -54,9 +54,9 @@ public class CompetitionService {
                     int first = (i + j) % n;
                     int second = (i + n - j - 2) % n;
                     matches.add(Match.from(competition, memberList.get(first), memberList.get(second), i, j));
-                    if (competition.getType().equals(CompetitionType.DOUBLE_ROUND_ROBIN)) {
+                    /*if (competition.getType().equals(CompetitionType.DOUBLE_ROUND_ROBIN)) {
                         matches.add(Match.from(competition, memberList.get(second), memberList.get(first), n + i, j));
-                    }
+                    }*/
 
                 }
                 if (fixed != null) {
@@ -64,14 +64,14 @@ public class CompetitionService {
                     int last = (i + n - 1) % n;
                     if (i % 2 == 0) {
                         matches.add(Match.from(competition, memberList.get(last), fixed, i, j));
-                        if (competition.getType().equals(CompetitionType.DOUBLE_ROUND_ROBIN)) {
+                        /*if (competition.getType().equals(CompetitionType.DOUBLE_ROUND_ROBIN)) {
                             matches.add(Match.from(competition, fixed, memberList.get(last), n + i, j));
-                        }
+                        }*/
                     } else {
                         matches.add(Match.from(competition, fixed, memberList.get(last), i, j));
-                        if (competition.getType().equals(CompetitionType.DOUBLE_ROUND_ROBIN)) {
+                        /*if (competition.getType().equals(CompetitionType.DOUBLE_ROUND_ROBIN)) {
                             matches.add(Match.from(competition, memberList.get(last), fixed, n + i, j));
-                        }
+                        }*/
                     }
                 }
             }
@@ -153,5 +153,16 @@ public class CompetitionService {
             throw new IllegalStateException("대회를 삭제할 수 없습니다.");
         }
         competitionRepository.delete(competition);
+    }
+
+    public void optionOn(Competition competition) {
+        competition.optionOn();
+        /*if (competition.isLeague()) {
+            makeSecondMatches();
+        }*/
+    }
+
+    public void optionOff(Competition competition) {
+        competition.optionOff();
     }
 }

@@ -18,8 +18,8 @@
                 <div th:each="member : ${members}" class="form-check form-check-inline">
                     <input type="checkbox" th:field="*{members}" th:value="${member.id}" class="form-check-input">
                     <label class="flex-shrink-0 form-check-label" th:for="${#ids.prev('members')}">
-                        <svg th:if="${#strings.isEmpty(member.image)}" th:data-jdenticon-value="${member.name}" width="40" height="40" class="rounded border bg-light me-3"></svg>
-                        <img th:if="${!#strings.isEmpty(member.image)}" th:src="${member.image}" width="40" height="40" class="rounded border me-3"/>
+                        <svg th:if="${#strings.isEmpty(member.image)}" th:data-jdenticon-value="${member.name}" width="40" height="40" class="rounded-circle border bg-light me-3"></svg>
+                        <img th:if="${!#strings.isEmpty(member.image)}" th:src="${member.image}" width="40" height="40" class="rounded-circle border me-3"/>
                         <b th:text="${member.name}">이름</b>
                     </label>
                 </div>

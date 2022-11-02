@@ -124,6 +124,9 @@ public class CompetitionController {
 
         Room room = roomService.getRoom(roomId);
         Competition competition = competitionService.getCompetition(room, competitionId);
+        if (competition.isTournament()) {
+            throw new IllegalArgumentException("토너먼트 모드에서는 순위를 볼 수 없습니다.");
+        }
         List<Participate> ranking = participateRepository.findLeagueRankingByCompetition(competition);
         model.addAttribute(room);
         model.addAttribute(member);

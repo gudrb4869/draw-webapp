@@ -47,8 +47,24 @@ public class CompetitionSettingController {
         return "redirect:/rooms/" + room.getId() + "/competitions/" + competition.getId() + "/settings";
     }
 
+    @PostMapping("/competition/option-on")
+    public String OptionOn(@CurrentMember Member member, @PathVariable Long roomId, @PathVariable Long competitionId) {
+        Room room = roomService.getRoomToUpdate(member, roomId);
+        Competition competition = competitionService.getCompetition(room, competitionId);
+        competitionService.optionOn(competition);
+        return "redirect:/rooms/" + room.getId() + "/competitions/" + competition.getId() + "/settings";
+    }
+
+    @PostMapping("/competition/option-off")
+    public String OptionOff(@CurrentMember Member member, @PathVariable Long roomId, @PathVariable Long competitionId) {
+        Room room = roomService.getRoomToUpdate(member, roomId);
+        Competition competition = competitionService.getCompetition(room, competitionId);
+        competitionService.optionOff(competition);
+        return "redirect:/rooms/" + room.getId() + "/competitions/" + competition.getId() + "/settings";
+    }
+
     @DeleteMapping("/competition/remove")
-    public String removeRoom(@CurrentMember Member member, @PathVariable Long roomId, @PathVariable Long competitionId) {
+    public String removeCompetition(@CurrentMember Member member, @PathVariable Long roomId, @PathVariable Long competitionId) {
         Room room = roomService.getRoomToUpdate(member, roomId);
         Competition competition = competitionService.getCompetition(room, competitionId);
         competitionService.remove(competition);

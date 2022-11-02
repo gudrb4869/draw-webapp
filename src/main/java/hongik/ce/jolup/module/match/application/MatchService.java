@@ -3,6 +3,7 @@ package hongik.ce.jolup.module.match.application;
 import hongik.ce.jolup.module.competition.domain.entity.Competition;
 import hongik.ce.jolup.module.competition.domain.entity.Participate;
 import hongik.ce.jolup.module.match.domain.entity.Match;
+import hongik.ce.jolup.module.match.endpoint.form.LocationForm;
 import hongik.ce.jolup.module.match.endpoint.form.ScoreForm;
 import hongik.ce.jolup.module.match.event.MatchUpdatedEvent;
 import hongik.ce.jolup.module.match.infra.repository.MatchRepository;
@@ -33,7 +34,7 @@ public class MatchService {
             scoreForm.setAwayScore(0);
         }
         // 기존 경기 결과 확인 후 초기화
-        checkMatchOldResult(competition, match, scoreForm, home, away);
+        checkMatchOldResult(competition, match, scoreForm.getHomeScore(), scoreForm.getAwayScore(), home, away);
 
         // 새로운 경기 수정 결과 반영
         updateNewMatchResult(competition, match, scoreForm, home, away);
@@ -68,28 +69,36 @@ public class MatchService {
         }
     }
 
-    private void checkMatchOldResult(Competition competition, Match match, ScoreForm scoreForm, Participate home, Participate away) {
+    private void checkMatchOldResult(Competition competition, Match match, int homeScore, int awayScore, Participate home, Participate away) {
         if (match.isStatus()) {
             if (match.getHomeScore() > match.getAwayScore()) {
                 home.subWin(1);
                 away.subLose(1);
-                if (competition.isTournament() && scoreForm.getHomeScore() <= scoreForm.getAwayScore()) {
+                if (competition.isTournament() && homeScore <= homeScore) {
                     resetNextRoundMatch(competition, match);
                 }
             } else if (match.getHomeScore() < match.getAwayScore()) {
                 home.subLose(1);
                 away.subWin(1);
-                if (competition.isTournament() && scoreForm.getHomeScore() >= scoreForm.getAwayScore()) {
+                if (competition.isTournament() && homeScore >= homeScore) {
                     resetNextRoundMatch(competition, match);
                 }
             } else {
                 home.subDraw(1);
                 away.subDraw(1);
             }
+            match.reset();
             home.subGoalFor(match.getHomeScore());
             home.subGoalAgainst(match.getAwayScore());
             away.subGoalFor(match.getAwayScore());
             away.subGoalAgainst(match.getHomeScore());
+            if (competition.isTournament()) {
+                if (match.getNumber() % 2 == 0) {
+                    match.updateHome(null);
+                } else {
+                    match.updateAway(null);
+                }
+            }
         }
     }
 
@@ -116,28 +125,7 @@ public class MatchService {
             if (nextMatch.isStatus()) {
                 Participate home = competition.getParticipates().stream().filter(p -> p.getMember().equals(nextMatch.getHome())).findAny().orElseThrow(() -> new IllegalStateException("존재하지 않는 참가자입니다."));
                 Participate away = competition.getParticipates().stream().filter(p -> p.getMember().equals(nextMatch.getAway())).findAny().orElseThrow(() -> new IllegalStateException("존재하지 않는 참가자입니다."));
-                if (nextMatch.getHomeScore() > nextMatch.getAwayScore()) {
-                    home.subWin(1);
-                    away.subLose(1);
-                } else if (nextMatch.getHomeScore() < nextMatch.getAwayScore()) {
-                    home.subLose(1);
-                    away.subWin(1);
-                } else {
-                    home.subDraw(1);
-                    away.subDraw(1);
-                }
-                home.subGoalFor(nextMatch.getHomeScore());
-                home.subGoalAgainst(nextMatch.getAwayScore());
-                away.subGoalFor(nextMatch.getAwayScore());
-                away.subGoalAgainst(nextMatch.getHomeScore());
-
-                resetNextRoundMatch(competition, nextMatch);
-            }
-            nextMatch.reset();
-            if (match.getNumber() % 2 == 0) {
-                nextMatch.updateHome(null);
-            } else {
-                nextMatch.updateAway(null);
+                checkMatchOldResult(competition, nextMatch, 0, 0, home, away);
             }
         }
     }
@@ -159,5 +147,10 @@ public class MatchService {
 
     public void updateStartDateTime(Match match, LocalDateTime newStartDateTime) {
         match.updateStartDateTime(newStartDateTime);
+    }
+
+    public void updateLocation(Match match, LocationForm locationForm) {
+        match.updateLocation(locationForm);
+        matchRepository.save(match);
     }
 }

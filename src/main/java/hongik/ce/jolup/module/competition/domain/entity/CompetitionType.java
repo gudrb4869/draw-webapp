@@ -6,10 +6,9 @@ import lombok.RequiredArgsConstructor;
 @Getter
 @RequiredArgsConstructor
 public enum CompetitionType {
-    SINGLE_ROUND_ROBIN("리그(단판)"),
-    DOUBLE_ROUND_ROBIN("리그(홈 & 어웨이)"),
-    SINGLE_ELIMINATION_TOURNAMENT("토너먼트"),
-    DOUBLE_ELIMINATION_TOURNAMENT("토너먼트(패자부활전 O)");
+    ROUND_ROBIN("리그"),
+    SINGLE_ELIMINATION_TOURNAMENT("싱글 엘리미네이션 토너먼트"),
+    DOUBLE_ELIMINATION_TOURNAMENT("더블 엘리미네이션 토너먼트");
 
     private final String description;
 }

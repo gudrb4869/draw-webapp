@@ -9,16 +9,15 @@
         <div class="col-sm-10 d-flex">
             <div class="flex-shrink-0 align-items-baseline">
                 <!-- avatar -->
-                <svg th:if="${#strings.isEmpty(profileMember.image)}" class="img-fluid float-left rounded img-thumbnail"
+                <svg th:if="${#strings.isEmpty(profileMember.image)}" class="img-fluid float-left rounded-circle border img-thumbnail"
                      th:data-jdenticon-value="${profileMember.name}" width="125" height="125"></svg>
-                <img th:if="${!#strings.isEmpty(profileMember.image)}" class="img-fluid float-left rounded img-thumbnail"
+                <img th:if="${!#strings.isEmpty(profileMember.image)}" class="img-fluid float-left rounded-circle border img-thumbnail"
                      th:src="${profileMember.image}" width="125" height="125"/>
             </div>
             <div class="flex-grow-1 ms-3">
                 <!-- nickname-->
                 <h1 tabindex="0" data-bs-toggle="tooltip" data-bs-placement="top" class="display-4"
                     th:title="${profileMember.name}" th:text="${profileMember.name}"></h1>
-                <!--                    <h1 class="display-4 text-truncate" th:text="${member.name}">name</h1>-->
                 <!-- bio -->
                 <p class="lead" th:if="${!#strings.isEmpty(profileMember.bio)}" th:text="${profileMember.bio}">bio</p>
                 <p class="lead" th:if="${#strings.isEmpty(profileMember.bio) && isOwner}">소개를 추가해주세요.</p>
@@ -42,8 +41,6 @@
                             <a class="btn btn-outline-primary" href="#" th:href="@{/settings/profile}">프로필 수정</a>
                         </div>
                         <div class="nav nav-pills" id="v-pills-tab" role="tablist" aria-orientation="vertical">
-                            <!--<a class="nav-link active" id="v-pills-intro-tab" data-bs-toggle="pill" href="#v-pills-profile"
-                               role="tab" aria-controls="v-pills-profile" aria-selected="true">소개</a>-->
                             <a class="nav-link" id="v-pills-follower-tab" data-bs-toggle="pill" href="#v-pills-follower" role="tab"
                                aria-controls="v-pills-follower" aria-selected="false">팔로워 <span th:text="${followers.size()}">0</span></a>
                             <a class="nav-link" id="v-pills-following-tab" data-bs-toggle="pill" href="#v-pills-following" role="tab"
@@ -55,76 +52,15 @@
         </div>
     </div>
     <div class="row mt-3 justify-content-center">
-        <!--<div class="col-2">
-            <div class="nav flex-column nav-pills" id="v-pills-tab" role="tablist" aria-orientation="vertical">
-                &lt;!&ndash;<a class="nav-link active" id="v-pills-intro-tab" data-bs-toggle="pill" href="#v-pills-profile"
-                   role="tab" aria-controls="v-pills-profile" aria-selected="true">소개</a>&ndash;&gt;
-                <a class="nav-link" id="v-pills-follower-tab" data-bs-toggle="pill" href="#v-pills-follower" role="tab"
-                   aria-controls="v-pills-follower" aria-selected="false">팔로워 <span th:text="${followers.size()}">0</span></a>
-                <a class="nav-link" id="v-pills-following-tab" data-bs-toggle="pill" href="#v-pills-following" role="tab"
-                   aria-controls="v-pills-following" aria-selected="false">팔로잉 <span th:text="${followings.size()}">0</span></a>
-
-            </div>
-        </div>-->
-        <div class="col-sm-10 col-md-6">
+        <div class="col-sm-10 d-flex">
             <div class="tab-content" id="v-pills-tabContent">
-                <!--<div class="tab-pane fade show active" id="v-pills-profile" role="tabpanel"
-                     aria-labelledby="v-pills-home-tab">
-                    <div sec:authorize="isAuthenticated()" th:if="${!isOwner and !isFollowing}">
-                        <form class="needs-validation" th:action="@{'/profile/' + ${member.id} + '/follow'}" method="post" novalidate>
-                            <div class="mb-3">
-                                <button class="btn btn-outline-primary" type="submit">팔로우</button>
-                            </div>
-                        </form>
-                    </div>
-                    <div sec:authorize="isAuthenticated()" th:if="${!isOwner and isFollowing}">
-                        <form class="needs-validation" th:action="@{'/profile/' + ${member.id} + '/unfollow'}" method="post" novalidate>
-                            <div class="mb-3">
-                                <button class="btn btn-outline-primary" type="submit">언팔로우</button>
-                            </div>
-                        </form>
-                    </div>
-                    <div th:if="${isOwner}">
-                        <a class="btn btn-outline-primary" href="#" th:href="@{/settings/profile}">프로필 수정</a>
-                    </div>
-                </div>-->
                 <div class="tab-pane fade" id="v-pills-follower" role="tabpanel" aria-labelledby="v-pills-profile-tab">
                     <span th:if="${followers.size() == 0}">팔로워 없음</span>
-                    <ul class="list-unstyled col-10" th:if="${followers.size() > 0}">
-                        <a href="#" th:href="@{'/profile/' + ${follower.id}}" class="text-decoration-none text-black" th:each="follower: ${followers}">
-                            <li class="d-flex mt-3">
-                                <div class="flex-shrink-0">
-                                    <svg th:if="${#strings.isEmpty(follower.image)}" th:data-jdenticon-value="${follower.name}" width="64" height="64" class="rounded border bg-light me-3"></svg>
-                                    <img th:if="${!#strings.isEmpty(follower.image)}" th:src="${follower.image}" width="64" height="64" class="rounded border me-3"/>
-                                </div>
-                                <div class="flex-grow-1 ms-3">
-                                    <h5 class="mt-0 mb-1">
-                                        <span th:text="${follower.name}"></span>
-                                    </h5>
-                                    <span th:text="${follower.bio}"></span>
-                                </div>
-                            </li>
-                        </a>
-                    </ul>
+                    <div th:replace="fragments.html :: member-list (memberList=${followers})"></div>
                 </div>
                 <div class="tab-pane fade" id="v-pills-following" role="tabpanel" aria-labelledby="v-pills-profile-tab">
                     <span th:if="${followings.size() == 0}">팔로잉 없음</span>
-                    <ul class="list-unstyled col-10" th:if="${followings.size() > 0}">
-                        <a href="#" th:href="@{'/profile/' + ${following.id}}" class="text-decoration-none text-black" th:each="following: ${followings}">
-                            <li class="d-flex mt-3">
-                                <div class="flex-shrink-0">
-                                    <svg th:if="${#strings.isEmpty(following.image)}" th:data-jdenticon-value="${following.name}" width="64" height="64" class="rounded border bg-light me-3"></svg>
-                                    <img th:if="${!#strings.isEmpty(following.image)}" th:src="${following.image}" width="64" height="64" class="rounded border me-3"/>
-                                </div>
-                                <div class="flex-grow-1 ms-3">
-                                    <h5 class="mt-0 mb-1">
-                                        <span th:text="${following.name}"></span>
-                                    </h5>
-                                    <span th:text="${following.bio}"></span>
-                                </div>
-                            </li>
-                        </a>
-                    </ul>
+                    <div th:replace="fragments.html :: member-list (memberList=${followings})"></div>
                 </div>
             </div>
         </div>
