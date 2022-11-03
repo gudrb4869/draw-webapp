@@ -19,8 +19,8 @@
                         <span th:if="${competition.isTournament() and match.round == 3}" th:text="'16강 / ' + ${match.number + 1} + '경기'">경기 정보</span>
                         <span th:if="${competition.isTournament() and match.round == 4}" th:text="'32강 / ' + ${match.number + 1} + '경기'">경기 정보</span>
                         <span th:if="${competition.isTournament() and match.round == 5}" th:text="'64강 / ' + ${match.number + 1} + '경기'">경기 정보</span>
-                        <small th:if="${match.startDateTime == null}" class="text-warning">시간 미정</small>
-                        <small th:if="${match.startDateTime != null}" class="date-time text-dark" th:text="${match.startDateTime}">경기 시간</small>
+                        <small id="sdt" th:if="${match.startDateTime == null}" class="text-warning">시간 미정</small>
+                        <small id="sdt" th:if="${match.startDateTime != null}" class="date-time text-dark" th:text="${match.startDateTime}">경기 시간</small>
                     </div>
                     <div class="card-body text-center">
                         <div class="row">
@@ -30,9 +30,9 @@
                                 <span th:text="${match.home?.name}"></span>
                             </div>
                             <div class="col-4">
-                                <span th:text="${match.status} ? ${match?.homeScore} : '-'">3</span>
+                                <span id="hs" th:text="${match.status} ? ${match?.homeScore} : '-'">3</span>
                                 <span th:if="${match?.homeScore != null and match?.awayScore != null}"> : </span>
-                                <span th:text="${match.status} ? ${match?.awayScore} : '-'">2</span>
+                                <span id="as" th:text="${match.status} ? ${match?.awayScore} : '-'">2</span>
                             </div>
                             <div class="col-4">
                                 <svg th:if="${#strings.isEmpty(match.away?.image)}" th:data-jdenticon-value="${match.away?.name}" width="24" height="24" class="rounded-circle border bg-light me-3"></svg>
@@ -45,31 +45,102 @@
             </div>
         </div>
     </div>
-    <div class="row justify-content-center pt-3">
+    <!--<div class="row justify-content-center pt-3">
         <div class="col-sm-10">
             <div id="map" style="width: 100%; height: 600px;"></div>
         </div>
+    </div>-->
+    <div class="row justify-content-center">
+        <form class="need-validation col-sm-10" id="match-form" style="display: none">
+            <div class="mb-3">
+                <label th:for="homeScore">홈팀 스코어</label>
+                <input type="number" id="homeScore" name="homeScore" value="0"
+                       class="form-control" aria-describedby="homeScoreHelp">
+                <small id="homeScoreHelp" class="form-text text-muted">
+                    홈팀 스코어를 입력하세요. 0이상 100이하의 값이어야 합니다.
+                </small>
+            </div>
+            <div class="mb-3">
+                <label th:for="awayScore">어웨이팀 스코어</label>
+                <input type="number" id="awayScore" name="awayScore" value="0"
+                       class="form-control" aria-describedby="awayScoreHelp">
+                <small id="awayScoreHelp" class="form-text text-muted">
+                    어웨이팀 스코어를 입력하세요. 0이상 100이하의 값이어야 합니다.
+                </small>
+            </div>
+            <div class="mb-3">
+                <label th:for="startDateTime">경기 시작 일시</label>
+                <input id="startDateTime" type="datetime-local" name="startDateTime"
+                       class="form-control" aria-describedby="startDateTimeHelp">
+                <small id="startDateTimeHelp" class="form-text text-muted">
+                    경기 시작 일시를 입력하세요.
+                </small>
+            </div>
+            <div class="row">
+                <div class="col">
+                    <button class="btn btn-outline-dark" type="button" id="save-button">저장</button>
+                    <button class="btn btn-outline-dark" type="reset" id="cancel-button">취소</button>
+                </div>
+            </div>
+        </form>
     </div>
     <div class="row pt-3 justify-content-center">
         <div class="col-sm-10 justify-content-center">
-            <a sec:authorize="isAuthenticated()" th:if="${room.isAdmin(#authentication.principal)}" class="btn btn-outline-dark" th:href="@{|/rooms/${roomId}/competitions/${competitionId}/matches/${matchId}/update-location|}">
-                경기 장소 수정
-            </a>
-            <a sec:authorize="isAuthenticated()" th:if="${room.isAdmin(#authentication.principal)}" class="btn btn-outline-dark" th:href="@{|/rooms/${roomId}/competitions/${competitionId}/matches/${matchId}/update-date|}">
-                경기 시간 수정
-            </a>
-            <a sec:authorize="isAuthenticated()" th:if="${room.isAdmin(#authentication.principal)}" class="btn btn-outline-dark" th:href="@{|/rooms/${roomId}/competitions/${competitionId}/matches/${matchId}/update-score|}">
-                경기 결과 수정
-            </a>
-            <a class="btn btn-outline-dark" th:href="@{|/rooms/${roomId}/competitions/${competitionId}|}">
-                돌아가기
-            </a>
+            <button sec:authorize="isAuthenticated()" th:if="${room.isAdmin(#authentication.principal)}"
+                    class="btn btn-outline-dark" id="match-button">
+                경기 정보 수정
+            </button>
         </div>
     </div>
     <div th:replace="fragments.html :: footer"></div>
 </div> <!-- /container -->
 <div th:replace="fragments.html :: date-time"></div>
-<script type="text/javascript" th:inline="javascript">
+<script th:replace="fragments.html :: ajax-csrf-header"></script>
+<script type="application/javascript" th:inline="javascript">
+    $(function () {
+        let $matchBtn = $('#match-button');
+        let $matchForm = $('#match-form');
+        let $saveBtn = $('#save-button');
+        let $cancelBtn = $('#cancel-button');
+        let $homeScore = $('#hs');
+        let $awayScore = $('#as');
+        let $startDateTime = $('#sdt');
+        $matchBtn.click(function () {
+            $matchBtn.hide();
+            $matchForm.show();
+        });
+
+        $cancelBtn.click(function () {
+            $matchForm.hide();
+            $matchBtn.show();
+        });
+
+        $saveBtn.click(function () {
+            $matchForm.hide();
+            $matchBtn.show();
+
+            var data = {};
+            $matchForm.serializeArray().map(function (x){data[x.name] = x.value});
+            console.log(data);
+            $.ajax({
+                dataType: "json",
+                contentType: "application/json; charset=utf-8",
+                method: "POST",
+                url: "/rooms/[[${roomId}]]/competitions/[[${competitionId}]]/matches/[[${matchId}]]",
+                data: JSON.stringify(data),
+            }).done(function (data, status) {
+                console.log("${data} and status is ${status}");
+            })
+            console.log(data['homeScore']);
+            console.log(data['awayScore']);
+            console.log(data['startDateTime']);
+            $homeScore.text(data['homeScore']);
+            $awayScore.text(data['awayScore']);
+            $startDateTime.text(data['startDateTime']);
+        });
+    })
+</script>
+<!--<script type="text/javascript" th:inline="javascript">
     var longitude = [[${locationForm.longitude}]];
     var latitude = [[${locationForm.latitude}]];
     var jibunAddress = [[${locationForm.jibunAddress}]];
@@ -100,6 +171,6 @@
         '</div>'
     ].join('\n'));
     infoWindow.open(map, point);
-</script>
+</script>-->
 </body>
 </html>

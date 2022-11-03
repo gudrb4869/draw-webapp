@@ -4,6 +4,7 @@ import hongik.ce.jolup.module.competition.domain.entity.Competition;
 import hongik.ce.jolup.module.competition.domain.entity.Participate;
 import hongik.ce.jolup.module.match.domain.entity.Match;
 import hongik.ce.jolup.module.match.endpoint.form.LocationForm;
+import hongik.ce.jolup.module.match.endpoint.form.MatchForm;
 import hongik.ce.jolup.module.match.endpoint.form.ScoreForm;
 import hongik.ce.jolup.module.match.event.MatchUpdatedEvent;
 import hongik.ce.jolup.module.match.infra.repository.MatchRepository;
@@ -152,5 +153,9 @@ public class MatchService {
     public void updateLocation(Match match, LocationForm locationForm) {
         match.updateLocation(locationForm);
         matchRepository.save(match);
+    }
+
+    public void update(Match match, MatchForm matchForm) {
+        match.updateFrom(matchForm);
     }
 }

@@ -13,7 +13,7 @@ import java.util.List;
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@ToString(of = {"id", "title", "access"})
+@ToString
 @EqualsAndHashCode(of = {"id"}, callSuper = false)
 @NamedEntityGraph(
         name ="Room.withJoinsAndMembers",
@@ -40,10 +40,10 @@ public class Room extends BaseTimeEntity {
 
     private Integer count = 0;
 
-    @OneToMany(mappedBy = "room", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "room", cascade = CascadeType.ALL) @ToString.Exclude
     private List<Join> joins = new ArrayList<>();
 
-    @OneToMany(mappedBy = "room", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "room", cascade = CascadeType.ALL) @ToString.Exclude
     private List<Competition> competitions = new ArrayList<>();
 
     public static Room from(RoomForm roomForm) {

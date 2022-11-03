@@ -4,6 +4,7 @@ import hongik.ce.jolup.module.competition.domain.entity.Competition;
 import hongik.ce.jolup.module.match.application.MatchService;
 import hongik.ce.jolup.module.competition.application.CompetitionService;
 import hongik.ce.jolup.module.match.endpoint.form.LocationForm;
+import hongik.ce.jolup.module.match.endpoint.form.MatchForm;
 import hongik.ce.jolup.module.match.endpoint.form.ScoreForm;
 import hongik.ce.jolup.module.member.support.CurrentMember;
 import hongik.ce.jolup.module.room.application.RoomService;
@@ -13,6 +14,7 @@ import hongik.ce.jolup.module.room.domain.entity.Room;
 import lombok.*;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -44,6 +46,17 @@ public class MatchController {
         model.addAttribute(match);
         model.addAttribute(LocationForm.from(match));
         return "match/view";
+    }
+
+    @PostMapping("/{matchId}")
+    @ResponseStatus(HttpStatus.OK)
+    public void updateMatchInfo(@CurrentMember Member member, @PathVariable Long roomId, @PathVariable Long competitionId, @PathVariable Long matchId,
+                                @RequestBody MatchForm matchForm) {
+        log.info("matchForm = {}", matchForm);
+        Room room = roomService.getRoom(member, roomId);
+        Competition competition = competitionService.getCompetition(room, competitionId);
+        Match match = matchService.getMatch(competition, matchId);
+        matchService.update(match, matchForm);
     }
 
     @GetMapping("/{matchId}/update-score")

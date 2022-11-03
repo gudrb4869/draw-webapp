@@ -3,6 +3,7 @@ package hongik.ce.jolup.module.match.domain.entity;
 import hongik.ce.jolup.BaseTimeEntity;
 import hongik.ce.jolup.module.competition.domain.entity.Competition;
 import hongik.ce.jolup.module.match.endpoint.form.LocationForm;
+import hongik.ce.jolup.module.match.endpoint.form.MatchForm;
 import hongik.ce.jolup.module.match.endpoint.form.ScoreForm;
 import hongik.ce.jolup.module.member.domain.entity.Member;
 import lombok.*;
@@ -111,5 +112,11 @@ public class Match extends BaseTimeEntity {
         this.latitude = locationForm.getLatitude();
         this.jibunAddress = locationForm.getJibunAddress();
         this.roadAddress = locationForm.getRoadAddress();
+    }
+
+    public void updateFrom(MatchForm matchForm) {
+        this.homeScore = matchForm.getHomeScore();
+        this.awayScore = matchForm.getAwayScore();
+        this.startDateTime = matchForm.getStartDateTime();
     }
 }

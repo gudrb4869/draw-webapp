@@ -14,7 +14,7 @@ import java.util.List;
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@ToString(of = {"id", "title", "type", "room"})
+@ToString
 @NamedEntityGraph(
         name = "Competition.withRoomAndParticipatesAndMembers",
         attributeNodes = {
@@ -44,10 +44,10 @@ public class Competition extends BaseTimeEntity {
 
     private boolean option;
 
-    @OneToMany(mappedBy = "competition", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "competition", cascade = CascadeType.ALL) @ToString.Exclude
     private List<Participate> participates = new ArrayList<>();
 
-    @OneToMany(mappedBy = "competition", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "competition", cascade = CascadeType.ALL) @ToString.Exclude
     private List<Match> matches = new ArrayList<>();
 
     public static Competition from(CompetitionForm competitionForm, Room room) {
