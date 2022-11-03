@@ -7,53 +7,7 @@
 <div class="container">
     <div th:replace="fragments.html :: room-info"></div>
     <div th:replace="fragments.html :: room-menu ('competitions')"></div>
-    <div class="row justify-content-center mx-3 my-3">
-        <div class="col-lg-10 px-0 row">
-            <div class="row row-cols-1 row-cols-md-2">
-                <div th:if="${competitions.getTotalElements() == 0}" class="col">
-                    대회가 없습니다.
-                </div>
-                <div class="col mb-4 pr-0" th:each="competition: ${competitions}">
-                    <a th:href="@{'/rooms/' + ${room.id} + '/competitions/' + ${competition.id}}" class="text-decoration-none">
-                        <div class="card">
-                            <div class="card-header">
-                                <span th:text="${competition.title}">title</span>
-                            </div>
-                            <div class="card-body">
-                                <p class="card-text" th:text="${competition.type.description}">Short description</p>
-                                <div class="d-flex justify-content-between align-items-center">
-                                    <small class="text-muted">
-                                        <i class="fa fa-user"></i>
-                                        <span th:text="${competition.count}"></span>명
-                                    </small>
-                                    <small class="text-muted fromNow" th:text="${competition.createdDate}">9 mins</small>
-                                </div>
-                            </div>
-                            <!--<ul class="list-group list-group-flush">
-                                <li class="list-group-item">
-                                    <i class="fa fa-calendar"></i>
-                                    <span class="calendar" th:text="${competition.createdDate}"></span> 방 시작
-                                </li>
-                                <li class="list-group-item">
-                                    <i class="fa fa-hourglass-end"></i>
-                                    <span class="fromNow" th:text="${competition.createdDate}"></span>모집 마감,
-    &lt;!&ndash;                                <span th:if="${competition.type != 0}">&ndash;&gt;
-                                    <span>
-                                        <span th:text="${competition..name()}"></span>명 모집 중
-                                        (<span th:text="${competition.type.name()}"></span> 자리 남음)
-                                    </span>
-                                </li>
-                                <li class="list-group-item">
-                                    <a href="#" th:href="@{'/rooms/' + ${room.id} + '/competitions/' + ${competition.id}}"
-                                       class="card-link">자세히 보기</a>
-                                </li>
-                            </ul>-->
-                        </div>
-                    </a>
-                </div>
-            </div>
-        </div>
-    </div>
+    <div th:replace="fragments.html :: competition-list (competitionList=${competitions.getContent()})"></div>
     <div th:replace="fragments.html :: page (pages=${competitions}, url='/rooms/' + ${room.id} + '/competitions')"></div>
     <div th:replace="fragments.html :: footer"></div>
 </div> <!-- /container -->

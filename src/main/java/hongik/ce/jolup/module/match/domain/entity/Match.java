@@ -41,17 +41,15 @@ public class Match extends BaseTimeEntity {
     @ManyToOne(fetch = FetchType.LAZY) @ToString.Exclude
     private Member away;
 
-    private boolean status;
-
     @Column(name = "match_round")
     private int round;
 
     @Column(name = "match_number")
     private int number;
 
-    private int homeScore = 0;
+    private Integer homeScore;
 
-    private int awayScore = 0;
+    private Integer awayScore;
 
     private LocalDateTime startDateTime;
 
@@ -86,21 +84,6 @@ public class Match extends BaseTimeEntity {
     public void updateScoreFrom(ScoreForm scoreForm) {
         this.homeScore = scoreForm.getHomeScore();
         this.awayScore = scoreForm.getAwayScore();
-        this.status = scoreForm.isStatus();
-    }
-
-    public void reset() {
-        this.homeScore = 0;
-        this.awayScore = 0;
-        this.status = false;
-    }
-
-    public void open() {
-        this.closed = false;
-    }
-
-    public void close() {
-        this.closed = true;
     }
 
     public void updateStartDateTime(LocalDateTime newStartDateTime) {
@@ -118,5 +101,17 @@ public class Match extends BaseTimeEntity {
         this.homeScore = matchForm.getHomeScore();
         this.awayScore = matchForm.getAwayScore();
         this.startDateTime = matchForm.getStartDateTime();
+    }
+
+    public void open() {
+        this.closed = false;
+    }
+
+    public void close() {
+        this.closed = true;
+    }
+
+    public boolean isFinished() {
+        return (this.homeScore != null) && (this.awayScore != null);
     }
 }

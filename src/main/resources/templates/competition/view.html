@@ -15,13 +15,12 @@
                 <h3 class="round-robin__round-title" th:text="${key + 1} + '라운드'"></h3>
                 <ul class="round-robin__list">
                     <li class="round-robin__item" th:each="match : ${matches.get(key)}"
-                        th:onclick="${!match.closed} ? |location.href='@{|/rooms/${room.id}/competitions/${competition.id}/matches/${match.id}|}'|">
+                        th:onclick="|location.href='@{|/rooms/${room.id}/competitions/${competition.id}/matches/${match.id}|}'|">
                         <div class="round-robin__match" tabindex="0">
                             <table class="round-robin__table">
                                 <caption class="round-robin__caption">
-                                    <span th:if="${match.closed}">부전승</span>
-                                    <span th:if="${!match.closed and match.startDateTime == null}" class="text-warning">시간 미정</span>
-                                    <span th:if="${!match.closed and match.startDateTime != null}" class="date-time text-dark" th:text="${match.startDateTime}">경기 시간</span>
+                                    <span th:if="${match.startDateTime == null}" class="text-warning">시간 미정</span>
+                                    <span th:if="${match.startDateTime != null}" class="date-time text-dark" th:text="${match.startDateTime}">경기 시간</span>
                                 </caption>
                                 <thead class="sr-only">
                                 <tr>
@@ -41,7 +40,7 @@
                                         <span th:text="${match?.home?.name}"></span>
                                     </td>
                                     <td class="round-robin__score">
-                                        <span class="tournament-bracket__number" th:text="${match.status} ? ${match?.homeScore} : '-'">4</span>
+                                        <span class="tournament-bracket__number" th:text="${match?.homeScore} ?: '-'">4</span>
                                     </td>
                                 </tr>
                                 <tr class="round-robin__team" th:classappend="${match.homeScore < match.awayScore} ? 'round-robin__team--winner'"
@@ -54,7 +53,7 @@
                                         <span th:text="${match?.away?.name}"></span>
                                     </td>
                                     <td class="round-robin__score">
-                                        <span class="round-robin__number" th:text="${match.status} ? ${match?.awayScore} : '-'">1</span>
+                                        <span class="round-robin__number" th:text="${match?.awayScore} ?: '-'">1</span>
                                     </td>
                                 </tr>
                                 </tbody>
@@ -71,7 +70,7 @@
                 <h3 class="tournament-bracket__round-title" th:text="${key == 0} ? '결승' : (${key == 1} ? '준결승' : (${key == 2} ? '8강' : (${key == 3} ? '16강' : (${key == 4} ? '32강' : (${key == 5} ? '64강' : _)))))"></h3>
                 <ul class="tournament-bracket__list">
                     <li class="tournament-bracket__item" th:each="match : ${matches.get(key)}"
-                        th:onclick="${!match.closed} ? |location.href='@{|/rooms/${room.id}/competitions/${competition.id}/matches/${match.id}|}'|">
+                        th:onclick="|location.href='@{|/rooms/${room.id}/competitions/${competition.id}/matches/${match.id}|}'|">
                         <div class="tournament-bracket__match" tabindex="0">
                             <table class="tournament-bracket__table">
                                 <caption class="tournament-bracket__caption">
@@ -97,7 +96,7 @@
                                         <span th:text="${match?.home?.name}"></span>
                                     </td>
                                     <td class="tournament-bracket__score">
-                                        <span class="tournament-bracket__number" th:text="${match.status} ? ${match?.homeScore} : '-'">4</span>
+                                        <span class="tournament-bracket__number" th:text="${match?.homeScore} ?: '-'">4</span>
                                     </td>
                                 </tr>
                                 <tr class="tournament-bracket__team" th:classappend="${match.homeScore < match.awayScore} ? 'tournament-bracket__team--winner'"
@@ -110,7 +109,7 @@
                                         <span th:text="${match?.away?.name}"></span>
                                     </td>
                                     <td class="tournament-bracket__score">
-                                        <span class="tournament-bracket__number" th:text="${match.status} ? ${match?.awayScore} : '-'">1</span>
+                                        <span class="tournament-bracket__number" th:text="${match?.awayScore} ?: '-'">1</span>
                                     </td>
                                 </tr>
                                 </tbody>

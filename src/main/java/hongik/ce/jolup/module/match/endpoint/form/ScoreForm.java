@@ -38,7 +38,6 @@ public class ScoreForm {
         if (match.getAway() != null) {
             scoreForm.away = match.getAway().getName();
         }
-        scoreForm.status = match.isStatus();
 //        scoreForm.startDateTime = match.getStartDateTime();
         return scoreForm;
     }

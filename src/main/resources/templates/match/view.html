@@ -6,41 +6,52 @@
 <div th:replace="fragments.html :: navigation-bar"></div>
 <div class="container">
     <div th:replace="fragments.html :: competition-info"></div>
-    <div class="row pt-3 justify-content-center">
+    <div class="row mt-3 justify-content-center">
         <div class="col-sm-10" th:object="${match}">
             <div th:replace="fragments.html :: message"></div>
             <div class="mb-3">
-                <div class="card">
-                    <div class="card-header d-flex justify-content-between align-items-center">
-                        <span th:if="${competition.isLeague()}" th:text="${match.round + 1} + '라운드 / ' + ${match.number + 1} + '경기'">경기 정보</span>
-                        <span th:if="${competition.isTournament() and match.round == 0}" th:text="'결승'">경기 정보</span>
-                        <span th:if="${competition.isTournament() and match.round == 1}" th:text="'준결승 / ' + ${match.number + 1} + '경기'">경기 정보</span>
-                        <span th:if="${competition.isTournament() and match.round == 2}" th:text="'8강 / ' + ${match.number + 1} + '경기'">경기 정보</span>
-                        <span th:if="${competition.isTournament() and match.round == 3}" th:text="'16강 / ' + ${match.number + 1} + '경기'">경기 정보</span>
-                        <span th:if="${competition.isTournament() and match.round == 4}" th:text="'32강 / ' + ${match.number + 1} + '경기'">경기 정보</span>
-                        <span th:if="${competition.isTournament() and match.round == 5}" th:text="'64강 / ' + ${match.number + 1} + '경기'">경기 정보</span>
-                        <small id="sdt" th:if="${match.startDateTime == null}" class="text-warning">시간 미정</small>
-                        <small id="sdt" th:if="${match.startDateTime != null}" class="date-time text-dark" th:text="${match.startDateTime}">경기 시간</small>
-                    </div>
-                    <div class="card-body text-center">
-                        <div class="row">
-                            <div class="col-4">
-                                <svg th:if="${#strings.isEmpty(match.home?.image)}" th:data-jdenticon-value="${match.home?.name}" width="24" height="24" class="rounded-circle border bg-light me-3"></svg>
-                                <img th:if="${!#strings.isEmpty(match.home?.image)}" th:src="${match.home?.image}" width="24" height="24" class="rounded-circle border me-3"/>
-                                <span th:text="${match.home?.name}"></span>
-                            </div>
-                            <div class="col-4">
-                                <span id="hs" th:text="${match.status} ? ${match?.homeScore} : '-'">3</span>
-                                <span th:if="${match?.homeScore != null and match?.awayScore != null}"> : </span>
-                                <span id="as" th:text="${match.status} ? ${match?.awayScore} : '-'">2</span>
-                            </div>
-                            <div class="col-4">
-                                <svg th:if="${#strings.isEmpty(match.away?.image)}" th:data-jdenticon-value="${match.away?.name}" width="24" height="24" class="rounded-circle border bg-light me-3"></svg>
-                                <img th:if="${!#strings.isEmpty(match.away?.image)}" th:src="${match.away?.image}" width="24" height="24" class="rounded-circle border me-3"/>
-                                <span th:text="${match.away?.name}"></span>
-                            </div>
-                        </div>
-                    </div>
+                <div class="round-robin__match" tabindex="0">
+                    <table class="round-robin__table">
+                        <caption class="round-robin__caption">
+                            <span id="sdt" th:class="${match.startDateTime == null} ? 'text-warning' : 'date-time text-dark'"
+                                  th:text="${match.startDateTime} ?: '시간 미정'">경기 시간</span>
+                        </caption>
+                        <thead class="sr-only">
+                        <tr>
+                            <th>Image</th>
+                            <th>Team</th>
+                            <th>Score</th>
+                        </tr>
+                        </thead>
+                        <tbody class="round-robin__content">
+                        <tr class="round-robin__team" th:classappend="${match.homeScore > match.awayScore} ? 'round-robin__team--winner'"
+                            tabindex="0" data-bs-toggle="tooltip" data-bs-placement="top" th:title="${match?.home?.name}">
+                            <td class="round-robin__image">
+                                <svg th:if="${#strings.isEmpty(match?.home?.image)}" th:data-jdenticon-value="${match?.home?.name}" width="24" height="24" class="rounded-circle border bg-light"></svg>
+                                <img th:if="${!#strings.isEmpty(match?.home?.image)}" th:src="${match?.home?.image}" width="24" height="24" class="rounded-circle border"/>
+                            </td>
+                            <td class="round-robin__name">
+                                <span id="h" th:text="${match?.home?.name}"></span>
+                            </td>
+                            <td class="round-robin__score">
+                                <span id="hs" class="tournament-bracket__number" th:text="${match?.homeScore} ?: '-'">4</span>
+                            </td>
+                        </tr>
+                        <tr class="round-robin__team" th:classappend="${match.homeScore < match.awayScore} ? 'round-robin__team--winner'"
+                            tabindex="0" data-bs-toggle="tooltip" data-bs-placement="bottom" th:title="${match?.away?.name}">
+                            <td class="round-robin__image">
+                                <svg th:if="${#strings.isEmpty(match?.away?.image)}" th:data-jdenticon-value="${match?.away?.name}" width="24" height="24" class="rounded-circle border bg-light"></svg>
+                                <img th:if="${!#strings.isEmpty(match?.away?.image)}" th:src="${match?.away?.image}" width="24" height="24" class="rounded-circle border"/>
+                            </td>
+                            <td class="round-robin__name">
+                                <span id="a" th:text="${match?.away?.name}"></span>
+                            </td>
+                            <td class="round-robin__score">
+                                <span id="as" class="round-robin__number" th:text="${match?.awayScore} ?: '-'">1</span>
+                            </td>
+                        </tr>
+                        </tbody>
+                    </table>
                 </div>
             </div>
         </div>
@@ -54,23 +65,25 @@
         <form class="need-validation col-sm-10" id="match-form" style="display: none">
             <div class="mb-3">
                 <label th:for="homeScore">홈팀 스코어</label>
-                <input type="number" id="homeScore" name="homeScore" value="0"
-                       class="form-control" aria-describedby="homeScoreHelp">
+                <input type="number" id="homeScore" name="homeScore" th:value="${match.homeScore}"
+                       class="form-control" aria-describedby="homeScoreHelp" min="0">
                 <small id="homeScoreHelp" class="form-text text-muted">
-                    홈팀 스코어를 입력하세요. 0이상 100이하의 값이어야 합니다.
+                    홈팀 스코어를 입력하세요. 0이상의 값이어야 합니다.
+                    홈팀 스코어와 어웨이 스코어를 빈칸으로 입력시 경기 결과가 초기화됩니다.
                 </small>
             </div>
             <div class="mb-3">
                 <label th:for="awayScore">어웨이팀 스코어</label>
-                <input type="number" id="awayScore" name="awayScore" value="0"
-                       class="form-control" aria-describedby="awayScoreHelp">
+                <input type="number" id="awayScore" name="awayScore" th:value="${match.awayScore}"
+                       class="form-control" aria-describedby="awayScoreHelp" min="0">
                 <small id="awayScoreHelp" class="form-text text-muted">
-                    어웨이팀 스코어를 입력하세요. 0이상 100이하의 값이어야 합니다.
+                    어웨이팀 스코어를 입력하세요. 0이상의 값이어야 합니다.
+                    홈팀 스코어와 어웨이 스코어를 빈칸으로 입력시 경기 결과가 초기화됩니다.
                 </small>
             </div>
             <div class="mb-3">
                 <label th:for="startDateTime">경기 시작 일시</label>
-                <input id="startDateTime" type="datetime-local" name="startDateTime"
+                <input id="startDateTime" type="datetime-local" name="startDateTime" th:value="${match.startDateTime}"
                        class="form-control" aria-describedby="startDateTimeHelp">
                 <small id="startDateTimeHelp" class="form-text text-muted">
                     경기 시작 일시를 입력하세요.
@@ -90,6 +103,9 @@
                     class="btn btn-outline-dark" id="match-button">
                 경기 정보 수정
             </button>
+            <a class="btn btn-outline-dark" id="quit-button" th:href="@{|/rooms/${roomId}/competitions/${competitionId}|}">
+                목록
+            </a>
         </div>
     </div>
     <div th:replace="fragments.html :: footer"></div>
@@ -99,26 +115,31 @@
 <script type="application/javascript" th:inline="javascript">
     $(function () {
         let $matchBtn = $('#match-button');
+        let $quitBtn = $('#quit-button');
         let $matchForm = $('#match-form');
         let $saveBtn = $('#save-button');
         let $cancelBtn = $('#cancel-button');
         let $homeScore = $('#hs');
         let $awayScore = $('#as');
         let $startDateTime = $('#sdt');
+        let $home = $('#h');
+        let $away = $('#a');
         $matchBtn.click(function () {
             $matchBtn.hide();
+            $quitBtn.hide();
             $matchForm.show();
         });
 
         $cancelBtn.click(function () {
             $matchForm.hide();
             $matchBtn.show();
+            $quitBtn.show();
         });
 
         $saveBtn.click(function () {
             $matchForm.hide();
             $matchBtn.show();
-
+            $quitBtn.show();
             var data = {};
             $matchForm.serializeArray().map(function (x){data[x.name] = x.value});
             console.log(data);
@@ -131,12 +152,36 @@
             }).done(function (data, status) {
                 console.log("${data} and status is ${status}");
             })
-            console.log(data['homeScore']);
-            console.log(data['awayScore']);
-            console.log(data['startDateTime']);
-            $homeScore.text(data['homeScore']);
-            $awayScore.text(data['awayScore']);
-            $startDateTime.text(data['startDateTime']);
+            if (data['homeScore']) {
+                $homeScore.text(data['homeScore']);
+            } else {
+                $homeScore.text('-');
+            }
+            if (data['awayScore']) {
+                $awayScore.text(data['awayScore']);
+            } else {
+                $awayScore.text('-');
+            }
+            if (data['startDateTime'] && $startDateTime.hasClass('text-warning')) {
+                console.log('datetime created')
+                $startDateTime.removeClass('text-warning');
+                $startDateTime.addClass('text-dark date-time');
+                $startDateTime.text(data['startDateTime']);
+                $(".date-time").text(function(index, dateTime) {
+                    return moment(dateTime, "YYYY-MM-DD`T`hh:mm").format('LLL');
+                });
+            }
+            else if (!data['startDateTime'] && !$startDateTime.hasClass('text-warning')) {
+                console.log('datetime removed');
+                $startDateTime.removeClass('text-dark date-time');
+                $startDateTime.addClass('text-warning');
+                $startDateTime.text('시간 미정');
+            } else {
+                $startDateTime.text(data['startDateTime']);
+                $(".date-time").text(function(index, dateTime) {
+                    return moment(dateTime, "YYYY-MM-DD`T`hh:mm").format('LLL');
+                });
+            }
         });
     })
 </script>

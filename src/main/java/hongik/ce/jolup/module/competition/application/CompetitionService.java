@@ -45,18 +45,15 @@ public class CompetitionService {
             }
             /*
             참가자 수 : n
-            참가자 수가 홀수 일 경우 -> 전체 라운드 수 : n - 1, 라운드당 게임 수 : n / 2
-            참가자 수가 짝수 일 경우 -> 전체 라운드 수 : n, 라운드당 게임 수 (n - 1) / 2
+            참가자 수가 짝수 일 경우 -> 전체 라운드 수 : n - 1, 라운드당 게임 수 : n / 2
+            참가자 수가 홀수 일 경우 -> 전체 라운드 수 : n, 라운드당 게임 수 (n - 1) / 2
              */
             int n = memberList.size();
             for (int i = 0; i < n; i++) { // n은 홀수 전체 라운드 수 : n
-                for (int j = 0; j < n / 2; j++) { // n은 홀수, 라운드당 게임 수 : ceil((n - 1) / 2) -> n / 2
+                for (int j = 0; j < n / 2; j++) { // n은 홀수, 라운드당 게임 수 : floor((n - 1) / 2) -> n / 2
                     int first = (i + j) % n;
                     int second = (i + n - j - 2) % n;
                     matches.add(Match.from(competition, memberList.get(first), memberList.get(second), i, j));
-                    /*if (competition.getType().equals(CompetitionType.DOUBLE_ROUND_ROBIN)) {
-                        matches.add(Match.from(competition, memberList.get(second), memberList.get(first), n + i, j));
-                    }*/
 
                 }
                 if (fixed != null) {
@@ -64,14 +61,8 @@ public class CompetitionService {
                     int last = (i + n - 1) % n;
                     if (i % 2 == 0) {
                         matches.add(Match.from(competition, memberList.get(last), fixed, i, j));
-                        /*if (competition.getType().equals(CompetitionType.DOUBLE_ROUND_ROBIN)) {
-                            matches.add(Match.from(competition, fixed, memberList.get(last), n + i, j));
-                        }*/
                     } else {
                         matches.add(Match.from(competition, fixed, memberList.get(last), i, j));
-                        /*if (competition.getType().equals(CompetitionType.DOUBLE_ROUND_ROBIN)) {
-                            matches.add(Match.from(competition, memberList.get(last), fixed, n + i, j));
-                        }*/
                     }
                 }
             }
@@ -134,6 +125,15 @@ public class CompetitionService {
         return competition;
     }
 
+    public Competition getCompetitionToUpdateMatch(Room room, Long competitionId) {
+        return getCompetition(room, competitionRepository.findCompetitionWithRoomAndMatchesById(competitionId));
+    }
+
+    private Competition getCompetition(Room room, Competition competition) {
+        checkExistsCompetition(room, competition);
+        return competition;
+    }
+
     private void checkExistsCompetition(Room room, Competition competition) {
         if (competition == null || !competition.getRoom().equals(room)) {
             throw new IllegalArgumentException("존재하지 않는 대회입니다.");
@@ -157,12 +157,71 @@ public class CompetitionService {
 
     public void optionOn(Competition competition) {
         competition.optionOn();
-        /*if (competition.isLeague()) {
-            makeSecondMatches();
-        }*/
+        if (competition.isLeague()) {
+            LinkedHashMap<Integer, List<Match>> matches = new LinkedHashMap<>();
+            competition.getMatches().forEach(match -> matches.computeIfAbsent(match.getRound(), k -> new ArrayList<>()).add(match));
+            Set<Match> matchSet = new HashSet<>();
+            /*
+            참가자 수 : n
+            참가자 수가 짝수 일 경우 -> 전체 라운드 수 : n - 1, 라운드당 게임 수 : n / 2
+            참가자 수가 홀수 일 경우 -> 전체 라운드 수 : n, 라운드당 게임 수 (n - 1) / 2
+             */
+            Integer n = competition.getCount();
+            if (n % 2 == 0) {
+                n -= 1;
+            }
+            for (Integer key : matches.keySet()) {
+                for (Match match : matches.get(key)) {
+                    matchSet.add(Match.from(competition, match.getAway(), match.getHome(), match.getRound() + n, match.getNumber()));
+                }
+            }
+            matchRepository.saveAll(matchSet);
+        }
     }
 
     public void optionOff(Competition competition) {
         competition.optionOff();
+        if (competition.isLeague()) {
+            LinkedHashMap<Integer, List<Match>> matches = new LinkedHashMap<>();
+            matchRepository.findMatchWithAllByCompetition(competition).forEach(match -> matches.computeIfAbsent(match.getRound(), k -> new ArrayList<>()).add(match));
+            Set<Match> matchSet = new HashSet<>();
+            /*
+            참가자 수 : n
+            참가자 수가 짝수 일 경우 -> 전체 라운드 수 : n - 1, 라운드당 게임 수 : n / 2
+            참가자 수가 홀수 일 경우 -> 전체 라운드 수 : n, 라운드당 게임 수 (n - 1) / 2
+             */
+            Integer n = competition.getCount();
+            if (n % 2 == 0) {
+                n -= 1;
+            }
+            Integer last_round = Collections.max(matches.keySet());
+            for (int i = n; i <= last_round; i++) {
+                for (Match match : matches.get(i)) {
+                    Participate home = competition.getParticipates().stream().filter(p -> p.getMember().equals(match.getHome())).findAny().orElseThrow(() -> new IllegalStateException("존재하지 않는 참가자입니다."));
+                    Participate away = competition.getParticipates().stream().filter(p -> p.getMember().equals(match.getAway())).findAny().orElseThrow(() -> new IllegalStateException("존재하지 않는 참가자입니다."));
+
+                    Integer homeScore = match.getHomeScore();
+                    Integer awayScore = match.getAwayScore();
+                    if (homeScore != null && match.getAwayScore() != null) {
+                        if (homeScore > awayScore) {
+                            home.subWin(1);
+                            away.subLose(1);
+                        } else if (homeScore < awayScore) {
+                            home.subLose(1);
+                            away.subWin(1);
+                        } else {
+                            home.subDraw(1);
+                            away.subDraw(1);
+                        }
+                        home.subGoalFor(homeScore);
+                        home.subGoalAgainst(awayScore);
+                        away.subGoalFor(awayScore);
+                        away.subGoalAgainst(homeScore);
+                    }
+                    matchSet.add(match);
+                }
+            }
+            matchRepository.deleteAll(matchSet);
+        }
     }
 }

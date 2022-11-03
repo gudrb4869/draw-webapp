@@ -50,7 +50,7 @@ public class CompetitionSettingController {
     @PostMapping("/competition/option-on")
     public String OptionOn(@CurrentMember Member member, @PathVariable Long roomId, @PathVariable Long competitionId) {
         Room room = roomService.getRoomToUpdate(member, roomId);
-        Competition competition = competitionService.getCompetition(room, competitionId);
+        Competition competition = competitionService.getCompetitionToUpdateMatch(room, competitionId);
         competitionService.optionOn(competition);
         return "redirect:/rooms/" + room.getId() + "/competitions/" + competition.getId() + "/settings";
     }

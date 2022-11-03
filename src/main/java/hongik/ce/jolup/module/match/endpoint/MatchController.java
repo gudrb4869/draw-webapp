@@ -51,12 +51,12 @@ public class MatchController {
     @PostMapping("/{matchId}")
     @ResponseStatus(HttpStatus.OK)
     public void updateMatchInfo(@CurrentMember Member member, @PathVariable Long roomId, @PathVariable Long competitionId, @PathVariable Long matchId,
-                                @RequestBody MatchForm matchForm) {
+                                @Valid @RequestBody MatchForm matchForm) {
         log.info("matchForm = {}", matchForm);
         Room room = roomService.getRoom(member, roomId);
         Competition competition = competitionService.getCompetition(room, competitionId);
         Match match = matchService.getMatch(competition, matchId);
-        matchService.update(match, matchForm);
+        matchService.update(match, matchForm, competition);
     }
 
     @GetMapping("/{matchId}/update-score")

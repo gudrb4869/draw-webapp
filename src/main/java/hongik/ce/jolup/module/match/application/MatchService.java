@@ -16,6 +16,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -26,34 +27,39 @@ public class MatchService {
     private final MatchRepository matchRepository;
     private final ApplicationEventPublisher publisher;
 
-    public void updateScore(Competition competition, Match match, ScoreForm scoreForm) {
-        Participate home = competition.getParticipates().stream().filter(p -> p.getMember().equals(match.getHome())).findAny().orElseThrow(() -> new IllegalStateException("존재하지 않는 참가자입니다."));
-        Participate away = competition.getParticipates().stream().filter(p -> p.getMember().equals(match.getAway())).findAny().orElseThrow(() -> new IllegalStateException("존재하지 않는 참가자입니다."));
+    public void update(Match match, MatchForm matchForm, Competition competition) {
+        Participate home = competition.getParticipates().stream().filter(p -> p.getMember().equals(match.getHome())).findAny().orElse(null);
+        Participate away = competition.getParticipates().stream().filter(p -> p.getMember().equals(match.getAway())).findAny().orElse(null);
 
-        if (!scoreForm.isStatus()) {
-            scoreForm.setHomeScore(0);
-            scoreForm.setAwayScore(0);
+        if (home != null && away != null) {
+            checkMatchOldResult(competition, match,
+                    Optional.ofNullable(matchForm.getHomeScore()).orElse(0),
+                    Optional.ofNullable(matchForm.getAwayScore()).orElse(0),
+                    home, away);
+
+            changeNewMatchResult(competition, match, matchForm.getHomeScore(), matchForm.getAwayScore(), home, away);
+        } else {
+            matchForm.setHomeScore(null);
+            matchForm.setAwayScore(null);
         }
-        // 기존 경기 결과 확인 후 초기화
-        checkMatchOldResult(competition, match, scoreForm.getHomeScore(), scoreForm.getAwayScore(), home, away);
+        match.updateFrom(matchForm);
+    }
 
-        // 새로운 경기 수정 결과 반영
-        updateNewMatchResult(competition, match, scoreForm, home, away);
-
+    public void updateScore(Competition competition, Match match, ScoreForm scoreForm) {
         List<Member> members = competition.getParticipates().stream().map(Participate::getMember).collect(Collectors.toList());
         publisher.publishEvent(new MatchUpdatedEvent(match, "대회 '" + match.getCompetition().getTitle() + "'에서 경기 결과가 수정되었습니다.", members));
         match.updateScoreFrom(scoreForm);
     }
 
-    private void updateNewMatchResult(Competition competition, Match match, ScoreForm scoreForm, Participate home, Participate away) {
-        if (scoreForm.isStatus()) {
-            if (scoreForm.getHomeScore() > scoreForm.getAwayScore()) {
+    private void changeNewMatchResult(Competition competition, Match match, Integer homeScore, Integer awayScore, Participate home, Participate away) {
+        if (homeScore != null && awayScore != null) {
+            if (homeScore > awayScore) {
                 home.addWin(1);
                 away.addLose(1);
                 if (competition.isTournament()) {
                     setNextRoundMatch(competition, match, match.getHome());
                 }
-            } else if (scoreForm.getHomeScore() < scoreForm.getAwayScore()) {
+            } else if (homeScore < awayScore) {
                 home.addLose(1);
                 away.addWin(1);
                 if (competition.isTournament()) {
@@ -63,43 +69,35 @@ public class MatchService {
                 home.addDraw(1);
                 away.addDraw(1);
             }
-            home.addGoalFor(scoreForm.getHomeScore());
-            home.addGoalAgainst(scoreForm.getAwayScore());
-            away.addGoalFor(scoreForm.getAwayScore());
-            away.addGoalAgainst(scoreForm.getHomeScore());
+            home.addGoalFor(homeScore);
+            home.addGoalAgainst(awayScore);
+            away.addGoalFor(awayScore);
+            away.addGoalAgainst(homeScore);
         }
     }
 
-    private void checkMatchOldResult(Competition competition, Match match, int homeScore, int awayScore, Participate home, Participate away) {
-        if (match.isStatus()) {
+    private void checkMatchOldResult(Competition competition, Match match, Integer homeScore, Integer awayScore, Participate home, Participate away) {
+        if (match.isFinished()) {
             if (match.getHomeScore() > match.getAwayScore()) {
                 home.subWin(1);
                 away.subLose(1);
-                if (competition.isTournament() && homeScore <= homeScore) {
+                if (competition.isTournament() && homeScore <= awayScore) {
                     resetNextRoundMatch(competition, match);
                 }
             } else if (match.getHomeScore() < match.getAwayScore()) {
                 home.subLose(1);
                 away.subWin(1);
-                if (competition.isTournament() && homeScore >= homeScore) {
+                if (competition.isTournament() && homeScore >= awayScore) {
                     resetNextRoundMatch(competition, match);
                 }
             } else {
                 home.subDraw(1);
                 away.subDraw(1);
             }
-            match.reset();
             home.subGoalFor(match.getHomeScore());
             home.subGoalAgainst(match.getAwayScore());
             away.subGoalFor(match.getAwayScore());
             away.subGoalAgainst(match.getHomeScore());
-            if (competition.isTournament()) {
-                if (match.getNumber() % 2 == 0) {
-                    match.updateHome(null);
-                } else {
-                    match.updateAway(null);
-                }
-            }
         }
     }
 
@@ -123,10 +121,15 @@ public class MatchService {
                 .orElse(null);
 
         if (nextMatch != null) {
-            if (nextMatch.isStatus()) {
+            if (nextMatch.isFinished()) {
                 Participate home = competition.getParticipates().stream().filter(p -> p.getMember().equals(nextMatch.getHome())).findAny().orElseThrow(() -> new IllegalStateException("존재하지 않는 참가자입니다."));
                 Participate away = competition.getParticipates().stream().filter(p -> p.getMember().equals(nextMatch.getAway())).findAny().orElseThrow(() -> new IllegalStateException("존재하지 않는 참가자입니다."));
                 checkMatchOldResult(competition, nextMatch, 0, 0, home, away);
+            }
+            if (match.getNumber() % 2 == 0) {
+                nextMatch.updateHome(null);
+            } else {
+                nextMatch.updateAway(null);
             }
         }
     }
@@ -141,9 +144,6 @@ public class MatchService {
         if (match == null || !match.getCompetition().equals(competition)) {
             throw new IllegalArgumentException("존재하지 않는 경기입니다.");
         }
-        if (match.isClosed()) {
-            throw new IllegalArgumentException("접근할수 없는 경기입니다.");
-        }
     }
 
     public void updateStartDateTime(Match match, LocalDateTime newStartDateTime) {
@@ -153,9 +153,5 @@ public class MatchService {
     public void updateLocation(Match match, LocationForm locationForm) {
         match.updateLocation(locationForm);
         matchRepository.save(match);
-    }
-
-    public void update(Match match, MatchForm matchForm) {
-        match.updateFrom(matchForm);
     }
 }

@@ -109,9 +109,9 @@ public class CompetitionController {
         } else if (competition.isTournament()) {
             matchRepository.findMatchWithAllByCompetition(competition)
                     .forEach(match -> matches.computeIfAbsent(match.getRound(), k -> new ArrayList<>()).add(match));
-            for (Integer key : matches.keySet()) {
-                matches.get(key).sort(Comparator.comparing(Match::getNumber));
-            }
+        }
+        for (Integer key : matches.keySet()) {
+            matches.get(key).sort(Comparator.comparing(Match::getNumber));
         }
         model.addAttribute("matches", matches);
         model.addAttribute("first_round", Collections.min(matches.keySet()));
