@@ -27,7 +27,7 @@
                         <tr class="round-robin__team" th:classappend="${match.homeScore > match.awayScore} ? 'round-robin__team--winner'"
                             tabindex="0" data-bs-toggle="tooltip" data-bs-placement="top" th:title="${match?.home?.name}">
                             <td class="round-robin__image">
-                                <svg th:if="${#strings.isEmpty(match?.home?.image)}" th:data-jdenticon-value="${match?.home?.name}" width="24" height="24" class="rounded-circle border bg-light"></svg>
+                                <img th:if="${#strings.isEmpty(match?.home?.image)}" src="/images/user.png" width="24" height="24" class="rounded-circle border"/>
                                 <img th:if="${!#strings.isEmpty(match?.home?.image)}" th:src="${match?.home?.image}" width="24" height="24" class="rounded-circle border"/>
                             </td>
                             <td class="round-robin__name">
@@ -40,7 +40,7 @@
                         <tr class="round-robin__team" th:classappend="${match.homeScore < match.awayScore} ? 'round-robin__team--winner'"
                             tabindex="0" data-bs-toggle="tooltip" data-bs-placement="bottom" th:title="${match?.away?.name}">
                             <td class="round-robin__image">
-                                <svg th:if="${#strings.isEmpty(match?.away?.image)}" th:data-jdenticon-value="${match?.away?.name}" width="24" height="24" class="rounded-circle border bg-light"></svg>
+                                <img th:if="${#strings.isEmpty(match?.away?.image)}" src="/images/user.png" width="24" height="24" class="rounded-circle border"/>
                                 <img th:if="${!#strings.isEmpty(match?.away?.image)}" th:src="${match?.away?.image}" width="24" height="24" class="rounded-circle border"/>
                             </td>
                             <td class="round-robin__name">

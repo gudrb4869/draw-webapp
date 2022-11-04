@@ -7,7 +7,6 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public enum Grade {
     ADMIN("admin"),
-    MANAGER("manager"),
     USER("user");
 
     private final String description;

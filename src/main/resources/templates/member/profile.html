@@ -9,8 +9,8 @@
         <div class="col-sm-10 d-flex">
             <div class="flex-shrink-0 align-items-baseline">
                 <!-- avatar -->
-                <svg th:if="${#strings.isEmpty(profileMember.image)}" class="img-fluid float-left rounded-circle border img-thumbnail"
-                     th:data-jdenticon-value="${profileMember.name}" width="125" height="125"></svg>
+                <img th:if="${#strings.isEmpty(profileMember?.image)}"
+                     src="/images/user.png" width="125" height="125" class="img-fluid float-left rounded-circle border img-thumbnail"/>
                 <img th:if="${!#strings.isEmpty(profileMember.image)}" class="img-fluid float-left rounded-circle border img-thumbnail"
                      th:src="${profileMember.image}" width="125" height="125"/>
             </div>
