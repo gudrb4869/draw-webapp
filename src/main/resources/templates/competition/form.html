@@ -22,7 +22,8 @@
             <div class="mb-3">
                 <label th:for="type">대회 방식</label>
                 <select th:field="*{type}" class="form-select" th:errorclass="border-danger">
-                    <option th:value="ROUND_ROBIN">리그</option>
+                    <option th:value="SINGLE_ROUND_ROBIN">리그</option>
+                    <option th:value="DOUBLE_ROUND_ROBIN">리그(홈 앤드 어웨이)</option>
                     <option th:value="SINGLE_ELIMINATION_TOURNAMENT">토너먼트</option>
                 </select>
                 <p th:errors="*{type}" class="text-danger">대회 방식 오류</p>

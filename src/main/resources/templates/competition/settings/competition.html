@@ -36,43 +36,6 @@
                     </div>
                 </form>
             </div>
-
-            <div class="row">
-                <h5 class="col-sm-12" th:text="'옵션 (현재 상태 : ' + (${competition.option} ? 'ON' : 'OFF') + ')'">옵션 상태</h5>
-                <form th:if="${!competition.option}" class="col-sm-12" action="#"
-                      th:action="@{'/rooms/' + ${room.id} + '/competitions/' + ${competition.id} + '/settings/competition/option-on'}" method="post"
-                      novalidate>
-                    <div th:if="${competition.isLeague()}" class="alert alert-info" role="alert">
-                        <svg th:replace="fragments.html::symbol-info"/>
-                        홈 앤드 어웨이 방식으로 변경하려면 버튼을 클릭하세요.<br/>
-                    </div>
-                    <div th:if="${competition.isTournament()}" class="alert alert-info" role="alert">
-                        <svg th:replace="fragments.html::symbol-info"/>
-                        대회에서 3위 결정전을 진행하시려면 버튼을 클릭하세요.<br/>
-                    </div>
-                    <div class="mb-3">
-                        <button class="btn btn-outline-primary" type="submit" aria-describedby="submitHelp">ON
-                        </button>
-                    </div>
-                </form>
-                <form th:if="${competition.option}" class="col-sm-12" action="#"
-                      th:action="@{'/rooms/' + ${room.id} + '/competitions/' + ${competition.id} + '/settings/competition/option-off'}" method="post"
-                      novalidate>
-                    <div th:if="${competition.isLeague()}" class="alert alert-info" role="alert">
-                        <svg th:replace="fragments.html::symbol-warning"/>
-                        단판 방식으로 변경하려면 버튼을 클릭하세요.<br/>
-                        2차전 경기 결과가 반영된 순위, 경기 정보가 삭제됩니다.
-                    </div>
-                    <div th:if="${competition.isTournament()}" class="alert alert-info" role="alert">
-                        <svg th:replace="fragments.html::symbol-warning"/>
-                        대회에서 3위 결정전을 생략하시려면 버튼을 클릭하세요.<br/>
-                    </div>
-                    <div class="mb-3">
-                        <button class="btn btn-outline-primary" type="submit" aria-describedby="submitHelp">OFF
-                        </button>
-                    </div>
-                </form>
-            </div>
             <hr/>
             <div class="row">
                 <h5 class="col-sm-12 text-danger">대회 삭제</h5>
@@ -87,6 +50,7 @@
                 </div>
             </div>
         </div>
+
         <div class="modal fade" id="remove" tabindex="-1" role="dialog" aria-labelledby="removeTitle" aria-hidden="true">
             <div class="modal-dialog modal-dialog-centered" role="document">
                 <div class="modal-content">

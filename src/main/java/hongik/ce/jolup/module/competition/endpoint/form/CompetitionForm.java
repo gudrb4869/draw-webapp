@@ -18,12 +18,12 @@ public class CompetitionForm {
     private String title;
 
     @NotNull(message = "대회 방식을 선택하세요.")
-    private CompetitionType type = CompetitionType.ROUND_ROBIN;
+    private CompetitionType type = CompetitionType.SINGLE_ROUND_ROBIN;
 
     private Set<Long> members = new HashSet<>();
 
     public boolean isLeague() {
-        return this.type.equals(CompetitionType.ROUND_ROBIN);
+        return this.type.equals(CompetitionType.SINGLE_ROUND_ROBIN) || this.type.equals(CompetitionType.DOUBLE_ROUND_ROBIN);
     }
 
     public boolean isTournament() {

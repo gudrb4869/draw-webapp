@@ -29,8 +29,8 @@ public class InitDb {
 
     @PostConstruct
     public void init() {
-//        Long id = initService.dbInit();
-//        initService.createCompetition(id);
+        Long id = initService.dbInit();
+        initService.createCompetition(id);
     }
 
     @Component
@@ -117,10 +117,13 @@ public class InitDb {
              */
             List<Member> members = room.getJoins().stream().map(Join::getMember).collect(Collectors.toList());
             Competition competition1 = competitionService.createCompetition(members, room,
-                    createCompetitionForm(members, "리그 데모", CompetitionType.ROUND_ROBIN, 0, 11));
+                    createCompetitionForm(members, "demo1", CompetitionType.SINGLE_ROUND_ROBIN, 0, 11));
 
             Competition competition2 = competitionService.createCompetition(members, room,
-                    createCompetitionForm(members, "토너먼트 데모", CompetitionType.SINGLE_ELIMINATION_TOURNAMENT, 24, 49));
+                    createCompetitionForm(members, "demo2", CompetitionType.DOUBLE_ROUND_ROBIN, 12, 19));
+
+            Competition competition3 = competitionService.createCompetition(members, room,
+                    createCompetitionForm(members, "demo3", CompetitionType.SINGLE_ELIMINATION_TOURNAMENT, 20, 49));
         }
 
         private CompetitionForm createCompetitionForm(List<Member> members, String title, CompetitionType type, int start, int end) {

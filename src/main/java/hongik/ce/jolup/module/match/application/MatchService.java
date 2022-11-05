@@ -152,6 +152,5 @@ public class MatchService {
 
     public void updateLocation(Match match, LocationForm locationForm) {
         match.updateLocation(locationForm);
-        matchRepository.save(match);
     }
 }
