@@ -49,12 +49,27 @@ class MemberControllerTest {
     }
 
     @Test
-    @DisplayName("회원 가입 처리: 입력값 오류")
-    void signupSubmitWithError() throws Exception {
+    @DisplayName("회원 가입 처리: 입력값 오류(최소 길이)")
+    void signupSubmitWithLengthError() throws Exception {
         mockMvc.perform(post("/signup")
                         .param("email", "a")
-                        .param("password", "a1!")
+                        .param("password", "a")
+                        .param("password_confirm", "a")
                         .param("name", "1")
+                        .with(csrf()))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(view().name("member/signup"));
+    }
+
+    @Test
+    @DisplayName("회원 가입 처리: 입력값 오류(비밀번호 불일치)")
+    void signupSubmitWithNotMatchedError() throws Exception {
+        mockMvc.perform(post("/signup")
+                        .param("email", "gudrb")
+                        .param("password", "1234")
+                        .param("password_confirm", "1235")
+                        .param("name", "형규")
                         .with(csrf()))
                 .andDo(print())
                 .andExpect(status().isOk())
@@ -65,56 +80,58 @@ class MemberControllerTest {
     @DisplayName("회원 가입 처리: 입력값 정상")
     void signupSubmit() throws Exception {
         mockMvc.perform(post("/signup")
-                        .param("email", "hongik")
-                        .param("password", "hongik1!")
-                        .param("name", "홍익")
+                        .param("email", "gudrb")
+                        .param("password", "1234")
+                        .param("password_confirm", "1234")
+                        .param("name", "형규")
                         .with(csrf()))
                 .andDo(print())
                 .andExpect(status().is3xxRedirection())
-                .andExpect(view().name("redirect:/"));
+                .andExpect(view().name("redirect:/login"));
 
-        assertTrue(memberRepository.existsByEmail("hongik"));
-        Member member = memberRepository.findByEmail("hongik").orElse(null);
+        assertTrue(memberRepository.existsByEmail("gudrb"));
+        Member member = memberRepository.findByEmail("gudrb").orElse(null);
         assertNotNull(member);
-        assertNotEquals(member.getPassword(), "hongik1!");
+        assertNotEquals(member.getPassword(), "1234");
     }
 
     @Test
     @DisplayName("로그인 성공")
     void login_success() throws Exception {
         SignupForm signupForm = new SignupForm();
-        signupForm.setEmail("hongik");
-        signupForm.setPassword("hongik1!");
-        signupForm.setName("홍익");
+        signupForm.setEmail("gudrb");
+        signupForm.setPassword("1234");
+        signupForm.setPassword_confirm("1234");
+        signupForm.setName("형규");
         memberService.signup(signupForm);
         mockMvc.perform(post("/login")
-                        .param("username", "hongik")
-                        .param("password", "hongik1!")
+                        .param("username", "gudrb")
+                        .param("password", "1234")
                         .with(csrf()))
                 .andExpect(status().is3xxRedirection())
                 .andExpect(redirectedUrl("/"))
-                .andExpect(authenticated().withUsername("홍익"));
+                .andExpect(authenticated().withUsername("형규"));
     }
 
     @Test
     @DisplayName("로그인 실패")
     void login_fail() throws Exception {
         mockMvc.perform(post("/login")
-                        .param("username", "wkrwjs")
-                        .param("password", "wkrwjs1!")
+                        .param("username", "gudrb123")
+                        .param("password", "1234")
                         .with(csrf()))
                 .andExpect(status().is3xxRedirection())
                 .andExpect(redirectedUrl("/login?error"))
                 .andExpect(unauthenticated());
     }
 
-    /*@Test
+    @Test
     @DisplayName("로그아웃 성공")
     void logout_success() throws Exception {
-        mockMvc.perform(get("/logout")
+        mockMvc.perform(post("/logout")
                         .with(csrf()))
                 .andExpect(status().is3xxRedirection())
                 .andExpect(redirectedUrl("/"))
                 .andExpect(unauthenticated());
-    }*/
+    }
 }

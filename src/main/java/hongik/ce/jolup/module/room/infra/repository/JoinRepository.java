@@ -9,22 +9,18 @@ import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
 import java.util.Optional;
 
 @Transactional(readOnly = true)
 public interface JoinRepository extends JpaRepository<Join, Long> {
 
-    @EntityGraph(value = "Join.withAll", type = EntityGraph.EntityGraphType.FETCH)
+    @EntityGraph(attributePaths = {"member", "room"})
     Page<Join> findByRoom(Room room, Pageable pageable);
 
-    @EntityGraph(value = "Join.withAll", type = EntityGraph.EntityGraphType.FETCH)
+    @EntityGraph(attributePaths = {"member", "room"})
     Page<Join> findWithJoinByMember(Member member, Pageable pageable);
 
     boolean existsByRoomAndMember(Room room, Member member);
 
     Optional<Join> findByRoomAndMember(Room room, Member member);
-
-    @EntityGraph(attributePaths = {"room"})
-    List<Join> findWithRoomByMember(Member member);
 }

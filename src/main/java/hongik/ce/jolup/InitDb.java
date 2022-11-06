@@ -29,8 +29,8 @@ public class InitDb {
 
     @PostConstruct
     public void init() {
-        Long id = initService.dbInit();
-        initService.createCompetition(id);
+//        Long id = initService.dbInit();
+//        initService.createCompetition(id);
     }
 
     @Component
