@@ -151,9 +151,10 @@ public class RoomController {
     }
 
     @DeleteMapping("/{id}")
-    public String removeRoom(@CurrentAccount Account account, @PathVariable Long id) {
+    public String removeRoom(@CurrentAccount Account account, @PathVariable Long id, RedirectAttributes attributes) {
         Room room = roomService.getRoomToUpdate(account, id);
         roomService.remove(room);
+        attributes.addFlashAttribute("message", "방을 삭제했습니다.");
         return "redirect:/";
     }
 }

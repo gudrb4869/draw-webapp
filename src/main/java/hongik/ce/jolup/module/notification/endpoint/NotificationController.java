@@ -26,6 +26,7 @@ public class NotificationController {
         long numberOfNotChecked = notificationRepository.countByAccountAndChecked(account, false);
         model.addAttribute(account);
         model.addAttribute("notificationList", notificationList);
+        model.addAttribute("numberOfChecked", notificationList.size() - numberOfNotChecked);
         model.addAttribute("numberOfNotChecked", numberOfNotChecked);
         return "notification/list";
     }

@@ -63,7 +63,7 @@ public class CompetitionController {
 
     @PostMapping("/create")
     public String create(@CurrentAccount Account account, @PathVariable Long roomId, Model model,
-                         @Valid CompetitionForm competitionForm, BindingResult bindingResult, RedirectAttributes attributes) {
+                         @Valid CompetitionForm competitionForm, BindingResult bindingResult) {
 
         Room room = roomService.getRoomToUpdate(account, roomId);
         List<Account> accounts = room.getJoins().stream().map(Join::getAccount)
@@ -75,8 +75,6 @@ public class CompetitionController {
             return "competition/form";
         }
         Competition competition = competitionService.createCompetition(accounts, room, competitionForm);
-
-        attributes.addFlashAttribute("message", "대회를 만들었습니다.");
         return "redirect:/rooms/" + room.getId() + "/competitions/" + competition.getId();
     }
 

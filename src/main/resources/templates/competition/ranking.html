@@ -8,45 +8,46 @@
     <div th:replace="fragments.html :: competition-menu (currentMenu='ranking')"></div>
     <div class="row mt-3 justify-content-center">
         <div class="col-10 py-3">
-            <table class="table table-sm table-hover">
-                <h3>순위</h3>
-                <thead>
-                <tr>
-                    <th class="col">#</th>
-                    <th class="col">이름</th>
-                    <th class="col">경기수</th>
-                    <th class="col">승</th>
-                    <th class="col">무</th>
-                    <th class="col">패</th>
-                    <th class="col">승점</th>
-                    <th class="col">득점</th>
-                    <th class="col">실점</th>
-                    <th class="col">득실차</th>
-                </tr>
-                </thead>
-                <tbody>
-                <tr th:each="rank : ${ranking}">
-                    <td th:text="${rankStat.count}"></td>
-                    <td>
-                        <a th:href="@{'/profile/' + ${rank.account.id}}" class="text-decoration-none">
-                            <img th:if="${#strings.isEmpty(rank.account?.image)}"
-                                 src="/images/user.png" width="24" height="24" class="rounded-circle border"/>
-                            <img th:if="${!#strings.isEmpty(rank.account?.image)}"
-                                 th:src="${rank.account?.image}" width="24" height="24" class="rounded-circle border"/>
-                            <span th:text="${rank.account.name}"></span>
-                        </a>
-                    </td>
-                    <td th:text="${rank.win + rank.draw + rank.lose}"></td>
-                    <td th:text="${rank.win}"></td>
-                    <td th:text="${rank.draw}"></td>
-                    <td th:text="${rank.lose}"></td>
-                    <td class="fw-bolder" th:text="${rank.win * 3 + rank.draw}"></td>
-                    <td th:text="${rank.goalFor}"></td>
-                    <td th:text="${rank.goalAgainst}"></td>
-                    <td th:text="${rank.goalFor - rank.goalAgainst}"></td>
-                </tr>
-                </tbody>
-            </table>
+            <div class="table-responsive">
+                <table class="table table-sm table-hover">
+                    <thead>
+                    <tr>
+                        <th>#</th>
+                        <th>이름</th>
+                        <th>경기수</th>
+                        <th>승</th>
+                        <th>무</th>
+                        <th>패</th>
+                        <th>승점</th>
+                        <th>득점</th>
+                        <th>실점</th>
+                        <th>득실차</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr th:each="rank : ${ranking}">
+                        <td th:text="${rankStat.count}"></td>
+                        <td>
+                            <a th:href="@{'/profile/' + ${rank.account.id}}" class="text-decoration-none">
+                                <img th:if="${#strings.isEmpty(rank.account?.image)}"
+                                     src="/images/user.png" width="24" height="24" class="rounded-circle border"/>
+                                <img th:if="${!#strings.isEmpty(rank.account?.image)}"
+                                     th:src="${rank.account?.image}" width="24" height="24" class="rounded-circle border"/>
+                                <span th:text="${rank.account.name}"></span>
+                            </a>
+                        </td>
+                        <td th:text="${rank.win + rank.draw + rank.lose}"></td>
+                        <td th:text="${rank.win}"></td>
+                        <td th:text="${rank.draw}"></td>
+                        <td th:text="${rank.lose}"></td>
+                        <td class="fw-bolder" th:text="${rank.win * 3 + rank.draw}"></td>
+                        <td th:text="${rank.goalFor}"></td>
+                        <td th:text="${rank.goalAgainst}"></td>
+                        <td th:text="${rank.goalFor - rank.goalAgainst}"></td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
         </div>
     </div>
     <div th:replace="fragments.html :: footer"></div>

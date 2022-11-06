@@ -3,6 +3,7 @@
 <head th:replace="fragments.html :: head"></head>
 <body class="bg-light">
 <div th:replace="fragments.html :: navigation-bar"></div>
+<svg th:replace="fragments.html::svg-symbols"/>
 <div class="container">
     <div class="row py-5 justify-content-center">
         <div class="col-md-6">
@@ -17,16 +18,22 @@
                 <div class="card-header d-flex justify-content-between align-items-center">
                     <small>읽지 않은 알림 <span class="text-success" th:text="${numberOfNotChecked}">3</span>개</small>
                     <a href="#" th:if="${hasNotification}" th:href="@{/notifications/all-read}" class="text-decoration-none">
-                        <small class="text-dark">모두 읽음 처리</small>
+                        <small class="text-dark">
+                            <i class="fa fa-check-circle text-success"></i> 모두 읽음 처리
+                        </small>
                     </a>
-                    <!--<form class="row" th:action="@{/notifications}" th:method="delete">
-                        <button type="submit" class="" aria-describedby="deleteHelp">
-                            읽은 알림 삭제
-                        </button>
-                    </form>-->
                 </div>
                 <div th:replace="fragments.html :: notification-list (notifications=${notificationList})"></div>
             </div>
+        </div>
+    </div>
+    <div class="row py-3 justify-content-center" th:if="${numberOfChecked > 0}">
+        <div class="col-md-6">
+            <form class="row" th:action th:method="delete">
+                <button type="submit" class="btn btn-warning" aria-describedby="deleteHelp">
+                    읽은 알림 삭제
+                </button>
+            </form>
         </div>
     </div>
     <div th:replace="fragments.html :: footer"></div>
