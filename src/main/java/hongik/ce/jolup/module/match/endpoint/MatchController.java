@@ -6,10 +6,10 @@ import hongik.ce.jolup.module.competition.application.CompetitionService;
 import hongik.ce.jolup.module.match.endpoint.form.LocationForm;
 import hongik.ce.jolup.module.match.endpoint.form.MatchForm;
 import hongik.ce.jolup.module.match.endpoint.form.ScoreForm;
-import hongik.ce.jolup.module.member.support.CurrentMember;
+import hongik.ce.jolup.module.account.support.CurrentAccount;
 import hongik.ce.jolup.module.room.application.RoomService;
 import hongik.ce.jolup.module.match.domain.entity.Match;
-import hongik.ce.jolup.module.member.domain.entity.Member;
+import hongik.ce.jolup.module.account.domain.entity.Account;
 import hongik.ce.jolup.module.room.domain.entity.Room;
 import lombok.*;
 import lombok.extern.slf4j.Slf4j;
@@ -36,11 +36,11 @@ public class MatchController {
 
     @GetMapping("/{matchId}")
     public String viewMatch(@PathVariable Long roomId, @PathVariable Long competitionId, @PathVariable Long matchId,
-                              @CurrentMember Member member, Model model) {
-        Room room = roomService.getRoom(member, roomId);
+                            @CurrentAccount Account account, Model model) {
+        Room room = roomService.getRoom(account, roomId);
         Competition competition = competitionService.getCompetition(room, competitionId);
         Match match = matchService.getMatch(competition, matchId);
-        model.addAttribute(member);
+        model.addAttribute(account);
         model.addAttribute(room);
         model.addAttribute(competition);
         model.addAttribute(match);
@@ -50,10 +50,10 @@ public class MatchController {
 
     @PostMapping("/{matchId}")
     @ResponseStatus(HttpStatus.OK)
-    public void updateMatchInfo(@CurrentMember Member member, @PathVariable Long roomId, @PathVariable Long competitionId, @PathVariable Long matchId,
+    public void updateMatchInfo(@CurrentAccount Account account, @PathVariable Long roomId, @PathVariable Long competitionId, @PathVariable Long matchId,
                                 @Valid @RequestBody MatchForm matchForm) {
         log.info("matchForm = {}", matchForm);
-        Room room = roomService.getRoom(member, roomId);
+        Room room = roomService.getRoom(account, roomId);
         Competition competition = competitionService.getCompetition(room, competitionId);
         Match match = matchService.getMatch(competition, matchId);
         matchService.update(match, matchForm, competition);
@@ -61,11 +61,11 @@ public class MatchController {
 
     @GetMapping("/{matchId}/update-score")
     public String updateScoreForm(@PathVariable Long roomId, @PathVariable Long competitionId, @PathVariable Long matchId,
-                             @CurrentMember Member member, Model model) {
-        Room room = roomService.getRoomToUpdate(member, roomId);
+                                  @CurrentAccount Account account, Model model) {
+        Room room = roomService.getRoomToUpdate(account, roomId);
         Competition competition = competitionService.getCompetition(room, competitionId);
         Match match = matchService.getMatch(competition, matchId);
-        model.addAttribute(member);
+        model.addAttribute(account);
         model.addAttribute(room);
         model.addAttribute(competition);
         model.addAttribute(match);
@@ -74,15 +74,15 @@ public class MatchController {
     }
 
     @PostMapping("/{matchId}/update-score")
-    public String updateScore(@PathVariable Long roomId, @PathVariable Long competitionId, @PathVariable Long matchId, @CurrentMember Member member,
+    public String updateScore(@PathVariable Long roomId, @PathVariable Long competitionId, @PathVariable Long matchId, @CurrentAccount Account account,
                               @Valid ScoreForm scoreForm, BindingResult bindingResult, Model model, RedirectAttributes attributes) {
 
-        Room room = roomService.getRoomToUpdate(member, roomId);
+        Room room = roomService.getRoomToUpdate(account, roomId);
         Competition competition = competitionService.getCompetition(room, competitionId);
         Match match = matchService.getMatch(competition, matchId);
         log.info("matchForm = {}", scoreForm);
         if (bindingResult.hasErrors()) {
-            model.addAttribute(member);
+            model.addAttribute(account);
             model.addAttribute(room);
             model.addAttribute(competition);
             model.addAttribute(match);
@@ -95,11 +95,11 @@ public class MatchController {
 
     @GetMapping("/{matchId}/update-date")
     public String updateDateForm(@PathVariable Long roomId, @PathVariable Long competitionId, @PathVariable Long matchId,
-                                      @CurrentMember Member member, Model model) {
-        Room room = roomService.getRoomToUpdate(member, roomId);
+                                 @CurrentAccount Account account, Model model) {
+        Room room = roomService.getRoomToUpdate(account, roomId);
         Competition competition = competitionService.getCompetition(room, competitionId);
         Match match = matchService.getMatch(competition, matchId);
-        model.addAttribute(member);
+        model.addAttribute(account);
         model.addAttribute(room);
         model.addAttribute(competition);
         model.addAttribute(match);
@@ -107,10 +107,10 @@ public class MatchController {
     }
 
     @PostMapping("/{matchId}/update-date")
-    public String updateDate(@PathVariable Long roomId, @PathVariable Long competitionId, @PathVariable Long matchId, @CurrentMember Member member,
+    public String updateDate(@PathVariable Long roomId, @PathVariable Long competitionId, @PathVariable Long matchId, @CurrentAccount Account account,
                              Model model, @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime newStartDateTime, RedirectAttributes attributes) {
 
-        Room room = roomService.getRoomToUpdate(member, roomId);
+        Room room = roomService.getRoomToUpdate(account, roomId);
         Competition competition = competitionService.getCompetition(room, competitionId);
         Match match = matchService.getMatch(competition, matchId);
         matchService.updateStartDateTime(match, newStartDateTime);
@@ -120,12 +120,12 @@ public class MatchController {
 
     @GetMapping("/{matchId}/update-location")
     public String updateLocationForm(@PathVariable Long roomId, @PathVariable Long competitionId, @PathVariable Long matchId,
-                                      @CurrentMember Member member, Model model) {
-        Room room = roomService.getRoomToUpdate(member, roomId);
+                                     @CurrentAccount Account account, Model model) {
+        Room room = roomService.getRoomToUpdate(account, roomId);
         Competition competition = competitionService.getCompetition(room, competitionId);
         Match match = matchService.getMatch(competition, matchId);
         log.info("match = {}", match);
-        model.addAttribute(member);
+        model.addAttribute(account);
         model.addAttribute(room);
         model.addAttribute(competition);
         model.addAttribute(match);
@@ -134,10 +134,10 @@ public class MatchController {
     }
 
     @PostMapping("/{matchId}/update-location")
-    public String updateLocation(@PathVariable Long roomId, @PathVariable Long competitionId, @PathVariable Long matchId, @CurrentMember Member member,
+    public String updateLocation(@PathVariable Long roomId, @PathVariable Long competitionId, @PathVariable Long matchId, @CurrentAccount Account account,
                                  LocationForm locationForm, RedirectAttributes attributes) {
         log.info("locationForm = {}", locationForm);
-        Room room = roomService.getRoomToUpdate(member, roomId);
+        Room room = roomService.getRoomToUpdate(account, roomId);
         Competition competition = competitionService.getCompetition(room, competitionId);
         Match match = matchService.getMatch(competition, matchId);
         matchService.updateLocation(match, locationForm);

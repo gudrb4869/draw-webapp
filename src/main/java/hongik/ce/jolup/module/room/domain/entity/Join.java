@@ -1,7 +1,7 @@
 package hongik.ce.jolup.module.room.domain.entity;
 
 import hongik.ce.jolup.BaseTimeEntity;
-import hongik.ce.jolup.module.member.domain.entity.Member;
+import hongik.ce.jolup.module.account.domain.entity.Account;
 import lombok.*;
 
 import javax.persistence.*;
@@ -9,13 +9,13 @@ import javax.persistence.*;
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@ToString(of = {"id", "member", "room", "grade"})
-@Table(name = "joins", uniqueConstraints = {@UniqueConstraint(columnNames = {"member_id", "room_id"})})
+@ToString
+@Table(name = "joins", uniqueConstraints = {@UniqueConstraint(columnNames = {"account_id", "room_id"})})
 @NamedEntityGraph(
         name = "Join.withAll",
         attributeNodes = {
                 @NamedAttributeNode("room"),
-                @NamedAttributeNode("member")
+                @NamedAttributeNode("account")
         }
 )
 public class Join extends BaseTimeEntity {
@@ -24,7 +24,7 @@ public class Join extends BaseTimeEntity {
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    private Member member;
+    private Account account;
 
     @ManyToOne(fetch = FetchType.LAZY)
     private Room room;
@@ -33,16 +33,16 @@ public class Join extends BaseTimeEntity {
     @Enumerated(EnumType.STRING)
     private Grade grade;
 
-    public static Join from(Room room, Member member, Grade grade) {
+    public static Join from(Room room, Account account, Grade grade) {
         Join join = new Join();
         join.room = room;
-        join.member = member;
+        join.account = account;
         join.grade = grade;
         return join;
     }
 
-    public void updateMember(Member member) {
-        this.member = member;
+    public void updateMember(Account account) {
+        this.account = account;
     }
 
     public void updateGrade(Grade grade) {

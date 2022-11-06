@@ -1,6 +1,6 @@
 package hongik.ce.jolup.module.room.application;
 
-import hongik.ce.jolup.module.member.domain.entity.Member;
+import hongik.ce.jolup.module.account.domain.entity.Account;
 import hongik.ce.jolup.module.room.domain.entity.Grade;
 import hongik.ce.jolup.module.room.domain.entity.Join;
 import hongik.ce.jolup.module.room.domain.entity.Room;
@@ -28,16 +28,16 @@ public class RoomService {
     private final JoinRepository joinRepository;
     private final ApplicationEventPublisher eventPublisher;
 
-    public Room createNewRoom(RoomForm roomForm, Member member) {
+    public Room createNewRoom(RoomForm roomForm, Account account) {
         Room room = roomRepository.save(Room.from(roomForm));
-        joinRepository.save(Join.from(room, member, Grade.ADMIN));
+        joinRepository.save(Join.from(room, account, Grade.ADMIN));
         return room;
     }
 
-    public void inviteRoom(List<Member> friends, Room room, Set<Long> members) {
-        Set<Member> inviteList = friends.stream().filter(f -> members.contains(f.getId())).collect(Collectors.toSet());
-        for (Member member : inviteList) {
-            joinRepository.save(Join.from(room, member, Grade.USER));
+    public void inviteRoom(List<Account> friends, Room room, Set<Long> members) {
+        Set<Account> inviteList = friends.stream().filter(f -> members.contains(f.getId())).collect(Collectors.toSet());
+        for (Account account : inviteList) {
+            joinRepository.save(Join.from(room, account, Grade.USER));
             room.addCount();
         }
         eventPublisher.publishEvent(new RoomInviteEvent(room, "방 '" + room.getTitle() + "'에서 회원님을 초대했습니다.", inviteList));
@@ -53,30 +53,30 @@ public class RoomService {
                 .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 방입니다."));
     }
 
-    public Room getRoom(Member member, Long id) {
+    public Room getRoom(Account account, Long id) {
         Room room = getRoom(id);
-        check(member, room);
+        check(account, room);
         return room;
     }
 
-    private void check(Member member, Room room) {
+    private void check(Account account, Room room) {
         Join join = room.getJoins().stream()
-                .filter(j -> j.getMember().equals(member))
+                .filter(j -> j.getAccount().equals(account))
                 .findFirst().orElse(null);
         if (join == null && !room.isRevealed()) {
             throw new IllegalArgumentException("비공개 방입니다.");
         }
     }
 
-    public Room getRoomToUpdate(Member member, Long id) {
+    public Room getRoomToUpdate(Account account, Long id) {
         Room room = getRoom(id);
-        checkIsAdmin(member, room);
+        checkIsAdmin(account, room);
         return room;
     }
 
-    private void checkIsAdmin(Member member, Room room) {
+    private void checkIsAdmin(Account account, Room room) {
         Join join = room.getJoins().stream()
-                .filter(j -> j.getMember().equals(member))
+                .filter(j -> j.getAccount().equals(account))
                 .findFirst().orElse(null);
         if (join == null || !join.getGrade().equals(Grade.ADMIN)) {
             throw new IllegalArgumentException("해당 기능을 사용할 수 없습니다.");
@@ -90,16 +90,16 @@ public class RoomService {
         roomRepository.delete(room);
     }
 
-    public void addMember(Room room, Member member) {
-        if (joinRepository.existsByRoomAndMember(room, member)) {
+    public void addMember(Room room, Account account) {
+        if (joinRepository.existsByRoomAndAccount(room, account)) {
             throw new IllegalArgumentException("이미 방에 참여중입니다.");
         }
         room.addCount();
-        joinRepository.save(Join.from(room, member, Grade.USER));
+        joinRepository.save(Join.from(room, account, Grade.USER));
     }
 
-    public void removeMember(Room room, Member member) {
-        Join join = joinRepository.findByRoomAndMember(room, member)
+    public void removeMember(Room room, Account account) {
+        Join join = joinRepository.findByRoomAndAccount(room, account)
                 .orElseThrow(() -> new IllegalArgumentException("방에 참여중인 회원이 아닙니다."));
         if (join.getGrade().equals(Grade.ADMIN)) {
             throw new IllegalArgumentException("관리자는 방을 나갈 수 없습니다. 설정에 들어가서 방을 삭제하세요.");

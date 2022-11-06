@@ -2,7 +2,7 @@ package hongik.ce.jolup.module.room.domain.entity;
 
 import hongik.ce.jolup.BaseTimeEntity;
 import hongik.ce.jolup.module.competition.domain.entity.Competition;
-import hongik.ce.jolup.module.member.domain.UserMember;
+import hongik.ce.jolup.module.account.domain.UserAccount;
 import hongik.ce.jolup.module.room.endpoint.form.RoomForm;
 import lombok.*;
 
@@ -18,9 +18,9 @@ import java.util.List;
 @NamedEntityGraph(
         name ="Room.withJoinsAndMembers",
         attributeNodes = {
-                @NamedAttributeNode(value = "joins", subgraph = "member")
+                @NamedAttributeNode(value = "joins", subgraph = "account")
         },
-        subgraphs = @NamedSubgraph(name = "member", attributeNodes = @NamedAttributeNode("member"))
+        subgraphs = @NamedSubgraph(name = "account", attributeNodes = @NamedAttributeNode("account"))
 )
 @NamedEntityGraph(
         name ="Room.withJoins",
@@ -55,16 +55,16 @@ public class Room extends BaseTimeEntity {
         return room;
     }
 
-    public boolean isMember(UserMember userMember) {
+    public boolean isMember(UserAccount userAccount) {
         Join join = this.joins.stream()
-                .filter(j -> j.getMember().equals(userMember.getMember()))
+                .filter(j -> j.getAccount().equals(userAccount.getAccount()))
                 .findFirst().orElse(null);
         return join != null;
     }
 
-    public boolean isAdmin(UserMember userMember) {
+    public boolean isAdmin(UserAccount userAccount) {
         Join join = this.joins.stream()
-                .filter(j -> j.getMember().equals(userMember.getMember()))
+                .filter(j -> j.getAccount().equals(userAccount.getAccount()))
                 .findFirst().orElse(null);
         return join != null && join.getGrade().equals(Grade.ADMIN);
     }

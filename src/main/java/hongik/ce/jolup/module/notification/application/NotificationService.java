@@ -1,6 +1,6 @@
 package hongik.ce.jolup.module.notification.application;
 
-import hongik.ce.jolup.module.member.domain.entity.Member;
+import hongik.ce.jolup.module.account.domain.entity.Account;
 import hongik.ce.jolup.module.notification.domain.entity.Notification;
 import hongik.ce.jolup.module.notification.infra.repository.NotificationRepository;
 import lombok.RequiredArgsConstructor;
@@ -24,26 +24,26 @@ public class NotificationService {
         notifications.forEach(Notification::read);
     }
 
-    public List<Notification> findByMemberAndCheckedOrderByCreatedDateDesc(Member member, boolean b) {
-        return notificationRepository.findByMemberAndCheckedOrderByCreatedDateDesc(member, b);
+    public List<Notification> findByMemberAndCheckedOrderByCreatedDateDesc(Account account, boolean b) {
+        return notificationRepository.findByAccountAndCheckedOrderByCreatedDateDesc(account, b);
     }
 
-    public long countByMemberAndChecked(Member member, boolean b) {
-        return notificationRepository.countByMemberAndChecked(member, b);
+    public long countByMemberAndChecked(Account account, boolean b) {
+        return notificationRepository.countByAccountAndChecked(account, b);
     }
 
-    public void deleteByMemberAndChecked(Member member, boolean b) {
-        notificationRepository.deleteByMemberAndChecked(member, b);
+    public void deleteByMemberAndChecked(Account account, boolean b) {
+        notificationRepository.deleteByAccountAndChecked(account, b);
     }
 
-    public Notification getNotification(Member member, Long id) {
+    public Notification getNotification(Account account, Long id) {
         Notification notification = getNotification(id);
-        check(member, notification);
+        check(account, notification);
         return notification;
     }
 
-    private void check(Member member, Notification notification) {
-        if (!notification.getMember().equals(member)) {
+    private void check(Account account, Notification notification) {
+        if (!notification.getAccount().equals(account)) {
             throw new IllegalStateException("잘못된 접근입니다.");
         }
     }

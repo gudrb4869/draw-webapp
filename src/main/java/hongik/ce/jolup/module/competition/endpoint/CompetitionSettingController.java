@@ -1,9 +1,9 @@
 package hongik.ce.jolup.module.competition.endpoint;
 
+import hongik.ce.jolup.module.account.domain.entity.Account;
 import hongik.ce.jolup.module.competition.application.CompetitionService;
 import hongik.ce.jolup.module.competition.domain.entity.Competition;
-import hongik.ce.jolup.module.member.domain.entity.Member;
-import hongik.ce.jolup.module.member.support.CurrentMember;
+import hongik.ce.jolup.module.account.support.CurrentAccount;
 import hongik.ce.jolup.module.room.application.RoomService;
 import hongik.ce.jolup.module.room.domain.entity.Room;
 import lombok.RequiredArgsConstructor;
@@ -21,22 +21,22 @@ public class CompetitionSettingController {
     private final CompetitionService competitionService;
 
     @GetMapping
-    public String viewCompetitionSetting(@CurrentMember Member member, @PathVariable Long roomId, @PathVariable Long competitionId, Model model) {
-        Room room = roomService.getRoomToUpdate(member, roomId);
+    public String viewCompetitionSetting(@CurrentAccount Account account, @PathVariable Long roomId, @PathVariable Long competitionId, Model model) {
+        Room room = roomService.getRoomToUpdate(account, roomId);
         Competition competition = competitionService.getCompetition(room, competitionId);
-        model.addAttribute(member);
+        model.addAttribute(account);
         model.addAttribute(room);
         model.addAttribute(competition);
         return "competition/settings/competition";
     }
 
     @PostMapping("/competition/title")
-    public String updateCompetitionTitle(@CurrentMember Member member, @PathVariable Long roomId, @PathVariable Long competitionId, String newTitle,
-                                  Model model, RedirectAttributes attributes) {
-        Room room = roomService.getRoomToUpdate(member, roomId);
+    public String updateCompetitionTitle(@CurrentAccount Account account, @PathVariable Long roomId, @PathVariable Long competitionId, String newTitle,
+                                         Model model, RedirectAttributes attributes) {
+        Room room = roomService.getRoomToUpdate(account, roomId);
         Competition competition = competitionService.getCompetition(room, competitionId);
         if (!competitionService.isValidTitle(newTitle)) {
-            model.addAttribute(member);
+            model.addAttribute(account);
             model.addAttribute(room);
             model.addAttribute(competition);
             model.addAttribute("competitionTitleError", "대회 이름을 다시 입력하세요.");
@@ -48,8 +48,8 @@ public class CompetitionSettingController {
     }
 
     @DeleteMapping("/competition/remove")
-    public String removeCompetition(@CurrentMember Member member, @PathVariable Long roomId, @PathVariable Long competitionId) {
-        Room room = roomService.getRoomToUpdate(member, roomId);
+    public String removeCompetition(@CurrentAccount Account account, @PathVariable Long roomId, @PathVariable Long competitionId) {
+        Room room = roomService.getRoomToUpdate(account, roomId);
         Competition competition = competitionService.getCompetition(room, competitionId);
         competitionService.remove(competition);
         return "redirect:/rooms/" + room.getId() + "/competitions";

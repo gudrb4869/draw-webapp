@@ -18,7 +18,7 @@ public class ParticipateRepositoryCustomImpl extends QuerydslRepositorySupport i
         QParticipate participate = QParticipate.participate;
         List<Participate> participates = from(participate)
                 .where(participate.competition.eq(competition))
-                .leftJoin(participate.member).fetchJoin()
+                .leftJoin(participate.account).fetchJoin()
                 .leftJoin(participate.competition).fetchJoin()
                 .orderBy(participate.win.multiply(3).add(participate.draw).desc(), participate.goalFor.subtract(participate.goalAgainst).desc(),
                         participate.goalFor.desc())

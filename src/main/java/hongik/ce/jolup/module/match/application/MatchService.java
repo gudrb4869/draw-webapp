@@ -8,7 +8,7 @@ import hongik.ce.jolup.module.match.endpoint.form.MatchForm;
 import hongik.ce.jolup.module.match.endpoint.form.ScoreForm;
 import hongik.ce.jolup.module.match.event.MatchUpdatedEvent;
 import hongik.ce.jolup.module.match.infra.repository.MatchRepository;
-import hongik.ce.jolup.module.member.domain.entity.Member;
+import hongik.ce.jolup.module.account.domain.entity.Account;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
@@ -28,8 +28,8 @@ public class MatchService {
     private final ApplicationEventPublisher publisher;
 
     public void update(Match match, MatchForm matchForm, Competition competition) {
-        Participate home = competition.getParticipates().stream().filter(p -> p.getMember().equals(match.getHome())).findAny().orElse(null);
-        Participate away = competition.getParticipates().stream().filter(p -> p.getMember().equals(match.getAway())).findAny().orElse(null);
+        Participate home = competition.getParticipates().stream().filter(p -> p.getAccount().equals(match.getHome())).findAny().orElse(null);
+        Participate away = competition.getParticipates().stream().filter(p -> p.getAccount().equals(match.getAway())).findAny().orElse(null);
 
         if (home != null && away != null) {
             checkMatchOldResult(competition, match,
@@ -46,8 +46,8 @@ public class MatchService {
     }
 
     public void updateScore(Competition competition, Match match, ScoreForm scoreForm) {
-        List<Member> members = competition.getParticipates().stream().map(Participate::getMember).collect(Collectors.toList());
-        publisher.publishEvent(new MatchUpdatedEvent(match, "대회 '" + match.getCompetition().getTitle() + "'에서 경기 결과가 수정되었습니다.", members));
+        List<Account> accounts = competition.getParticipates().stream().map(Participate::getAccount).collect(Collectors.toList());
+        publisher.publishEvent(new MatchUpdatedEvent(match, "대회 '" + match.getCompetition().getTitle() + "'에서 경기 결과가 수정되었습니다.", accounts));
         match.updateScoreFrom(scoreForm);
     }
 
@@ -101,16 +101,16 @@ public class MatchService {
         }
     }
 
-    private void setNextRoundMatch(Competition competition, Match match, Member member) {
+    private void setNextRoundMatch(Competition competition, Match match, Account account) {
         Match nextMatch = matchRepository
                 .findByCompetitionAndRoundAndNumber(competition, match.getRound() - 1, match.getNumber() / 2)
                 .orElse(null);
 
         if (nextMatch != null) {
             if (match.getNumber() % 2 == 0) {
-                nextMatch.updateHome(member);
+                nextMatch.updateHome(account);
             } else {
-                nextMatch.updateAway(member);
+                nextMatch.updateAway(account);
             }
         }
     }
@@ -122,8 +122,8 @@ public class MatchService {
 
         if (nextMatch != null) {
             if (nextMatch.isFinished()) {
-                Participate home = competition.getParticipates().stream().filter(p -> p.getMember().equals(nextMatch.getHome())).findAny().orElseThrow(() -> new IllegalStateException("존재하지 않는 참가자입니다."));
-                Participate away = competition.getParticipates().stream().filter(p -> p.getMember().equals(nextMatch.getAway())).findAny().orElseThrow(() -> new IllegalStateException("존재하지 않는 참가자입니다."));
+                Participate home = competition.getParticipates().stream().filter(p -> p.getAccount().equals(nextMatch.getHome())).findAny().orElseThrow(() -> new IllegalStateException("존재하지 않는 참가자입니다."));
+                Participate away = competition.getParticipates().stream().filter(p -> p.getAccount().equals(nextMatch.getAway())).findAny().orElseThrow(() -> new IllegalStateException("존재하지 않는 참가자입니다."));
                 checkMatchOldResult(competition, nextMatch, 0, 0, home, away);
             }
             if (match.getNumber() % 2 == 0) {

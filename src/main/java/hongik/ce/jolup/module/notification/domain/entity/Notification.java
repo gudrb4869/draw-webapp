@@ -1,7 +1,7 @@
 package hongik.ce.jolup.module.notification.domain.entity;
 
 import hongik.ce.jolup.BaseTimeEntity;
-import hongik.ce.jolup.module.member.domain.entity.Member;
+import hongik.ce.jolup.module.account.domain.entity.Account;
 import lombok.*;
 
 import javax.persistence.*;
@@ -22,14 +22,14 @@ public class Notification extends BaseTimeEntity {
     private boolean checked;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    private Member member;
+    private Account account;
 
-    public static Notification from(String link, boolean checked, String message, Member member) {
+    public static Notification from(String link, boolean checked, String message, Account account) {
         Notification notification = new Notification();
         notification.link = link;
         notification.checked = checked;
         notification.message = message;
-        notification.member = member;
+        notification.account = account;
         return notification;
     }
 

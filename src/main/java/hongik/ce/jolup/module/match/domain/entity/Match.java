@@ -1,11 +1,11 @@
 package hongik.ce.jolup.module.match.domain.entity;
 
 import hongik.ce.jolup.BaseTimeEntity;
+import hongik.ce.jolup.module.account.domain.entity.Account;
 import hongik.ce.jolup.module.competition.domain.entity.Competition;
 import hongik.ce.jolup.module.match.endpoint.form.LocationForm;
 import hongik.ce.jolup.module.match.endpoint.form.MatchForm;
 import hongik.ce.jolup.module.match.endpoint.form.ScoreForm;
-import hongik.ce.jolup.module.member.domain.entity.Member;
 import lombok.*;
 
 import javax.persistence.*;
@@ -36,10 +36,10 @@ public class Match extends BaseTimeEntity {
     private Competition competition;
 
     @ManyToOne(fetch = FetchType.LAZY) @ToString.Exclude
-    private Member home;
+    private Account home;
 
     @ManyToOne(fetch = FetchType.LAZY) @ToString.Exclude
-    private Member away;
+    private Account away;
 
     @Column(name = "match_round")
     private int round;
@@ -63,7 +63,7 @@ public class Match extends BaseTimeEntity {
 
     private boolean closed;
 
-    public static Match from(Competition competition, Member home, Member away, int round, int number) {
+    public static Match from(Competition competition, Account home, Account away, int round, int number) {
         Match match = new Match();
         match.competition = competition;
         match.home = home;
@@ -73,11 +73,11 @@ public class Match extends BaseTimeEntity {
         return match;
     }
 
-    public void updateHome(Member home) {
+    public void updateHome(Account home) {
         this.home = home;
     }
 
-    public void updateAway(Member away) {
+    public void updateAway(Account away) {
         this.away = away;
     }
 

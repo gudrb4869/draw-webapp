@@ -42,7 +42,7 @@
     <a class="list-group-item list-group-item-action" th:classappend="${currentMenu == 'profile'} ? active" href="#" th:href="@{/settings/profile}">프로필 설정</a>
     <a class="list-group-item list-group-item-action" th:classappend="${currentMenu == 'password'} ? active" href="#" th:href="@{/settings/password}">비밀번호 설정</a>
     <a class="list-group-item list-group-item-action" th:classappend="${currentMenu == 'notification'} ? active" href="#" th:href="@{/settings/notification}">알림 설정</a>
-    <a class="list-group-item list-group-item-action" th:classappend="${currentMenu == 'member'}? active" href="#" th:href="@{/settings/member}">계정 관리</a>
+    <a class="list-group-item list-group-item-action" th:classappend="${currentMenu == 'account'}? active" href="#" th:href="@{/settings/account}">계정 관리</a>
 </div>
 
 <nav th:fragment="navigation-bar" class="navbar navbar-expand-sm navbar-dark bg-dark">
@@ -133,14 +133,14 @@
                    aria-haspopup="true" aria-expanded="false">
                     <span sec:authentication="name">Username</span>
                     <!-- 이미지가 존재하면 이미지를, 그렇지 않으면 아바타를 보여주도록 수정(시작) -->
-                    <img th:if="${#strings.isEmpty(member?.image)}"
+                    <img th:if="${#strings.isEmpty(account?.image)}"
                          src="/images/user.png" width="24" height="24" class="rounded-circle border"/>
-                    <img th:if="${!#strings.isEmpty(member?.image)}"
-                         th:src="${member?.image}" width="24" height="24" class="rounded-circle border"/>
+                    <img th:if="${!#strings.isEmpty(account?.image)}"
+                         th:src="${account?.image}" width="24" height="24" class="rounded-circle border"/>
                     <!-- 이미지가 존재하면 이미지를, 그렇지 않으면 아바타를 보여주도록 수정(끝) -->
                 </a>
                 <div class="dropdown-menu dropdown-menu-sm-end" aria-labelledby="userDropdown">
-                    <a class="dropdown-item" th:href="@{'/profile/' + ${#authentication.principal.member.id}}">프로필</a>
+                    <a class="dropdown-item" th:href="@{'/profile/' + ${#authentication.principal.account.id}}">프로필</a>
                     <a class="dropdown-item" href="#" th:href="@{'/settings/profile'}">설정</a>
                     <div class="dropdown-divider"></div>
                     <form class="form-inline my-2 my-lg-0" action="#" th:action="@{/logout}" method="post">
@@ -231,7 +231,7 @@
                     방 들어가기
                 </a>
                 <!--방 멤버 수-->
-                <!--<a class="btn btn-primary" th:href="@{'/rooms/' + ${room.id} + '/members'}"
+                <!--<a class="btn btn-primary" th:href="@{'/rooms/' + ${room.id} + '/accounts'}"
                    th:text="${room.count}">1</a>-->
             </span>
             <!--인증된 사용자이고 방 멤버인 경우-->
@@ -242,7 +242,7 @@
                     방 나가기
                 </a>
                 <!--방 멤버 수-->
-                <!--<a class="btn btn-primary" th:href="@{'/rooms/' + ${room.id} + '/members'}"
+                <!--<a class="btn btn-primary" th:href="@{'/rooms/' + ${room.id} + '/accounts'}"
                    th:text="${room.count}">1</a>-->
             </span>
             <!--인증된 사용자이고 방 관리자인 경우-->
@@ -466,20 +466,20 @@
     </div>
 </div>
 
-<ul th:fragment="member-list (memberList)" class="list-unstyled col-10">
-    <li class="d-flex mt-3" th:each="member: ${memberList}">
+<ul th:fragment="account-list (accountList)" class="list-unstyled col-10">
+    <li class="d-flex mt-3" th:each="account: ${accountList}">
         <div class="flex-shrink-0">
-            <a class="text-decoration-none" href="#" th:href="${member != null} ? @{'/profile/' + ${member?.id}}">
-                <img th:if="${#strings.isEmpty(member?.image)}" src="/images/user.png" width="64" height="64" class="rounded-circle border me-3"/>
-                <img th:if="${!#strings.isEmpty(member?.image)}" th:src="${member?.image}" width="64" height="64" class="rounded-circle border me-3"/>
+            <a class="text-decoration-none" href="#" th:href="${account != null} ? @{'/profile/' + ${account?.id}}">
+                <img th:if="${#strings.isEmpty(account?.image)}" src="/images/user.png" width="64" height="64" class="rounded-circle border me-3"/>
+                <img th:if="${!#strings.isEmpty(account?.image)}" th:src="${account?.image}" width="64" height="64" class="rounded-circle border me-3"/>
             </a>
         </div>
         <div class="flex-grow-1 ms-3">
-            <a class="text-decoration-none" href="#" th:href="${member != null} ? @{'/profile/' + ${member?.id}}">
+            <a class="text-decoration-none" href="#" th:href="${account != null} ? @{'/profile/' + ${account?.id}}">
                 <h5 class="mt-0 mb-1">
-                    <span th:text="${member?.name ?: '(알수없음)'}"></span>
+                    <span th:text="${account?.name ?: '(알수없음)'}"></span>
                 </h5>
-                <span th:text="${member?.bio}"></span>
+                <span th:text="${account?.bio}"></span>
             </a>
         </div>
     </li>

@@ -30,7 +30,7 @@
     </div>
 
     <div class="row px-3 justify-content-center">
-        <div th:replace="fragments.html :: member-list (memberList=${memberPage.getContent()})"></div>
+        <div th:replace="fragments.html :: account-list (accountList=${memberPage.getContent()})"></div>
     </div>
 
     <div th:replace="fragments.html :: page (pages=${memberPage}, url='/search?category=' + ${category} + '&keyword=' + ${keyword})"></div>

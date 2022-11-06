@@ -1,7 +1,7 @@
 package hongik.ce.jolup.module.notification.infra.interceptor;
 
-import hongik.ce.jolup.module.member.domain.UserMember;
-import hongik.ce.jolup.module.member.domain.entity.Member;
+import hongik.ce.jolup.module.account.domain.UserAccount;
+import hongik.ce.jolup.module.account.domain.entity.Account;
 import hongik.ce.jolup.module.notification.domain.entity.Notification;
 import hongik.ce.jolup.module.notification.infra.repository.NotificationRepository;
 import lombok.RequiredArgsConstructor;
@@ -28,16 +28,16 @@ public class NotificationInterceptor implements HandlerInterceptor {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         if (modelAndView != null && !isRedirectView(modelAndView) // 리다이렉트가 아니고
                 && authentication != null && isTypeOfUserMember(authentication)) { // 인증정보가 존재하고 UserMember 타입일 때
-            Member member = ((UserMember) authentication.getPrincipal()).getMember(); // Member 정보를 획득하여
-            long count = notificationRepository.countByMemberAndChecked(member, false); // 알림 정보를 조회하고
+            Account account = ((UserAccount) authentication.getPrincipal()).getAccount(); // Member 정보를 획득하여
+            long count = notificationRepository.countByAccountAndChecked(account, false); // 알림 정보를 조회하고
             modelAndView.addObject("hasNotification", count > 0); // Model로 전달함.
-            List<Notification> notifications = notificationRepository.findFirst5ByMemberOrderByCreatedDateDesc(member);
+            List<Notification> notifications = notificationRepository.findFirst5ByAccountOrderByCreatedDateDesc(account);
             modelAndView.addObject("notifications", notifications);
         }
     }
 
     private boolean isTypeOfUserMember(Authentication authentication) {
-        return authentication.getPrincipal() instanceof UserMember;
+        return authentication.getPrincipal() instanceof UserAccount;
     }
 
     private boolean isRedirectView(ModelAndView modelAndView) {

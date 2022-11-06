@@ -1,6 +1,6 @@
 package hongik.ce.jolup.module.room.event;
 
-import hongik.ce.jolup.module.member.domain.entity.Member;
+import hongik.ce.jolup.module.account.domain.entity.Account;
 import hongik.ce.jolup.module.notification.domain.entity.Notification;
 import hongik.ce.jolup.module.notification.infra.repository.NotificationRepository;
 import hongik.ce.jolup.module.room.domain.entity.Room;
@@ -24,13 +24,13 @@ public class RoomEventListener {
     public void handleRoomInvitedEvent(RoomInviteEvent roomInviteEvent) {
         Room room = roomInviteEvent.getRoom();
         String message = roomInviteEvent.getMessage();
-        Set<Member> members = roomInviteEvent.getMembers();
-        members.forEach(member -> {
-            saveNotification(room, message, member);
+        Set<Account> accounts = roomInviteEvent.getAccounts();
+        accounts.forEach(account -> {
+            saveNotification(room, message, account);
         });
     }
 
-    private void saveNotification(Room room, String message, Member member) {
-        notificationRepository.save(Notification.from("/rooms/" + room.getId(), false, message, member));
+    private void saveNotification(Room room, String message, Account account) {
+        notificationRepository.save(Notification.from("/rooms/" + room.getId(), false, message, account));
     }
 }

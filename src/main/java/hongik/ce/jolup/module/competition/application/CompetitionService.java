@@ -1,5 +1,6 @@
 package hongik.ce.jolup.module.competition.application;
 
+import hongik.ce.jolup.module.account.domain.entity.Account;
 import hongik.ce.jolup.module.competition.domain.entity.Competition;
 import hongik.ce.jolup.module.competition.domain.entity.CompetitionType;
 import hongik.ce.jolup.module.competition.domain.entity.Participate;
@@ -9,7 +10,6 @@ import hongik.ce.jolup.module.competition.infra.repository.CompetitionRepository
 import hongik.ce.jolup.module.competition.infra.repository.ParticipateRepository;
 import hongik.ce.jolup.module.match.domain.entity.Match;
 import hongik.ce.jolup.module.match.infra.repository.MatchRepository;
-import hongik.ce.jolup.module.member.domain.entity.Member;
 import hongik.ce.jolup.module.room.domain.entity.Room;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.ApplicationEventPublisher;
@@ -29,64 +29,64 @@ public class CompetitionService {
     private final CompetitionRepository competitionRepository;
     private final ApplicationEventPublisher eventPublisher;
 
-    public Competition createCompetition(List<Member> members, Room room, CompetitionForm competitionForm) {
+    public Competition createCompetition(List<Account> accounts, Room room, CompetitionForm competitionForm) {
         Competition competition = competitionRepository.save(Competition.from(competitionForm, room));
 
-        List<Member> memberList = members.stream().filter(m -> competitionForm.getMembers().contains(m.getId())).collect(Collectors.toList());
-        List<Participate> participates = memberList.stream().map(member -> Participate.from(member, competition)).collect(Collectors.toList());
+        List<Account> accountList = accounts.stream().filter(m -> competitionForm.getMembers().contains(m.getId())).collect(Collectors.toList());
+        List<Participate> participates = accountList.stream().map(member -> Participate.from(member, competition)).collect(Collectors.toList());
 
-        Collections.shuffle(memberList);
+        Collections.shuffle(accountList);
         Set<Match> matches = new HashSet<>();
         if (competition.isLeague()) {
             Random random = new Random();
-            Member fixed = null;
-            if (memberList.size() % 2 == 0) {
-                fixed = memberList.remove(random.nextInt(memberList.size()));
+            Account fixed = null;
+            if (accountList.size() % 2 == 0) {
+                fixed = accountList.remove(random.nextInt(accountList.size()));
             }
             /*
             참가자 수 : n
             참가자 수가 짝수 일 경우 -> 전체 라운드 수 : n - 1, 라운드당 게임 수 : n / 2
             참가자 수가 홀수 일 경우 -> 전체 라운드 수 : n, 라운드당 게임 수 (n - 1) / 2
              */
-            int n = memberList.size();
+            int n = accountList.size();
             for (int i = 0; i < n; i++) { // n은 홀수 전체 라운드 수 : n
                 for (int j = 0; j < n / 2; j++) { // n은 홀수, 라운드당 게임 수 : floor((n - 1) / 2) -> n / 2
                     int first = (i + j) % n;
                     int second = (i + n - j - 2) % n;
-                    matches.add(Match.from(competition, memberList.get(first), memberList.get(second), i, j));
+                    matches.add(Match.from(competition, accountList.get(first), accountList.get(second), i, j));
                     if (competition.getType().equals(CompetitionType.DOUBLE_ROUND_ROBIN)) {
-                        matches.add(Match.from(competition, memberList.get(second), memberList.get(first), n + i, j));
+                        matches.add(Match.from(competition, accountList.get(second), accountList.get(first), n + i, j));
                     }
                 }
                 if (fixed != null) {
                     int j = n / 2;
                     int last = (i + n - 1) % n;
                     if (i % 2 == 0) {
-                        matches.add(Match.from(competition, memberList.get(last), fixed, i, j));
+                        matches.add(Match.from(competition, accountList.get(last), fixed, i, j));
                         if (competition.getType().equals(CompetitionType.DOUBLE_ROUND_ROBIN)) {
-                            matches.add(Match.from(competition, fixed, memberList.get(last), n + i, j));
+                            matches.add(Match.from(competition, fixed, accountList.get(last), n + i, j));
                         }
                     } else {
-                        matches.add(Match.from(competition, fixed, memberList.get(last), i, j));
+                        matches.add(Match.from(competition, fixed, accountList.get(last), i, j));
                         if (competition.getType().equals(CompetitionType.DOUBLE_ROUND_ROBIN)) {
-                            matches.add(Match.from(competition, memberList.get(last), fixed, n + i, j));
+                            matches.add(Match.from(competition, accountList.get(last), fixed, n + i, j));
                         }
                     }
                 }
             }
         }
         else if (competition.isTournament()) {
-            int n = memberList.size();
+            int n = accountList.size();
             int round = (int)Math.ceil(Math.log(n) / Math.log(2)); // 총 라운드
             int walkover = (int)Math.pow(2, round) - n; // 부전승 인원 수
 
-            List<Member> seed1 = new ArrayList<>();
+            List<Account> seed1 = new ArrayList<>();
             for (int i = 0; i < (int)Math.pow(2, round - 1); i++) {
-                seed1.add(memberList.remove(0));
+                seed1.add(accountList.remove(0));
             }
-            List<Member> seed2 = new ArrayList<>();
+            List<Account> seed2 = new ArrayList<>();
             for (int i = 0; i < n - (int)Math.pow(2, round - 1); i++) {
-                seed2.add(memberList.remove(0));
+                seed2.add(accountList.remove(0));
             }
             for (int i = 0; i < walkover; i++) {
                 seed2.add(null);
@@ -123,7 +123,7 @@ public class CompetitionService {
         participateRepository.saveAll(participates);
         matchRepository.saveAll(matches);
         eventPublisher.publishEvent(new CompetitionCreatedEvent(competition,
-                "방 '" + competition.getRoom().getTitle() + "'에서 새로운 대회 '" + competition.getTitle() + "'가 생성되었습니다.", members));
+                "방 '" + competition.getRoom().getTitle() + "'에서 새로운 대회 '" + competition.getTitle() + "'가 생성되었습니다.", accounts));
         return competition;
     }
 

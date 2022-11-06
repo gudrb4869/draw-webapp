@@ -1,7 +1,7 @@
 package hongik.ce.jolup.module.competition.domain.entity;
 
 import hongik.ce.jolup.BaseTimeEntity;
-import hongik.ce.jolup.module.member.domain.entity.Member;
+import hongik.ce.jolup.module.account.domain.entity.Account;
 import lombok.*;
 
 import javax.persistence.*;
@@ -17,7 +17,7 @@ public class Participate extends BaseTimeEntity {
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    private Member member;
+    private Account account;
 
     @ManyToOne(fetch = FetchType.LAZY)
     private Competition competition;
@@ -32,15 +32,15 @@ public class Participate extends BaseTimeEntity {
 
     private int goalAgainst = 0;
 
-    public static Participate from(Member member, Competition competition) {
+    public static Participate from(Account account, Competition competition) {
         Participate participate = new Participate();
-        participate.member = member;
+        participate.account = account;
         participate.competition = competition;
         return participate;
     }
 
-    public void updateMember(Member member) {
-        this.member = member;
+    public void updateMember(Account account) {
+        this.account = account;
     }
 
     // 편의 메서드

@@ -19,9 +19,9 @@ import java.util.List;
         name = "Competition.withRoomAndParticipatesAndMembers",
         attributeNodes = {
                 @NamedAttributeNode("room"),
-                @NamedAttributeNode(value = "participates", subgraph = "member")
+                @NamedAttributeNode(value = "participates", subgraph = "account")
         },
-        subgraphs = @NamedSubgraph(name = "member", attributeNodes = @NamedAttributeNode("member"))
+        subgraphs = @NamedSubgraph(name = "account", attributeNodes = @NamedAttributeNode("account"))
 )
 @EqualsAndHashCode(of = {"id"}, callSuper = false)
 public class Competition extends BaseTimeEntity {
@@ -35,7 +35,7 @@ public class Competition extends BaseTimeEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     private Room room;
 
-    @Column(nullable = false)
+    @Column(nullable = false, updatable = false)
     @Enumerated(EnumType.STRING)
     private CompetitionType type;
 

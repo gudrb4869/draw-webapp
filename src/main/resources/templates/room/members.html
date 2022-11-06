@@ -11,18 +11,18 @@
         <ul class="list-unstyled col-10">
             <li class="d-flex mt-3" th:each="join: ${joins}">
                 <div class="flex-shrink-0">
-                    <a class="text-decoration-none" href="#" th:href="${join.member != null} ? @{'/profile/' + ${join.member?.id}}">
-                        <img th:if="${#strings.isEmpty(join.member?.image)}" src="/images/user.png" width="64" height="64" class="rounded-circle border me-3"/>
-                        <img th:if="${!#strings.isEmpty(join.member?.image)}" th:src="${join.member?.image}" width="64" height="64" class="rounded-circle border me-3"/>
+                    <a class="text-decoration-none" href="#" th:href="${join.account != null} ? @{'/profile/' + ${join.account?.id}}">
+                        <img th:if="${#strings.isEmpty(join.account?.image)}" src="/images/user.png" width="64" height="64" class="rounded-circle border me-3"/>
+                        <img th:if="${!#strings.isEmpty(join.account?.image)}" th:src="${join.account?.image}" width="64" height="64" class="rounded-circle border me-3"/>
                     </a>
                 </div>
                 <div class="flex-grow-1 ms-3">
-                    <a class="text-decoration-none" href="#" th:href="${join.member != null} ? @{'/profile/' + ${join.member?.id}}">
+                    <a class="text-decoration-none" href="#" th:href="${join.account != null} ? @{'/profile/' + ${join.account?.id}}">
                         <h5 class="mt-0 mb-1">
-                            <span th:text="${join.member?.name ?: '(알수없음)'}"></span>
+                            <span th:text="${join.account?.name ?: '(알수없음)'}"></span>
                             <span th:if="${join.grade?.name() == 'ADMIN'}" class="badge bg-primary">방장</span>
                         </h5>
-                        <span th:text="${join.member?.bio}"></span>
+                        <span th:text="${join.account?.bio}"></span>
                     </a>
                 </div>
             </li>

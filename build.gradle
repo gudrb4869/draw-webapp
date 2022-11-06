@@ -41,7 +41,7 @@ dependencies {
 //	implementation 'org.springframework.boot:spring-boot-starter-oauth2-client'
 	implementation "com.querydsl:querydsl-jpa:${queryDslVersion}"
 	implementation "com.querydsl:querydsl-apt:${queryDslVersion}"
-	implementation "org.hibernate:hibernate-spatial" // 좌표데이터 변환 라이브러리
+//	implementation "org.hibernate:hibernate-spatial" // 좌표데이터 변환 라이브러리
 
 	implementation 'com.github.gavlyukovskiy:p6spy-spring-boot-starter:1.8.1'
 	implementation 'com.fasterxml.jackson.datatype:jackson-datatype-hibernate5'
