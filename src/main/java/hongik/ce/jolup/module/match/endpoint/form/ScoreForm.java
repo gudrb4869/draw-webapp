@@ -12,33 +12,20 @@ import javax.validation.constraints.NotNull;
 @NoArgsConstructor
 public class ScoreForm {
 
-
-    private String home;
     @Min(0)
-    @Max(100)
-    private int homeScore = 0;
+    @Max(999)
+    private Integer homeScore = 0;
     @Min(0)
-    @Max(100)
-    private int awayScore = 0;
-    private String away;
+    @Max(999)
+    private Integer awayScore = 0;
 
     @NotNull
-    private boolean status;
-
-    /*@DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
-    private LocalDateTime startDateTime;*/
+    private boolean finished;
 
     public static ScoreForm from(Match match) {
         ScoreForm scoreForm = new ScoreForm();
-        if (match.getHome() != null) {
-            scoreForm.home = match.getHome().getName();
-        }
         scoreForm.homeScore = match.getHomeScore();
         scoreForm.awayScore = match.getAwayScore();
-        if (match.getAway() != null) {
-            scoreForm.away = match.getAway().getName();
-        }
-//        scoreForm.startDateTime = match.getStartDateTime();
         return scoreForm;
     }
 }

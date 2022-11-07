@@ -459,6 +459,9 @@
     background-color: #FFF176;
     border-color: #fad674;
 }*/
+/*.tournament-bracket__team--winner {
+    background-color: seagreen;
+}*/
 .tournament-bracket__medal {
     padding: 0 0.5rem;
 }

@@ -128,9 +128,7 @@ public class CompetitionService {
     }
 
     public Competition getCompetition(Room room, Long competitionId) {
-        Competition competition = competitionRepository.findCompetitionWithRoomAndParticipatesById(competitionId).orElse(null);
-        checkExistsCompetition(room, competition);
-        return competition;
+        return getCompetition(room, competitionRepository.findCompetitionWithRoomAndParticipatesById(competitionId));
     }
 
     public Competition getCompetitionToUpdateMatch(Room room, Long competitionId) {

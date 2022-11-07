@@ -103,8 +103,8 @@ public class InitDb {
                 roomService.addMember(room, accounts.get(i));
             }
 
-            for (int i = 2; i <= 50; i++) {
-                RoomForm roomForm = createRoomForm(Integer.toString(i), true);
+            for (int i = 2; i <= 20; i++) {
+                RoomForm roomForm = createRoomForm(Integer.toString(i), i % 2 == 0);
                 roomService.createNewRoom(roomForm, account);
             }
             return room.getId();

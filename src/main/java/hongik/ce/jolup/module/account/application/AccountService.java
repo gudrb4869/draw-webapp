@@ -45,10 +45,9 @@ public class AccountService implements UserDetailsService {
         return accountRepository.save(account);
     }
 
-    public Long updatePassword(Account account, String newPassword) {
+    public void updatePassword(Account account, String newPassword) {
         account.updatePassword(passwordEncoder.encode(newPassword));
         accountRepository.save(account);
-        return account.getId();
     }
 
     public void updateProfile(Account account, Profile profile) {
@@ -61,7 +60,7 @@ public class AccountService implements UserDetailsService {
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         Account account = accountRepository.findByEmail(username)
-                .orElseThrow(() -> new UsernameNotFoundException("Failed : No User Info -> " + username));
+                .orElseThrow(() -> new UsernameNotFoundException(username + "에 해당하는 사용자가 없습니다."));
         return new UserAccount(account);
     }
 

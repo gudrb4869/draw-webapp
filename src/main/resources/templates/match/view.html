@@ -35,7 +35,7 @@
                                 <span id="h" th:text="${match?.home?.name}"></span>
                             </td>
                             <td class="round-robin__score">
-                                <span id="hs" class="tournament-bracket__number" th:text="${match?.homeScore} ?: '-'">4</span>
+                                <span id="hs" class="tournament-bracket__number" th:text="${match?.finished} ? ${match.homeScore}: '-'">4</span>
                             </td>
                         </tr>
                         <tr class="round-robin__team" th:classappend="${match.homeScore < match.awayScore} ? 'round-robin__team--winner'"
@@ -48,7 +48,7 @@
                                 <span id="a" th:text="${match?.away?.name}"></span>
                             </td>
                             <td class="round-robin__score">
-                                <span id="as" class="round-robin__number" th:text="${match?.awayScore} ?: '-'">1</span>
+                                <span id="as" class="round-robin__number" th:text="${match?.finished} ? ${match.awayScore}: '-'">1</span>
                             </td>
                         </tr>
                         </tbody>
@@ -62,7 +62,7 @@
             <div id="map" style="width: 100%; height: 600px;"></div>
         </div>
     </div>-->
-    <div class="row justify-content-center">
+    <!--<div class="row justify-content-center">
         <form class="need-validation col-sm-10" id="match-form" style="display: none">
             <div class="mb-3">
                 <label th:for="homeScore">홈팀 스코어</label>
@@ -97,14 +97,45 @@
                 </div>
             </div>
         </form>
+    </div>-->
+    <div class="row justify-content-center">
+        <form class="need-validation col-sm-10" id="score-form" style="display: none">
+            <div class="mb-3">
+                <label th:for="homeScore">홈팀 스코어</label>
+                <input type="number" id="homeScore" name="homeScore" th:value="${match.homeScore}"
+                       class="form-control" aria-describedby="homeScoreHelp" min="0" max="999">
+                <small id="homeScoreHelp" class="form-text text-muted">
+                    홈팀 스코어를 입력하세요. 0이상 999이하의 값이어야 합니다.
+                </small>
+            </div>
+            <div class="mb-3">
+                <label th:for="awayScore">어웨이팀 스코어</label>
+                <input type="number" id="awayScore" name="awayScore" th:value="${match.awayScore}"
+                       class="form-control" aria-describedby="awayScoreHelp" min="0" max="999">
+                <small id="awayScoreHelp" class="form-text text-muted">
+                    어웨이팀 스코어를 입력하세요. 0이상 999이하의 값이어야 합니다.
+                </small>
+            </div>
+            <div class="row">
+                <div class="col">
+                    <button class="btn btn-sm btn-dark" type="button" id="reset-button">초기화</button>
+                    <button class="btn btn-sm btn-success" type="button" id="save-button">저장</button>
+                    <button class="btn btn-sm btn-secondary" type="reset" id="cancel-button">취소</button>
+                </div>
+            </div>
+        </form>
     </div>
-    <div class="row pt-3 justify-content-center">
+    <div class="row pt-3 justify-content-center" id="btn-group">
         <div class="col-sm-10 justify-content-center">
-            <button sec:authorize="isAuthenticated()" th:if="${room.isAdmin(#authentication.principal)}"
+            <!--<button sec:authorize="isAuthenticated()" th:if="${room.isAdmin(#authentication.principal)}"
                     class="btn btn-outline-dark" id="match-button">
                 경기 정보 수정
+            </button>-->
+            <button sec:authorize="isAuthenticated()" th:if="${room.isAdmin(#authentication.principal)}"
+                    class="btn btn-sm btn-success" id="score-button">
+                경기 결과 수정
             </button>
-            <a class="btn btn-outline-dark" id="quit-button" th:href="@{|/rooms/${roomId}/competitions/${competitionId}|}">
+            <a class="btn btn-sm btn-secondary" id="quit-button" th:href="@{|/rooms/${roomId}/competitions/${competitionId}|}">
                 목록
             </a>
         </div>
@@ -115,75 +146,130 @@
 <script th:replace="fragments.html :: ajax-csrf-header"></script>
 <script type="application/javascript" th:inline="javascript">
     $(function () {
-        let $matchBtn = $('#match-button');
-        let $quitBtn = $('#quit-button');
-        let $matchForm = $('#match-form');
+        let $scoreBtn = $('#score-button');
+        let $scoreForm = $('#score-form');
+        let $resetBtn = $('#reset-button');
         let $saveBtn = $('#save-button');
         let $cancelBtn = $('#cancel-button');
+        let $btnGroup = $('#btn-group');
         let $homeScore = $('#hs');
+        let $homeScoreForm = $('#homeScore');
+        let $awayScoreForm = $('#awayScore');
         let $awayScore = $('#as');
         let $startDateTime = $('#sdt');
         let $home = $('#h');
         let $away = $('#a');
-        $matchBtn.click(function () {
-            $matchBtn.hide();
-            $quitBtn.hide();
-            $matchForm.show();
-        });
-
+        $scoreBtn.click(function () {
+            $btnGroup.hide();
+            $scoreForm.show();
+        })
         $cancelBtn.click(function () {
-            $matchForm.hide();
-            $matchBtn.show();
-            $quitBtn.show();
+            $scoreForm.hide();
+            $btnGroup.show();
         });
 
         $saveBtn.click(function () {
-            $matchForm.hide();
-            $matchBtn.show();
-            $quitBtn.show();
-            var data = {};
-            $matchForm.serializeArray().map(function (x){data[x.name] = x.value});
+            $scoreForm.hide();
+            $btnGroup.show();
+            let data = {'finished': 'true'};
+            $scoreForm.serializeArray().map(function (x){
+                data[x.name] = x.value;
+            });
             console.log(data);
             $.ajax({
                 dataType: "json",
                 contentType: "application/json; charset=utf-8",
                 method: "POST",
-                url: "/rooms/[[${roomId}]]/competitions/[[${competitionId}]]/matches/[[${matchId}]]",
+                url: "/rooms/[[${roomId}]]/competitions/[[${competitionId}]]/matches/[[${matchId}]]/score",
                 data: JSON.stringify(data),
             }).done(function (data, status) {
                 console.log("${data} and status is ${status}");
             })
-            if (data['homeScore']) {
-                $homeScore.text(data['homeScore']);
-            } else {
-                $homeScore.text('-');
-            }
-            if (data['awayScore']) {
-                $awayScore.text(data['awayScore']);
-            } else {
-                $awayScore.text('-');
-            }
-            if (data['startDateTime'] && $startDateTime.hasClass('text-warning')) {
-                console.log('datetime created')
-                $startDateTime.removeClass('text-warning');
-                $startDateTime.addClass('text-dark date-time');
-                $startDateTime.text(data['startDateTime']);
-                $(".date-time").text(function(index, dateTime) {
-                    return moment(dateTime, "YYYY-MM-DD`T`hh:mm").format('LLL');
-                });
-            }
-            else if (!data['startDateTime'] && !$startDateTime.hasClass('text-warning')) {
-                console.log('datetime removed');
-                $startDateTime.removeClass('text-dark date-time');
-                $startDateTime.addClass('text-warning');
-                $startDateTime.text('시간 미정');
-            } else {
-                $startDateTime.text(data['startDateTime']);
-                $(".date-time").text(function(index, dateTime) {
-                    return moment(dateTime, "YYYY-MM-DD`T`hh:mm").format('LLL');
-                });
-            }
+            $homeScore.text(data['homeScore']);
+            $awayScore.text(data['awayScore']);
         });
+
+        $resetBtn.click(function () {
+            $scoreForm.hide();
+            $btnGroup.show();
+            let data = {'finished': 'false'};
+            $scoreForm.serializeArray().map(function (x){
+                data[x.name] = x.value;
+            });
+            console.log(data);
+            $.ajax({
+                dataType: "json",
+                contentType: "application/json; charset=utf-8",
+                method: "POST",
+                url: "/rooms/[[${roomId}]]/competitions/[[${competitionId}]]/matches/[[${matchId}]]/score",
+                data: JSON.stringify(data),
+            }).done(function (data, status) {
+                console.log("${data} and status is ${status}");
+            })
+            $homeScore.text('-');
+            $awayScore.text('-');
+            $homeScoreForm.val(0);
+            $awayScoreForm.val(0);
+        });
+        // $matchBtn.click(function () {
+        //     $matchBtn.hide();
+        //     $quitBtn.hide();
+        //     $matchForm.show();
+        // });
+
+        // $cancelBtn.click(function () {
+        //     $matchForm.hide();
+        //     $matchBtn.show();
+        //     $quitBtn.show();
+        // });
+
+        // $saveBtn.click(function () {
+        //     $matchForm.hide();
+        //     $matchBtn.show();
+        //     $quitBtn.show();
+        //     var data = {};
+        //     $matchForm.serializeArray().map(function (x){data[x.name] = x.value});
+        //     console.log(data);
+        //     $.ajax({
+        //         dataType: "json",
+        //         contentType: "application/json; charset=utf-8",
+        //         method: "POST",
+        //         url: "/rooms/[[${roomId}]]/competitions/[[${competitionId}]]/matches/[[${matchId}]]",
+        //         data: JSON.stringify(data),
+        //     }).done(function (data, status) {
+        //         console.log("${data} and status is ${status}");
+        //     })
+        //     if (data['homeScore']) {
+        //         $homeScore.text(data['homeScore']);
+        //     } else {
+        //         $homeScore.text('-');
+        //     }
+        //     if (data['awayScore']) {
+        //         $awayScore.text(data['awayScore']);
+        //     } else {
+        //         $awayScore.text('-');
+        //     }
+        //     if (data['startDateTime'] && $startDateTime.hasClass('text-warning')) {
+        //         console.log('datetime created')
+        //         $startDateTime.removeClass('text-warning');
+        //         $startDateTime.addClass('text-dark date-time');
+        //         $startDateTime.text(data['startDateTime']);
+        //         $(".date-time").text(function(index, dateTime) {
+        //             return moment(dateTime, "YYYY-MM-DD`T`hh:mm").format('LLL');
+        //         });
+        //     }
+        //     else if (!data['startDateTime'] && !$startDateTime.hasClass('text-warning')) {
+        //         console.log('datetime removed');
+        //         $startDateTime.removeClass('text-dark date-time');
+        //         $startDateTime.addClass('text-warning');
+        //         $startDateTime.text('시간 미정');
+        //     } else {
+        //         $startDateTime.text(data['startDateTime']);
+        //         $(".date-time").text(function(index, dateTime) {
+        //             return moment(dateTime, "YYYY-MM-DD`T`hh:mm").format('LLL');
+        //         });
+        //     }
+        // });
     })
 </script>
 <!--<script type="text/javascript" th:inline="javascript">

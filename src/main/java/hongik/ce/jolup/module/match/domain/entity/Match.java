@@ -47,11 +47,15 @@ public class Match extends BaseTimeEntity {
     @Column(name = "match_number")
     private int number;
 
-    private Integer homeScore;
+    private int homeScore;
 
-    private Integer awayScore;
+    private int awayScore;
 
     private LocalDateTime startDateTime;
+
+    private boolean closed;
+
+    private boolean finished;
 
     private Double longitude;
 
@@ -60,8 +64,6 @@ public class Match extends BaseTimeEntity {
     private String jibunAddress;
 
     private String roadAddress;
-
-    private boolean closed;
 
     public static Match from(Competition competition, Account home, Account away, int round, int number) {
         Match match = new Match();
@@ -84,6 +86,7 @@ public class Match extends BaseTimeEntity {
     public void updateScoreFrom(ScoreForm scoreForm) {
         this.homeScore = scoreForm.getHomeScore();
         this.awayScore = scoreForm.getAwayScore();
+        this.finished = scoreForm.isFinished();
     }
 
     public void updateStartDateTime(LocalDateTime newStartDateTime) {
@@ -111,7 +114,9 @@ public class Match extends BaseTimeEntity {
         this.closed = true;
     }
 
-    public boolean isFinished() {
-        return (this.homeScore != null) && (this.awayScore != null);
+    public void reset() {
+        this.homeScore = 0;
+        this.awayScore = 0;
+        this.finished = false;
     }
 }

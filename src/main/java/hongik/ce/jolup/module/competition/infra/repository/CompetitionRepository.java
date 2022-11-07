@@ -20,7 +20,7 @@ public interface CompetitionRepository extends JpaRepository<Competition, Long> 
     Page<Competition> findCompetitionsByRoom(Room room, Pageable pageable);
 
     @EntityGraph(attributePaths = {"room", "participates"})
-    Optional<Competition> findCompetitionWithRoomAndParticipatesById(Long id);
+    Competition findCompetitionWithRoomAndParticipatesById(Long id);
 
     @EntityGraph(value = "Competition.withRoomAndParticipatesAndMembers")
     Optional<Competition> findCompetitionWithRoomAndParticipatesAndMembersById(Long id);

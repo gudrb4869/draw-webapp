@@ -15,9 +15,11 @@ import lombok.*;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
+import org.springframework.validation.Errors;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
@@ -51,9 +53,37 @@ public class MatchController {
     @PostMapping("/{matchId}")
     @ResponseStatus(HttpStatus.OK)
     public void updateMatchInfo(@CurrentAccount Account account, @PathVariable Long roomId, @PathVariable Long competitionId, @PathVariable Long matchId,
-                                @Valid @RequestBody MatchForm matchForm) {
+                                 @Valid @RequestBody MatchForm matchForm) {
         log.info("matchForm = {}", matchForm);
-        Room room = roomService.getRoom(account, roomId);
+        Room room = roomService.getRoomToUpdate(account, roomId);
+        Competition competition = competitionService.getCompetition(room, competitionId);
+        Match match = matchService.getMatch(competition, matchId);
+        matchService.update(match, matchForm, competition);
+    }
+
+    @PostMapping("/{matchId}/score")
+    @ResponseStatus(HttpStatus.OK)
+    public ResponseEntity<ScoreForm> updateMatchScore(@CurrentAccount Account account, @PathVariable Long roomId, @PathVariable Long competitionId, @PathVariable Long matchId,
+                                           @RequestBody @Valid ScoreForm scoreForm, Errors errors) {
+
+        log.info("scoreForm = {}", scoreForm);
+        if (errors.hasErrors()) {
+            log.info("valid error: {}", errors.getErrorCount());
+            return ResponseEntity.badRequest().build();
+        }
+        Room room = roomService.getRoomToUpdate(account, roomId);
+        Competition competition = competitionService.getCompetition(room, competitionId);
+        Match match = matchService.getMatch(competition, matchId);
+        matchService.updateScore(match, scoreForm, competition);
+        return ResponseEntity.ok(scoreForm);
+    }
+
+    @PostMapping("/{matchId}/date")
+    @ResponseStatus(HttpStatus.OK)
+    public void updateMatchDate(@CurrentAccount Account account, @PathVariable Long roomId, @PathVariable Long competitionId, @PathVariable Long matchId,
+                                 @Valid @RequestBody MatchForm matchForm) {
+        log.info("matchForm = {}", matchForm);
+        Room room = roomService.getRoomToUpdate(account, roomId);
         Competition competition = competitionService.getCompetition(room, competitionId);
         Match match = matchService.getMatch(competition, matchId);
         matchService.update(match, matchForm, competition);
@@ -88,7 +118,7 @@ public class MatchController {
             model.addAttribute(match);
             return "match/score";
         }
-        matchService.updateScore(competition, match, scoreForm);
+        matchService.updateScore(match, scoreForm, competition);
         attributes.addFlashAttribute("message", "경기 결과를 수정했습니다.");
         return "redirect:/rooms/" + room.getId() + "/competitions/" + competition.getId() + "/matches/" + match.getId();
     }

@@ -1,0 +1,22 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="fragments.html :: head"></head>
+<body class="bg-light">
+<div th:replace="fragments.html :: navigation-bar"></div>
+<div class="container">
+    <div class="row py-3 text-center">
+        <p class="lead text-muted">
+            <span th:text="${message}"></span><br/>
+        </p>
+        <p th:if="${referer != null}">
+            <a th:href="@{${referer}}" class="btn btn-danger my-2">이전페이지로 이동</a>
+        </p>
+        <p th:if="${referer == null}">
+            <a th:href="@{/}" class="btn btn-danger my-2">홈페이지로 이동</a>
+        </p>
+    </div>
+    <div th:replace="fragments.html :: footer"></div>
+</div> <!-- /container -->
+<div th:replace="fragments.html :: date-time"></div>
+</body>
+</html>

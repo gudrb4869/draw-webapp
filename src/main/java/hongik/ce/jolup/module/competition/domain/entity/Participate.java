@@ -44,28 +44,37 @@ public class Participate extends BaseTimeEntity {
     }
 
     // 편의 메서드
-    public void addWin(int win) {
-        this.win += win;
+
+    public void updateGoalFor(int goalFor) {
+        this.goalFor += goalFor;
     }
 
-    public void subWin(int win) {
-        this.win -= win;
+    public void updateGoalAgainst(int goalAgainst) {
+        this.goalAgainst += goalAgainst;
     }
 
-    public void addDraw(int draw) {
-        this.draw += draw;
+    public void addWin() {
+        this.win++;
     }
 
-    public void subDraw(int draw) {
-        this.draw -= draw;
+    public void subWin() {
+        this.win--;
     }
 
-    public void addLose(int lose) {
-        this.lose += lose;
+    public void addDraw() {
+        this.draw++;
     }
 
-    public void subLose(int lose) {
-        this.lose -= lose;
+    public void subDraw() {
+        this.draw--;
+    }
+
+    public void addLose() {
+        this.lose++;
+    }
+
+    public void subLose() {
+        this.lose--;
     }
 
     public void addGoalFor(int goalFor) {
