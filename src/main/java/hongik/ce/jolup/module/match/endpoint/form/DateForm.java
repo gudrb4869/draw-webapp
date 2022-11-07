@@ -14,10 +14,4 @@ public class DateForm {
 
     @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
     private LocalDateTime startDateTime;
-
-    public static DateForm from(Match match) {
-        DateForm dateForm = new DateForm();
-        dateForm.startDateTime = match.getStartDateTime();
-        return dateForm;
-    }
 }

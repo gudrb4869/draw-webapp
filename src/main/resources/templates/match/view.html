@@ -98,23 +98,46 @@
             </div>
         </form>
     </div>-->
-    <div class="row justify-content-center">
-        <form class="need-validation col-sm-10" id="score-form" style="display: none">
+    <div class="row mt-3 justify-content-center">
+        <form class="need-validation col-sm-10" novalidate id="date-form" style="display: none">
             <div class="mb-3">
-                <label th:for="homeScore">홈팀 스코어</label>
-                <input type="number" id="homeScore" name="homeScore" th:value="${match.homeScore}"
-                       class="form-control" aria-describedby="homeScoreHelp" min="0" max="999">
-                <small id="homeScoreHelp" class="form-text text-muted">
-                    홈팀 스코어를 입력하세요. 0이상 999이하의 값이어야 합니다.
+                <label th:for="startDateTime">경기 시간 일시</label>
+                <input id="StartDateTime" type="datetime-local" name="startDateTime" th:value="${match.startDateTime}"
+                       class="form-control" aria-describedby="startDateTimeHelp">
+                <small id="startDateTimeHelp" class="form-text text-muted">
+                    경기 시간을 입력하세요.
                 </small>
+                <small class="invalid-feedback">경기 시간을 입력하세요.</small>
             </div>
-            <div class="mb-3">
-                <label th:for="awayScore">어웨이팀 스코어</label>
-                <input type="number" id="awayScore" name="awayScore" th:value="${match.awayScore}"
-                       class="form-control" aria-describedby="awayScoreHelp" min="0" max="999">
-                <small id="awayScoreHelp" class="form-text text-muted">
-                    어웨이팀 스코어를 입력하세요. 0이상 999이하의 값이어야 합니다.
-                </small>
+            <div class="row">
+                <div class="col">
+                    <button class="btn btn-sm btn-success" type="button" id="date-save-button">저장</button>
+                    <button class="btn btn-sm btn-secondary" type="reset" id="date-cancel-button">취소</button>
+                </div>
+            </div>
+        </form>
+    </div>
+    <div class="row mt-3 justify-content-center">
+        <form class="need-validation col-sm-10" novalidate id="score-form" style="display: none">
+            <div class="row">
+                <div class="mb-3 col-sm-6">
+                    <label th:for="homeScore">홈팀 스코어</label>
+                    <input type="number" id="homeScore" name="homeScore" th:value="${match.homeScore}"
+                           class="form-control" aria-describedby="homeScoreHelp" min="0" max="999" required>
+                    <small id="homeScoreHelp" class="form-text text-muted">
+                        홈팀 스코어를 입력하세요. 0이상 999이하의 값이어야 합니다.
+                    </small>
+                    <small class="invalid-feedback">홈팀 스코어를 입력하세요.</small>
+                </div>
+                <div class="mb-3 col-sm-6">
+                    <label th:for="awayScore">어웨이팀 스코어</label>
+                    <input type="number" id="awayScore" name="awayScore" th:value="${match.awayScore}"
+                           class="form-control" aria-describedby="awayScoreHelp" min="0" max="999" required>
+                    <small id="awayScoreHelp" class="form-text text-muted">
+                        어웨이팀 스코어를 입력하세요. 0이상 999이하의 값이어야 합니다.
+                    </small>
+                    <small class="invalid-feedback">어웨이팀 스코어를 입력하세요.</small>
+                </div>
             </div>
             <div class="row">
                 <div class="col">
@@ -125,17 +148,17 @@
             </div>
         </form>
     </div>
-    <div class="row pt-3 justify-content-center" id="btn-group">
+    <div class="row mt-3 justify-content-center" id="btn-group">
         <div class="col-sm-10 justify-content-center">
-            <!--<button sec:authorize="isAuthenticated()" th:if="${room.isAdmin(#authentication.principal)}"
-                    class="btn btn-outline-dark" id="match-button">
-                경기 정보 수정
-            </button>-->
+            <button sec:authorize="isAuthenticated()" th:if="${room.isAdmin(#authentication.principal)}"
+                    class="btn btn-sm btn-success" id="date-button">
+                경기 시간 수정
+            </button>
             <button sec:authorize="isAuthenticated()" th:if="${room.isAdmin(#authentication.principal)}"
                     class="btn btn-sm btn-success" id="score-button">
                 경기 결과 수정
             </button>
-            <a class="btn btn-sm btn-secondary" id="quit-button" th:href="@{|/rooms/${roomId}/competitions/${competitionId}|}">
+            <a class="btn btn-sm btn-secondary" th:href="@{|/rooms/${roomId}/competitions/${competitionId}|}">
                 목록
             </a>
         </div>
@@ -143,6 +166,7 @@
     <div th:replace="fragments.html :: footer"></div>
 </div> <!-- /container -->
 <div th:replace="fragments.html :: date-time"></div>
+<script th:replace="fragments.html :: form-validation"></script>
 <script th:replace="fragments.html :: ajax-csrf-header"></script>
 <script type="application/javascript" th:inline="javascript">
     $(function () {
@@ -156,6 +180,10 @@
         let $homeScoreForm = $('#homeScore');
         let $awayScoreForm = $('#awayScore');
         let $awayScore = $('#as');
+        let $dateBtn = $('#date-button');
+        let $dateForm = $('#date-form');
+        let $dateSaveBtn = $('#date-save-button');
+        let $dateCancelBtn = $('#date-cancel-button');
         let $startDateTime = $('#sdt');
         let $home = $('#h');
         let $away = $('#a');
@@ -167,7 +195,6 @@
             $scoreForm.hide();
             $btnGroup.show();
         });
-
         $saveBtn.click(function () {
             $scoreForm.hide();
             $btnGroup.show();
@@ -211,17 +238,50 @@
             $homeScoreForm.val(0);
             $awayScoreForm.val(0);
         });
-        // $matchBtn.click(function () {
-        //     $matchBtn.hide();
-        //     $quitBtn.hide();
-        //     $matchForm.show();
-        // });
 
-        // $cancelBtn.click(function () {
-        //     $matchForm.hide();
-        //     $matchBtn.show();
-        //     $quitBtn.show();
-        // });
+        $dateBtn.click(function () {
+            $btnGroup.hide();
+            $dateForm.show();
+        });
+        $dateCancelBtn.click(function () {
+            $dateForm.hide();
+            $btnGroup.show();
+        });
+        $dateSaveBtn.click(function () {
+            $dateForm.hide();
+            $btnGroup.show();
+            let data = {};
+            $dateForm.serializeArray().map(function (x){data[x.name] = x.value});
+            console.log(data);
+            $.ajax({
+                dataType: "json",
+                contentType: "application/json; charset=utf-8",
+                method: "POST",
+                url: "/rooms/[[${roomId}]]/competitions/[[${competitionId}]]/matches/[[${matchId}]]/date",
+                data: JSON.stringify(data),
+            }).done(function (data, status) {
+                console.log("${data} and status is ${status}");
+            })
+            if (data['startDateTime'] && $startDateTime.hasClass('text-warning')) {
+                $startDateTime.removeClass('text-warning');
+                $startDateTime.addClass('text-dark date-time');
+                $startDateTime.text(data['startDateTime']);
+                $(".date-time").text(function(index, dateTime) {
+                    return moment(dateTime, "YYYY-MM-DD`T`hh:mm").format('LLL');
+                });
+            }
+            else if (!data['startDateTime'] && !$startDateTime.hasClass('text-warning')) {
+                $startDateTime.removeClass('text-dark date-time');
+                $startDateTime.addClass('text-warning');
+                $startDateTime.text('시간 미정');
+            }
+            else {
+                $startDateTime.text(data['startDateTime']);
+                $(".date-time").text(function(index, dateTime) {
+                    return moment(dateTime, "YYYY-MM-DD`T`hh:mm").format('LLL');
+                });
+            }
+        });
 
         // $saveBtn.click(function () {
         //     $matchForm.hide();

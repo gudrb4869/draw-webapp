@@ -89,8 +89,8 @@ public class Match extends BaseTimeEntity {
         this.finished = scoreForm.isFinished();
     }
 
-    public void updateStartDateTime(LocalDateTime newStartDateTime) {
-        this.startDateTime = newStartDateTime;
+    public void updateStartDateTime(LocalDateTime startDateTime) {
+        this.startDateTime = startDateTime;
     }
 
     public void updateLocation(LocationForm locationForm) {
