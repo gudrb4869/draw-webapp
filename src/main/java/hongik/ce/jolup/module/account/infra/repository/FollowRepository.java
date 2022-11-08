@@ -4,11 +4,9 @@ import hongik.ce.jolup.module.account.domain.entity.Account;
 import hongik.ce.jolup.module.account.domain.entity.Follow;
 import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
-@Transactional(readOnly = true)
 public interface FollowRepository extends JpaRepository<Follow, Long> {
     @EntityGraph(attributePaths = {"following", "follower"})
     List<Follow> findByFollowing(Account following);
@@ -16,7 +14,6 @@ public interface FollowRepository extends JpaRepository<Follow, Long> {
     @EntityGraph(attributePaths = {"following", "follower"})
     List<Follow> findByFollower(Account follower);
 
-    @Transactional
     void deleteByFollowingAndFollower(Account following, Account follower);
 
     boolean existsByFollowingAndFollower(Account following, Account follower);

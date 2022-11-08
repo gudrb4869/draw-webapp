@@ -10,16 +10,18 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 
 @Service
-@Transactional
+@Transactional(readOnly = true)
 @RequiredArgsConstructor
 public class NotificationService {
 
     private final NotificationRepository notificationRepository;
 
+    @Transactional
     public Notification save(Notification notification) {
         return notificationRepository.save(notification);
     }
 
+    @Transactional
     public void markAsRead(List<Notification> notifications) {
         notifications.forEach(Notification::read);
     }
@@ -32,6 +34,7 @@ public class NotificationService {
         return notificationRepository.countByAccountAndChecked(account, b);
     }
 
+    @Transactional
     public void deleteByMemberAndChecked(Account account, boolean b) {
         notificationRepository.deleteByAccountAndChecked(account, b);
     }
@@ -53,6 +56,7 @@ public class NotificationService {
                 .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 알림입니다."));
     }
 
+    @Transactional
     public void read(Notification notification) {
         notification.read();
     }

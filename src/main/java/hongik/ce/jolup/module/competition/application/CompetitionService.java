@@ -21,7 +21,7 @@ import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
-@Transactional
+@Transactional(readOnly = true)
 public class CompetitionService {
 
     private final ParticipateRepository participateRepository;
@@ -29,6 +29,7 @@ public class CompetitionService {
     private final CompetitionRepository competitionRepository;
     private final ApplicationEventPublisher eventPublisher;
 
+    @Transactional
     public Competition createCompetition(List<Account> accounts, Room room, CompetitionForm competitionForm) {
         Competition competition = competitionRepository.save(Competition.from(competitionForm, room));
 
@@ -150,10 +151,12 @@ public class CompetitionService {
         return newTitle.length() > 0 && newTitle.length() <= 50;
     }
 
+    @Transactional
     public void updateCompetitionTitle(Competition competition, String newTitle) {
         competition.updateTitle(newTitle);
     }
 
+    @Transactional
     public void remove(Competition competition) {
         if (!competition.isRemovable()) {
             throw new IllegalStateException("대회를 삭제할 수 없습니다.");

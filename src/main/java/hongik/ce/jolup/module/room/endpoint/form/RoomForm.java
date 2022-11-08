@@ -8,6 +8,8 @@ import javax.validation.constraints.Size;
 
 @Data
 @NoArgsConstructor
+@AllArgsConstructor
+@Builder
 public class RoomForm {
 
     @NotBlank

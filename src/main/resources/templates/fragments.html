@@ -39,18 +39,27 @@
 </footer>
 
 <div th:fragment="settings-menu (currentMenu)" class="list-group">
-    <a class="list-group-item list-group-item-action" th:classappend="${currentMenu == 'profile'} ? active" href="#" th:href="@{/settings/profile}">프로필 설정</a>
-    <a class="list-group-item list-group-item-action" th:classappend="${currentMenu == 'password'} ? active" href="#" th:href="@{/settings/password}">비밀번호 설정</a>
-    <a class="list-group-item list-group-item-action" th:classappend="${currentMenu == 'notification'} ? active" href="#" th:href="@{/settings/notification}">알림 설정</a>
-    <a class="list-group-item list-group-item-action" th:classappend="${currentMenu == 'account'}? active" href="#" th:href="@{/settings/account}">계정 관리</a>
+    <a class="list-group-item list-group-item-action" th:classappend="${currentMenu == 'profile'} ? active" href="#" th:href="@{/settings/profile}">
+        프로필 <i class="fa fa-address-card"></i>
+    </a>
+    <a class="list-group-item list-group-item-action" th:classappend="${currentMenu == 'password'} ? active" href="#" th:href="@{/settings/password}">
+        비밀번호 <i class="fa fa-lock"></i>
+    </a>
+    <a class="list-group-item list-group-item-action" th:classappend="${currentMenu == 'notification'} ? active" href="#" th:href="@{/settings/notification}">
+        알림 <i class="fa fa-bell"></i>
+    </a>
+    <a class="list-group-item list-group-item-action" th:classappend="${currentMenu == 'account'}? active" href="#" th:href="@{/settings/account}">
+        계정  <i class="fa fa-user"></i>
+    </a>
 </div>
 
 <nav th:fragment="navigation-bar" class="navbar navbar-expand-sm navbar-dark bg-dark">
     <a class="navbar-brand" href="/" th:href="@{/}">
 <!--        <img src="/images/logo.png" width="30" height="30">-->
-        <svg xmlns="http://www.w3.org/2000/svg" width="40" height="32" fill="currentColor" class="bi bi-house-door-fill" viewBox="0 0 16 16">
+        <!--<svg xmlns="http://www.w3.org/2000/svg" width="40" height="32" fill="currentColor" class="bi bi-house-door-fill" viewBox="0 0 16 16">
             <path d="M6.5 14.5v-3.505c0-.245.25-.495.5-.495h2c.25 0 .5.25.5.5v3.5a.5.5 0 0 0 .5.5h4a.5.5 0 0 0 .5-.5v-7a.5.5 0 0 0-.146-.354L13 5.793V2.5a.5.5 0 0 0-.5-.5h-1a.5.5 0 0 0-.5.5v1.293L8.354 1.146a.5.5 0 0 0-.708 0l-6 6A.5.5 0 0 0 1.5 7.5v7a.5.5 0 0 0 .5.5h4a.5.5 0 0 0 .5-.5z"/>
-        </svg>
+        </svg>-->
+        <i class="fa fa-home fa-2x fa-fw"></i>
     </a>
     <button class="navbar-toggler collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent"
             aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
@@ -227,8 +236,8 @@
             <span sec:authorize="isAuthenticated()" th:if="${!room.isMember(#authentication.principal)}"
                   class="btn-group" role="group" aria-label="Basic example">
                 <!--방 가입 링크-->
-                <a class="btn btn-primary" th:href="@{'/rooms/' + ${room.id} + '/join'}">
-                    방 들어가기
+                <a class="btn btn-sm btn-primary" th:href="@{'/rooms/' + ${room.id} + '/join'}">
+                    <i class="fa fa-user-plus"></i> 방 들어가기
                 </a>
                 <!--방 멤버 수-->
                 <!--<a class="btn btn-primary" th:href="@{'/rooms/' + ${room.id} + '/accounts'}"
@@ -238,8 +247,8 @@
             <span sec:authorize="isAuthenticated()" th:if="${room.isMember(#authentication.principal) and !room.isAdmin(#authentication.principal)}"
                   class="btn-group" role="group">
                 <!--방 가입 링크-->
-                <a class="btn btn-outline-danger" th:href="@{'/rooms/' + ${room.id} + '/leave'}">
-                    방 나가기
+                <a class="btn btn-sm btn-outline-danger" th:href="@{'/rooms/' + ${room.id} + '/leave'}">
+                    <i class="fa fa-user-times"></i> 방 나가기
                 </a>
                 <!--방 멤버 수-->
                 <!--<a class="btn btn-primary" th:href="@{'/rooms/' + ${room.id} + '/accounts'}"
@@ -247,13 +256,15 @@
             </span>
             <!--인증된 사용자이고 방 관리자인 경우-->
             <span sec:authorize="isAuthenticated()" th:if="${room.isAdmin(#authentication.principal)}">
-                <button class="btn btn-sm btn-outline-danger" data-bs-toggle="modal" data-bs-target="#remove">방 삭제</button>
+                <button class="btn btn-sm btn-outline-danger" data-bs-toggle="modal" data-bs-target="#remove">
+                    <i class="fa fa-trash"></i> 방 삭제
+                </button>
                 <a class="btn btn-sm btn-outline-primary" th:href="@{'/rooms/' + ${room.id} + '/update'}">
-                    방 수정
+                    <i class="fa fa-wrench"></i> 방 수정
                 </a>
                 <!--친구 초대 링크-->
                 <a class="btn btn-sm btn-outline-primary" th:href="@{'/rooms/' + ${room.id} + '/invite'}">
-                    친구 초대
+                    <i class="fa fa-user"></i> 친구 초대
                 </a>
                 <!--대회 만들기 링크-->
                 <a class="btn btn-sm btn-outline-primary" th:href="@{'/rooms/' + ${room.id} + '/competitions/create'}">
@@ -350,7 +361,7 @@
     })
 </script>
 
-<div th:fragment="competition-info" class="row py-4 text-center justify-content-center bg-light">
+<!--<div th:fragment="competition-info" class="row py-4 text-center justify-content-center bg-light">
     <div class="col-10">
         <span class="h2">
         <a href="#" class="text-decoration-none" th:href="@{'/rooms/' + ${room.id} + '/competitions'}">
@@ -360,18 +371,43 @@
         </a>
         </span>
     </div>
+</div>-->
+
+<div th:fragment="competition-info">
+    <div class="row pt-4 justify-content-center bg-light">
+        <div class="col-10 col-md-4">
+            <span class="btn-group" role="group" aria-label="Basic example">
+                <a class="btn btn-sm btn-primary" th:href="@{'/rooms/' + ${room.id}}">
+                    <i class="fa fa-arrow-left"></i> 목록
+                </a>
+            </span>
+        </div>
+        <div class="col-10 col-md-6">
+            <span class="h2">
+                <a href="#" class="text-decoration-none" th:href="@{'/rooms/' + ${room.id} + '/competitions/' + ${competition.id}}">
+                    <span class="h2" th:text="${competition.title}">대회 이름</span>
+                </a>
+            </span>
+        </div>
+    </div>
 </div>
 
-<div th:fragment="competition-menu (currentMenu)" class="row px-3 justify-content-center bg-light">
+<div th:fragment="competition-menu (currentMenu)" class="row px-3 py-3 justify-content-center bg-light">
     <nav class="col-10 nav nav-tabs">
         <a class="nav-item nav-link" th:classappend="${currentMenu == 'matches'}? active"
-           href="#" th:href="@{'/rooms/' + ${room.id} + '/competitions/' + ${competition.id}}">경기</a>
+           href="#" th:href="@{'/rooms/' + ${room.id} + '/competitions/' + ${competition.id}}">
+            <i class="fa fa-calendar"></i> 경기
+        </a>
         <a th:if="${competition.isLeague()}"
            class="nav-item nav-link" th:classappend="${currentMenu == 'ranking'}? active"
-           href="#" th:href="@{'/rooms/' + ${room.id} + '/competitions/' + ${competition.id} + '/ranking'}">순위</a>
+           href="#" th:href="@{'/rooms/' + ${room.id} + '/competitions/' + ${competition.id} + '/ranking'}">
+            <i class="fa fa-list"></i> 순위
+        </a>
         <a sec:authorize="isAuthenticated()" th:if="${room.isAdmin(#authentication.principal)}"
            class="nav-item nav-link" th:classappend="${currentMenu == 'settings'}? active"
-           href="#" th:href="@{'/rooms/' + ${room.id} + '/competitions/' + ${competition.id} + '/settings'}">설정</a>
+           href="#" th:href="@{'/rooms/' + ${room.id} + '/competitions/' + ${competition.id} + '/settings'}">
+            <i class="fa fa-gear"></i> 설정
+        </a>
     </nav>
 </div>
 
@@ -379,7 +415,6 @@
     <a href="#" th:href="@{'/notifications/' + ${notification.id}}" th:each="notification: ${notifications}"
        class="list-group-item list-group-item-action">
         <div class="d-flex w-100 justify-content-between">
-<!--            <small th:class="${notification.checked}? text-muted" th:text="${notification.title}">Noti title</small>-->
             <small th:text="${notification.message}" class="text-left mb-0 mt-1" th:classappend="${notification.checked}? 'text-muted'">message</small>
             <small class="fromNow" th:classappend="${notification.checked}? 'text-muted'" th:text="${notification.createdDate}">3 days ago</small>
         </div>
@@ -456,7 +491,9 @@
                                     <i class="fa fa-user"></i>
                                     <span th:text="${room.count}"></span>명
                                 </small>
-                                <small class="text-muted fromNow" th:text="${room.createdDate}">9 mins</small>
+                                <small class="text-muted">
+                                    <i class="fa fa-clock-o"></i>
+                                    <span class="fromNow" th:text="${room.createdDate}">9 mins</span></small>
                             </div>
                         </div>
                     </a>
@@ -528,8 +565,8 @@
             </div>
             <div class="row">
                 <div class="col">
-                    <button type="submit" class="btn btn-outline-dark" th:text="${mode == 'update' ? '방 수정' : '방 만들기'}">방 만들기</button>
-                    <a class="btn btn-outline-dark" href="#" th:href="${mode == 'update'} ? @{'/rooms/' + ${id}} : @{/}">
+                    <button type="submit" class="btn btn-sm btn-primary" th:text="${mode == 'update' ? '방 수정' : '방 만들기'}">방 만들기</button>
+                    <a class="btn btn-sm btn-secondary" href="#" th:href="${mode == 'update'} ? @{'/rooms/' + ${id}} : @{/}">
                         취소
                     </a>
                 </div>
@@ -556,7 +593,10 @@
                                     <i class="fa fa-user"></i>
                                     <span th:text="${competition.count}"></span>명
                                 </small>
-                                <small class="text-muted fromNow" th:text="${competition.createdDate}">9 mins</small>
+                                <small class="text-muted">
+                                    <i class="fa fa-clock-o"></i>
+                                    <span class="fromNow" th:text="${competition.createdDate}">9 mins</span>
+                                </small>
                             </div>
                         </div>
                     </a>

@@ -11,44 +11,35 @@
         </div>
         <div class="col-lg-8">
             <div th:replace="fragments.html :: message"></div>
-            <div class="row">
+            <div class="row mt-3">
                 <h2 class="col-12">이름 변경</h2>
             </div>
-            <div class="row">
-                <form class="needs-validation col-12 mb-3" th:object="${nameForm}" th:action method="post" novalidate>
+            <div class="row mt-3">
+                <form class="needs-validation col-12" th:object="${nameForm}" th:action method="post" novalidate>
                     <div class="mb-3">
-                        <label th:for="name" class="form-label" hidden>이름</label>
+                        <label th:for="name">이름</label>
                         <input type="text" th:field="*{name}" class="form-control"
-                               aria-describedby="nameHelp">
-                        <div id="nameHelp" class="form-text">공백없이 문자와 숫자로만 3자 이상 20자 이내로 입력하세요.</div>
-                        <div class="invalid-feedback">이름을 입력하세요.</div>
-                        <div class="form-text text-danger" th:errors="*{name}">nickname Error
-                        </div>
+                               aria-describedby="nameHelp" required min="2" max="12">
+                        <small id="nameHelp" class="form-text text-muted">공백없이 2자 이상 12자 이내로 입력하세요.</small>
+                        <small class="invalid-feedback">이름을 입력하세요.</small>
+                        <small class="form-text text-danger" th:errors="*{name}">nickname Error</small>
                     </div>
                     <div class="mb-3">
-                        <label th:for="password" class="form-label" hidden>비밀번호</label>
+                        <label th:for="password">비밀번호</label>
                         <input type="password" th:field="*{password}" class="form-control"
-                               aria-describedby="passwordHelp">
-                        <div id="passwordHelp" class="form-text">이름을 변경하시려면 비밀번호를 입력하세요.</div>
-                        <div class="invalid-feedback">비밀번호를 입력하세요.</div>
-                        <div class="form-text text-danger" th:errors="*{password}">password Error
-                        </div>
+                               aria-describedby="passwordHelp" required>
+                        <small id="passwordHelp" class="form-text text-muted">이름을 변경하시려면 비밀번호를 입력하세요.</small>
+                        <small class="invalid-feedback">비밀번호를 입력하세요.</small>
+                        <small class="form-text text-danger" th:errors="*{password}">password Error</small>
                     </div>
-                    <button type="submit" class="btn btn-primary">변경하기</button>
+                    <div class="mb-3">
+                        <button type="submit" class="btn btn-primary">변경하기</button>
+                    </div>
                 </form>
             </div>
             <hr/>
-            <!--<div class="row">
-                <h2 class="col-sm-12 mt-3">회원 탈퇴</h2>
-                <div class="alert alert-danger d-flex align-items-center" role="alert">
-                    <svg th:replace="fragments.html::symbol-danger"/>
-                    <div>
-                        회원 탈퇴를 하시면 회원 정보를 복구하실 수 없습니다.
-                    </div>
-                </div>
-            </div>-->
-            <div class="row">
-                <div class="col-sm-12 mt-3">
+            <div class="row mt-3">
+                <div class="col-sm-12">
                     <h2 class="text-danger">회원 탈퇴</h2>
                     <div class="alert alert-danger d-flex align-items-center" role="alert">
                         <svg th:replace="fragments.html::symbol-danger"/>

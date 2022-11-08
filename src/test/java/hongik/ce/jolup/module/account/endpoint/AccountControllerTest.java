@@ -1,48 +1,45 @@
-package hongik.ce.jolup.controller;
+package hongik.ce.jolup.module.account.endpoint;
 
+import hongik.ce.jolup.infra.IntegrationTest;
+import hongik.ce.jolup.module.account.application.FollowService;
 import hongik.ce.jolup.module.account.domain.entity.Account;
-import hongik.ce.jolup.module.account.endpoint.form.SignupForm;
 import hongik.ce.jolup.module.account.infra.repository.AccountRepository;
 import hongik.ce.jolup.module.account.application.AccountService;
+import hongik.ce.jolup.module.account.infra.repository.FollowRepository;
+import hongik.ce.jolup.module.notification.infra.repository.NotificationRepository;
 import org.junit.jupiter.api.*;
-import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
-import static org.springframework.security.test.web.servlet.response.SecurityMockMvcResultMatchers.authenticated;
-import static org.springframework.security.test.web.servlet.response.SecurityMockMvcResultMatchers.unauthenticated;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
-@ExtendWith(SpringExtension.class)
-@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.MOCK)
-@AutoConfigureMockMvc
+@IntegrationTest
 class AccountControllerTest {
     @Autowired MockMvc mockMvc;
     @Autowired
     AccountRepository accountRepository;
     @Autowired
     AccountService accountService;
-
-    @BeforeEach
-    void beforeEach() {
-    }
-
-    @AfterEach()
-    void afterEach() {
+    @Autowired
+    FollowRepository followRepository;
+    @Autowired
+    FollowService followService;
+    @Autowired
+    NotificationRepository notificationRepository;
+/*
+    @AfterEach
+    void afterEach() throws Exception {
+        notificationRepository.deleteAll();
+        followRepository.deleteAll();
         accountRepository.deleteAll();
-    }
-
+    }*/
     @Test
-    @DisplayName("회원 가입 화면 진입 확인")
-    void signupForm() throws Exception {
+    void 회원가입화면() throws Exception {
         mockMvc.perform(get("/signup"))
                 .andDo(print())
                 .andExpect(status().isOk())
@@ -51,8 +48,7 @@ class AccountControllerTest {
     }
 
     @Test
-    @DisplayName("회원 가입 처리: 입력값 오류(최소 길이)")
-    void signupSubmitWithLengthError() throws Exception {
+    void 회원가입실패_최소길이() throws Exception {
         mockMvc.perform(post("/signup")
                         .param("email", "a")
                         .param("password", "a")
@@ -65,8 +61,7 @@ class AccountControllerTest {
     }
 
     @Test
-    @DisplayName("회원 가입 처리: 입력값 오류(비밀번호 불일치)")
-    void signupSubmitWithNotMatchedError() throws Exception {
+    void 회원가입실패_비밀번호불일치() throws Exception {
         mockMvc.perform(post("/signup")
                         .param("email", "gudrb")
                         .param("password", "1234")
@@ -79,8 +74,7 @@ class AccountControllerTest {
     }
 
     @Test
-    @DisplayName("회원 가입 처리: 입력값 정상")
-    void signupSubmit() throws Exception {
+    void 회원가입성공() throws Exception {
         mockMvc.perform(post("/signup")
                         .param("email", "gudrb")
                         .param("password", "1234")
@@ -92,48 +86,33 @@ class AccountControllerTest {
                 .andExpect(view().name("redirect:/login"));
 
         assertTrue(accountRepository.existsByEmail("gudrb"));
-        Account account = accountRepository.findByEmail("gudrb").orElse(null);
+        Account account = accountRepository.findByEmail("gudrb");
         assertNotNull(account);
         assertNotEquals(account.getPassword(), "1234");
     }
 
     @Test
-    @DisplayName("로그인 성공")
-    void login_success() throws Exception {
-        SignupForm signupForm = new SignupForm();
-        signupForm.setEmail("gudrb");
-        signupForm.setPassword("1234");
-        signupForm.setPasswordConfirm("1234");
-        signupForm.setName("형규");
-        accountService.signup(signupForm);
-        mockMvc.perform(post("/login")
-                        .param("username", "gudrb")
-                        .param("password", "1234")
+    @WithAccount(value = {"test", "gudrb"})
+    void 팔로우성공() throws Exception {
+        Account source = accountRepository.findByEmail("gudrb");
+        Account target = accountRepository.findByEmail("test");
+        mockMvc.perform(post("/profile/" + target.getId() + "/follow")
                         .with(csrf()))
                 .andExpect(status().is3xxRedirection())
-                .andExpect(redirectedUrl("/"))
-                .andExpect(authenticated().withUsername("형규"));
+                .andExpect(redirectedUrl("/profile/" + target.getId()));
+        assertTrue(followRepository.existsByFollowingAndFollower(source, target));
     }
 
     @Test
-    @DisplayName("로그인 실패")
-    void login_fail() throws Exception {
-        mockMvc.perform(post("/login")
-                        .param("username", "gudrb123")
-                        .param("password", "1234")
+    @WithAccount(value = {"test", "gudrb"})
+    void 언팔로우성공() throws Exception {
+        Account source = accountRepository.findByEmail("gudrb");
+        Account target = accountRepository.findByEmail("test");
+        followService.createFollow(source, target);
+        mockMvc.perform(post("/profile/" + target.getId() + "/unfollow")
                         .with(csrf()))
                 .andExpect(status().is3xxRedirection())
-                .andExpect(redirectedUrl("/login?error"))
-                .andExpect(unauthenticated());
-    }
-
-    @Test
-    @DisplayName("로그아웃 성공")
-    void logout_success() throws Exception {
-        mockMvc.perform(post("/logout")
-                        .with(csrf()))
-                .andExpect(status().is3xxRedirection())
-                .andExpect(redirectedUrl("/"))
-                .andExpect(unauthenticated());
+                .andExpect(redirectedUrl("/profile/" + target.getId()));
+        assertFalse(followRepository.existsByFollowingAndFollower(source, target));
     }
 }

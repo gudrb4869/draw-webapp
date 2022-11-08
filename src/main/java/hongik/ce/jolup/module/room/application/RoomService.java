@@ -21,19 +21,21 @@ import java.util.stream.Collectors;
 @Slf4j
 @Service
 @RequiredArgsConstructor
-@Transactional
+@Transactional(readOnly = true)
 public class RoomService {
 
     private final RoomRepository roomRepository;
     private final JoinRepository joinRepository;
     private final ApplicationEventPublisher eventPublisher;
 
+    @Transactional
     public Room createNewRoom(RoomForm roomForm, Account account) {
         Room room = roomRepository.save(Room.from(roomForm));
         joinRepository.save(Join.from(room, account, Grade.ADMIN));
         return room;
     }
 
+    @Transactional
     public void inviteRoom(List<Account> friends, Room room, Set<Long> members) {
         Set<Account> inviteList = friends.stream().filter(f -> members.contains(f.getId())).collect(Collectors.toSet());
         for (Account account : inviteList) {
@@ -83,6 +85,7 @@ public class RoomService {
         }
     }
 
+    @Transactional
     public void remove(Room room) {
         if (!room.isRemovable()) {
             throw new IllegalStateException("방을 삭제할 수 없습니다.");
@@ -90,6 +93,7 @@ public class RoomService {
         roomRepository.delete(room);
     }
 
+    @Transactional
     public void addMember(Room room, Account account) {
         if (joinRepository.existsByRoomAndAccount(room, account)) {
             throw new IllegalArgumentException("이미 방에 참여중입니다.");
@@ -98,6 +102,7 @@ public class RoomService {
         joinRepository.save(Join.from(room, account, Grade.USER));
     }
 
+    @Transactional
     public void removeMember(Room room, Account account) {
         Join join = joinRepository.findByRoomAndAccount(room, account)
                 .orElseThrow(() -> new IllegalArgumentException("방에 참여중인 회원이 아닙니다."));
@@ -108,6 +113,7 @@ public class RoomService {
         joinRepository.delete(join);
     }
 
+    @Transactional
     public void updateRoom(Room room, RoomForm roomForm) {
         room.updateFrom(roomForm);
     }

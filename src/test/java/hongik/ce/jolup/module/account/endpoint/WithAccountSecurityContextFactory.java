@@ -1,4 +1,4 @@
-package hongik.ce.jolup.app;
+package hongik.ce.jolup.module.account.endpoint;
 
 import hongik.ce.jolup.module.account.endpoint.form.SignupForm;
 import hongik.ce.jolup.module.account.application.AccountService;
@@ -19,18 +19,19 @@ public class WithAccountSecurityContextFactory implements WithSecurityContextFac
 
     @Override
     public SecurityContext createSecurityContext(WithAccount annotation) {
-        String email = annotation.value();
-
-        SignupForm signupForm = new SignupForm();
-        signupForm.setEmail(email);
-        signupForm.setPassword("1234");
-        signupForm.setName(email);
-        accountService.signup(signupForm);
-
-        UserDetails principal = accountService.loadUserByUsername(email);
-        Authentication authentication = new UsernamePasswordAuthenticationToken(principal, principal.getPassword(), principal.getAuthorities());
+        String[] emails = annotation.value();
         SecurityContext context = SecurityContextHolder.createEmptyContext();
-        context.setAuthentication(authentication);
+        for (String email : emails) {
+            SignupForm signupForm = new SignupForm();
+            signupForm.setEmail(email);
+            signupForm.setPassword("1234");
+            signupForm.setName(email + "123");
+            accountService.signup(signupForm);
+            UserDetails principal = accountService.loadUserByUsername(email);
+            Authentication authentication = new UsernamePasswordAuthenticationToken(principal, principal.getPassword(), principal.getAuthorities());
+            context.setAuthentication(authentication);
+        }
+        // 테스트 주체는 마지막에 등록되는 email임.
         return context;
     }
 }

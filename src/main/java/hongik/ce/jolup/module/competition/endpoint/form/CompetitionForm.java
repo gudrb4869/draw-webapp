@@ -14,7 +14,7 @@ import java.util.Set;
 @NoArgsConstructor
 public class CompetitionForm {
     @NotBlank
-    @Size(min = 1, max = 50)
+    @Size(max = 50)
     private String title;
 
     @NotNull(message = "대회 방식을 선택하세요.")

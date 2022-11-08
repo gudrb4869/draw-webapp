@@ -10,13 +10,14 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
-@Transactional
+@Transactional(readOnly = true)
 @RequiredArgsConstructor
 public class FollowService {
 
     private final FollowRepository followRepository;
     private final ApplicationEventPublisher publisher;
 
+    @Transactional
     public void createFollow(Account following, Account follower) {
         if (followRepository.existsByFollowingAndFollower(following, follower)) {
             throw new IllegalStateException("이미 팔로잉한 회원입니다.");
@@ -29,6 +30,7 @@ public class FollowService {
         return followRepository.existsByFollowingAndFollower(following, follower);
     }
 
+    @Transactional
     public void deleteFriends(Account following, Account follower) {
         followRepository.deleteByFollowingAndFollower(following, follower);
     }

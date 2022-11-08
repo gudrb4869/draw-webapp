@@ -7,29 +7,32 @@
     <div class="py-5 text-center">
         <h2>대회 만들기</h2>
     </div>
-    <div class="row mx-auto justify-content-center">
-        <form class="col-md-6 mx-auto" th:action th:object="${competitionForm}" method="post">
-            <div th:if="${#fields.hasGlobalErrors()}">
-                <p class="text-danger" th:each="err : ${#fields.globalErrors()}" th:text="${err}">전체 오류 메시지</p>
-            </div>
+    <div class="row justify-content-center">
+        <form class="needs-validation col-sm-10" th:action th:object="${competitionForm}" method="post" novalidate>
             <div class="mb-3">
                 <label th:for="title">대회 이름</label>
-                <input type="text" th:field="*{title}" placeholder="대회 이름을 입력하세요"
-                       class="form-control" th:errorclass="is-invalid" autofocus="autofocus">
-                <p th:errors="*{title}" class="text-danger">대회 이름 오류</p>
+                <input type="text" th:field="*{title}" class="form-control" placeholder="대회 이름"
+                       th:errorclass="is-invalid" aria-describedby="titleHelp" autofocus required>
+                <small id="titleHelp" class="form-text text-muted">
+                    대회 이름을 50자 이내로 입력하세요.
+                </small>
+                <small class="invalid-feedback">대회 이름을 입력하세요.</small>
+                <p th:errors="*{title}" class="form-text text-danger">대회 이름 오류</p>
             </div>
-
             <div class="mb-3">
                 <label th:for="type">대회 방식</label>
-                <select th:field="*{type}" class="form-select" th:errorclass="border-danger">
+                <select th:field="*{type}" class="form-select" th:errorclass="border-danger" aria-describedby="typeHelp">
                     <option th:value="SINGLE_ROUND_ROBIN">리그</option>
                     <option th:value="DOUBLE_ROUND_ROBIN">리그(홈 앤드 어웨이)</option>
                     <option th:value="SINGLE_ELIMINATION_TOURNAMENT">토너먼트</option>
                 </select>
-                <p th:errors="*{type}" class="text-danger">대회 방식 오류</p>
+                <small id="typeHelp" class="form-text text-muted">
+                    <strong>리그</strong>방식으로 대회를 진행할 경우, 모든 참가자들이 서로 한 번씩 경기를 가지게 됩니다.<br/>
+                    <strong>리그(홈 앤드 어웨이)</strong>방식으로 대회를 진행할 경우, 모든 참가가들이 서로 두 번씩 경기를 가지게 됩니다.<br/>
+                    <strong>토너먼트</strong>방식으로 대회를 진행할 경우, 승자는 다음 라운드로 진출하여 다른 경기의 승자와 경기를 가지며 최종 승자가 대회에서 우승하게 됩니다.
+                </small>
+                <p th:errors="*{type}" class="form-text text-danger">대회 방식 오류</p>
             </div>
-
-
             <div class="mb-3">
                 <div class="fw-bold mb-1">참가자 선택</div>
                 <div th:each="member : ${members}" class="form-check form-check-inline">
@@ -42,12 +45,14 @@
                         <b th:text="${member.name}">이름</b>
                     </label>
                 </div>
-                <p th:errors="*{members}" class="text-danger">참가자 오류</p>
+                <p th:errors="*{members}" class="form-text text-danger">참가자 오류</p>
             </div>
             <div class="row">
                 <div class="col">
-                    <button type="submit" class="btn btn-outline-dark">대회 만들기</button>
-                    <button type="button" class="btn btn-outline-dark" th:onclick="|location.href='@{|/rooms/${roomId}|}'|">취소</button>
+                    <button type="submit" class="btn btn-sm btn-primary">대회 만들기</button>
+                    <a class="btn btn-sm btn-secondary" href="#" th:href="@{'/rooms/' + ${roomId}}">
+                        취소
+                    </a>
                 </div>
             </div>
         </form>

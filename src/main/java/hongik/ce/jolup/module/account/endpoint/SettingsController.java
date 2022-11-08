@@ -29,8 +29,8 @@ public class SettingsController {
     static final String SETTINGS_PROFILE_URL = "/" + SETTINGS_PROFILE_VIEW_NAME;
     static final String SETTINGS_PASSWORD_VIEW_NAME = "settings/password";
     static final String SETTINGS_PASSWORD_URL = "/" + SETTINGS_PASSWORD_VIEW_NAME;
-    static final String SETTINGS_MEMBER_VIEW_NAME = "settings/account";
-    static final String SETTINGS_MEMBER_URL = "/" + SETTINGS_MEMBER_VIEW_NAME;
+    static final String SETTINGS_ACCOUNT_VIEW_NAME = "settings/account";
+    static final String SETTINGS_ACCOUNT_URL = "/" + SETTINGS_ACCOUNT_VIEW_NAME;
     static final String SETTINGS_NOTIFICATION_VIEW_NAME = "settings/notification";
     static final String SETTINGS_NOTIFICATION_URL = "/" + SETTINGS_NOTIFICATION_VIEW_NAME;
 
@@ -107,27 +107,27 @@ public class SettingsController {
         return "redirect:" + SETTINGS_NOTIFICATION_URL;
     }
 
-    @GetMapping(SETTINGS_MEMBER_URL)
-    public String MemberInfoForm(@CurrentAccount Account account, Model model) {
+    @GetMapping(SETTINGS_ACCOUNT_URL)
+    public String nameForm(@CurrentAccount Account account, Model model) {
         model.addAttribute(account);
         model.addAttribute(new NameForm(account.getName()));
-        return SETTINGS_MEMBER_VIEW_NAME;
+        return SETTINGS_ACCOUNT_VIEW_NAME;
     }
 
-    @PostMapping(SETTINGS_MEMBER_URL)
+    @PostMapping(SETTINGS_ACCOUNT_URL)
     public String updateName(@CurrentAccount Account account, @Valid NameForm nameForm, Errors errors,
                              Model model, RedirectAttributes attributes) {
         nameFormValidator.validatePassword(nameForm, account, errors);
         if (errors.hasErrors()) {
             model.addAttribute(account);
-            return SETTINGS_MEMBER_URL;
+            return SETTINGS_ACCOUNT_VIEW_NAME;
         }
         accountService.updateName(account, nameForm.getName());
         attributes.addFlashAttribute("message", "이름을 수정하였습니다.");
-        return "redirect:" + SETTINGS_MEMBER_URL;
+        return "redirect:" + SETTINGS_ACCOUNT_URL;
     }
 
-    @DeleteMapping(SETTINGS_MEMBER_URL)
+    @DeleteMapping(SETTINGS_ACCOUNT_URL)
     public String deleteMember(@CurrentAccount Account account,
                                Model model, RedirectAttributes attributes) {
         accountService.remove(account);

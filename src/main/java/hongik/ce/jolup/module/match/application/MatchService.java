@@ -20,14 +20,14 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
-@Transactional
+@Transactional(readOnly = true)
 @RequiredArgsConstructor
 public class MatchService {
 
     private final MatchRepository matchRepository;
     private final ApplicationEventPublisher publisher;
 
-
+    @Transactional
     public void updateScore(Match match, ScoreForm scoreForm, Competition competition) {
         if (!scoreForm.isFinished()) {
             scoreForm.setHomeScore(0);
@@ -47,6 +47,11 @@ public class MatchService {
 
         List<Account> accounts = competition.getParticipates().stream().map(Participate::getAccount).collect(Collectors.toList());
         publisher.publishEvent(new MatchUpdatedEvent(match, "대회 '" + match.getCompetition().getTitle() + "'에서 경기 결과가 수정되었습니다.", accounts));
+    }
+
+    @Transactional
+    public void updateDate(Match match, DateForm dateForm) {
+        match.updateStartDateTime(dateForm.getStartDateTime());
     }
 
     private void checkTournamentNextMatchExistsMatchResult(Match match, Competition competition) {
@@ -123,7 +128,7 @@ public class MatchService {
     }
 
     public void update(Match match, MatchForm matchForm, Competition competition) {
-        match.updateFrom(matchForm);
+//        match.updateFrom(matchForm);
     }
 
     public Match getMatch(Competition competition, Long matchId) {
@@ -144,9 +149,5 @@ public class MatchService {
 
     public void updateLocation(Match match, LocationForm locationForm) {
         match.updateLocation(locationForm);
-    }
-
-    public void updateDate(Match match, DateForm dateForm) {
-        match.updateStartDateTime(dateForm.getStartDateTime());
     }
 }
