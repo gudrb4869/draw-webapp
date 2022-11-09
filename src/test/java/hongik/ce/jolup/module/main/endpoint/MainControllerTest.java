@@ -31,7 +31,7 @@ class MainControllerTest {
     void beforeEach() {
         SignupForm signupForm = new SignupForm();
         signupForm.setEmail("gudrb");
-        signupForm.setName("형규");
+        signupForm.setName("gudrb123");
         signupForm.setPassword("1234");
         accountService.signup(signupForm);
     }
@@ -49,7 +49,7 @@ class MainControllerTest {
                         .with(csrf()))
                 .andExpect(status().is3xxRedirection())
                 .andExpect(redirectedUrl("/"))
-                .andExpect(authenticated().withUsername("형규"));
+                .andExpect(authenticated().withUsername("gudrb123"));
     }
 
     @Test

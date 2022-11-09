@@ -8,7 +8,7 @@ import hongik.ce.jolup.module.competition.endpoint.validator.CompetitionFormVali
 import hongik.ce.jolup.module.competition.infra.repository.CompetitionRepository;
 import hongik.ce.jolup.module.competition.infra.repository.ParticipateRepository;
 import hongik.ce.jolup.module.match.infra.repository.MatchRepository;
-import hongik.ce.jolup.module.account.support.CurrentAccount;
+import hongik.ce.jolup.module.account.support.CurrentUser;
 import hongik.ce.jolup.module.room.application.RoomService;
 import hongik.ce.jolup.module.room.domain.entity.Join;
 import hongik.ce.jolup.module.competition.domain.entity.Competition;
@@ -25,7 +25,6 @@ import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.validation.Valid;
 import java.util.*;
@@ -50,7 +49,7 @@ public class CompetitionController {
     }
 
     @GetMapping("/create")
-    public String createForm(@CurrentAccount Account account, @PathVariable Long roomId, Model model) {
+    public String createForm(@CurrentUser Account account, @PathVariable Long roomId, Model model) {
         Room room = roomService.getRoomToUpdate(account, roomId);
         model.addAttribute(account);
         model.addAttribute(room);
@@ -62,7 +61,7 @@ public class CompetitionController {
     }
 
     @PostMapping("/create")
-    public String create(@CurrentAccount Account account, @PathVariable Long roomId, Model model,
+    public String create(@CurrentUser Account account, @PathVariable Long roomId, Model model,
                          @Valid CompetitionForm competitionForm, BindingResult bindingResult) {
 
         Room room = roomService.getRoomToUpdate(account, roomId);
@@ -79,7 +78,7 @@ public class CompetitionController {
     }
 
     @GetMapping
-    public String viewRoomCompetitions(@CurrentAccount Account account, @PathVariable Long roomId,
+    public String viewRoomCompetitions(@CurrentUser Account account, @PathVariable Long roomId,
                                        @PageableDefault(size = 8, sort = "createdDate", direction = Sort.Direction.DESC) Pageable pageable,
                                        Model model) {
         Room room = roomService.getRoom(account, roomId);
@@ -91,7 +90,7 @@ public class CompetitionController {
     }
 
     @GetMapping("/{competitionId}")
-    public String viewCompetition(@CurrentAccount Account account, @PathVariable Long roomId, @PathVariable Long competitionId,
+    public String viewCompetition(@CurrentUser Account account, @PathVariable Long roomId, @PathVariable Long competitionId,
                                   @PageableDefault(size = 10, sort = "round", direction = Sort.Direction.ASC) Pageable pageable, Model model) {
 
         Room room = roomService.getRoom(roomId);
@@ -118,7 +117,7 @@ public class CompetitionController {
     }
 
     @GetMapping("/{competitionId}/ranking")
-    public String viewCompetitionRanking(@CurrentAccount Account account, @PathVariable Long roomId, @PathVariable Long competitionId, Model model) {
+    public String viewCompetitionRanking(@CurrentUser Account account, @PathVariable Long roomId, @PathVariable Long competitionId, Model model) {
 
         Room room = roomService.getRoom(roomId);
         Competition competition = competitionService.getCompetition(room, competitionId);

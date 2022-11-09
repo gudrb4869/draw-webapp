@@ -3,7 +3,7 @@ package hongik.ce.jolup.module.competition.endpoint;
 import hongik.ce.jolup.module.account.domain.entity.Account;
 import hongik.ce.jolup.module.competition.application.CompetitionService;
 import hongik.ce.jolup.module.competition.domain.entity.Competition;
-import hongik.ce.jolup.module.account.support.CurrentAccount;
+import hongik.ce.jolup.module.account.support.CurrentUser;
 import hongik.ce.jolup.module.room.application.RoomService;
 import hongik.ce.jolup.module.room.domain.entity.Room;
 import lombok.RequiredArgsConstructor;
@@ -21,7 +21,7 @@ public class CompetitionSettingController {
     private final CompetitionService competitionService;
 
     @GetMapping
-    public String viewCompetitionSetting(@CurrentAccount Account account, @PathVariable Long roomId, @PathVariable Long competitionId, Model model) {
+    public String viewCompetitionSetting(@CurrentUser Account account, @PathVariable Long roomId, @PathVariable Long competitionId, Model model) {
         Room room = roomService.getRoomToUpdate(account, roomId);
         Competition competition = competitionService.getCompetition(room, competitionId);
         model.addAttribute(account);
@@ -31,7 +31,7 @@ public class CompetitionSettingController {
     }
 
     @PostMapping("/competition/title")
-    public String updateCompetitionTitle(@CurrentAccount Account account, @PathVariable Long roomId, @PathVariable Long competitionId, String newTitle,
+    public String updateCompetitionTitle(@CurrentUser Account account, @PathVariable Long roomId, @PathVariable Long competitionId, String newTitle,
                                          Model model, RedirectAttributes attributes) {
         Room room = roomService.getRoomToUpdate(account, roomId);
         Competition competition = competitionService.getCompetition(room, competitionId);
@@ -48,7 +48,7 @@ public class CompetitionSettingController {
     }
 
     @DeleteMapping("/competition/remove")
-    public String removeCompetition(@CurrentAccount Account account, @PathVariable Long roomId, @PathVariable Long competitionId) {
+    public String removeCompetition(@CurrentUser Account account, @PathVariable Long roomId, @PathVariable Long competitionId) {
         Room room = roomService.getRoomToUpdate(account, roomId);
         Competition competition = competitionService.getCompetition(room, competitionId);
         competitionService.remove(competition);

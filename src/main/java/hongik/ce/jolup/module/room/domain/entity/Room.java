@@ -22,10 +22,6 @@ import java.util.List;
         },
         subgraphs = @NamedSubgraph(name = "account", attributeNodes = @NamedAttributeNode("account"))
 )
-@NamedEntityGraph(
-        name ="Room.withJoins",
-        attributeNodes = @NamedAttributeNode("joins")
-)
 public class Room extends BaseTimeEntity {
 
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)

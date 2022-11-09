@@ -31,13 +31,13 @@ class AccountControllerTest {
     FollowService followService;
     @Autowired
     NotificationRepository notificationRepository;
-/*
+
     @AfterEach
-    void afterEach() throws Exception {
-        notificationRepository.deleteAll();
+    void afterEach() {
         followRepository.deleteAll();
+        notificationRepository.deleteAll();
         accountRepository.deleteAll();
-    }*/
+    }
     @Test
     void 회원가입화면() throws Exception {
         mockMvc.perform(get("/signup"))
@@ -92,10 +92,10 @@ class AccountControllerTest {
     }
 
     @Test
-    @WithAccount(value = {"test", "gudrb"})
+    @WithAccount(value = {"gudrb", "test"})
     void 팔로우성공() throws Exception {
-        Account source = accountRepository.findByEmail("gudrb");
-        Account target = accountRepository.findByEmail("test");
+        Account source = accountRepository.findByEmail("test");
+        Account target = accountRepository.findByEmail("gudrb");
         mockMvc.perform(post("/profile/" + target.getId() + "/follow")
                         .with(csrf()))
                 .andExpect(status().is3xxRedirection())
@@ -104,10 +104,32 @@ class AccountControllerTest {
     }
 
     @Test
-    @WithAccount(value = {"test", "gudrb"})
-    void 언팔로우성공() throws Exception {
+    @WithAccount(value = {"gudrb", "test"})
+    void 팔로우실패_이미팔로우중() throws Exception {
+        Account source = accountRepository.findByEmail("test");
+        Account target = accountRepository.findByEmail("gudrb");
+        followService.createFollow(source, target);
+        mockMvc.perform(post("/profile/" + target.getId() + "/follow")
+                        .with(csrf()))
+                .andExpect(status().isOk())
+                .andExpect(view().name("error"));
+    }
+
+    @Test
+    @WithAccount("gudrb")
+    void 팔로우실패_자기자신을팔로우() throws Exception {
         Account source = accountRepository.findByEmail("gudrb");
-        Account target = accountRepository.findByEmail("test");
+        mockMvc.perform(post("/profile/" + source.getId() + "/follow")
+                        .with(csrf()))
+                .andExpect(status().isOk())
+                .andExpect(view().name("error"));
+    }
+
+    @Test
+    @WithAccount(value = {"gudrb", "test"})
+    void 언팔로우성공() throws Exception {
+        Account source = accountRepository.findByEmail("test");
+        Account target = accountRepository.findByEmail("gudrb");
         followService.createFollow(source, target);
         mockMvc.perform(post("/profile/" + target.getId() + "/unfollow")
                         .with(csrf()))

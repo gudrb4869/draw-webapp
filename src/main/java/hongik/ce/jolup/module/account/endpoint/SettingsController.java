@@ -9,7 +9,7 @@ import hongik.ce.jolup.module.account.application.AccountService;
 import hongik.ce.jolup.module.account.endpoint.validator.NameFormValidator;
 import hongik.ce.jolup.module.account.endpoint.validator.PasswordFormValidator;
 import hongik.ce.jolup.module.account.endpoint.validator.ProfileValidator;
-import hongik.ce.jolup.module.account.support.CurrentAccount;
+import hongik.ce.jolup.module.account.support.CurrentUser;
 import lombok.*;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -50,14 +50,14 @@ public class SettingsController {
     }
 
     @GetMapping(SETTINGS_PROFILE_URL)
-    public String profileUpdateForm(@CurrentAccount Account account, Model model) {
+    public String profileUpdateForm(@CurrentUser Account account, Model model) {
         model.addAttribute(account);
         model.addAttribute("profile", Profile.from(account));
         return SETTINGS_PROFILE_VIEW_NAME;
     }
 
     @PostMapping(SETTINGS_PROFILE_URL)
-    public String updateProfile(@Valid Profile profile, Errors errors, @CurrentAccount Account account,
+    public String updateProfile(@Valid Profile profile, Errors errors, @CurrentUser Account account,
                                    Model model, RedirectAttributes attributes) {
         profileValidator.validatePassword(profile, account, errors);
         if (errors.hasErrors()) {
@@ -70,14 +70,14 @@ public class SettingsController {
     }
 
     @GetMapping(SETTINGS_PASSWORD_URL)
-    public String passwordUpdateForm(@CurrentAccount Account account, Model model) {
+    public String passwordUpdateForm(@CurrentUser Account account, Model model) {
         model.addAttribute(account);
         model.addAttribute(new PasswordForm());
         return SETTINGS_PASSWORD_VIEW_NAME;
     }
 
     @PostMapping(SETTINGS_PASSWORD_URL)
-    public String updatePassword(@Valid PasswordForm passwordForm, Errors errors, @CurrentAccount Account account,
+    public String updatePassword(@Valid PasswordForm passwordForm, Errors errors, @CurrentUser Account account,
                                  Model model, RedirectAttributes attributes) {
         passwordFormValidator.validateForm(passwordForm, account, errors);
         if (errors.hasErrors()) {
@@ -90,14 +90,14 @@ public class SettingsController {
     }
 
     @GetMapping(SETTINGS_NOTIFICATION_URL)
-    public String notificationForm(@CurrentAccount Account account, Model model) {
+    public String notificationForm(@CurrentUser Account account, Model model) {
         model.addAttribute(account);
         model.addAttribute(NotificationForm.from(account));
         return SETTINGS_NOTIFICATION_VIEW_NAME;
     }
 
     @PostMapping(SETTINGS_NOTIFICATION_URL)
-    public String updateNotification(@CurrentAccount Account account, @Valid NotificationForm notificationForm, BindingResult bindingResult, Model model, RedirectAttributes attributes) {
+    public String updateNotification(@CurrentUser Account account, @Valid NotificationForm notificationForm, BindingResult bindingResult, Model model, RedirectAttributes attributes) {
         if (bindingResult.hasErrors()) {
             model.addAttribute(account);
             return SETTINGS_NOTIFICATION_VIEW_NAME;
@@ -108,14 +108,14 @@ public class SettingsController {
     }
 
     @GetMapping(SETTINGS_ACCOUNT_URL)
-    public String nameForm(@CurrentAccount Account account, Model model) {
+    public String nameForm(@CurrentUser Account account, Model model) {
         model.addAttribute(account);
         model.addAttribute(new NameForm(account.getName()));
         return SETTINGS_ACCOUNT_VIEW_NAME;
     }
 
     @PostMapping(SETTINGS_ACCOUNT_URL)
-    public String updateName(@CurrentAccount Account account, @Valid NameForm nameForm, Errors errors,
+    public String updateName(@CurrentUser Account account, @Valid NameForm nameForm, Errors errors,
                              Model model, RedirectAttributes attributes) {
         nameFormValidator.validatePassword(nameForm, account, errors);
         if (errors.hasErrors()) {
@@ -128,7 +128,7 @@ public class SettingsController {
     }
 
     @DeleteMapping(SETTINGS_ACCOUNT_URL)
-    public String deleteMember(@CurrentAccount Account account,
+    public String deleteMember(@CurrentUser Account account,
                                Model model, RedirectAttributes attributes) {
         accountService.remove(account);
         attributes.addFlashAttribute("message", "회원탈퇴에 성공하였습니다.");

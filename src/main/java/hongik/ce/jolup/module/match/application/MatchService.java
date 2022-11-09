@@ -20,14 +20,13 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
-@Transactional(readOnly = true)
+@Transactional
 @RequiredArgsConstructor
 public class MatchService {
 
     private final MatchRepository matchRepository;
     private final ApplicationEventPublisher publisher;
 
-    @Transactional
     public void updateScore(Match match, ScoreForm scoreForm, Competition competition) {
         if (!scoreForm.isFinished()) {
             scoreForm.setHomeScore(0);
@@ -49,7 +48,6 @@ public class MatchService {
         publisher.publishEvent(new MatchUpdatedEvent(match, "대회 '" + match.getCompetition().getTitle() + "'에서 경기 결과가 수정되었습니다.", accounts));
     }
 
-    @Transactional
     public void updateDate(Match match, DateForm dateForm) {
         match.updateStartDateTime(dateForm.getStartDateTime());
     }

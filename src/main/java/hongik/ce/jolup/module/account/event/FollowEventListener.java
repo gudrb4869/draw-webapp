@@ -5,11 +5,13 @@ import hongik.ce.jolup.module.account.domain.entity.Account;
 import hongik.ce.jolup.module.notification.domain.entity.Notification;
 import hongik.ce.jolup.module.notification.infra.repository.NotificationRepository;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.event.EventListener;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
+@Slf4j
 @Async
 @Transactional
 @Component
@@ -20,6 +22,7 @@ public class FollowEventListener {
 
     @EventListener
     public void handleFollowEvent(FollowEvent followEvent) {
+        log.info("followEvent = {}", followEvent);
         Follow follow = followEvent.getFollow();
         String message = followEvent.getMessage();
         Account follower = follow.getFollower();

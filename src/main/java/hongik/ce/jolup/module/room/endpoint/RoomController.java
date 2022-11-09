@@ -3,7 +3,7 @@ package hongik.ce.jolup.module.room.endpoint;
 import hongik.ce.jolup.module.account.domain.entity.Account;
 import hongik.ce.jolup.module.account.domain.entity.Follow;
 import hongik.ce.jolup.module.account.infra.repository.FollowRepository;
-import hongik.ce.jolup.module.account.support.CurrentAccount;
+import hongik.ce.jolup.module.account.support.CurrentUser;
 import hongik.ce.jolup.module.room.application.RoomService;
 import hongik.ce.jolup.module.room.domain.entity.Join;
 import hongik.ce.jolup.module.room.domain.entity.Room;
@@ -19,7 +19,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.validation.BindingResult;
+import org.springframework.validation.Errors;
 import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
@@ -45,15 +45,16 @@ public class RoomController {
     }
 
     @GetMapping("/create")
-    public String createRoomForm(@CurrentAccount Account account, Model model) {
+    public String createRoomForm(@CurrentUser Account account, Model model) {
         model.addAttribute(account);
         model.addAttribute(new RoomForm());
         return "room/form";
     }
 
     @PostMapping("/create")
-    public String createRoom(@CurrentAccount Account account, @Valid RoomForm roomForm, BindingResult result, RedirectAttributes attributes) {
-        if (result.hasErrors()) {
+    public String createRoom(@CurrentUser Account account, @Valid RoomForm roomForm, Errors errors, Model model, RedirectAttributes attributes) {
+        if (errors.hasErrors()) {
+            model.addAttribute(account);
             return "room/form";
         }
         Room room = roomService.createNewRoom(roomForm, account);
@@ -62,7 +63,7 @@ public class RoomController {
     }
 
     @GetMapping("/{id}")
-    public String viewRoom(@CurrentAccount Account account, @PathVariable Long id, Model model) {
+    public String viewRoom(@CurrentUser Account account, @PathVariable Long id, Model model) {
         Room room = roomService.getRoom(account, id);
         model.addAttribute(account);
         model.addAttribute(room);
@@ -70,7 +71,7 @@ public class RoomController {
     }
 
     @GetMapping("/{id}/update")
-    public String updateRoomForm(@CurrentAccount Account account, @PathVariable Long id, Model model) {
+    public String updateRoomForm(@CurrentUser Account account, @PathVariable Long id, Model model) {
         Room room = roomService.getRoomToUpdate(account, id);
         model.addAttribute(account);
         model.addAttribute(RoomForm.from(room));
@@ -78,10 +79,10 @@ public class RoomController {
     }
 
     @PostMapping("/{id}/update")
-    public String updateRoom(@CurrentAccount Account account, @PathVariable Long id, Model model,
-                             @Valid RoomForm roomForm, BindingResult result, RedirectAttributes attributes) {
+    public String updateRoom(@CurrentUser Account account, @PathVariable Long id, Model model,
+                             @Valid RoomForm roomForm, Errors errors, RedirectAttributes attributes) {
         Room room = roomService.getRoomToUpdate(account, id);
-        if (result.hasErrors()) {
+        if (errors.hasErrors()) {
             model.addAttribute(account);
             return "room/update-form";
         }
@@ -91,7 +92,7 @@ public class RoomController {
     }
 
     @GetMapping("/{id}/members")
-    public String viewRoomMembers(@CurrentAccount Account account, @PathVariable Long id,
+    public String viewRoomMembers(@CurrentUser Account account, @PathVariable Long id,
                                   @PageableDefault(size = 10, sort = "grade", direction = Sort.Direction.ASC) Pageable pageable,
                                   Model model) {
         Room room = roomService.getRoom(account, id);
@@ -102,22 +103,22 @@ public class RoomController {
         return "room/members";
     }
 
-    @GetMapping("/{id}/join")
-    public String joinRoom(@CurrentAccount Account account, @PathVariable Long id) {
+    @PostMapping("/{id}/join")
+    public String joinRoom(@CurrentUser Account account, @PathVariable Long id) {
         Room room = roomService.getRoom(account, id);
         roomService.addMember(room, account);
         return "redirect:/rooms/" + room.getId() + "/members";
     }
 
-    @GetMapping("/{id}/leave")
-    public String leaveRoom(@CurrentAccount Account account, @PathVariable Long id) {
+    @PostMapping("/{id}/leave")
+    public String leaveRoom(@CurrentUser Account account, @PathVariable Long id) {
         Room room = roomService.findOne(id);
         roomService.removeMember(room, account);
         return "redirect:/rooms/" + room.getId() + "/members";
     }
 
     @GetMapping("/{id}/invite")
-    public String inviteForm(@PathVariable Long id, @CurrentAccount Account account, Model model) {
+    public String inviteForm(@PathVariable Long id, @CurrentUser Account account, Model model) {
         Room room = roomService.getRoomToUpdate(account, id);
         List<Account> accounts = room.getJoins().stream().map(Join::getAccount)
                 .collect(Collectors.toList());
@@ -132,14 +133,14 @@ public class RoomController {
     }
 
     @PostMapping("/{id}/invite")
-    public String invite(@CurrentAccount Account account, @PathVariable Long id, Model model,
-                         @Valid InviteForm inviteForm, BindingResult result, RedirectAttributes attributes) {
+    public String invite(@CurrentUser Account account, @PathVariable Long id, Model model,
+                         @Valid InviteForm inviteForm, Errors errors, RedirectAttributes attributes) {
         Room room = roomService.getRoomToUpdate(account, id);
         List<Account> accounts = room.getJoins().stream().map(Join::getAccount).collect(Collectors.toList());
         List<Account> friends = followRepository.findByFollowing(account)
                 .stream().map(Follow::getFollower).collect(Collectors.toList())
                 .stream().filter(f -> !accounts.contains(f)).collect(Collectors.toList());
-        if (result.hasErrors()) {
+        if (errors.hasErrors()) {
             model.addAttribute(account);
             model.addAttribute(room);
             model.addAttribute("members", friends);
@@ -151,7 +152,7 @@ public class RoomController {
     }
 
     @DeleteMapping("/{id}")
-    public String removeRoom(@CurrentAccount Account account, @PathVariable Long id, RedirectAttributes attributes) {
+    public String removeRoom(@CurrentUser Account account, @PathVariable Long id, RedirectAttributes attributes) {
         Room room = roomService.getRoomToUpdate(account, id);
         roomService.remove(room);
         attributes.addFlashAttribute("message", "방을 삭제했습니다.");

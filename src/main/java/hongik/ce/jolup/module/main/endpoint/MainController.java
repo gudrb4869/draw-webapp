@@ -2,7 +2,7 @@ package hongik.ce.jolup.module.main.endpoint;
 
 import hongik.ce.jolup.module.account.domain.entity.Account;
 import hongik.ce.jolup.module.account.infra.repository.AccountRepository;
-import hongik.ce.jolup.module.account.support.CurrentAccount;
+import hongik.ce.jolup.module.account.support.CurrentUser;
 import hongik.ce.jolup.module.room.domain.entity.Join;
 import hongik.ce.jolup.module.room.domain.entity.Room;
 import hongik.ce.jolup.module.room.infra.repository.JoinRepository;
@@ -30,7 +30,7 @@ public class MainController {
     private final RoomRepository roomRepository;
 
     @GetMapping("/")
-    public String index(@CurrentAccount Account account, Model model,
+    public String index(@CurrentUser Account account, Model model,
                         @PageableDefault(size = 9, sort = "createdDate", direction = Sort.Direction.DESC) Pageable pageable) {
         if (account != null) {
             model.addAttribute(account);
@@ -48,7 +48,7 @@ public class MainController {
     }
 
     @GetMapping("/login")
-    public String login(@CurrentAccount Account account) {
+    public String login(@CurrentUser Account account) {
         if (account != null) {
             return "redirect:/";
         }

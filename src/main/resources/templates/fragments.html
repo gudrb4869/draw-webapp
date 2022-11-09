@@ -236,9 +236,14 @@
             <span sec:authorize="isAuthenticated()" th:if="${!room.isMember(#authentication.principal)}"
                   class="btn-group" role="group" aria-label="Basic example">
                 <!--방 가입 링크-->
-                <a class="btn btn-sm btn-primary" th:href="@{'/rooms/' + ${room.id} + '/join'}">
+                <form th:action="@{'/rooms/' + ${room.id} + '/join'}" method="post">
+                    <button class="btn btn-sm btn-outline-primary" type="submit">
+                        <i class="fa fa-user-plus"></i> 방 들어가기
+                    </button>
+                </form>
+                <!--<a class="btn btn-sm btn-primary" th:href="@{'/rooms/' + ${room.id} + '/join'}">
                     <i class="fa fa-user-plus"></i> 방 들어가기
-                </a>
+                </a>-->
                 <!--방 멤버 수-->
                 <!--<a class="btn btn-primary" th:href="@{'/rooms/' + ${room.id} + '/accounts'}"
                    th:text="${room.count}">1</a>-->
@@ -247,9 +252,14 @@
             <span sec:authorize="isAuthenticated()" th:if="${room.isMember(#authentication.principal) and !room.isAdmin(#authentication.principal)}"
                   class="btn-group" role="group">
                 <!--방 가입 링크-->
-                <a class="btn btn-sm btn-outline-danger" th:href="@{'/rooms/' + ${room.id} + '/leave'}">
+                <form th:action="@{'/rooms/' + ${room.id} + '/leave'}" method="post">
+                    <button class="btn btn-sm btn-outline-danger" type="submit">
+                        <i class="fa fa-user-times"></i> 방 나가기
+                    </button>
+                </form>
+                <!--<button class="btn btn-sm btn-outline-danger" th:href="@{'/rooms/' + ${room.id} + '/leave'}">
                     <i class="fa fa-user-times"></i> 방 나가기
-                </a>
+                </button>-->
                 <!--방 멤버 수-->
                 <!--<a class="btn btn-primary" th:href="@{'/rooms/' + ${room.id} + '/accounts'}"
                    th:text="${room.count}">1</a>-->

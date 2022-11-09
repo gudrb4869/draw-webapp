@@ -27,7 +27,7 @@ import java.util.List;
 
 @Service
 @RequiredArgsConstructor
-@Transactional(readOnly = true)
+@Transactional
 public class AccountService implements UserDetailsService {
 
     private final AccountRepository accountRepository;
@@ -35,7 +35,6 @@ public class AccountService implements UserDetailsService {
     private final MatchRepository matchRepository;
     private final PasswordEncoder passwordEncoder;
 
-    @Transactional
     public Account signup(SignupForm signupForm) {
         Account account = saveNewMember(signupForm);
         return account;
@@ -46,25 +45,21 @@ public class AccountService implements UserDetailsService {
         return accountRepository.save(account);
     }
 
-    @Transactional
     public void updateProfile(Account account, Profile profile) {
         account.updateProfile(profile);
         accountRepository.save(account);
     }
 
-    @Transactional
     public void updatePassword(Account account, String newPassword) {
         account.updatePassword(passwordEncoder.encode(newPassword));
         accountRepository.save(account);
     }
 
-    @Transactional
     public void updateNotification(Account account, NotificationForm notificationForm) {
         account.updateNotification(notificationForm);
         accountRepository.save(account);
     }
 
-    @Transactional
     public void updateName(Account account, String name) {
         account.updateName(name);
         accountRepository.save(account);
@@ -89,7 +84,6 @@ public class AccountService implements UserDetailsService {
                 .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 사용자입니다."));
     }
 
-    @Transactional
     public void remove(Account account) {
         Account a = accountRepository.findWithJoinsAndRoomById(account.getId()).orElseThrow(() -> new IllegalArgumentException("존재하지 않는 사용자입니다."));
         for (Join join : a.getJoins()) {

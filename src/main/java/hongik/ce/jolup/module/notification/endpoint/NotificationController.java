@@ -1,7 +1,7 @@
 package hongik.ce.jolup.module.notification.endpoint;
 
 import hongik.ce.jolup.module.account.domain.entity.Account;
-import hongik.ce.jolup.module.account.support.CurrentAccount;
+import hongik.ce.jolup.module.account.support.CurrentUser;
 import hongik.ce.jolup.module.notification.infra.repository.NotificationRepository;
 import hongik.ce.jolup.module.notification.domain.entity.Notification;
 import hongik.ce.jolup.module.notification.application.NotificationService;
@@ -21,7 +21,7 @@ public class NotificationController {
     private final NotificationRepository notificationRepository;
 
     @GetMapping("/notifications")
-    public String getNotifications(@CurrentAccount Account account, Model model) {
+    public String getNotifications(@CurrentUser Account account, Model model) {
         List<Notification> notificationList = notificationRepository.findByAccountOrderByCreatedDateDesc(account);
         long numberOfNotChecked = notificationRepository.countByAccountAndChecked(account, false);
         model.addAttribute(account);
@@ -32,14 +32,14 @@ public class NotificationController {
     }
 
     @GetMapping("/notifications/{id}")
-    public String viewNotification(@CurrentAccount Account account, @PathVariable Long id) {
+    public String viewNotification(@CurrentUser Account account, @PathVariable Long id) {
         Notification notification = notificationService.getNotification(account, id);
         notificationService.read(notification);
         return "redirect:" + notification.getLink();
     }
 
     @GetMapping("/notifications/all-read")
-    public String allRead(@CurrentAccount Account account, RedirectAttributes attributes) {
+    public String allRead(@CurrentUser Account account, RedirectAttributes attributes) {
         List<Notification> notifications = notificationRepository.findByAccountAndCheckedOrderByCreatedDateDesc(account, false);
         notificationService.markAsRead(notifications);
         attributes.addFlashAttribute("message", "읽지 않은 알림들을 읽음 처리 했습니다.");
@@ -47,7 +47,7 @@ public class NotificationController {
     }
 
     @DeleteMapping("/notifications")
-    public String deleteNotifications(@CurrentAccount Account account, RedirectAttributes attributes) {
+    public String deleteNotifications(@CurrentUser Account account, RedirectAttributes attributes) {
         notificationService.deleteByMemberAndChecked(account, true);
         attributes.addFlashAttribute("message", "읽은 알림을 모두 삭제했습니다.");
         return "redirect:/notifications";

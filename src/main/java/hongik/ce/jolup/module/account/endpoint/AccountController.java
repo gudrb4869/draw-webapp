@@ -7,7 +7,7 @@ import hongik.ce.jolup.module.account.endpoint.form.SignupForm;
 import hongik.ce.jolup.module.account.application.AccountService;
 import hongik.ce.jolup.module.account.endpoint.validator.SignupFormValidator;
 import hongik.ce.jolup.module.account.infra.repository.FollowRepository;
-import hongik.ce.jolup.module.account.support.CurrentAccount;
+import hongik.ce.jolup.module.account.support.CurrentUser;
 import lombok.*;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Controller;
@@ -37,7 +37,7 @@ public class AccountController {
     }
 
     @GetMapping("/signup")
-    public String signupForm(@CurrentAccount Account account, Model model) {
+    public String signupForm(@CurrentUser Account account, Model model) {
         if (account != null) {
             return "redirect:/";
         }
@@ -58,7 +58,7 @@ public class AccountController {
     }
 
     @GetMapping("/profile/{id}")
-    public String profile(@CurrentAccount Account account, @PathVariable Long id, Model model) {
+    public String profile(@CurrentUser Account account, @PathVariable Long id, Model model) {
         Account profileAccount = accountService.getAccount(id);
         log.info("profileMember = {}", profileAccount);
         List<Account> followings = followRepository.findByFollowing(profileAccount)
@@ -78,7 +78,7 @@ public class AccountController {
 
     @PostMapping("/profile/{id}/follow")
 //    @ResponseStatus(HttpStatus.OK)
-    public String follow(@CurrentAccount Account account, @PathVariable Long id) {
+    public String follow(@CurrentUser Account account, @PathVariable Long id) {
         Account byId = accountService.getAccount(id);
         if (byId.equals(account)) {
             throw new IllegalStateException("잘못된 접근입니다.");
@@ -89,7 +89,7 @@ public class AccountController {
 
     @PostMapping("/profile/{id}/unfollow")
 //    @ResponseStatus(HttpStatus.OK)
-    public String unfollow(@CurrentAccount Account account, @PathVariable Long id) {
+    public String unfollow(@CurrentUser Account account, @PathVariable Long id) {
         Account byId = accountService.getAccount(id);
         if (byId.equals(account)) {
             throw new IllegalStateException("잘못된 접근입니다.");
