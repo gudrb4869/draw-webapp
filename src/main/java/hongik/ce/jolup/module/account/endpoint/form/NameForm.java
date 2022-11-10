@@ -11,10 +11,10 @@ import javax.validation.constraints.Pattern;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class NameForm {
     @NotBlank
-    @Pattern(regexp = "^[가-힣a-zA-Z0-9]{2,12}$")
+    @Pattern(regexp = "^[가-힣a-zA-Z0-9]{2,12}$", message = "이름 형식이 올바르지 않습니다.")
     private String name;
 
-    @NotBlank
+    @NotBlank(message = "현재 비밀번호를 입력해주세요.")
     private String password;
 
     public NameForm(String name) {

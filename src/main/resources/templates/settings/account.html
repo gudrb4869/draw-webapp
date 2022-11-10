@@ -33,7 +33,7 @@
                         <small class="form-text text-danger" th:errors="*{password}">password Error</small>
                     </div>
                     <div class="mb-3">
-                        <button type="submit" class="btn btn-primary">변경하기</button>
+                        <button type="submit" class="btn btn-primary bg-gradient">변경하기</button>
                     </div>
                 </form>
             </div>
@@ -44,7 +44,7 @@
                     <div class="alert alert-danger d-flex align-items-center" role="alert">
                         <svg th:replace="fragments.html::symbol-danger"/>
                         <div>
-                            회원 탈퇴를 하시면 회원 정보를 복구하실 수 없습니다.
+                            회원 탈퇴를 하시면 데이터를 복구할 수 없습니다.
                         </div>
                     </div>
                     <button class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#remove">탈퇴하기</button>
@@ -53,15 +53,15 @@
             <div class="modal fade" id="remove" tabindex="-1" role="dialog" aria-labelledby="removeTitle" aria-hidden="true">
                 <div class="modal-dialog modal-dialog-centered" role="document">
                     <div class="modal-content">
-                        <!--<div class="modal-header">
+                        <div class="modal-header">
                             <h5 class="modal-title" id="removeTitle"></h5>
                             <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                        </div>-->
+                        </div>
                         <div class="modal-body">
                             <p>정말로 회원 탈퇴 하시겠습니까?</p>
+                            <p><strong class="text-danger">탈퇴</strong>버튼을 누르시면 이후 복구할 수 없습니다.</p>
                         </div>
                         <div class="modal-footer">
-                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">닫기</button>
                             <form th:action th:method="delete">
                                 <button class="btn btn-danger" type="submit" aria-describedby="submitHelp">탈퇴</button>
                             </form>

@@ -1,0 +1,22 @@
+$primary: deepskyblue;
+$secondary: lightsteelblue;
+$success: yellowgreen;
+$info: aquamarine;
+$warning: khaki;
+$danger: salmon;
+$light: bisque;
+$dark: navy;
+
+@import "../node_modules/bootstrap/scss/bootstrap";
+
+/*
+:root {
+  --bs-primary-rgb: deepskyblue;
+  --bs-secondary-rgb: lightsteelblue;
+  --bs-success-rgb: yellowgreen;
+  --bs-info-rgb: aquamarine;
+  --bs-warning-rgb: khaki;
+  --bs-danger-rgb: salmon;
+  --bs-light-rgb: bisque;
+  --bs-dark-rgb: navy;
+}*/

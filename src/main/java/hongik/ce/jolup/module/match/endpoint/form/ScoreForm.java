@@ -14,10 +14,10 @@ public class ScoreForm {
 
     @Min(0)
     @Max(999)
-    private Integer homeScore = 0;
+    private int homeScore = 0;
     @Min(0)
     @Max(999)
-    private Integer awayScore = 0;
+    private int awayScore = 0;
 
     @NotNull
     private boolean finished;

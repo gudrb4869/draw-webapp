@@ -3,37 +3,42 @@
 <head th:replace="fragments.html :: head"></head>
 <body class="bg-light">
 <div th:replace="fragments.html::navigation-bar"></div>
-<div class="container" th:if="${#strings.equals(category, 'room')}">
-    <div class="py-5 text-center">
-        <p class="lead" th:if="${roomPage.getTotalElements() == 0}">
+<div class="container">
+    <div class="py-5 text-center" th:if="${#strings.equals(category, 'room')}">
+        <p class="fs-4" th:if="${roomPage.getTotalElements() == 0}">
             <strong th:text="${keyword}" id="keyword" class="context"></strong>에 대한 검색결과가 없습니다.
         </p>
-        <p class="lead" th:if="${roomPage.getTotalElements() > 0}">
+        <p class="fs-4" th:if="${roomPage.getTotalElements() > 0}">
             <strong th:text="${keyword}" id="keyword" class="context"></strong>에 대한 방이
             <span th:text="${roomPage.getTotalElements()}"></span>개 있습니다.
         </p>
     </div>
 
-    <div th:replace="fragments.html::room-list (roomList=${roomPage.getContent()})"></div>
-
-    <div th:replace="fragments.html :: page (pages=${roomPage}, url='/search?category=' + ${category} + '&keyword=' + ${keyword})"></div>
-</div>
-<div class="container" th:if="${#strings.equals(category, 'member')}">
-    <div class="py-5 text-center">
-        <p class="lead" th:if="${memberPage.getTotalElements() == 0}">
+    <div class="py-5 text-center" th:if="${#strings.equals(category, 'member')}">
+        <p class="fs-4" th:if="${memberPage.getTotalElements() == 0}">
             <strong th:text="${keyword}" id="keyword" class="context"></strong>에 대한 검색결과가 없습니다.
         </p>
-        <p class="lead" th:if="${memberPage.getTotalElements() > 0}">
+        <p class="fs-4" th:if="${memberPage.getTotalElements() > 0}">
             <strong th:text="${keyword}" id="keyword" class="context"></strong>에 대한 회원이
             <span th:text="${memberPage.getTotalElements()}"></span>명 있습니다.
         </p>
     </div>
 
-    <div class="row px-3 justify-content-center">
+    <div class="row justify-content-center" th:if="${#strings.equals(category, 'room')}">
+        <div th:replace="fragments.html::room-list (roomList=${roomPage.getContent()})"></div>
+    </div>
+
+    <div class="row justify-content-center" th:if="${#strings.equals(category, 'member')}">
         <div th:replace="fragments.html :: account-list (accountList=${memberPage.getContent()})"></div>
     </div>
 
-    <div th:replace="fragments.html :: page (pages=${memberPage}, url='/search?category=' + ${category} + '&keyword=' + ${keyword})"></div>
+    <div class="row justify-content-center pt-3" th:if="${#strings.equals(category, 'room')}">
+        <div th:replace="fragments.html :: page (pages=${roomPage}, url='/search?category=' + ${category} + '&keyword=' + ${keyword})"></div>
+    </div>
+
+    <div class="row justify-content-center pt-3" th:if="${#strings.equals(category, 'member')}">
+        <div th:replace="fragments.html :: page (pages=${memberPage}, url='/search?category=' + ${category} + '&keyword=' + ${keyword})"></div>
+    </div>
     <div th:replace="fragments.html :: footer"></div>
 </div>
 <script th:replace="fragments.html :: date-time"></script>

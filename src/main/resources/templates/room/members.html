@@ -18,16 +18,19 @@
                 <div class="flex-grow-1 ms-3">
                     <a class="text-decoration-none" href="#" th:href="${join.account != null} ? @{'/profile/' + ${join.account?.id}}">
                         <h5 class="mt-0 mb-1">
-                            <span th:text="${join.account?.name ?: '(알수없음)'}"></span>
-                            <span th:if="${join.grade?.name() == 'ADMIN'}" class="badge bg-dark">방장</span>
+                            <span class="text-dark" th:text="${join.account?.name ?: '(알수없음)'}"></span>
+                            <span th:if="${join.grade?.name() == 'ADMIN'}" class="badge bg-info rounded-pill">방장</span>
                         </h5>
-                        <span th:text="${join.account?.bio}"></span>
+                        <span class="text-muted" th:text="${join.account?.bio}"></span>
                     </a>
                 </div>
             </li>
         </ul>
     </div>
-    <div th:replace="fragments.html :: page (pages=${joins}, url='/rooms/' + ${room.id} + '/members')"></div>
+    <div class="row justify-content-center pt-3">
+        <div th:replace="fragments.html :: page (pages=${joins}, url='/rooms/' + ${room.id} + '/members')"></div>
+    </div>
+
     <div th:replace="fragments.html :: footer"></div>
 </div> <!-- /container -->
 <div th:replace="fragments.html :: date-time"></div>

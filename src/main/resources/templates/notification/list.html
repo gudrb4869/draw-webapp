@@ -5,7 +5,16 @@
 <div th:replace="fragments.html :: navigation-bar"></div>
 <svg th:replace="fragments.html::svg-symbols"/>
 <div class="container">
-    <div class="row py-5 justify-content-center">
+    <div class="row pt-5 justify-content-center" th:if="${numberOfChecked > 0}">
+        <div class="col-md-6">
+            <form class="row" th:action th:method="delete">
+                <button type="submit" class="btn btn-warning" aria-describedby="deleteHelp">
+                    <i class="fa fa-trash"></i> 읽은 알림 삭제
+                </button>
+            </form>
+        </div>
+    </div>
+    <div class="row pt-5 justify-content-center">
         <div class="col-md-6">
             <div class="row">
                 <div th:replace="fragments.html :: message"></div>
@@ -29,15 +38,6 @@
                     <div th:replace="fragments.html :: notification-list (notifications=${notificationList})"></div>
                 </div>
             </div>
-        </div>
-    </div>
-    <div class="row py-3 justify-content-center" th:if="${numberOfChecked > 0}">
-        <div class="col-md-6">
-            <form class="row" th:action th:method="delete">
-                <button type="submit" class="btn btn-warning" aria-describedby="deleteHelp">
-                    <i class="fa fa-trash"></i> 읽은 알림 삭제
-                </button>
-            </form>
         </div>
     </div>
     <div th:replace="fragments.html :: footer"></div>
