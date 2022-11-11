@@ -20,8 +20,6 @@ public class ExceptionController {
         log.error("bad request", exception);
         model.addAttribute(account);
         model.addAttribute("message", exception.getMessage());
-        log.info("Referer : {}", request.getHeader("Referer"));
-        model.addAttribute("referer", request.getHeader("Referer"));
         return "error";
     }
 

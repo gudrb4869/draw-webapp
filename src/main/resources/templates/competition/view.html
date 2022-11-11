@@ -1,7 +1,7 @@
 <!DOCTYPE HTML>
 <html xmlns:th="http://www.thymeleaf.org">
 <head th:replace="fragments.html :: head"></head>
-<body class="bg-light">
+<body class="bg-white">
 <div th:replace="fragments.html :: navigation-bar"></div>
 <div class="container">
     <div th:replace="fragments.html :: competition-info"></div>
@@ -14,13 +14,11 @@
             <div class="round-robin__round" th:classappend="'round-robin__round--' + ${key}" th:each="key : ${#numbers.sequence(first_round, last_round)}">
                 <h3 class="round-robin__round-title" th:text="${key + 1} + '라운드'"></h3>
                 <ul class="round-robin__list">
-                    <li class="round-robin__item" th:each="match : ${matches.get(key)}"
-                        th:onclick="${!match.closed} ? |location.href='@{|/rooms/${room.id}/competitions/${competition.id}/matches/${match.id}|}'|">
-                        <div class="round-robin__match" tabindex="0">
+                    <li class="round-robin__item" th:each="match : ${matches.get(key)}">
+                        <div class="round-robin__match" tabindex="0" th:onclick="${!match.closed} ? |location.href='@{|/rooms/${room.id}/competitions/${competition.id}/matches/${match.id}|}'|">
                             <table class="round-robin__table">
                                 <caption class="round-robin__caption">
-                                    <span th:if="${match.startDateTime == null}" class="text-warning">시간 미정</span>
-                                    <span th:if="${match.startDateTime != null}" class="date-time text-dark" th:text="${match.startDateTime}">경기 시간</span>
+                                    <span th:if="${!match.closed}" th:class="${match.startDateTime} ? 'date-time text-dark' : 'text-warning'" th:text="${match.startDateTime} ?: _">시간 미정</span>
                                 </caption>
                                 <thead class="sr-only">
                                 <tr>
@@ -67,18 +65,16 @@
             </div>
         </div>
 
-        <div class="col-sm-10 py-3 tournament-bracket tournament-bracket--rounded" th:if="${competition.isTournament()}">
+        <div class="col-sm-10 tournament-bracket tournament-bracket--rounded" th:if="${competition.isTournament()}">
             <div class="tournament-bracket__round" th:classappend="'tournament-bracket__round--' + ${last_round - key}" th:each="key : ${#numbers.sequence(last_round, first_round, -1)}">
-                <h3 class="tournament-bracket__round-title" th:text="${key == 0} ? '결승' : (${key == 1} ? '준결승' : (${key == 2} ? '8강' : (${key == 3} ? '16강' : (${key == 4} ? '32강' : (${key == 5} ? '64강' : _)))))"></h3>
+                <h3 class="tournament-bracket__round-title" th:text="${key == 0} ? '결승전' : (${key == 1} ? '준결승전': (${key == 2} ? '8강전' : (${key == 3} ? '16강전' : (${key == 4} ? '32강전' : (${key == 5} ? '64강전' : _)))))">라운드</h3>
                 <ul class="tournament-bracket__list">
-                    <li class="tournament-bracket__item" th:each="match : ${matches.get(key)}"
-                        th:onclick="${!match.closed} ? |location.href='@{|/rooms/${room.id}/competitions/${competition.id}/matches/${match.id}|}'|">
-                        <div class="tournament-bracket__match" tabindex="0">
+                    <li class="tournament-bracket__item" th:each="match : ${matches.get(key)}">
+                        <div class="tournament-bracket__match" tabindex="0" th:onclick="${!match.closed} ? |location.href='@{|/rooms/${room.id}/competitions/${competition.id}/matches/${match.id}|}'|">
                             <table class="tournament-bracket__table">
                                 <caption class="tournament-bracket__caption">
                                     <span th:if="${match.closed}">부전승</span>
-                                    <span th:if="${!match.closed and match.startDateTime == null}" class="text-warning">시간 미정</span>
-                                    <span th:if="${!match.closed and match.startDateTime != null}" class="date-time text-dark" th:text="${match.startDateTime}">경기 시간</span>
+                                    <span th:if="${!match.closed}" th:class="${match.startDateTime} ? 'date-time text-dark' : 'text-warning'" th:text="${match.startDateTime} ?: _">시간 미정</span>
                                 </caption>
                                 <thead class="sr-only">
                                 <tr>

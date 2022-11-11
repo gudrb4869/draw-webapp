@@ -1,7 +1,7 @@
 <!DOCTYPE HTML>
 <html xmlns:th="http://www.thymeleaf.org">
 <head th:replace="fragments.html :: head"></head>
-<body class="bg-light">
+<body class="bg-white">
 <div th:replace="fragments.html :: navigation-bar"></div>
 <div class="container">
     <div th:replace="fragments.html :: competition-info"></div>
@@ -9,7 +9,7 @@
     <div class="row mt-3 justify-content-center">
         <div class="col-10 py-3">
             <div class="table-responsive">
-                <table class="table table-sm table-hover">
+                <table class="table table-sm table-hover text-center">
                     <thead>
                     <tr>
                         <th>#</th>
@@ -33,7 +33,7 @@
                                      src="/images/user.png" width="24" height="24" class="rounded-circle border"/>
                                 <img th:if="${!#strings.isEmpty(rank.account?.image)}"
                                      th:src="${rank.account?.image}" width="24" height="24" class="rounded-circle border"/>
-                                <span th:text="${rank.account.name}"></span>
+                                <span class="text-dark" th:text="${rank.account.name}"></span>
                             </a>
                         </td>
                         <td th:text="${rank.win + rank.draw + rank.lose}"></td>

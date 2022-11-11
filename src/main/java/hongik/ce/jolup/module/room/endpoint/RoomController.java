@@ -62,13 +62,13 @@ public class RoomController {
         return "redirect:/rooms/" + room.getId();
     }
 
-    @GetMapping("/{id}")
+    /*@GetMapping("/{id}")
     public String viewRoom(@CurrentUser Account account, @PathVariable Long id, Model model) {
         Room room = roomService.getRoom(account, id);
         model.addAttribute(account);
         model.addAttribute(room);
         return "room/view";
-    }
+    }*/
 
     @GetMapping("/{id}/update")
     public String updateRoomForm(@CurrentUser Account account, @PathVariable Long id, Model model) {
@@ -91,7 +91,7 @@ public class RoomController {
         return "redirect:/rooms/" + room.getId();
     }
 
-    @GetMapping("/{id}/members")
+    @GetMapping({"/{id}", "/{id}/members"})
     public String viewRoomMembers(@CurrentUser Account account, @PathVariable Long id,
                                   @PageableDefault(size = 10, sort = "grade", direction = Sort.Direction.ASC) Pageable pageable,
                                   Model model) {

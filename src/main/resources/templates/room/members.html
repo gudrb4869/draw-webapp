@@ -1,9 +1,11 @@
 <!DOCTYPE HTML>
 <html xmlns:th="http://www.thymeleaf.org">
 <head th:replace="fragments.html :: head"></head>
-<body class="bg-light">
+<body class="bg-white">
 <div th:replace="fragments.html :: navigation-bar"></div>
+<svg th:replace="fragments.html::svg-symbols"/>
 <div class="container">
+    <div th:replace="fragments.html :: message"></div>
     <div th:replace="fragments.html :: room-info"></div>
     <div th:replace="fragments.html :: room-menu ('members')"></div>
     <div class="row px-3 justify-content-center">

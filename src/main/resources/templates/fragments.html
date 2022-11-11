@@ -13,7 +13,6 @@
     <link rel="stylesheet" href="/css/tournament.css"/>
     <script src="/node_modules/jquery/dist/jquery.min.js"></script>
     <script src="/node_modules/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
-    <script type="text/javascript" src="https://openapi.map.naver.com/openapi/v3/maps.js?ncpClientId=54v2qemi1o&submodules=geocoder"></script>
     <style>
         .container {
             max-width: 100%;
@@ -192,6 +191,7 @@
         <div class="col-10 col-md-6">
             <a href="#" class="text-decoration-none text-dark" th:href="@{'/rooms/' + ${room.id}}">
                 <span class="h2" th:text="${room.title}">방 이름</span>
+                <span class="h3" th:if="${!room.revealed}"><i class="fa fa-lock"></i></span>
             </a>
         </div>
         <div class="col-10 col-md-4 text-end justify-content-md-end">
@@ -206,7 +206,7 @@
                   class="btn-group" role="group" aria-label="Basic example">
                 <!--방 가입 링크-->
                 <form th:action="@{'/rooms/' + ${room.id} + '/join'}" method="post">
-                    <button class="btn btn-sm btn-outline-primary" type="submit">
+                    <button class="btn btn-sm btn-outline-primary bg-gradient" type="submit">
                         <i class="fa fa-user-plus"></i> 방 들어가기
                     </button>
                 </form>
@@ -222,7 +222,7 @@
                   class="btn-group" role="group">
                 <!--방 가입 링크-->
                 <form th:action="@{'/rooms/' + ${room.id} + '/leave'}" method="post">
-                    <button class="btn btn-sm btn-outline-danger" type="submit">
+                    <button class="btn btn-sm btn-outline-danger bg-gradient" type="submit">
                         <i class="fa fa-user-times"></i> 방 나가기
                     </button>
                 </form>
@@ -235,19 +235,19 @@
             </span>
             <!--인증된 사용자이고 방 관리자인 경우-->
             <span sec:authorize="isAuthenticated()" th:if="${room.isAdmin(#authentication.principal)}">
-                <button class="btn btn-sm btn-outline-danger" data-bs-toggle="modal" data-bs-target="#remove">
+                <button class="btn btn-sm btn-outline-danger bg-gradient" data-bs-toggle="modal" data-bs-target="#remove">
                     <i class="fa fa-trash"></i> 방 삭제
                 </button>
-                <a class="btn btn-sm btn-outline-primary" th:href="@{'/rooms/' + ${room.id} + '/update'}">
+                <a class="btn btn-sm btn-outline-primary bg-gradient" th:href="@{'/rooms/' + ${room.id} + '/update'}">
                     <i class="fa fa-wrench"></i> 방 수정
                 </a>
                 <!--친구 초대 링크-->
-                <a class="btn btn-sm btn-outline-primary" th:href="@{'/rooms/' + ${room.id} + '/invite'}">
+                <a class="btn btn-sm btn-outline-primary bg-gradient" th:href="@{'/rooms/' + ${room.id} + '/invite'}">
                     <i class="fa fa-user"></i> 친구 초대
                 </a>
                 <!--대회 만들기 링크-->
-                <a class="btn btn-sm btn-outline-primary" th:href="@{'/rooms/' + ${room.id} + '/competitions/create'}">
-                    <i class="fa fa-plus"></i> 대회 만들기
+                <a class="btn btn-sm btn-outline-primary bg-gradient" th:href="@{'/rooms/' + ${room.id} + '/competitions/create'}">
+                    <i class="fa fa-plus-square"></i> 대회 만들기
                 </a>
             </span>
         </div>
@@ -339,7 +339,7 @@
     <div class="row pt-4 justify-content-center bg-light">
         <div class="col-10 col-md-4">
             <span class="btn-group" role="group" aria-label="Basic example">
-                <a class="btn btn-sm btn-primary" th:href="@{'/rooms/' + ${room.id} + '/competitions'}">
+                <a class="btn btn-sm btn-primary bg-gradient" th:href="@{'/rooms/' + ${room.id} + '/competitions'}">
                     <i class="fa fa-arrow-left"></i> 목록
                 </a>
             </span>
@@ -354,7 +354,7 @@
     </div>
 </div>
 
-<div th:fragment="competition-menu (currentMenu)" class="row px-3 py-3 justify-content-center bg-light">
+<div th:fragment="competition-menu (currentMenu)" class="row px-3 pt-3 justify-content-center bg-light">
     <nav class="col-10 nav nav-tabs">
         <a class="nav-item nav-link text-dark" th:classappend="${currentMenu == 'matches'}? active"
            href="#" th:href="@{'/rooms/' + ${room.id} + '/competitions/' + ${competition.id}}">
@@ -519,13 +519,11 @@
                 <small class="invalid-feedback">방 소개를 입력하세요.</small>
                 <small class="form-text text-danger" th:errors="*{shortDescription}">ShortDescription Error</small>
             </div>
-            <div class="row">
-                <div class="col">
-                    <button type="submit" class="btn btn-sm btn-primary" th:text="${mode == 'update' ? '방 수정' : '방 만들기'}">방 만들기</button>
-                    <a class="btn btn-sm btn-secondary" href="#" th:href="${mode == 'update'} ? @{'/rooms/' + ${id}} : @{/}">
-                        취소
-                    </a>
-                </div>
+            <div class="d-grid gap-2 d-md-block">
+                <button type="submit" class="btn btn-sm btn-primary bg-gradient" th:text="${mode == 'update' ? '방 수정' : '방 만들기'}">방 만들기</button>
+                <a class="btn btn-sm btn-secondary bg-gradient" href="#" th:href="${mode == 'update'} ? @{'/rooms/' + ${id}} : @{/}">
+                    취소
+                </a>
             </div>
         </form>
     </div>

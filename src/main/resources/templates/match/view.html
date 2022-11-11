@@ -2,20 +2,18 @@
 <html xmlns:th="http://www.thymeleaf.org"
       xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 <head th:replace="fragments.html :: head"></head>
-<body class="bg-light">
+<body class="bg-white">
 <div th:replace="fragments.html :: navigation-bar"></div>
 <svg th:replace="fragments.html::svg-symbols"/>
 <div class="container">
-    <div th:replace="fragments.html :: competition-info"></div>
-    <div class="row mt-3 justify-content-center">
-        <div class="col-sm-10" th:object="${match}">
+    <div class="row mt-5 justify-content-center">
+        <div class="col-sm-6" th:object="${match}">
             <div th:replace="fragments.html :: message"></div>
             <div class="mb-3">
                 <div class="round-robin__match" tabindex="0">
                     <table class="round-robin__table">
                         <caption class="round-robin__caption">
-                            <span id="sdt" th:class="${match.startDateTime == null} ? 'text-warning' : 'date-time text-dark'"
-                                  th:text="${match.startDateTime} ?: '시간 미정'">경기 시간</span>
+                            <span id="sdt" th:if="${!match.closed}" th:class="${match.startDateTime} ? 'date-time text-dark' : 'text-warning'" th:text="${match.startDateTime} ?: _">시간 미정</span>
                         </caption>
                         <thead class="sr-only">
                         <tr>
@@ -57,49 +55,8 @@
             </div>
         </div>
     </div>
-    <!--<div class="row justify-content-center pt-3">
-        <div class="col-sm-10">
-            <div id="map" style="width: 100%; height: 600px;"></div>
-        </div>
-    </div>-->
-    <!--<div class="row justify-content-center">
-        <form class="need-validation col-sm-10" id="match-form" style="display: none">
-            <div class="mb-3">
-                <label th:for="homeScore">홈팀 스코어</label>
-                <input type="number" id="homeScore" name="homeScore" th:value="${match.homeScore}"
-                       class="form-control" aria-describedby="homeScoreHelp" min="0">
-                <small id="homeScoreHelp" class="form-text text-muted">
-                    홈팀 스코어를 입력하세요. 0이상의 값이어야 합니다.
-                    홈팀 스코어와 어웨이 스코어를 빈칸으로 입력시 경기 결과가 초기화됩니다.
-                </small>
-            </div>
-            <div class="mb-3">
-                <label th:for="awayScore">어웨이팀 스코어</label>
-                <input type="number" id="awayScore" name="awayScore" th:value="${match.awayScore}"
-                       class="form-control" aria-describedby="awayScoreHelp" min="0">
-                <small id="awayScoreHelp" class="form-text text-muted">
-                    어웨이팀 스코어를 입력하세요. 0이상의 값이어야 합니다.
-                    홈팀 스코어와 어웨이 스코어를 빈칸으로 입력시 경기 결과가 초기화됩니다.
-                </small>
-            </div>
-            <div class="mb-3">
-                <label th:for="startDateTime">경기 시작 일시</label>
-                <input id="startDateTime" type="datetime-local" name="startDateTime" th:value="${match.startDateTime}"
-                       class="form-control" aria-describedby="startDateTimeHelp">
-                <small id="startDateTimeHelp" class="form-text text-muted">
-                    경기 시작 일시를 입력하세요.
-                </small>
-            </div>
-            <div class="row">
-                <div class="col">
-                    <button class="btn btn-outline-dark" type="button" id="save-button">저장</button>
-                    <button class="btn btn-outline-dark" type="reset" id="cancel-button">취소</button>
-                </div>
-            </div>
-        </form>
-    </div>-->
     <div class="row mt-3 justify-content-center">
-        <form class="need-validation col-sm-10" novalidate id="date-form" style="display: none">
+        <form class="need-validation col-sm-6" novalidate id="date-form" style="display: none">
             <div class="mb-3">
                 <label th:for="startDateTime">경기 시간 일시</label>
                 <input id="StartDateTime" type="datetime-local" name="startDateTime" th:value="${match.startDateTime}"
@@ -118,7 +75,7 @@
         </form>
     </div>
     <div class="row mt-3 justify-content-center">
-        <form class="need-validation col-sm-10" novalidate id="score-form" style="display: none">
+        <form class="need-validation col-sm-6" novalidate id="score-form" style="display: none">
             <div class="row">
                 <div class="mb-3 col-sm-6">
                     <label th:for="homeScore">홈팀 스코어</label>
@@ -149,7 +106,7 @@
         </form>
     </div>
     <div class="row mt-3 justify-content-center" id="btn-group">
-        <div class="col-sm-10 justify-content-center">
+        <div class="col-sm-6 justify-content-center">
             <button sec:authorize="isAuthenticated()" th:if="${room.isAdmin(#authentication.principal)}"
                     class="btn btn-sm btn-success" id="date-button">
                 경기 시간 수정
@@ -282,87 +239,7 @@
                 });
             }
         });
-
-        // $saveBtn.click(function () {
-        //     $matchForm.hide();
-        //     $matchBtn.show();
-        //     $quitBtn.show();
-        //     var data = {};
-        //     $matchForm.serializeArray().map(function (x){data[x.name] = x.value});
-        //     console.log(data);
-        //     $.ajax({
-        //         dataType: "json",
-        //         contentType: "application/json; charset=utf-8",
-        //         method: "POST",
-        //         url: "/rooms/[[${roomId}]]/competitions/[[${competitionId}]]/matches/[[${matchId}]]",
-        //         data: JSON.stringify(data),
-        //     }).done(function (data, status) {
-        //         console.log("${data} and status is ${status}");
-        //     })
-        //     if (data['homeScore']) {
-        //         $homeScore.text(data['homeScore']);
-        //     } else {
-        //         $homeScore.text('-');
-        //     }
-        //     if (data['awayScore']) {
-        //         $awayScore.text(data['awayScore']);
-        //     } else {
-        //         $awayScore.text('-');
-        //     }
-        //     if (data['startDateTime'] && $startDateTime.hasClass('text-warning')) {
-        //         console.log('datetime created')
-        //         $startDateTime.removeClass('text-warning');
-        //         $startDateTime.addClass('text-dark date-time');
-        //         $startDateTime.text(data['startDateTime']);
-        //         $(".date-time").text(function(index, dateTime) {
-        //             return moment(dateTime, "YYYY-MM-DD`T`hh:mm").format('LLL');
-        //         });
-        //     }
-        //     else if (!data['startDateTime'] && !$startDateTime.hasClass('text-warning')) {
-        //         console.log('datetime removed');
-        //         $startDateTime.removeClass('text-dark date-time');
-        //         $startDateTime.addClass('text-warning');
-        //         $startDateTime.text('시간 미정');
-        //     } else {
-        //         $startDateTime.text(data['startDateTime']);
-        //         $(".date-time").text(function(index, dateTime) {
-        //             return moment(dateTime, "YYYY-MM-DD`T`hh:mm").format('LLL');
-        //         });
-        //     }
-        // });
     })
 </script>
-<!--<script type="text/javascript" th:inline="javascript">
-    var longitude = [[${locationForm.longitude}]];
-    var latitude = [[${locationForm.latitude}]];
-    var jibunAddress = [[${locationForm.jibunAddress}]];
-    var roadAddress = [[${locationForm.roadAddress}]];
-    var current = new naver.maps.LatLng(latitude, longitude);
-    var map = new naver.maps.Map("map", {
-        center: current,
-        zoom: 15,
-        mapTypeControl: true
-    });
-
-    var infoWindow = new naver.maps.InfoWindow({
-        anchorSkew: true
-    });
-    var htmlAddresses = [];
-    var point = new naver.maps.Point(longitude, latitude);
-    if (jibunAddress) {
-        htmlAddresses.push('[지번 주소] ' + jibunAddress);
-    }
-    if (roadAddress) {
-        htmlAddresses.push('[도로명 주소] ' + roadAddress);
-    }
-    htmlAddresses.push('[좌표] 위도 : ' + latitude + ', 경도 : ' + longitude);
-    map.setCursor('pointer');
-    infoWindow.setContent([
-        '<div style="padding:10px;min-width:200px;line-height:150%;">',
-        htmlAddresses.join('<br />'),
-        '</div>'
-    ].join('\n'));
-    infoWindow.open(map, point);
-</script>-->
 </body>
 </html>
