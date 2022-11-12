@@ -28,7 +28,7 @@
                                 </tr>
                                 </thead>
                                 <tbody class="round-robin__content">
-                                <tr class="round-robin__team" th:classappend="${match.homeScore > match.awayScore} ? 'round-robin__team--winner'"
+                                <tr class="round-robin__team" th:classappend="${match.homeScore < match.awayScore} ? 'text-muted'"
                                     tabindex="0" data-bs-toggle="tooltip" data-bs-placement="top" th:title="${match?.home?.name}">
                                     <td class="round-robin__image">
                                         <img th:if="${#strings.isEmpty(match?.home?.image)}" src="/images/user.png" width="24" height="24" class="rounded-circle border"/>
@@ -41,7 +41,7 @@
                                         <span class="tournament-bracket__number" th:text="${match?.finished} ? ${match.homeScore}: '-'">4</span>
                                     </td>
                                 </tr>
-                                <tr class="round-robin__team" th:classappend="${match.homeScore < match.awayScore} ? 'round-robin__team--winner'"
+                                <tr class="round-robin__team" th:classappend="${match.homeScore > match.awayScore} ? 'text-muted'"
                                     tabindex="0" data-bs-toggle="tooltip" data-bs-placement="bottom" th:title="${match?.away?.name}">
                                     <td class="round-robin__image">
                                         <img th:if="${#strings.isEmpty(match?.away?.image)}" src="/images/user.png" width="24" height="24" class="rounded-circle border"/>
@@ -84,7 +84,7 @@
                                 </tr>
                                 </thead>
                                 <tbody class="tournament-bracket__content">
-                                <tr class="tournament-bracket__team" th:classappend="${match.homeScore > match.awayScore} ? 'tournament-bracket__team--winner'"
+                                <tr class="tournament-bracket__team" th:classappend="${match.homeScore < match.awayScore} ? 'text-muted'"
                                     tabindex="0" data-bs-toggle="tooltip" data-bs-placement="top" th:title="${match?.home?.name}">
                                     <td class="tournament-bracket__image">
                                         <img th:if="${#strings.isEmpty(match?.home?.image)}" src="/images/user.png" width="24" height="24" class="rounded-circle border"/>
@@ -92,12 +92,13 @@
                                     </td>
                                     <td class="tournament-bracket__name">
                                         <span th:text="${match?.home?.name}"></span>
+                                        <i th:if="${key == 0 and match.finished and match.homeScore > match.awayScore}" class="fa fa-trophy text-warning"></i>
                                     </td>
                                     <td class="tournament-bracket__score">
                                         <span class="tournament-bracket__number" th:text="${match?.finished} ? ${match.homeScore}: '-'">4</span>
                                     </td>
                                 </tr>
-                                <tr class="tournament-bracket__team" th:classappend="${match.homeScore < match.awayScore} ? 'tournament-bracket__team--winner'"
+                                <tr class="tournament-bracket__team" th:classappend="${match.homeScore > match.awayScore} ? 'text-muted'"
                                     tabindex="0" data-bs-toggle="tooltip" data-bs-placement="bottom" th:title="${match?.away?.name}">
                                     <td class="tournament-bracket__image">
                                         <img th:if="${#strings.isEmpty(match?.away?.image)}" src="/images/user.png" width="24" height="24" class="rounded-circle border"/>
@@ -105,6 +106,7 @@
                                     </td>
                                     <td class="tournament-bracket__name">
                                         <span th:text="${match?.away?.name}"></span>
+                                        <i th:if="${key == 0 and match.finished and match.homeScore < match.awayScore}" class="fa fa-trophy text-warning"></i>
                                     </td>
                                     <td class="tournament-bracket__score">
                                         <span class="tournament-bracket__number" th:text="${match?.finished} ? ${match.awayScore}: '-'">1</span>

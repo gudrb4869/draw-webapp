@@ -4,11 +4,9 @@
 <head th:replace="fragments.html :: head"></head>
 <body class="bg-white">
 <div th:replace="fragments.html :: navigation-bar"></div>
-<svg th:replace="fragments.html::svg-symbols"/>
 <div class="container">
     <div class="row mt-5 justify-content-center">
         <div class="col-sm-6" th:object="${match}">
-            <div th:replace="fragments.html :: message"></div>
             <div class="mb-3">
                 <div class="round-robin__match" tabindex="0">
                     <table class="round-robin__table">
@@ -23,7 +21,7 @@
                         </tr>
                         </thead>
                         <tbody class="round-robin__content">
-                        <tr class="round-robin__team" th:classappend="${match.homeScore > match.awayScore} ? 'round-robin__team--winner'"
+                        <tr id="home-team" class="round-robin__team" th:classappend="${match.homeScore < match.awayScore} ? 'text-muted'"
                             tabindex="0" data-bs-toggle="tooltip" data-bs-placement="top" th:title="${match?.home?.name}">
                             <td class="round-robin__image">
                                 <img th:if="${#strings.isEmpty(match?.home?.image)}" src="/images/user.png" width="24" height="24" class="rounded-circle border"/>
@@ -36,7 +34,7 @@
                                 <span id="hs" class="tournament-bracket__number" th:text="${match?.finished} ? ${match.homeScore}: '-'">4</span>
                             </td>
                         </tr>
-                        <tr class="round-robin__team" th:classappend="${match.homeScore < match.awayScore} ? 'round-robin__team--winner'"
+                        <tr id="away-team" class="round-robin__team" th:classappend="${match.homeScore > match.awayScore} ? 'text-muted'"
                             tabindex="0" data-bs-toggle="tooltip" data-bs-placement="bottom" th:title="${match?.away?.name}">
                             <td class="round-robin__image">
                                 <img th:if="${#strings.isEmpty(match?.away?.image)}" src="/images/user.png" width="24" height="24" class="rounded-circle border"/>
@@ -144,6 +142,8 @@
         let $startDateTime = $('#sdt');
         let $home = $('#h');
         let $away = $('#a');
+        let $homeTeam = $('#home-team');
+        let $awayTeam = $('#away-team');
         $scoreBtn.click(function () {
             $btnGroup.hide();
             $scoreForm.show();
@@ -171,6 +171,16 @@
             })
             $homeScore.text(data['homeScore']);
             $awayScore.text(data['awayScore']);
+            if (data['homeScore'] < data['awayScore']) {
+                $homeTeam.addClass('text-muted');
+                $awayTeam.removeClass('text-muted');
+            } else if (data['homeScore'] > data['awayScore']) {
+                $homeTeam.removeClass('text-muted');
+                $awayTeam.addClass('text-muted');
+            } else {
+                $homeTeam.removeClass('text-muted');
+                $awayTeam.removeClass('text-muted');
+            }
         });
 
         $resetBtn.click(function () {
@@ -194,6 +204,8 @@
             $awayScore.text('-');
             $homeScoreForm.val(0);
             $awayScoreForm.val(0);
+            $homeTeam.removeClass('text-muted');
+            $awayTeam.removeClass('text-muted');
         });
 
         $dateBtn.click(function () {

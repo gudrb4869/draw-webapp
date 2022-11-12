@@ -107,7 +107,7 @@ class RoomControllerTest {
                 .build(), account);
         mockMvc.perform(get("/rooms/" + room.getId()))
                 .andExpect(status().isOk())
-                .andExpect(view().name("room/view"))
+                .andExpect(view().name("room/members"))
                 .andExpect(model().attributeExists("account"))
                 .andExpect(model().attributeExists("room"));
     }
