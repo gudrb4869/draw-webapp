@@ -8,7 +8,8 @@
     <div th:replace="fragments.html :: message"></div>
     <div class="py-5 text-center">
         <p class="fs-4" th:if="${joins.getTotalElements() == 0}">
-            참여중인 방이 없습니다.
+            현재 참여중인 방이 없습니다.<br/>
+            기존 방에 가입하거나, 새로운 방을 만들어보세요.
         </p>
         <p class="fs-4" th:if="${joins.getTotalElements() > 0}">
             현재 <span th:text="${joins.getTotalElements()}"></span>개의 방에 참여중입니다.
@@ -18,7 +19,7 @@
     <div class="row justify-content-center pb-3">
         <div class="col-sm-10">
             <div class="d-grid d-flex justify-content-end">
-                <a class="btn btn-lg btn-primary bg-gradient" th:href="@{'/rooms/create'}">
+                <a class="btn btn-lg btn-primary bg-gradient shadow" th:href="@{'/rooms/create'}">
                     <i class="fa fa-plus"></i> 방 만들기
                 </a>
             </div>

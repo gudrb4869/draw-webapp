@@ -9,8 +9,10 @@ import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
 import java.util.Optional;
 
+@Transactional(readOnly = true)
 public interface JoinRepository extends JpaRepository<Join, Long> {
 
     @EntityGraph(attributePaths = {"account", "room"})
@@ -22,4 +24,8 @@ public interface JoinRepository extends JpaRepository<Join, Long> {
     boolean existsByRoomAndAccount(Room room, Account account);
 
     Optional<Join> findByRoomAndAccount(Room room, Account account);
+
+    @Transactional
+    @EntityGraph(attributePaths = {"account", "room"})
+    List<Join> findByAccount(Account account);
 }

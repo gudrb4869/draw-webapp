@@ -3,8 +3,6 @@ package hongik.ce.jolup.module.match.domain.entity;
 import hongik.ce.jolup.BaseTimeEntity;
 import hongik.ce.jolup.module.account.domain.entity.Account;
 import hongik.ce.jolup.module.competition.domain.entity.Competition;
-import hongik.ce.jolup.module.match.endpoint.form.LocationForm;
-import hongik.ce.jolup.module.match.endpoint.form.MatchForm;
 import hongik.ce.jolup.module.match.endpoint.form.ScoreForm;
 import lombok.*;
 
@@ -14,8 +12,7 @@ import java.time.LocalDateTime;
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-//@Table(uniqueConstraints = {@UniqueConstraint(columnNames = {"id", "match_round", "match_number"})})
-@Table(name = "matches")
+@Table(name = "matches", uniqueConstraints = {@UniqueConstraint(columnNames = {"competition_id", "match_round", "match_number"})})
 @ToString
 @NamedEntityGraph(
         name = "Match.withCompetitionAndRoomAndHomeAndAway",
@@ -57,14 +54,6 @@ public class Match extends BaseTimeEntity {
 
     private boolean finished;
 
-    private Double longitude;
-
-    private Double latitude;
-
-    private String jibunAddress;
-
-    private String roadAddress;
-
     public static Match from(Competition competition, Account home, Account away, int round, int number) {
         Match match = new Match();
         match.competition = competition;
@@ -91,19 +80,6 @@ public class Match extends BaseTimeEntity {
 
     public void updateStartDateTime(LocalDateTime startDateTime) {
         this.startDateTime = startDateTime;
-    }
-
-    public void updateLocation(LocationForm locationForm) {
-        this.longitude = locationForm.getLongitude();
-        this.latitude = locationForm.getLatitude();
-        this.jibunAddress = locationForm.getJibunAddress();
-        this.roadAddress = locationForm.getRoadAddress();
-    }
-
-    public void updateFrom(MatchForm matchForm) {
-        this.homeScore = matchForm.getHomeScore();
-        this.awayScore = matchForm.getAwayScore();
-        this.startDateTime = matchForm.getStartDateTime();
     }
 
     public void open() {

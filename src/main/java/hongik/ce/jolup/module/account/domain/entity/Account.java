@@ -3,7 +3,6 @@ package hongik.ce.jolup.module.account.domain.entity;
 import hongik.ce.jolup.BaseTimeEntity;
 import hongik.ce.jolup.module.account.endpoint.form.NotificationForm;
 import hongik.ce.jolup.module.account.endpoint.form.Profile;
-import hongik.ce.jolup.module.room.domain.entity.Join;
 import hongik.ce.jolup.module.notification.domain.entity.Notification;
 import lombok.*;
 
@@ -15,11 +14,6 @@ import java.util.*;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @ToString
 @EqualsAndHashCode(of = {"id"}, callSuper = false)
-@NamedEntityGraph(
-        name = "Account.withJoinsAndRoom",
-        attributeNodes = @NamedAttributeNode(value = "joins", subgraph = "room"),
-        subgraphs = @NamedSubgraph(name = "room", attributeNodes = @NamedAttributeNode("room"))
-)
 public class Account extends BaseTimeEntity {
 
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -48,9 +42,6 @@ public class Account extends BaseTimeEntity {
 
     @OneToMany(mappedBy = "account", cascade = CascadeType.ALL) @ToString.Exclude
     private List<Notification> notifications = new ArrayList<>();
-
-    @OneToMany(mappedBy = "account", cascade = CascadeType.ALL) @ToString.Exclude
-    private List<Join> joins = new ArrayList<>();
 
     private boolean competitionCreatedByWeb = true;
     private boolean matchUpdatedByWeb = true;

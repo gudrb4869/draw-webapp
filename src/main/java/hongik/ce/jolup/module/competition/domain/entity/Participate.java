@@ -9,6 +9,7 @@ import javax.persistence.*;
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
+@Table(uniqueConstraints = {@UniqueConstraint(columnNames = {"account_id", "competition_id"})})
 @ToString
 public class Participate extends BaseTimeEntity {
 
@@ -44,14 +45,6 @@ public class Participate extends BaseTimeEntity {
     }
 
     // 편의 메서드
-
-    public void updateGoalFor(int goalFor) {
-        this.goalFor += goalFor;
-    }
-
-    public void updateGoalAgainst(int goalAgainst) {
-        this.goalAgainst += goalAgainst;
-    }
 
     public void addWin() {
         this.win++;

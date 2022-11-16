@@ -1,6 +1,5 @@
 package hongik.ce.jolup.module.match.endpoint.form;
 
-import hongik.ce.jolup.module.match.domain.entity.Match;
 import lombok.AccessLevel;
 import lombok.Data;
 import lombok.NoArgsConstructor;

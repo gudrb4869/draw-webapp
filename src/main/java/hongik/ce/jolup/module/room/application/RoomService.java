@@ -62,7 +62,7 @@ public class RoomService {
 
     private void check(Account account, Room room) {
         Join join = room.getJoins().stream()
-                .filter(j -> j.getAccount().equals(account))
+                .filter(j -> j.getAccount() != null && j.getAccount().equals(account))
                 .findFirst().orElse(null);
         if (join == null && !room.isRevealed()) {
             throw new AccessDeniedException("비공개 방입니다.");
@@ -77,7 +77,7 @@ public class RoomService {
 
     private void checkIsAdmin(Account account, Room room) {
         Join join = room.getJoins().stream()
-                .filter(j -> j.getAccount().equals(account))
+                .filter(j -> j.getAccount() != null && j.getAccount().equals(account))
                 .findFirst().orElse(null);
         if (join == null || !join.getGrade().equals(Grade.ADMIN)) {
             throw new AccessDeniedException("해당 기능을 사용할 수 없습니다.");

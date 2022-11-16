@@ -28,12 +28,12 @@
                     <tr th:each="rank : ${ranking}">
                         <td th:text="${rankStat.count}"></td>
                         <td>
-                            <a th:href="@{'/profile/' + ${rank.account.id}}" class="text-decoration-none">
+                            <a th:href="${rank.account != null} ? @{'/profile/' + ${rank?.account?.id}}" class="text-decoration-none">
                                 <img th:if="${#strings.isEmpty(rank.account?.image)}"
                                      src="/images/user.png" width="24" height="24" class="rounded-circle border"/>
                                 <img th:if="${!#strings.isEmpty(rank.account?.image)}"
                                      th:src="${rank.account?.image}" width="24" height="24" class="rounded-circle border"/>
-                                <span class="text-dark" th:text="${rank.account.name}"></span>
+                                <span class="text-dark" th:text="${rank?.account?.name}"></span>
                             </a>
                         </td>
                         <td th:text="${rank.win + rank.draw + rank.lose}"></td>

@@ -1,6 +1,5 @@
 package hongik.ce.jolup.module.competition.infra.repository;
 
-import com.querydsl.jpa.JPQLQuery;
 import hongik.ce.jolup.module.competition.domain.entity.Competition;
 import hongik.ce.jolup.module.competition.domain.entity.Participate;
 import hongik.ce.jolup.module.competition.domain.entity.QParticipate;

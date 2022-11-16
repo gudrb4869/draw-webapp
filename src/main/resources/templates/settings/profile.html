@@ -27,15 +27,15 @@
                                  th:src="${profile.image}"
                                  width="125" height="125" alt="name" th:alt="${account.name}"/>
                         </div>
-                        <div id="new-profile-image" class="mt-3"></div>
+                        <div id="new-profile-image" class="mt-3" style="display: none"></div>
                         <div class="card-body">
                             <div class="input-group">
                                 <input type="file" class="form-control" id="profile-image-file">
                             </div>
                             <div id="new-profile-image-control" class="mt-3 gap-2">
-                                <button class="btn btn-success" id="cut-button">자르기</button>
-                                <button class="btn btn-primary" id="confirm-button">확인</button>
-                                <button class="btn btn-warning" id="reset-button">취소</button>
+                                <button class="btn btn-success bg-gradient" id="cut-button" style="display: none">자르기</button>
+                                <button class="btn btn-primary bg-gradient" id="confirm-button" style="display: none">확인</button>
+                                <button class="btn btn-warning bg-gradient" id="reset-button" style="display: none">취소</button>
                             </div>
                             <div id="cropped-new-profile-image" class="mt-3"></div>
                         </div>
@@ -87,11 +87,6 @@
         let $currentProfileImage = $("#current-profile-image");
         let $resultImage = $("#cropped-new-profile-image");
         let $profileImage = $("#image");
-
-        $newProfileImage.hide();
-        $cutBtn.hide();
-        $resetBtn.hide();
-        $confirmBtn.hide();
 
         $("#profile-image-file").change(function (e) {
             if (e.target.files.length === 1) {

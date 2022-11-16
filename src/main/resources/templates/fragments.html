@@ -206,7 +206,7 @@
                   class="btn-group" role="group" aria-label="Basic example">
                 <!--방 가입 링크-->
                 <form th:action="@{'/rooms/' + ${room.id} + '/join'}" method="post">
-                    <button class="btn btn-sm btn-outline-primary bg-gradient" type="submit">
+                    <button class="btn btn-sm btn-outline-primary bg-gradient shadow" type="submit">
                         <i class="fa fa-user-plus"></i> 방 들어가기
                     </button>
                 </form>
@@ -222,7 +222,7 @@
                   class="btn-group" role="group">
                 <!--방 가입 링크-->
                 <form th:action="@{'/rooms/' + ${room.id} + '/leave'}" method="post">
-                    <button class="btn btn-sm btn-outline-danger bg-gradient" type="submit">
+                    <button class="btn btn-sm btn-outline-danger bg-gradient shadow" type="submit">
                         <i class="fa fa-user-times"></i> 방 나가기
                     </button>
                 </form>
@@ -235,21 +235,28 @@
             </span>
             <!--인증된 사용자이고 방 관리자인 경우-->
             <span sec:authorize="isAuthenticated()" th:if="${room.isAdmin(#authentication.principal)}">
-                <button class="btn btn-sm btn-outline-danger bg-gradient" data-bs-toggle="modal" data-bs-target="#remove">
+                <button class="btn btn-sm btn-outline-danger bg-gradient shadow" data-bs-toggle="modal" data-bs-target="#remove">
                     <i class="fa fa-trash"></i> 방 삭제
                 </button>
-                <a class="btn btn-sm btn-outline-primary bg-gradient" th:href="@{'/rooms/' + ${room.id} + '/update'}">
+                <a class="btn btn-sm btn-outline-primary bg-gradient shadow" th:href="@{'/rooms/' + ${room.id} + '/update'}">
                     <i class="fa fa-wrench"></i> 방 수정
                 </a>
                 <!--친구 초대 링크-->
-                <a class="btn btn-sm btn-outline-primary bg-gradient" th:href="@{'/rooms/' + ${room.id} + '/invite'}">
+                <a class="btn btn-sm btn-outline-primary bg-gradient shadow" th:href="@{'/rooms/' + ${room.id} + '/invite'}">
                     <i class="fa fa-user"></i> 친구 초대
                 </a>
                 <!--대회 만들기 링크-->
-                <a class="btn btn-sm btn-outline-primary bg-gradient" th:href="@{'/rooms/' + ${room.id} + '/competitions/create'}">
+                <a class="btn btn-sm btn-outline-primary bg-gradient shadow" th:href="@{'/rooms/' + ${room.id} + '/competitions/create'}">
                     <i class="fa fa-plus-square"></i> 대회 만들기
                 </a>
             </span>
+        </div>
+    </div>
+
+    <!--방 소개-->
+    <div class="row justify-content-center bg-light">
+        <div class="col-10">
+            <p class="lead" th:text="${room.shortDescription}"></p>
         </div>
     </div>
 
@@ -270,13 +277,6 @@
                     </form>
                 </div>
             </div>
-        </div>
-    </div>
-
-    <!--방 소개-->
-    <div class="row justify-content-center bg-light">
-        <div class="col-10">
-            <p class="lead" th:text="${room.shortDescription}"></p>
         </div>
     </div>
 </div>
@@ -432,7 +432,7 @@
 </div>
 
 <div th:fragment="room-list (roomList)" class="col-sm-10">
-    <div class="row">
+    <div class="row" th:if="${roomList.size() > 0}">
         <div class="col-md-4" th:each="room: ${roomList}">
             <div class="card text-center mb-4 shadow">
                 <a th:href="@{'/rooms/' + ${room.id}}" class="text-decoration-none">
@@ -520,8 +520,8 @@
                 <small class="form-text text-danger" th:errors="*{shortDescription}">ShortDescription Error</small>
             </div>
             <div class="d-grid gap-2 d-md-block">
-                <button type="submit" class="btn btn-sm btn-primary bg-gradient" th:text="${mode == 'update' ? '방 수정' : '방 만들기'}">방 만들기</button>
-                <a class="btn btn-sm btn-secondary bg-gradient" href="#" th:href="${mode == 'update'} ? @{'/rooms/' + ${id}} : @{/}">
+                <button type="submit" class="btn btn-primary bg-gradient" th:text="${mode == 'update' ? '방 수정' : '방 만들기'}">방 만들기</button>
+                <a class="btn btn-secondary bg-gradient" href="#" th:href="${mode == 'update'} ? @{'/rooms/' + ${id}} : @{/}">
                     취소
                 </a>
             </div>
@@ -531,7 +531,11 @@
 
 <div th:fragment="competition-list (competitionList)" class="row justify-content-center pt-3">
     <div class="col-sm-10">
-        <div class="row">
+        <div class="text-center" th:if="${competitionList.size() == 0}">
+            <i class="fa fa-exclamation-circle fa-5x"></i><br/>
+            <span class="fs-4">대회가 없습니다!</span>
+        </div>
+        <div class="row" th:if="${competitionList.size() > 0}">
             <div class="col-md-6" th:each="competition: ${competitionList}">
                 <div class="card text-center mb-4 shadow">
                     <a th:href="@{'/rooms/' + ${room.id} + '/competitions/' + ${competition.id}}" class="text-decoration-none">

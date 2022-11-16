@@ -36,9 +36,6 @@ public class MainController {
             model.addAttribute(account);
             Page<Join> joins = joinRepository.findWithJoinByAccount(account, pageable);
             model.addAttribute("joins", joins);
-            /*log.info("총 element 수 : {}, 전체 page 수 : {}, 페이지에 표시할 element 수 : {}, 현재 페이지 index : {}, 현재 페이지의 element 수 : {}",
-            joins.getTotalElements(), joins.getTotalPages(), joins.getSize(),
-            joins.getNumber(), joins.getNumberOfElements());*/
             List<Room> rooms = joins.getContent().stream().map(Join::getRoom).collect(Collectors.toList());
             model.addAttribute("rooms", rooms);
             return "home";

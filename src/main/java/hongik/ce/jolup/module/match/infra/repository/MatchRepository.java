@@ -7,6 +7,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
@@ -15,9 +16,11 @@ public interface MatchRepository extends JpaRepository<Match, Long> {
 
     Optional<Match> findByCompetitionAndRoundAndNumber(Competition competition, Integer round, Integer match);
 
+    @Transactional(readOnly = true)
     @EntityGraph(attributePaths = {"competition", "home", "away"})
     Page<Match> findMatchWithAllByCompetition(Competition competition, Pageable pageable);
 
+    @Transactional(readOnly = true)
     @EntityGraph(attributePaths = {"competition", "home", "away"})
     List<Match> findMatchWithAllByCompetition(Competition competition);
 

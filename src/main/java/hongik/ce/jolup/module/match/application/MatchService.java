@@ -4,8 +4,6 @@ import hongik.ce.jolup.module.competition.domain.entity.Competition;
 import hongik.ce.jolup.module.competition.domain.entity.Participate;
 import hongik.ce.jolup.module.match.domain.entity.Match;
 import hongik.ce.jolup.module.match.endpoint.form.DateForm;
-import hongik.ce.jolup.module.match.endpoint.form.LocationForm;
-import hongik.ce.jolup.module.match.endpoint.form.MatchForm;
 import hongik.ce.jolup.module.match.endpoint.form.ScoreForm;
 import hongik.ce.jolup.module.match.event.MatchUpdatedEvent;
 import hongik.ce.jolup.module.match.infra.repository.MatchRepository;
@@ -15,7 +13,6 @@ import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -125,10 +122,6 @@ public class MatchService {
         }
     }
 
-    public void update(Match match, MatchForm matchForm, Competition competition) {
-//        match.updateFrom(matchForm);
-    }
-
     public Match getMatch(Competition competition, Long matchId) {
         Match match = matchRepository.findMatchById(matchId).orElse(null);
         check(competition, match);
@@ -136,16 +129,8 @@ public class MatchService {
     }
 
     private void check(Competition competition, Match match) {
-        if (match == null || !match.getCompetition().equals(competition) || match.isClosed()) {
+        if (match == null || !competition.equals(match.getCompetition()) || match.isClosed()) {
             throw new IllegalArgumentException("존재하지 않는 경기입니다.");
         }
-    }
-
-    public void updateStartDateTime(Match match, LocalDateTime startDateTime) {
-        match.updateStartDateTime(startDateTime);
-    }
-
-    public void updateLocation(Match match, LocationForm locationForm) {
-        match.updateLocation(locationForm);
     }
 }

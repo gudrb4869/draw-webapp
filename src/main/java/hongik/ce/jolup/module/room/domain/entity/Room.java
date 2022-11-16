@@ -5,6 +5,7 @@ import hongik.ce.jolup.module.competition.domain.entity.Competition;
 import hongik.ce.jolup.module.account.domain.UserAccount;
 import hongik.ce.jolup.module.room.endpoint.form.RoomForm;
 import lombok.*;
+import org.hibernate.annotations.ColumnDefault;
 
 import javax.persistence.*;
 import java.util.ArrayList;
@@ -30,11 +31,13 @@ public class Room extends BaseTimeEntity {
     @Column(nullable = false)
     private String title;
 
+    @Column(nullable = false)
     private String shortDescription;
 
     private boolean revealed;
 
-    private Integer count = 0;
+    @ColumnDefault("0")
+    private int count = 0;
 
     @OneToMany(mappedBy = "room", cascade = CascadeType.ALL) @ToString.Exclude
     private List<Join> joins = new ArrayList<>();
@@ -53,14 +56,14 @@ public class Room extends BaseTimeEntity {
 
     public boolean isMember(UserAccount userAccount) {
         Join join = this.joins.stream()
-                .filter(j -> j.getAccount().equals(userAccount.getAccount()))
+                .filter(j -> j.getAccount() != null && j.getAccount().equals(userAccount.getAccount()))
                 .findFirst().orElse(null);
         return join != null;
     }
 
     public boolean isAdmin(UserAccount userAccount) {
         Join join = this.joins.stream()
-                .filter(j -> j.getAccount().equals(userAccount.getAccount()))
+                .filter(j -> j.getAccount() != null && j.getAccount().equals(userAccount.getAccount()))
                 .findFirst().orElse(null);
         return join != null && join.getGrade().equals(Grade.ADMIN);
     }

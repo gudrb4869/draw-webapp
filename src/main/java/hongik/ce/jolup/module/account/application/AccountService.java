@@ -11,6 +11,7 @@ import hongik.ce.jolup.module.account.endpoint.form.Profile;
 import hongik.ce.jolup.module.account.endpoint.form.SignupForm;
 import hongik.ce.jolup.module.account.infra.repository.AccountRepository;
 import hongik.ce.jolup.module.room.domain.entity.Join;
+import hongik.ce.jolup.module.room.infra.repository.JoinRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -31,6 +32,7 @@ import java.util.List;
 public class AccountService implements UserDetailsService {
 
     private final AccountRepository accountRepository;
+    private final JoinRepository joinRepository;
     private final ParticipateRepository participateRepository;
     private final MatchRepository matchRepository;
     private final PasswordEncoder passwordEncoder;
@@ -85,9 +87,9 @@ public class AccountService implements UserDetailsService {
     }
 
     public void remove(Account account) {
-        Account a = accountRepository.findWithJoinsAndRoomById(account.getId()).orElseThrow(() -> new IllegalArgumentException("존재하지 않는 사용자입니다."));
-        for (Join join : a.getJoins()) {
-            join.getRoom().subCount();
+        List<Join> joins = joinRepository.findByAccount(account);
+        for (Join join : joins) {
+            join.updateMember(null);
         }
         List<Participate> participates = participateRepository.findByAccount(account);
         for (Participate participate : participates) {

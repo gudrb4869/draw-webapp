@@ -8,47 +8,33 @@
     <div class="row mt-5 justify-content-center">
         <div class="col-sm-6" th:object="${match}">
             <div class="mb-3">
-                <div class="round-robin__match" tabindex="0">
-                    <table class="round-robin__table">
-                        <caption class="round-robin__caption">
-                            <span id="sdt" th:if="${!match.closed}" th:class="${match.startDateTime} ? 'date-time text-dark' : 'text-warning'" th:text="${match.startDateTime} ?: _">시간 미정</span>
-                        </caption>
-                        <thead class="sr-only">
-                        <tr>
-                            <th>Image</th>
-                            <th>Team</th>
-                            <th>Score</th>
-                        </tr>
-                        </thead>
-                        <tbody class="round-robin__content">
-                        <tr id="home-team" class="round-robin__team" th:classappend="${match.homeScore < match.awayScore} ? 'text-muted'"
-                            tabindex="0" data-bs-toggle="tooltip" data-bs-placement="top" th:title="${match?.home?.name}">
-                            <td class="round-robin__image">
-                                <img th:if="${#strings.isEmpty(match?.home?.image)}" src="/images/user.png" width="24" height="24" class="rounded-circle border"/>
-                                <img th:if="${!#strings.isEmpty(match?.home?.image)}" th:src="${match?.home?.image}" width="24" height="24" class="rounded-circle border"/>
-                            </td>
-                            <td class="round-robin__name">
-                                <span id="h" th:text="${match?.home?.name}"></span>
-                            </td>
-                            <td class="round-robin__score">
-                                <span id="hs" class="tournament-bracket__number" th:text="${match?.finished} ? ${match.homeScore}: '-'">4</span>
-                            </td>
-                        </tr>
-                        <tr id="away-team" class="round-robin__team" th:classappend="${match.homeScore > match.awayScore} ? 'text-muted'"
-                            tabindex="0" data-bs-toggle="tooltip" data-bs-placement="bottom" th:title="${match?.away?.name}">
-                            <td class="round-robin__image">
-                                <img th:if="${#strings.isEmpty(match?.away?.image)}" src="/images/user.png" width="24" height="24" class="rounded-circle border"/>
-                                <img th:if="${!#strings.isEmpty(match?.away?.image)}" th:src="${match?.away?.image}" width="24" height="24" class="rounded-circle border"/>
-                            </td>
-                            <td class="round-robin__name">
-                                <span id="a" th:text="${match?.away?.name}"></span>
-                            </td>
-                            <td class="round-robin__score">
-                                <span id="as" class="round-robin__number" th:text="${match?.finished} ? ${match.awayScore}: '-'">1</span>
-                            </td>
-                        </tr>
-                        </tbody>
-                    </table>
+                <div class="w-100 rounded shadow border border-dark bg-gradient" style="background-color: lightgray;">
+                    <div class="d-flex justify-content-start p-2">
+                        <div id="sdt" th:class="${match.startDateTime} ? 'date-time text-dark' : 'text-warning'" th:text="${match.startDateTime} ?: _">
+                            시간 미정
+                        </div>
+                    </div>
+                    <div class="d-flex justify-content-around p-2">
+                        <div class="grid text-center" style="row-gap: 0;">
+                            <figure>
+                                <img th:if="${#strings.isEmpty(match?.home?.image)}" src="/images/user.png" width="64" height="64" class="rounded-circle border"/>
+                                <img th:if="${!#strings.isEmpty(match?.home?.image)}" th:src="${match?.home?.image}" width="64" height="64" class="rounded-circle border"/>
+                                <figcaption th:text="${match?.home?.name}">home name</figcaption>
+                            </figure>
+                        </div>
+                        <div class="d-flex align-items-center fs-2">
+                            <p id="hs" th:text="${match?.finished} ? ${match?.homeScore}: '-'">4</p>
+                            <p> : </p>
+                            <p id="as" th:text="${match?.finished} ? ${match?.awayScore}: '-'">1</p>
+                        </div>
+                        <div class="grid text-center" style="row-gap: 0;">
+                            <figure>
+                                <img th:if="${#strings.isEmpty(match?.away?.image)}" src="/images/user.png" width="64" height="64" class="rounded-circle border"/>
+                                <img th:if="${!#strings.isEmpty(match?.away?.image)}" th:src="${match?.away?.image}" width="64" height="64" class="rounded-circle border"/>
+                                <figcaption th:text="${match?.away?.name}">away name</figcaption>
+                            </figure>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -66,8 +52,8 @@
             </div>
             <div class="row">
                 <div class="col">
-                    <button class="btn btn-sm btn-success" type="button" id="date-save-button">저장</button>
-                    <button class="btn btn-sm btn-secondary" type="reset" id="date-cancel-button">취소</button>
+                    <button class="btn btn-sm btn-success bg-gradient shadow" type="button" id="date-save-button">저장</button>
+                    <button class="btn btn-sm btn-secondary bg-gradient shadow" type="reset" id="date-cancel-button">취소</button>
                 </div>
             </div>
         </form>
@@ -96,9 +82,9 @@
             </div>
             <div class="row">
                 <div class="col">
-                    <button class="btn btn-sm btn-dark" type="button" id="reset-button">초기화</button>
-                    <button class="btn btn-sm btn-success" type="button" id="save-button">저장</button>
-                    <button class="btn btn-sm btn-secondary" type="reset" id="cancel-button">취소</button>
+                    <button class="btn btn-sm btn-dark bg-gradient shadow" type="button" id="reset-button">초기화</button>
+                    <button class="btn btn-sm btn-success bg-gradient shadow" type="button" id="save-button">저장</button>
+                    <button class="btn btn-sm btn-secondary bg-gradient shadow" type="reset" id="cancel-button">취소</button>
                 </div>
             </div>
         </form>
@@ -106,14 +92,14 @@
     <div class="row mt-3 justify-content-center" id="btn-group">
         <div class="col-sm-6 justify-content-center">
             <button sec:authorize="isAuthenticated()" th:if="${room.isAdmin(#authentication.principal)}"
-                    class="btn btn-sm btn-success" id="date-button">
+                    class="btn btn-sm btn-success bg-gradient shadow" id="date-button">
                 경기 시간 수정
             </button>
             <button sec:authorize="isAuthenticated()" th:if="${room.isAdmin(#authentication.principal)}"
-                    class="btn btn-sm btn-success" id="score-button">
+                    class="btn btn-sm btn-success bg-gradient shadow" id="score-button">
                 경기 결과 수정
             </button>
-            <a class="btn btn-sm btn-secondary" th:href="@{|/rooms/${roomId}/competitions/${competitionId}|}">
+            <a class="btn btn-sm btn-secondary bg-gradient shadow" th:href="@{|/rooms/${roomId}/competitions/${competitionId}|}">
                 목록
             </a>
         </div>
@@ -140,8 +126,6 @@
         let $dateSaveBtn = $('#date-save-button');
         let $dateCancelBtn = $('#date-cancel-button');
         let $startDateTime = $('#sdt');
-        let $home = $('#h');
-        let $away = $('#a');
         let $homeTeam = $('#home-team');
         let $awayTeam = $('#away-team');
         $scoreBtn.click(function () {
