@@ -8,7 +8,7 @@
         <h2>회원가입</h2>
     </div>
     <div class="row justify-content-center">
-        <form class="needs-validation col-sm-4" th:action method="post" th:object="${signupForm}" novalidate>
+        <form class="needs-validation col-sm-6" th:action method="post" th:object="${signupForm}" novalidate>
             <div class="mb-3">
                 <label th:for="email">아이디</label>
                 <input type="text" th:field="*{email}" placeholder="사용하실 아이디를 입력하세요."

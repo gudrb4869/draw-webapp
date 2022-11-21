@@ -28,7 +28,7 @@ public class Account extends BaseTimeEntity {
     @Column(nullable = false, unique = true)
     private String name;
 
-    @Lob
+    @Lob @ToString.Exclude
     @Basic(fetch = FetchType.EAGER)
     private String image;
 

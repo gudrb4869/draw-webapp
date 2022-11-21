@@ -53,8 +53,9 @@ public class MainController {
     }
 
     @GetMapping("/search")
-    public String search(String category, String keyword, Model model,
+    public String search(@CurrentUser Account account, String category, String keyword, Model model,
                              @PageableDefault(size = 9, sort = "createdDate", direction = Sort.Direction.ASC) Pageable pageable) {
+        model.addAttribute("account", account);
         model.addAttribute("category", category);
         model.addAttribute("keyword", keyword);
         if (category.equals("room")) {

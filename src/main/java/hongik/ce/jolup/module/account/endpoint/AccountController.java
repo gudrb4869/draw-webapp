@@ -67,7 +67,7 @@ public class AccountController {
         List<Account> followers = followRepository.findByFollower(profileAccount)
                 .stream().map(Follow::getFollowing)
                 .collect(Collectors.toList());
-        model.addAttribute("member", account);
+        model.addAttribute("account", account);
         model.addAttribute("profileAccount", profileAccount);
         model.addAttribute("isOwner", profileAccount.equals(account));
         model.addAttribute("isFollowing", followService.isFollow(account, profileAccount));

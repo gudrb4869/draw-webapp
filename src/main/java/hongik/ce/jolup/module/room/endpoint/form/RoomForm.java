@@ -16,6 +16,7 @@ public class RoomForm {
     @Size(max = 50)
     private String title;
 
+    @Builder.Default
     private boolean revealed = true;
 
     @NotBlank
