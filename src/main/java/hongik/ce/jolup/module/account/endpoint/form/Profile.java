@@ -25,7 +25,6 @@ public class Profile {
     }
 
     protected Profile(Account account) {
-        this.image = account.getImage();
         this.bio = account.getBio();
     }
 }

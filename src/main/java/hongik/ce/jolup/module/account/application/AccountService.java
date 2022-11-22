@@ -28,6 +28,7 @@ import javax.xml.bind.DatatypeConverter;
 import java.io.*;
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 import java.util.UUID;
 
 @Service
@@ -57,11 +58,12 @@ public class AccountService implements UserDetailsService {
     public void updateProfile(Account account, Profile profile) {
         String base64String = profile.getImage();
         String bio = profile.getBio();
-        String image = null;
-        System.out.println("base64String = " + base64String);
         if (base64String != null && !base64String.isEmpty()) {
+            if (account.getImage() != null) {
+                File file = new File(getFullPath(account.getImage()));
+                file.delete();
+            }
             String[] strings = base64String.split(",");
-            System.out.println("logic start");
             String extension;
             switch (strings[0]) {
                 case "data:image/jpeg;base64":
@@ -76,7 +78,7 @@ public class AccountService implements UserDetailsService {
             }
             // convert base64 string to binary data
             byte[] data = DatatypeConverter.parseBase64Binary(strings[1]);
-            image = UUID.randomUUID() + "." + extension;
+            String image = UUID.randomUUID() + "." + extension;
             String path = getFullPath(image);
             File file = new File(path);
             try (OutputStream outputStream = new BufferedOutputStream(new FileOutputStream(file))) {
@@ -84,9 +86,9 @@ public class AccountService implements UserDetailsService {
             } catch (IOException e) {
                 e.printStackTrace();
             }
+            account.setImage(image);
         }
 //        account.updateProfile(profile);
-        account.setImage(image);
         account.setBio(bio);
         accountRepository.save(account);
     }
