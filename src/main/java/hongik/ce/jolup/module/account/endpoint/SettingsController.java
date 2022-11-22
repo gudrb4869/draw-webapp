@@ -11,6 +11,7 @@ import hongik.ce.jolup.module.account.endpoint.validator.PasswordFormValidator;
 import hongik.ce.jolup.module.account.endpoint.validator.ProfileValidator;
 import hongik.ce.jolup.module.account.support.CurrentUser;
 import lombok.*;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -21,6 +22,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.validation.Valid;
 
+@Slf4j
 @Controller
 @RequiredArgsConstructor
 public class SettingsController {

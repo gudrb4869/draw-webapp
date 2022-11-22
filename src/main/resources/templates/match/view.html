@@ -18,7 +18,7 @@
                         <div class="grid text-center" style="row-gap: 0;">
                             <figure>
                                 <img th:if="${#strings.isEmpty(match?.home?.image)}" src="/images/user.png" width="64" height="64" class="rounded-circle border"/>
-                                <img th:if="${!#strings.isEmpty(match?.home?.image)}" th:src="${match?.home?.image}" width="64" height="64" class="rounded-circle border"/>
+                                <img th:if="${!#strings.isEmpty(match?.home?.image)}" th:src="|/img/${match?.home?.image}|" width="64" height="64" class="rounded-circle border"/>
                                 <figcaption th:text="${match?.home?.name}">home name</figcaption>
                             </figure>
                         </div>
@@ -30,7 +30,7 @@
                         <div class="grid text-center" style="row-gap: 0;">
                             <figure>
                                 <img th:if="${#strings.isEmpty(match?.away?.image)}" src="/images/user.png" width="64" height="64" class="rounded-circle border"/>
-                                <img th:if="${!#strings.isEmpty(match?.away?.image)}" th:src="${match?.away?.image}" width="64" height="64" class="rounded-circle border"/>
+                                <img th:if="${!#strings.isEmpty(match?.away?.image)}" th:src="|/img/${match?.away?.image}|" width="64" height="64" class="rounded-circle border"/>
                                 <figcaption th:text="${match?.away?.name}">away name</figcaption>
                             </figure>
                         </div>

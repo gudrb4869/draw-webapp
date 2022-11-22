@@ -14,7 +14,7 @@
                 <div class="flex-shrink-0">
                     <a class="text-decoration-none" href="#" th:href="${join.account != null} ? @{'/profile/' + ${join.account?.id}}">
                         <img th:if="${#strings.isEmpty(join.account?.image)}" src="/images/user.png" width="64" height="64" class="rounded-circle border me-3"/>
-                        <img th:if="${!#strings.isEmpty(join.account?.image)}" th:src="${join.account?.image}" width="64" height="64" class="rounded-circle border me-3"/>
+                        <img th:if="${!#strings.isEmpty(join.account?.image)}" th:src="|/img/${join.account?.image}|" width="64" height="64" class="rounded-circle border me-3"/>
                     </a>
                 </div>
                 <div class="flex-grow-1 ms-3">

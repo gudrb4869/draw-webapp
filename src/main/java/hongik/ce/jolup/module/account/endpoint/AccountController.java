@@ -10,6 +10,8 @@ import hongik.ce.jolup.module.account.infra.repository.FollowRepository;
 import hongik.ce.jolup.module.account.support.CurrentUser;
 import lombok.*;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.core.io.Resource;
+import org.springframework.core.io.UrlResource;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -18,6 +20,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.validation.Valid;
+import java.net.MalformedURLException;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -34,6 +37,12 @@ public class AccountController {
     @InitBinder("signupForm")
     public void initBinder(WebDataBinder webDataBinder) {
         webDataBinder.addValidators(signupFormValidator);
+    }
+
+    @ResponseBody
+    @GetMapping("/img/{filename}")
+    public Resource downloadImage(@PathVariable String filename) throws MalformedURLException {
+        return new UrlResource("file:" + accountService.getFullPath(filename));
     }
 
     @GetMapping("/signup")

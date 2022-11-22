@@ -28,8 +28,10 @@ public class Account extends BaseTimeEntity {
     @Column(nullable = false, unique = true)
     private String name;
 
-    @Lob @ToString.Exclude
+    /*@Lob @ToString.Exclude
     @Basic(fetch = FetchType.EAGER)
+    private String image;*/
+
     private String image;
 
     private String bio;
@@ -75,5 +77,13 @@ public class Account extends BaseTimeEntity {
     public void updateNotification(NotificationForm notificationForm) {
         this.competitionCreatedByWeb = notificationForm.isCompetitionCreatedByWeb();
         this.matchUpdatedByWeb = notificationForm.isMatchUpdatedByWeb();
+    }
+
+    public void setImage(String image) {
+        this.image = image;
+    }
+
+    public void setBio(String bio) {
+        this.bio = bio;
     }
 }

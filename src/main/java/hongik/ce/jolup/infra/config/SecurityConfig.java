@@ -42,7 +42,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     protected void configure(HttpSecurity http) throws Exception {
         http.authorizeRequests()
                 .mvcMatchers("/", "/login", "/signup", "/search").permitAll() // 누구나 접근 가능
-                .mvcMatchers(HttpMethod.GET, "/profile/*").permitAll()
+                .mvcMatchers(HttpMethod.GET, "/profile/*", "/img/*").permitAll()
                 .anyRequest().authenticated(); // 나머지는 권한이 있기만 하면 접근 가능
         http.formLogin() // 로그인에 대한 설정
                 .loginPage("/login")

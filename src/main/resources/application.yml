@@ -5,3 +5,6 @@ spring:
     hiddenmethod:
       filter:
         enabled: true
+
+file:
+  path: C:/Users/user/Desktop/file/

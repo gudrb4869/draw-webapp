@@ -13,6 +13,7 @@ import hongik.ce.jolup.module.account.infra.repository.AccountRepository;
 import hongik.ce.jolup.module.room.domain.entity.Join;
 import hongik.ce.jolup.module.room.infra.repository.JoinRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -23,8 +24,11 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.xml.bind.DatatypeConverter;
+import java.io.*;
 import java.util.Collections;
 import java.util.List;
+import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
@@ -37,6 +41,9 @@ public class AccountService implements UserDetailsService {
     private final MatchRepository matchRepository;
     private final PasswordEncoder passwordEncoder;
 
+    @Value("${file.path}")
+    private String filePath;
+
     public Account signup(SignupForm signupForm) {
         Account account = saveNewMember(signupForm);
         return account;
@@ -48,8 +55,44 @@ public class AccountService implements UserDetailsService {
     }
 
     public void updateProfile(Account account, Profile profile) {
-        account.updateProfile(profile);
+        String base64String = profile.getImage();
+        String bio = profile.getBio();
+        String image = null;
+        System.out.println("base64String = " + base64String);
+        if (base64String != null && !base64String.isEmpty()) {
+            String[] strings = base64String.split(",");
+            System.out.println("logic start");
+            String extension;
+            switch (strings[0]) {
+                case "data:image/jpeg;base64":
+                    extension = "jpeg";
+                    break;
+                case "data:image/png;base64":
+                    extension = "png";
+                    break;
+                default:
+                    extension = "jpg";
+                    break;
+            }
+            // convert base64 string to binary data
+            byte[] data = DatatypeConverter.parseBase64Binary(strings[1]);
+            image = UUID.randomUUID() + "." + extension;
+            String path = getFullPath(image);
+            File file = new File(path);
+            try (OutputStream outputStream = new BufferedOutputStream(new FileOutputStream(file))) {
+                outputStream.write(data);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+//        account.updateProfile(profile);
+        account.setImage(image);
+        account.setBio(bio);
         accountRepository.save(account);
+    }
+
+    public String getFullPath(String filename) {
+        return filePath + filename;
     }
 
     public void updatePassword(Account account, String newPassword) {

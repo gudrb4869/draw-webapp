@@ -19,7 +19,7 @@
                     <input type="checkbox" th:field="*{members}" th:value="${member.id}" class="form-check-input">
                     <label class="flex-shrink-0 form-check-label" th:for="${#ids.prev('members')}">
                         <img th:if="${#strings.isEmpty(member.image)}" src="/images/user.png" width="40" height="40" class="rounded-circle border me-3"/>
-                        <img th:if="${!#strings.isEmpty(member.image)}" th:src="${member.image}" width="40" height="40" class="rounded-circle border me-3"/>
+                        <img th:if="${!#strings.isEmpty(member.image)}" th:src="|/img/${member.image}|" width="40" height="40" class="rounded-circle border me-3"/>
                         <b th:text="${member.name}">이름</b>
                     </label>
                 </div>
