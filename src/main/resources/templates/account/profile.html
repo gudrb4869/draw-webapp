@@ -10,8 +10,8 @@
             <div class="flex-shrink-0 align-items-baseline">
                 <!-- avatar -->
                 <img th:if="${#strings.isEmpty(profileAccount?.image)}"
-                     src="/images/user.png" width="125" height="125" class="img-fluid float-left rounded-circle border img-thumbnail"/>
-                <img th:if="${!#strings.isEmpty(profileAccount.image)}" class="img-fluid float-left rounded-circle border img-thumbnail"
+                     src="/images/user.png" width="125" height="125" class="rounded-circle border"/>
+                <img th:if="${!#strings.isEmpty(profileAccount.image)}" class="rounded-circle border"
                      th:src="|/img/${profileAccount.image}|" width="125" height="125"/>
             </div>
             <div class="flex-grow-1 ms-3">

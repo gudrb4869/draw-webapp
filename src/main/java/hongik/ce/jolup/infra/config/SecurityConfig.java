@@ -60,11 +60,4 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .expiredUrl("/")
                 .maxSessionsPreventsLogin(false);
     }
-
-    /*@Override
-    // 로그인 시 필요한 정보를 가져옴
-    public void configure(AuthenticationManagerBuilder auth) throws Exception {
-        auth.userDetailsService(userDetailsService) // 유저 정보는 userDetailsService 에서 가져온다
-                .passwordEncoder(passwordEncoder()); // 패스워드 인코더는 passwordEncoder(BCrypt 사용)
-    }*/
 }

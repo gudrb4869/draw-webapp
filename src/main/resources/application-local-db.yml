@@ -10,7 +10,7 @@ spring:
       maximum-pool-size: 20
   jpa:
     hibernate:
-      ddl-auto: update
+      ddl-auto: validate
     properties:
       hibernate:
         default_batch_fetch_size: 1000
@@ -22,8 +22,7 @@ logging:
     org.hibernate:
       SQL: debug
 #      type.descriptor.sql.BasicBinder: trace
-app:
-  host: http://localhost:8080
+
 server:
   servlet:
     session:

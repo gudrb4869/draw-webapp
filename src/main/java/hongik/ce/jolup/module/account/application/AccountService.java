@@ -1,6 +1,7 @@
 package hongik.ce.jolup.module.account.application;
 
 import hongik.ce.jolup.module.account.domain.entity.Account;
+import hongik.ce.jolup.module.account.infra.FileStore;
 import hongik.ce.jolup.module.competition.domain.entity.Participate;
 import hongik.ce.jolup.module.competition.infra.repository.ParticipateRepository;
 import hongik.ce.jolup.module.match.domain.entity.Match;
@@ -13,7 +14,6 @@ import hongik.ce.jolup.module.account.infra.repository.AccountRepository;
 import hongik.ce.jolup.module.room.domain.entity.Join;
 import hongik.ce.jolup.module.room.infra.repository.JoinRepository;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -24,12 +24,9 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.xml.bind.DatatypeConverter;
 import java.io.*;
 import java.util.Collections;
 import java.util.List;
-import java.util.Objects;
-import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
@@ -41,9 +38,7 @@ public class AccountService implements UserDetailsService {
     private final ParticipateRepository participateRepository;
     private final MatchRepository matchRepository;
     private final PasswordEncoder passwordEncoder;
-
-    @Value("${file.path}")
-    private String filePath;
+    private final FileStore fileStore;
 
     public Account signup(SignupForm signupForm) {
         Account account = saveNewMember(signupForm);
@@ -55,46 +50,13 @@ public class AccountService implements UserDetailsService {
         return accountRepository.save(account);
     }
 
-    public void updateProfile(Account account, Profile profile) {
-        String base64String = profile.getImage();
-        String bio = profile.getBio();
-        if (base64String != null && !base64String.isEmpty()) {
-            if (account.getImage() != null) {
-                File file = new File(getFullPath(account.getImage()));
-                file.delete();
-            }
-            String[] strings = base64String.split(",");
-            String extension;
-            switch (strings[0]) {
-                case "data:image/jpeg;base64":
-                    extension = "jpeg";
-                    break;
-                case "data:image/png;base64":
-                    extension = "png";
-                    break;
-                default:
-                    extension = "jpg";
-                    break;
-            }
-            // convert base64 string to binary data
-            byte[] data = DatatypeConverter.parseBase64Binary(strings[1]);
-            String image = UUID.randomUUID() + "." + extension;
-            String path = getFullPath(image);
-            File file = new File(path);
-            try (OutputStream outputStream = new BufferedOutputStream(new FileOutputStream(file))) {
-                outputStream.write(data);
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-            account.setImage(image);
+    public void updateProfile(Account account, Profile profile) throws IOException {
+        String storeFileName = fileStore.storeFile(profile.getFile());
+        if (storeFileName != null) {
+            account.setImage(storeFileName);
         }
-//        account.updateProfile(profile);
-        account.setBio(bio);
+        account.setBio(profile.getBio());
         accountRepository.save(account);
-    }
-
-    public String getFullPath(String filename) {
-        return filePath + filename;
     }
 
     public void updatePassword(Account account, String newPassword) {

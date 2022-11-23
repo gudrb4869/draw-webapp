@@ -19,8 +19,7 @@ logging:
     org.hibernate:
       SQL: debug
       type.descriptor.sql.BasicBinder: trace
-app:
-  host: http://localhost:8080
+
 server:
   servlet:
     session:

@@ -45,7 +45,6 @@ public class Participate extends BaseTimeEntity {
     }
 
     // 편의 메서드
-
     public void addWin() {
         this.win++;
     }

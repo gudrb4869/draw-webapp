@@ -4,6 +4,7 @@ import hongik.ce.jolup.module.account.domain.entity.Account;
 import lombok.AccessLevel;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Size;
@@ -12,7 +13,7 @@ import javax.validation.constraints.Size;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Profile {
 
-    private String image;
+    private MultipartFile file;
 
     @Size(max = 30, message = "30자를 초과하였습니다.")
     private String bio;

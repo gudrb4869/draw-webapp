@@ -21,6 +21,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.validation.Valid;
+import java.io.IOException;
 
 @Slf4j
 @Controller
@@ -60,7 +61,7 @@ public class SettingsController {
 
     @PostMapping(SETTINGS_PROFILE_URL)
     public String updateProfile(@Valid Profile profile, Errors errors, @CurrentUser Account account,
-                                   Model model, RedirectAttributes attributes) {
+                                   Model model, RedirectAttributes attributes) throws IOException {
         profileValidator.validatePassword(profile, account, errors);
         if (errors.hasErrors()) {
             model.addAttribute(account);

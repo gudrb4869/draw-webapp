@@ -6,6 +6,7 @@ import hongik.ce.jolup.module.account.domain.entity.Follow;
 import hongik.ce.jolup.module.account.endpoint.form.SignupForm;
 import hongik.ce.jolup.module.account.application.AccountService;
 import hongik.ce.jolup.module.account.endpoint.validator.SignupFormValidator;
+import hongik.ce.jolup.module.account.infra.FileStore;
 import hongik.ce.jolup.module.account.infra.repository.FollowRepository;
 import hongik.ce.jolup.module.account.support.CurrentUser;
 import lombok.*;
@@ -33,6 +34,7 @@ public class AccountController {
     private final AccountService accountService;
     private final FollowRepository followRepository;
     private final FollowService followService;
+    private final FileStore fileStore;
 
     @InitBinder("signupForm")
     public void initBinder(WebDataBinder webDataBinder) {
@@ -42,7 +44,7 @@ public class AccountController {
     @ResponseBody
     @GetMapping("/img/{filename}")
     public Resource downloadImage(@PathVariable String filename) throws MalformedURLException {
-        return new UrlResource("file:" + accountService.getFullPath(filename));
+        return new UrlResource("file:" + fileStore.getFullPath(filename));
     }
 
     @GetMapping("/signup")
@@ -69,7 +71,6 @@ public class AccountController {
     @GetMapping("/profile/{id}")
     public String profile(@CurrentUser Account account, @PathVariable Long id, Model model) {
         Account profileAccount = accountService.getAccount(id);
-        log.info("profileMember = {}", profileAccount);
         List<Account> followings = followRepository.findByFollowing(profileAccount)
                 .stream().map(Follow::getFollower)
                 .collect(Collectors.toList());

@@ -5,6 +5,14 @@ spring:
     hiddenmethod:
       filter:
         enabled: true
+  servlet:
+    multipart:
+      max-file-size: 5MB
 
+# local
+#file:
+#  path: C:/Users/user/Desktop/file/
+
+# Aws EC2
 file:
-  path: C:/Users/user/Desktop/file/
+  path: /home/ubuntu/images/

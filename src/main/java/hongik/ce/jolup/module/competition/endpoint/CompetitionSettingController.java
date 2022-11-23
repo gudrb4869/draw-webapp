@@ -43,7 +43,7 @@ public class CompetitionSettingController {
             return "competition/settings/competition";
         }
         competitionService.updateCompetitionTitle(competition, newTitle);
-        attributes.addFlashAttribute("message", "대회명을 수정하였습니다.");
+        attributes.addFlashAttribute("message", "대회 이름을 수정했습니다.");
         return "redirect:/rooms/" + room.getId() + "/competitions/" + competition.getId() + "/settings";
     }
 

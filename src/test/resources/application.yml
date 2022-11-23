@@ -3,3 +3,10 @@ spring:
     active: local
   datasource:
     url: jdbc:h2:mem:test
+# local
+#file:
+#  path: C:/Users/user/Desktop/test/
+
+# AWS EC2
+file:
+  path: /home/ubuntu/images/

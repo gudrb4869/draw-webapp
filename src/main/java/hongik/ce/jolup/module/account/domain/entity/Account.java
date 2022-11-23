@@ -2,7 +2,6 @@ package hongik.ce.jolup.module.account.domain.entity;
 
 import hongik.ce.jolup.BaseTimeEntity;
 import hongik.ce.jolup.module.account.endpoint.form.NotificationForm;
-import hongik.ce.jolup.module.account.endpoint.form.Profile;
 import hongik.ce.jolup.module.notification.domain.entity.Notification;
 import lombok.*;
 
@@ -27,10 +26,6 @@ public class Account extends BaseTimeEntity {
 
     @Column(nullable = false, unique = true)
     private String name;
-
-    /*@Lob @ToString.Exclude
-    @Basic(fetch = FetchType.EAGER)
-    private String image;*/
 
     private String image;
 
@@ -62,11 +57,6 @@ public class Account extends BaseTimeEntity {
 
     public void updateName(String name) {
         this.name = name;
-    }
-
-    public void updateProfile(Profile profile) {
-        this.image = profile.getImage();
-        this.bio = profile.getBio();
     }
 
     public boolean isFollowing(Account account) {
