@@ -15,11 +15,11 @@
 ### 부가 기능
 * **회원 프로필 정보 수정**
 * **친구 추가 기능**
-* **알림 기능**
+* **알림 기능** - Interceptor 사용하여 알림 정보 조회
 
 ### 기술 스택
 - **Java, Spring Boot, Spring Security**
-- **JPA**
+- **JPA** - 메서드 호출만으로 SQL 수행하기 때문에 반복작업 감소. 생산성 향상. 유지보수에 좋음
 - **MariaDB**
 - **HTML, CSS, JavaScript**
 - **AWS**
